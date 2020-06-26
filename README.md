@@ -2,20 +2,6 @@
 
 Web application to explore Renewable Energy Zones.
 
-## Overview
-
-Steps to follow as soon as you download this structure to start a project:
-- [ ] Update `package.js` with data about the project (name, repo, license...)
-- [ ] If the license is known update `LICENSE`
-- [ ] Update `.circleci/config.yml` with correct repo and other needed information.
-- [ ] On `index.html` update the project title and check for other boostrap information that can be changed or removed.
-- [ ] Remove unneeded images from the `graphics` folder and replace the favicon with a project related one.
-- [ ] Update the modules to the most recent version.
-- [ ] **Delete this `README.md` and rename `_README.md`. Fill in the needed data. This is the most important task.** Others need to be able to know what the project is about and how to work with it. This can't be stressed enough.
-
-It's better to do this straight away so no traces of project-seed are ever pushed to github and just looks more professional.
-The values that are not immediately know should be left blank and filled ASAP.
-
 ## Gulp for building
 The build system currently supports:
 
@@ -50,44 +36,6 @@ app/assets/
 |  +- content/: Content image
 |
 ```
-
-## Collecticons
-Collecticons comes bundles with `project-seed-style`. SVG icons go inside `app/assets/icons/collecticons` and they're compiled into a webfont.  
-Despite the processor being installed they are not added to the app yet. For that you need to include the collecticons font wherever you setup global styled-components styles.
-```js
-import { collecticonsFont } from './styles/collecticons/index'; // Import the font from app/assets/scripts/styles/collecticons/index
-
-const GlobalStyles = createGlobalStyle`
-  ${collecticonsFont()}
-`;
-
-// Use it at higher level in the app
-<Root>
-  <GlobalStyles />
-</Root>
-```
-To use them with styled components:
-```js
-import collecticon from './styles/collecticons/index'; // Import the font from app/assets/scripts/styles/collecticons/index
-
-// The icon name will be the icon's file name
-const CloseBtn = styled.button`
-  &::before {
-    ${collecticon('xmark--small')}
-  }
-`
-```
-
-#### Remove collecticons
-If you don't need collecticons, it is easy to remove:  
-1)  
-```
-rm -rf app/assets/icons/collecticons
-rm -rf app/assets/scripts/styles/collecticons
-yarn remove collecticons-processor
-```
-
-2) You also need to manually remove the build task from `gulpfile.js`
 
 ### Configurations and environment variables
 
