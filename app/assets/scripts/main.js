@@ -1,8 +1,8 @@
 import React from 'react';
-import { render } from 'react-dom';
+// import { render } from 'react-dom';
 
 // Root component.
-class Root extends React.Component {
+export default class Root extends React.Component {
   componentDidMount () {
     // Hide the welcome banner.
     const banner = document.querySelector('#welcome-banner');
