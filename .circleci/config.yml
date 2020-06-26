@@ -71,10 +71,7 @@ jobs:
           name: Deploy to surge
           command: |
             cp /workspace/dist/index.html /workspace/dist/200.html
-            # Enable to use surge deployment
-            # CIRCLE will need the surge login variables:
-            # SURGE_LOGIN & SURGE_TOKEN
-            #./node_modules/surge/lib/cli.js --project /workspace/dist --domain <the domain>.surge.sh
+            ./node_modules/surge/lib/cli.js --project /workspace/dist --domain rezoning-web.surge.sh
 
 workflows:
   version: 2
