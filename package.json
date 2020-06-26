@@ -1,10 +1,10 @@
 {
-  "name": "project-seed-styled",
-  "version": "1.0.0",
-  "description": "Frontend application for the Smallsats project",
+  "name": "rezoning-web",
+  "version": "0.0.1",
+  "description": "Frontend application for the REZoning project",
   "repository": {
     "type": "git",
-    "url": "https://github.com/developmentseed/project-seed-styled.git"
+    "url": "https://github.com/developmentseed/rezoning-web.git"
   },
   "author": {
     "name": "Development Seed",
@@ -12,9 +12,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/developmentseed/project-seed-styled/issues"
+    "url": "https://github.com/developmentseed/rezoning-web/issues"
   },
-  "homepage": "https://github.com/developmentseed/project-seed-styled",
+  "homepage": "https://github.com/developmentseed/rezoning-web/issues",
   "scripts": {
     "postinstall": "[ -f app/assets/scripts/config/local.js ] || echo \"'use strict';\n\nexport default {\n  environment: 'development'\n};\" > app/assets/scripts/config/local.js",
     "serve": "NODE_ENV=development gulp serve",
@@ -25,7 +25,7 @@
     "test": "echo \"No tests\" && exit 0"
   },
   "engines": {
-    "node": "10.x"
+    "node": "12.x"
   },
   "browserify": {
     "transform": [

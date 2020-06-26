@@ -1,10 +1,6 @@
-# project-seed-styled
+# REZoning Web
 
-A basic starting point for web projects that use [styled-components](https://www.styled-components.com/).  
-This stems from [project-seed](https://github.com/developmentseed/project-seed) and behaves the same way.
-
-Since style components need react, it is already included.  
-It also includes collecticons. See the section below for more info.
+Web application to explore Renewable Energy Zones.
 
 ## Overview
 
