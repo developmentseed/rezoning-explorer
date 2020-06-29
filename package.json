@@ -92,11 +92,20 @@
     "watchify": "^3.11.1"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.10.1",
+    "element-resize-event": "^3.0.3",
+    "history": "^5.0.0",
     "lodash.defaultsdeep": "^4.6.1",
+    "lodash.get": "^4.4.2",
     "polished": "^3.4.1",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-helmet": "^6.1.0",
+    "react-redux": "^7.2.0",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
+    "redux": "^4.0.5",
     "styled-components": "^4.3.2"
   }
 }
