@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import T from 'prop-types';
+import { withRouter } from 'react-router';
 import styled from 'styled-components';
 
 import MetaTags from './meta-tags';
@@ -13,15 +14,16 @@ import { mediaRanges } from '../../styles/theme/theme';
 
 const { appTitle, appDescription } = config;
 
-const Page = styled(SizeAwareElement)`
+const Page = styled.div`
   display: grid;
-  grid-template-rows: 3rem auto 0;
+  grid-template-rows: minmax(2rem, min-content) 1fr ${({ hideFooter }) => hideFooter ? 0 : 'auto'};
   min-height: 100vh;
 `;
 
 const PageBody = styled.main`
   padding: 0;
   margin: 0;
+
   /* Animation */
   animation: ${reveal} 0.48s ease 0s 1;
 `;
@@ -31,39 +33,54 @@ class App extends Component {
     super(props);
 
     this.state = {
-      useShortTitle: false
+      isMediumDown: false
     };
 
     this.resizeListener = this.resizeListener.bind(this);
   }
 
-  resizeListener ({ width }) {
+  componentDidMount () {
+    window.scrollTo(0, 0);
+  }
+
+  // Handle cases where the page is updated without changing
+  componentDidUpdate (prevProps) {
+    if (this.props.location && this.props.location.pathname !== prevProps.location.pathname) {
+      window.scrollTo(0, 0);
+    }
+  }
+
+  resizeListener ({ width, height }) {
     this.setState({
-      useShortTitle: width < mediaRanges.small[0]
+      isMediumDown: width < mediaRanges.large[0]
     });
   }
 
   render () {
-    const { pageTitle, children } = this.props;
+    const { pageTitle, hideFooter, children } = this.props;
     const title = pageTitle ? `${pageTitle} — ` : '';
 
     return (
-      <Page onChange={this.resizeListener}>
+      <SizeAwareElement
+        element={Page}
+        className='page'
+        onChange={this.resizeListener}
+        hideFooter={hideFooter}
+      >
         <MetaTags title={`${title}${appTitle}`} description={appDescription} />
-        <PageHeader useShortTitle={this.state.useShortTitle} />
-
-        <PageBody role='main'>
-          {children}
-        </PageBody>
+        <PageHeader isMediumDown={this.state.isMediumDown} />
+        <PageBody role='main'>{children}</PageBody>
         <PageFooter />
-      </Page>
+      </SizeAwareElement>
     );
   }
 }
 
 App.propTypes = {
   pageTitle: T.string,
-  children: T.node
+  hideFooter: T.bool,
+  children: T.node,
+  location: T.object
 };
 
-export default App;
+export default withRouter(App);
