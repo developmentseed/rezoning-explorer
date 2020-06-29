@@ -4,71 +4,136 @@ import styled from 'styled-components';
 
 import config from '../../config';
 
-// import { Link } from 'react-router-dom';
-import { themeVal } from '../../styles/utils/general';
-import { reveal } from '../../styles/animation';
-import { panelSkin } from '../../styles/skins';
-import { glsp } from '../../styles/utils/theme-values';
+import { Link } from 'react-router-dom';
+import { themeVal, stylizeFunction } from '../../styles/utils/general';
+
+import { rgba } from 'polished';
+import Button from '../../styles/button/button';
+import { multiply, divide } from '../../styles/utils/math';
+import { stackSkin } from '../../styles/skins';
+import { visuallyHidden } from '../../styles/helpers';
+import collecticon from '../../styles/collecticons';
 
 const { appTitle, appShortTitle } = config;
+const _rgba = stylizeFunction(rgba);
 
 const PageHead = styled.header`
-  ${panelSkin()}
+  ${stackSkin()}
   position: sticky;
   z-index: 20;
   top: 0;
   left: 0;
   bottom: 0;
-  /* Animation */
-  animation: ${reveal} 0.32s ease 0s 1;
+  height: 100vh;
 `;
 
 const PageHeadInner = styled.div`
   display: flex;
-  padding: 0 ${glsp(0.5)};
+  flex-flow: column nowrap;
   align-items: center;
+  padding: ${themeVal('layout.space')} 0
+    ${multiply(themeVal('layout.space'), 1.5)} 0;
   margin: 0 auto;
   height: 100%;
 `;
 
 const PageHeadline = styled.div`
-  display: flex;
-  white-space: nowrap;
-  align-items: center;
+  margin: ${multiply(themeVal('layout.space'), 2)} 0 0 0;
+  order: 2;
 `;
 
 const PageTitle = styled.h1`
-  display: flex;
+  font-size: 1.5rem;
+  line-height: 1;
+  writing-mode: vertical-rl;
   text-align: center;
-  align-items: center;
+  transform: rotate(180deg);
   margin: 0;
-  font-weight: ${themeVal('type.base.bold')};
-  text-transform: uppercase;
+  * {
+    display: block;
+  }
   a {
-    display: flex;
-    align-items: center;
     transition: all 0.24s ease 0s;
     &,
     &:visited {
       color: inherit;
     }
-  }
-  span {
-    font-size: 1rem;
-    line-height: 1;
+    &:hover {
+      color: ${themeVal('color.link')};
+      opacity: 1;
+    }
   }
 `;
 
 const PageNav = styled.nav`
+  flex-flow: column nowrap;
+  flex: 1;
   display: flex;
-  flex-flow: row nowrap;
-  margin: 0 0 0 auto;
-  padding: 0 0 0 ${glsp(1)};
+`;
+
+const GlobalMenu = styled.ul`
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  margin: 0;
+  list-style: none;
+  > * {
+    margin: 0;
+  }
+  > *:last-child {
+    margin: 0;
+  }
+`;
+
+const GlobalMenuLink = styled.a.attrs({
+  'data-place': 'right'
+})`
+  position: relative;
+  display: block;
+  width: 4rem;
+  height: 3rem;
+  line-height: 3rem;
+  text-align: center;
+  transition: all 0.24s ease 0s;
+  &::before {
+    ${({ useIcon }) => collecticon(useIcon)}
+    font-size: 1.25rem
+  }
+  &::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: ${divide(themeVal('layout.space'), 4)};
+    background: ${themeVal('color.link')};
+    content: '';
+    opacity: 0;
+    transition: all 0.24s ease 0s;
+  }
+  &,
+  &:visited {
+    color: inherit;
+  }
+  &:hover {
+    color: ${themeVal('color.link')};
+    opacity: 1;
+    background: ${_rgba(themeVal('color.link'), 0.08)};
+  }
+  &.active {
+    color: ${themeVal('color.link')};
+    &::after {
+      opacity: 1;
+    }
+  }
+  span {
+    ${visuallyHidden()}
+  }
 `;
 
 class PageHeader extends React.Component {
   render () {
     const { useShortTitle } = this.props;
+    console.log(collecticon('house'))
 
     return (
       <PageHead role='banner'>
@@ -80,7 +145,21 @@ class PageHeader extends React.Component {
               </span>
             </PageTitle>
           </PageHeadline>
-          <PageNav role='navigation' />
+          <PageNav role='navigation'>
+
+            <GlobalMenu>
+              <li>
+                <GlobalMenuLink
+                  useIcon='house'
+                  data-tip='Welcome'
+                  title='View Welcome page'
+                >
+                      Welcome
+                </GlobalMenuLink>
+              </li>
+
+            </GlobalMenu>
+          </PageNav>
         </PageHeadInner>
       </PageHead>
     );
