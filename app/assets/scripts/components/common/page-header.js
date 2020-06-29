@@ -77,6 +77,7 @@ const GlobalMenu = styled.ul`
   justify-content: center;
   margin: 0;
   list-style: none;
+
   > * {
     margin: 0;
   }
@@ -133,7 +134,6 @@ const GlobalMenuLink = styled.a.attrs({
 class PageHeader extends React.Component {
   render () {
     const { useShortTitle } = this.props;
-    console.log(collecticon('house'))
 
     return (
       <PageHead role='banner'>
@@ -149,13 +149,16 @@ class PageHeader extends React.Component {
 
             <GlobalMenu>
               <li>
-                <GlobalMenuLink
+                <Button
+                  element={Link}
+                  to='/indicators'
+                  exact
                   useIcon='house'
-                  data-tip='Welcome'
-                  title='View Welcome page'
+                  variation='primary-plain'
+                  title='Show menu'
                 >
-                      Welcome
-                </GlobalMenuLink>
+                  Show menu
+                </Button>
               </li>
 
             </GlobalMenu>

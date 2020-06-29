@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import { Router, Route, Switch } from 'react-router-dom';
 // import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
-import history from './utils/history';
+import history from './utils/history.js';
 
 import GlobalStyles from './styles/global';
 
