@@ -11,6 +11,9 @@ import theme from './styles/theme/theme';
 
 // Views
 import Home from './components/home';
+import Sandbox from './components/sandbox';
+import Explore from './components/explore';
+import About from './components/about';
 
 // Root component.
 class Root extends React.Component {
@@ -43,6 +46,9 @@ class Root extends React.Component {
           <GlobalStyles innerHeight={this.state.windowHeight} />
           <Switch>
             <Route exact path='/' component={Home} />
+            <Route exact path='/sandbox' component={Sandbox} />
+            <Route exact path='/explore' component={Explore} />
+            <Route exact path='/about' component={About} />
           </Switch>
         </ThemeProvider>
       </Router>

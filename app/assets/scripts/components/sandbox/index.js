@@ -1,12 +1,12 @@
 import React from 'react';
 import App from '../common/app';
 
-function Home (props) {
+function Sandbox (props) {
   return (
     <App
-      pageTitle='Home'
+      pageTitle='Sandbox'
     />
   );
 }
 
-export default Home;
+export default Sandbox;
