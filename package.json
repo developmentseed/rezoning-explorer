@@ -94,7 +94,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.10.1",
     "element-resize-event": "^3.0.3",
-    "history": "^5.0.0",
+    "history": "^4.10.0",
     "lodash.defaultsdeep": "^4.6.1",
     "lodash.get": "^4.4.2",
     "polished": "^3.4.1",
