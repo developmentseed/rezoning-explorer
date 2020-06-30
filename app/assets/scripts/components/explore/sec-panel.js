@@ -19,16 +19,15 @@ const PrimePanel = styled(Panel)`
 `;
 
 function ExpMapPrimePanel (props) {
-
   return (
     <PrimePanel
       collapsible
-      direction='left'
+      direction='right'
       onPanelChange={() => {}}
       initialState={isLargeViewport()}
       headerContent={(
         <PanelHeadline>
-          <PanelTitle>Prime Panel</PanelTitle>
+          <PanelTitle>Secondary Panel</PanelTitle>
         </PanelHeadline>
       )}
       bodyContent={
@@ -46,6 +45,7 @@ function ExpMapPrimePanel (props) {
 }
 
 ExpMapPrimePanel.propTypes = {
+  onPanelChange: T.func
 };
 
 export default ExpMapPrimePanel;
