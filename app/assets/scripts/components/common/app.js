@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import MetaTags from './meta-tags';
 import PageHeader from './page-header';
 import PageFooter from './page-footer';
-import { reveal } from '../../styles/animation';
 
 import config from '../../config';
 import SizeAwareElement from './size-aware-element';
@@ -24,7 +23,6 @@ const PageBody = styled.main`
   padding: 0;
   margin: 0;
 `;
-
 
 class App extends Component {
   constructor (props) {
