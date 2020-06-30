@@ -18,12 +18,13 @@ const PrimePanel = styled(Panel)`
   `}
 `;
 
-function ExpMapPrimePanel (props) {
+function ExpMapSecPanel (props) {
+  const { onPanelChange } = props;
   return (
     <PrimePanel
       collapsible
       direction='right'
-      onPanelChange={() => {}}
+      onPanelChange={onPanelChange}
       initialState={isLargeViewport()}
       headerContent={(
         <PanelHeadline>
@@ -44,8 +45,8 @@ function ExpMapPrimePanel (props) {
   );
 }
 
-ExpMapPrimePanel.propTypes = {
+ExpMapSecPanel.propTypes = {
   onPanelChange: T.func
 };
 
-export default ExpMapPrimePanel;
+export default ExpMapSecPanel;

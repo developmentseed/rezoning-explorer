@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 import { render } from 'react-dom';
 import { Router, Route, Switch } from 'react-router-dom';
 // import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
+import { GlobalProvider } from './context/global-context';
 import history from './utils/history.js';
 
 import GlobalStyles from './styles/global';
+import GlobalContext from './context/global-context';
 
 import theme from './styles/theme/theme';
 
@@ -16,6 +18,7 @@ import Explore from './components/explore';
 import About from './components/about';
 
 // Root component.
+/*
 class Root extends React.Component {
   constructor (props) {
     super(props);
@@ -54,5 +57,33 @@ class Root extends React.Component {
       </Router>
     );
   }
+}
+*/
+
+function Root () {
+  const {windowHeight} = useContext(GlobalContext);
+
+  useEffect(() => {
+    // Hide the welcome banner.
+    const banner = document.querySelector('#welcome-banner');
+    banner.classList.add('dismissed');
+    setTimeout(() => banner.remove(), 500);
+  }, []);
+
+  return (
+    <Router history={history}>
+      <ThemeProvider theme={theme.main}>
+        <GlobalProvider>
+          <GlobalStyles innerHeight={windowHeight} />
+          <Switch>
+            <Route exact path='/' component={Home} />
+            <Route exact path='/sandbox' component={Sandbox} />
+            <Route exact path='/explore' component={Explore} />
+            <Route exact path='/about' component={About} />
+          </Switch>
+        </GlobalProvider>
+      </ThemeProvider>
+    </Router>
+  );
 }
 render(<Root />, document.querySelector('#app-container'));

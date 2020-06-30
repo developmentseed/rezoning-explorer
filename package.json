@@ -97,6 +97,7 @@
     "history": "^4.10.0",
     "lodash.defaultsdeep": "^4.6.1",
     "lodash.get": "^4.4.2",
+    "mapbox-gl": "^1.11.0",
     "polished": "^3.4.1",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
