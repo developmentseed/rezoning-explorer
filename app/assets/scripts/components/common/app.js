@@ -15,18 +15,16 @@ import { mediaRanges } from '../../styles/theme/theme';
 const { appTitle, appDescription } = config;
 
 const Page = styled.div`
-  display: grid;
-  grid-template-rows: minmax(2rem, min-content) 1fr ${({ hideFooter }) => hideFooter ? 0 : 'auto'};
   min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(4rem, max-content) auto 0;
 `;
 
 const PageBody = styled.main`
   padding: 0;
   margin: 0;
-
-  /* Animation */
-  animation: ${reveal} 0.48s ease 0s 1;
 `;
+
 
 class App extends Component {
   constructor (props) {
@@ -69,7 +67,9 @@ class App extends Component {
       >
         <MetaTags title={`${title}${appTitle}`} description={appDescription} />
         <PageHeader isMediumDown={this.state.isMediumDown} />
-        <PageBody role='main'>{children}</PageBody>
+        <PageBody role='main'>
+          {children}
+        </PageBody>
         <PageFooter />
       </SizeAwareElement>
     );

@@ -5,17 +5,13 @@ import styled from 'styled-components';
 import config from '../../config';
 
 import { Link } from 'react-router-dom';
-import { themeVal, stylizeFunction } from '../../styles/utils/general';
+import { themeVal } from '../../styles/utils/general';
 
-import { rgba } from 'polished';
 import Button from '../../styles/button/button';
-import { multiply, divide } from '../../styles/utils/math';
+import { multiply } from '../../styles/utils/math';
 import { stackSkin } from '../../styles/skins';
-import { visuallyHidden } from '../../styles/helpers';
-import collecticon from '../../styles/collecticons';
 
 const { appTitle, appShortTitle } = config;
-const _rgba = stylizeFunction(rgba);
 
 const PageHead = styled.header`
   ${stackSkin()}
@@ -86,49 +82,7 @@ const GlobalMenu = styled.ul`
   }
 `;
 
-const GlobalMenuLink = styled.a.attrs({
-  'data-place': 'right'
-})`
-  position: relative;
-  display: block;
-  width: 4rem;
-  height: 3rem;
-  line-height: 3rem;
-  text-align: center;
-  transition: all 0.24s ease 0s;
-  &::before {
-    ${({ useIcon }) => collecticon(useIcon)}
-    font-size: 1.25rem
-  }
-  &::after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: ${divide(themeVal('layout.space'), 4)};
-    background: ${themeVal('color.link')};
-    content: '';
-    opacity: 0;
-    transition: all 0.24s ease 0s;
-  }
-  &,
-  &:visited {
-    color: inherit;
-  }
-  &:hover {
-    color: ${themeVal('color.link')};
-    opacity: 1;
-    background: ${_rgba(themeVal('color.link'), 0.08)};
-  }
-  &.active {
-    color: ${themeVal('color.link')};
-    &::after {
-      opacity: 1;
-    }
-  }
-  span {
-    ${visuallyHidden()}
-  }
+const GlobalMenuButton = styled(Button)`
 `;
 
 class PageHeader extends React.Component {
@@ -149,16 +103,17 @@ class PageHeader extends React.Component {
 
             <GlobalMenu>
               <li>
-                <Button
+                <GlobalMenuButton
                   element={Link}
-                  to='/indicators'
-                  exact
-                  useIcon='house'
+                  to='/explore'
+                  useIcon='map'
                   variation='primary-plain'
                   title='Show menu'
+                  hideText
+                  size='large'
                 >
                   Show menu
-                </Button>
+                </GlobalMenuButton>
               </li>
 
             </GlobalMenu>
