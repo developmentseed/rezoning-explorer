@@ -39,6 +39,7 @@
 
 app/assets/scripts/config/local.js
 app/assets/scripts/styles/collecticons/catalog.json
+app/assets/scripts/components/__tests__/__snapshots__
 
 ################################################
 # Dependencies
