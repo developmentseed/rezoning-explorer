@@ -32,13 +32,15 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+          key: v2-dependencies-{{ checksum "package.json" }}
   lint:
     <<: *base_def
     steps:
       - checkout
       - restore_cache:
-          <<: *restore_cache_def
+          keys:
+            - v2-dependencies={{ checksum "package.json" }}
+            - v2-dependencies-
       - run: yarn lint
       - run: yarn lint:css
   test:
