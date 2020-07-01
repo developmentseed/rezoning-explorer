@@ -26,8 +26,8 @@ jobs:
     <<: *base_def
     steps:
       - checkout
-        ##- restore_cache:
-        ##<<: *restore_cache_def
+      - restore_cache:
+          <<: *restore_cache_def
       - run: yarn install
       - save_cache:
           paths:
