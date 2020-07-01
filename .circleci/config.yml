@@ -37,13 +37,8 @@ jobs:
     <<: *base_def
     steps:
       - checkout
-        ##- restore_cache:
-        ##<<: *restore_cache_def
-      - run: yarn install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+      - restore_cache:
+          <<: *restore_cache_def
       - run: yarn lint
       - run: yarn lint:css
   test:
