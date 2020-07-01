@@ -4,66 +4,86 @@ import styled from 'styled-components';
 
 import config from '../../config';
 
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { themeVal } from '../../styles/utils/general';
-import { reveal } from '../../styles/animation';
-import { panelSkin } from '../../styles/skins';
-import { glsp } from '../../styles/utils/theme-values';
+
+import Button from '../../styles/button/button';
+import { multiply } from '../../styles/utils/math';
+import { stackSkin } from '../../styles/skins';
 
 const { appTitle, appShortTitle } = config;
 
 const PageHead = styled.header`
-  ${panelSkin()}
+  ${stackSkin()}
   position: sticky;
   z-index: 20;
   top: 0;
   left: 0;
   bottom: 0;
-  /* Animation */
-  animation: ${reveal} 0.32s ease 0s 1;
+  height: 100vh;
 `;
 
 const PageHeadInner = styled.div`
   display: flex;
-  padding: 0 ${glsp(0.5)};
+  flex-flow: column nowrap;
   align-items: center;
+  padding: ${themeVal('layout.space')} 0
+    ${multiply(themeVal('layout.space'), 1.5)} 0;
   margin: 0 auto;
   height: 100%;
 `;
 
 const PageHeadline = styled.div`
-  display: flex;
-  white-space: nowrap;
-  align-items: center;
+  margin: ${multiply(themeVal('layout.space'), 2)} 0 0 0;
+  order: 2;
 `;
 
 const PageTitle = styled.h1`
-  display: flex;
+  font-size: 1.5rem;
+  line-height: 1;
+  writing-mode: vertical-rl;
   text-align: center;
-  align-items: center;
+  transform: rotate(180deg);
   margin: 0;
-  font-weight: ${themeVal('type.base.bold')};
-  text-transform: uppercase;
+  * {
+    display: block;
+  }
   a {
-    display: flex;
-    align-items: center;
     transition: all 0.24s ease 0s;
     &,
     &:visited {
       color: inherit;
     }
-  }
-  span {
-    font-size: 1rem;
-    line-height: 1;
+    &:hover {
+      color: ${themeVal('color.link')};
+      opacity: 1;
+    }
   }
 `;
 
 const PageNav = styled.nav`
+  flex-flow: column nowrap;
+  flex: 1;
   display: flex;
-  flex-flow: row nowrap;
-  margin: 0 0 0 auto;
-  padding: 0 0 0 ${glsp(1)};
+`;
+
+const GlobalMenu = styled.ul`
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  margin: 0;
+  list-style: none;
+
+  > * {
+    margin: 0;
+  }
+  > *:last-child {
+    margin: 0;
+  }
+`;
+
+const GlobalMenuButton = styled(Button)`
+  color: ${themeVal('color.base')};
 `;
 
 class PageHeader extends React.Component {
@@ -80,7 +100,24 @@ class PageHeader extends React.Component {
               </span>
             </PageTitle>
           </PageHeadline>
-          <PageNav role='navigation' />
+          <PageNav role='navigation'>
+
+            <GlobalMenu>
+              <li>
+                <GlobalMenuButton
+                  element={Link}
+                  to='/explore'
+                  useIcon='map'
+                  title='Show menu'
+                  hideText
+                  size='large'
+                >
+                  Show menu
+                </GlobalMenuButton>
+              </li>
+
+            </GlobalMenu>
+          </PageNav>
         </PageHeadInner>
       </PageHead>
     );

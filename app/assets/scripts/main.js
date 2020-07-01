@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 import { render } from 'react-dom';
 import { Router, Route, Switch } from 'react-router-dom';
 // import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
-import history from './utils/history';
+import GlobalContext, { GlobalProvider } from './context/global-context';
+import history from './utils/history.js';
 
 import GlobalStyles from './styles/global';
 
@@ -16,43 +17,30 @@ import Explore from './components/explore';
 import About from './components/about';
 
 // Root component.
-class Root extends React.Component {
-  constructor (props) {
-    super(props);
+function Root () {
+  const { windowHeight } = useContext(GlobalContext);
 
-    this.state = {
-      windowHeight: window.innerHeight
-    };
-
-    window.addEventListener('resize', () => {
-      // Store the height to set the page min height. This is needed for mobile
-      // devices to account for the address bar, since 100vh does not work.
-      // https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
-      this.setState({ windowHeight: window.innerHeight });
-    });
-  }
-
-  componentDidMount () {
+  useEffect(() => {
     // Hide the welcome banner.
     const banner = document.querySelector('#welcome-banner');
     banner.classList.add('dismissed');
     setTimeout(() => banner.remove(), 500);
-  }
+  }, []);
 
-  render () {
-    return (
-      <Router history={history}>
-        <ThemeProvider theme={theme.main}>
-          <GlobalStyles innerHeight={this.state.windowHeight} />
+  return (
+    <Router history={history}>
+      <ThemeProvider theme={theme.main}>
+        <GlobalProvider>
+          <GlobalStyles innerHeight={windowHeight} />
           <Switch>
             <Route exact path='/' component={Home} />
             <Route exact path='/sandbox' component={Sandbox} />
             <Route exact path='/explore' component={Explore} />
             <Route exact path='/about' component={About} />
           </Switch>
-        </ThemeProvider>
-      </Router>
-    );
-  }
+        </GlobalProvider>
+      </ThemeProvider>
+    </Router>
+  );
 }
 render(<Root />, document.querySelector('#app-container'));

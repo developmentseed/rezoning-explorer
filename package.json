@@ -83,8 +83,9 @@
     "gulp-terser": "^1.2.0",
     "gulp-useref": "^3.1.5",
     "require-globify": "^1.4.1",
-    "stylelint": "^10.1.0",
+    "stylelint": "^13.3.2",
     "stylelint-config-recommended": "^2.2.0",
+    "stylelint-config-styled-components": "^0.1.1",
     "surge": "^0.21.3",
     "through2": "^3.0.1",
     "vinyl-buffer": "^1.0.1",
@@ -94,18 +95,21 @@
   "dependencies": {
     "@babel/polyfill": "^7.10.1",
     "element-resize-event": "^3.0.3",
-    "history": "^5.0.0",
+    "history": "^4.10.0",
     "lodash.defaultsdeep": "^4.6.1",
     "lodash.get": "^4.4.2",
+    "mapbox-gl": "^1.11.0",
     "polished": "^3.4.1",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
+    "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.9.0",
     "react-helmet": "^6.1.0",
     "react-redux": "^7.2.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "redux": "^4.0.5",
-    "styled-components": "^4.3.2"
+    "styled-components": "^4.3.2",
+    "stylelint-processor-styled-components": "^1.10.0"
   }
 }
