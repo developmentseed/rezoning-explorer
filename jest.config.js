@@ -91,7 +91,7 @@ module.exports = {
 
     '^./config/production.js$': '<rootDir>/app/assets/scripts/config/production.js',
 
-    '^./catalog.json$': '<rootDir>/app/assets/scripts/styles/collecticons/catalog.json'
+    '^./catalog.json$': '<rootDir>/test/localFiles/catalog.json'
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
