@@ -22,7 +22,7 @@
     "stage": "NODE_ENV=staging gulp",
     "lint": "eslint app/assets/scripts/ --ext .js",
     "lint:css": "stylelint 'app/assets/styles/**/**' 'app/assets/scripts/**/*.js'",
-    "test": "jest",
+    "test": "jest -u",
     "tdd": "jest --watch"
   },
   "engines": {
