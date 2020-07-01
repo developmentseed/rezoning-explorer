@@ -38,7 +38,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          <<: *restore_cache_def
+        keys:
+          - v2-dependencies={{ checksum "package.json" }}
+          - v2-dependencies-
       - run: yarn lint
       - run: yarn lint:css
   test:
