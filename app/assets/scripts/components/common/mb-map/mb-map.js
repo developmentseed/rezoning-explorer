@@ -4,6 +4,7 @@ import styled, { withTheme } from 'styled-components';
 import mapboxgl from 'mapbox-gl';
 import config from '../../../config';
 import { glsp } from '../../../styles/utils/theme-values';
+import { resizeMap } from './mb-map-utils';
 
 mapboxgl.accessToken = config.mbToken;
 localStorage.setItem('MapboxAccessToken', config.mbToken);
@@ -69,7 +70,7 @@ function MbMap (props) {
 
   useEffect(() => {
     if (map) {
-      map.resize();
+      resizeMap(map);
     }
   }, [triggerResize]);
 
