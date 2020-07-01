@@ -39,6 +39,7 @@ jobs:
       - checkout
         ##- restore_cache:
         ##<<: *restore_cache_def
+      - run: yarn install
       - run: yarn lint
       - run: yarn lint:css
   test:
