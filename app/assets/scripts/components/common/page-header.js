@@ -83,6 +83,7 @@ const GlobalMenu = styled.ul`
 `;
 
 const GlobalMenuButton = styled(Button)`
+  color: ${themeVal('color.base')};
 `;
 
 class PageHeader extends React.Component {
@@ -107,7 +108,6 @@ class PageHeader extends React.Component {
                   element={Link}
                   to='/explore'
                   useIcon='map'
-                  variation='primary-plain'
                   title='Show menu'
                   hideText
                   size='large'

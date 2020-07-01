@@ -21,7 +21,7 @@ export const PanelSelf = styled.section`
   width: 100vw;
   height: 100%;
   z-index: 10;
-  transition: all 0.16s ease 0s,
+  transition: all 0.16s ease 0s;
 
   ${({ revealed }) => revealed && css`
     ${panelSkin()}

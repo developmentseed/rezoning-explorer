@@ -83,8 +83,9 @@
     "gulp-terser": "^1.2.0",
     "gulp-useref": "^3.1.5",
     "require-globify": "^1.4.1",
-    "stylelint": "^10.1.0",
+    "stylelint": "^13.3.2",
     "stylelint-config-recommended": "^2.2.0",
+    "stylelint-config-styled-components": "^0.1.1",
     "surge": "^0.21.3",
     "through2": "^3.0.1",
     "vinyl-buffer": "^1.0.1",
@@ -108,6 +109,7 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "redux": "^4.0.5",
-    "styled-components": "^4.3.2"
+    "styled-components": "^4.3.2",
+    "stylelint-processor-styled-components": "^1.10.0"
   }
 }
