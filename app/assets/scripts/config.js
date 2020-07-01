@@ -18,8 +18,8 @@ import defaultsDeep from 'lodash.defaultsdeep';
  *      This last file is gitignored, so you can safely change it without
  *      polluting the repo.
  */
-//TODO change back to config/*.js
-//There is a problem with Jest when this file path has a *
+// TODO change back to config/*.js
+// There is a problem with Jest when this file path has a *
 var configurations = require('./config/production.js', { mode: 'hash' });
 var config = configurations.production || {};
 
