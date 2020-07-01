@@ -47,6 +47,7 @@ function ExpMapPrimePanel (props) {
 }
 
 ExpMapPrimePanel.propTypes = {
+  onPanelChange: T.func
 };
 
 export default ExpMapPrimePanel;

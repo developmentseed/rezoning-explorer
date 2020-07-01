@@ -11,7 +11,7 @@ import {
 } from '../../styles/inpage';
 import Prose from '../../styles/type/prose';
 
-function Home (props) {
+function Home () {
   return (
     <App
       pageTitle='Home'

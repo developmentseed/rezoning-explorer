@@ -1,7 +1,7 @@
 import React from 'react';
 import App from '../common/app';
 
-function Explore (props) {
+function Explore () {
   return (
     <App
       pageTitle='Explore'

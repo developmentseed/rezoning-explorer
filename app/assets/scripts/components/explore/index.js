@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import App from '../common/app';
 import {
@@ -11,7 +11,6 @@ import {
 } from '../../styles/inpage';
 import media from '../../styles/utils/media-queries';
 import { themeVal } from '../../styles/utils/general';
-
 
 import PrimePanel from './prime-panel';
 import SecPanel from './sec-panel';
@@ -48,7 +47,7 @@ const ExploreCarto = styled.section`
 `;
 
 function Explore () {
-  const [resizeTrigger, setResizeTrigger] = useState(true);
+  const [triggerResize, setTriggerResize] = useState(true);
 
   return (
     <App
@@ -64,20 +63,20 @@ function Explore () {
         </InpageHeader>
         <InpageBody>
           <ExploreCanvas>
-            <PrimePanel 
+            <PrimePanel
               onPanelChange={() => {
-                setResizeTrigger(!resizeTrigger);
-               }}
+                setTriggerResize(!triggerResize);
+              }}
             />
             <ExploreCarto>
-              <MbMap 
-                triggerResize={resizeTrigger}
+              <MbMap
+                triggerResize={triggerResize}
               />
             </ExploreCarto>
-            <SecPanel 
+            <SecPanel
               onPanelChange={() => {
-                setResizeTrigger(!resizeTrigger);
-               }}
+                setTriggerResize(!triggerResize);
+              }}
             />
           </ExploreCanvas>
         </InpageBody>

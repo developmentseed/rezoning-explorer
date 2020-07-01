@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import T from 'prop-types';
 import styled, { withTheme } from 'styled-components';
 import mapboxgl from 'mapbox-gl';
 import config from '../../../config';
 import { glsp } from '../../../styles/utils/theme-values';
-import GlobalContext from '../../../context/global-context';
 
 mapboxgl.accessToken = config.mbToken;
 localStorage.setItem('MapboxAccessToken', config.mbToken);
@@ -70,11 +69,9 @@ function MbMap (props) {
 
   useEffect(() => {
     if (map) {
-      map.resize()
-      console.log(triggerResize)
+      map.resize();
     }
   }, [triggerResize]);
-
 
   return (
     <MapsContainer>
@@ -84,5 +81,8 @@ function MbMap (props) {
     </MapsContainer>
   );
 }
+MbMap.propTypes = {
+  triggerResize: T.bool
+};
 
-export default MbMap;
+export default withTheme(MbMap);
