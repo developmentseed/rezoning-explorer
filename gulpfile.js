@@ -74,7 +74,10 @@ function serve () {
   );
 
   gulp.watch('app/assets/icons/collecticons/**', collecticons);
-  gulp.watch('package.json', vendorScripts);
+  // Changing this line so that gulp will watch build files from
+  // linked libraries, like ui-library-seed
+  // gulp.watch('package.json', vendorScripts);
+  gulp.watch(['package.json', 'node_modules/**/*.js'], vendorScripts);
 }
 
 module.exports.clean = clean;

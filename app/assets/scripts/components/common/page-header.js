@@ -7,7 +7,9 @@ import config from '../../config';
 import { Link } from 'react-router-dom';
 import { themeVal } from '../../styles/utils/general';
 
-import Button from '../../styles/button/button';
+// import Button from '../../styles/button/button';
+//
+import { Button } from '@devseed-ui/button';
 import { multiply } from '../../styles/utils/math';
 import { stackSkin } from '../../styles/skins';
 
