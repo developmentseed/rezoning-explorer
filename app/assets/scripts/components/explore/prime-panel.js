@@ -13,6 +13,14 @@ import media, { isLargeViewport } from '../../styles/utils/media-queries';
 
 import CountryFilterForm from './country-filter-form';
 
+const COUNTRIES = ['Zambia', 'Nairobi', 'Mozambique']
+const RESOURCES = ['Solar', 'Wind']
+const FILTERS = [
+  { name: 'Grid Size', range: [1,24], unit: 'km^2'},
+  { name: 'LCOE Generation' },
+  { name: 'LOCOE Transmission' }
+]
+
 const PrimePanel = styled(Panel)`
   ${media.largeUp`
     width: 18rem;
@@ -40,7 +48,11 @@ function ExpMapPrimePanel (props) {
               <PanelBlockTitle>Tools</PanelBlockTitle>
             </PanelBlockHeader>
             <PanelBlockBody>
-              <CountryFilterForm />
+              <CountryFilterForm 
+                countryList={COUNTRIES}
+                resourceList={RESOURCES}
+                filterList={FILTERS}
+              />
             </PanelBlockBody>
           </PanelBlock>
         </>
