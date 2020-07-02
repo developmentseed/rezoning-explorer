@@ -33,8 +33,4 @@ if (process.env.NODE_ENV === 'staging') {
 if (process.env.NODE_ENV === 'development') {
   config = defaultsDeep(local || {}, config);
 }
-
-// Use module.exports so each property is exported individually from the file
-// instead of having a default. This will allow imports like:
-// import { environment } from './config'
-module.exports = config;
+export default config;
