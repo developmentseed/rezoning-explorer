@@ -49,6 +49,7 @@ jobs:
       - checkout
       - restore_cache:
           <<: *restore_cache_def
+      - run: yarn gulp collecticons
       - run: yarn test
   build:
     <<: *base_def

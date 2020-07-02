@@ -87,11 +87,9 @@ module.exports = {
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
-    '^../../config$': '<rootDir>/app/assets/scripts/config/production.js',
-
-    '^./config/production.js$': '<rootDir>/app/assets/scripts/config/production.js',
-
-    '^./catalog.json$': '<rootDir>/test/localFiles/catalog.json'
+    //'^../../config$': '<rootDir>/app/assets/scripts/config/production.js',
+    //'^./config/production.js$': '<rootDir>/app/assets/scripts/config/production.js',
+    // '^./catalog.json$': '<rootDir>/test/localFiles/catalog.json'
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader

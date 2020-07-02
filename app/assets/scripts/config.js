@@ -18,18 +18,22 @@ import defaultsDeep from 'lodash.defaultsdeep';
  *      This last file is gitignored, so you can safely change it without
  *      polluting the repo.
  */
-// TODO change back to config/*.js
-// There is a problem with Jest when this file path has a *
-var configurations = require('./config/production.js', { mode: 'hash' });
-var config = configurations.production || {};
+
+import production from './config/production';
+import staging from './config/staging';
+// eslint-disable-next-line import/no-unresolved
+// import local from './config/local';
+// import test from './config/test';
+
+// var config = configurations.production || {};
+let config = production || {};
 
 if (process.env.NODE_ENV === 'staging') {
-  config = defaultsDeep(configurations.staging, config);
+  config = defaultsDeep(staging, config);
 }
+/*
 if (process.env.NODE_ENV === 'development') {
-  config = defaultsDeep(configurations.local || {}, config);
-}
+  config = defaultsDeep(local || {}, config);
+} */
 
-// The require doesn't play super well with es6 imports. It creates an internal
-// 'default' property. Export that.
-export default config.default;
+export default config;

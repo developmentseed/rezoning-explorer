@@ -91,6 +91,8 @@ module.exports.default = gulp.series(
   finish
 );
 
+module.exports.collecticons = collecticons;
+
 // /////////////////////////////////////////////////////////////////////////////
 // ------------------------- Browserify tasks --------------------------------//
 // ------------------- (Not to be called directly) ---------------------------//
