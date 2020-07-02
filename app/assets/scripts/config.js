@@ -31,7 +31,9 @@ let config = production || {};
 if (process.env.NODE_ENV === 'staging') {
   config = defaultsDeep(staging, config);
 }
+/*
 if (process.env.NODE_ENV === 'development') {
   config = defaultsDeep(local || {}, config);
-}
+} */
+
 export default config;
