@@ -47,6 +47,9 @@ At times, it may be necessary to include options/variables specific to `producti
 
 When developing locally with `yarn run serve`, the default will be to use `production.js` (with overrides from `local.js`).  However, if you need to run with the staging settings, use: `yarn run stage` (this will not start a server)
 
+### Development
+
+This project uses components of [ui-library-seed](https://github.com/developmentseed/ui-library-seed). Published components can be added from the NPM registry with `yarn add @devseed-ui/{COMPONENT}`. To develop locally in parallel, follow the [documentation](https://github.com/developmentseed/ui-library-seed/blob/develop/DEVELOPMENT.md).
 
 ### How scripts are built
 

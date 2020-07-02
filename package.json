@@ -98,6 +98,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.10.1",
+    "@devseed-ui/button": "^2.4.2",
     "element-resize-event": "^3.0.3",
     "history": "^4.10.0",
     "jest-styled-components": "^7.0.2",
