@@ -7,9 +7,9 @@ import config from '../../config';
 import { Link } from 'react-router-dom';
 import { themeVal } from '../../styles/utils/general';
 
-// import { Button } from '@devseed-ui/button';
-//
-import Button from '../../styles/button/button';
+import { Button } from '@devseed-ui/button';
+//import Button from '../../styles/button/button';
+
 import { multiply } from '../../styles/utils/math';
 import { stackSkin } from '../../styles/skins';
 
@@ -110,6 +110,44 @@ class PageHeader extends React.Component {
                   element={Link}
                   to='/explore'
                   useIcon='house'
+                  title='Show menu'
+                  hideText
+                  size='large'
+                >
+                  Show menu
+                </GlobalMenuButton>
+              </li>
+              <li>
+                <GlobalMenuButton
+                  element={Link}
+                  to='/explore'
+                  useIcon='cog'
+                  title='Show menu'
+                  hideText
+                  size='large'
+                >
+                  Show menu
+                </GlobalMenuButton>
+              </li>
+
+              <li>
+                <GlobalMenuButton
+                  element={Link}
+                  to='/explore'
+                  useIcon='compass'
+                  title='Show menu'
+                  hideText
+                  size='large'
+                >
+                  Show menu
+                </GlobalMenuButton>
+              </li>
+
+              <li>
+                <GlobalMenuButton
+                  element={Link}
+                  to='/explore'
+                  useIcon='book'
                   title='Show menu'
                   hideText
                   size='large'
