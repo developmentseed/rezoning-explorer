@@ -1,7 +1,8 @@
 import React from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
-import { Button } from '@devseed-ui/button';
+// import { Button } from '@devseed-ui/button';
+import Button from '../../styles/button/button';
 
 import { themeVal, stylizeFunction } from '../../styles/utils/general';
 import { tint } from 'polished';
@@ -9,8 +10,6 @@ import { headingAlt } from '../../styles/type/heading';
 import { panelSkin } from '../../styles/skins';
 import { glsp } from '../../styles/utils/theme-values';
 import media from '../../styles/utils/media-queries';
-
-// import Button from '../../styles/button/button';
 
 const _tint = stylizeFunction(tint);
 

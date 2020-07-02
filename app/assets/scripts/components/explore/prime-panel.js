@@ -1,7 +1,6 @@
 import React from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
-
 import Panel, { PanelHeadline, PanelTitle } from '../common/panel';
 import {
   PanelBlock,
@@ -11,6 +10,8 @@ import {
 } from '../common/panel-block';
 
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
+
+import CountryFilterForm from './country-filter-form';
 
 const PrimePanel = styled(Panel)`
   ${media.largeUp`
@@ -38,7 +39,9 @@ function ExpMapPrimePanel (props) {
             <PanelBlockHeader>
               <PanelBlockTitle>Tools</PanelBlockTitle>
             </PanelBlockHeader>
-            <PanelBlockBody />
+            <PanelBlockBody>
+              <CountryFilterForm />
+            </PanelBlockBody>
           </PanelBlock>
         </>
       }

@@ -2,6 +2,7 @@ import { createGlobalStyle, css } from 'styled-components';
 import { normalize, rgba } from 'polished';
 
 import { themeVal, stylizeFunction } from './utils/general';
+// import { collecticonsFont } from '@devseed-ui/collecticons';
 import { collecticonsFont } from './collecticons';
 import { unscrollableY, unscrollableX } from './helpers';
 import mapboxStyles from './vendor/mapbox';
