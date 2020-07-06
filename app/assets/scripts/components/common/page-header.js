@@ -4,14 +4,20 @@ import styled from 'styled-components';
 
 import config from '../../config';
 
-import { Link } from 'react-router-dom';
-import { themeVal } from '../../styles/utils/general';
+import { NavLink } from 'react-router-dom';
+import {
+  themeVal,
+  stylizeFunction,
+  filterComponentProps
+} from '../../styles/utils/general';
 
-// import Button from '../../styles/button/button';
-//
-import { Button } from '@devseed-ui/button';
-import { multiply } from '../../styles/utils/math';
+import { rgba } from 'polished';
 import { stackSkin } from '../../styles/skins';
+import { visuallyHidden } from '../../styles/helpers';
+import collecticon from '../../styles/collecticons';
+import { multiply, divide } from '../../styles/utils/math';
+
+const _rgba = stylizeFunction(rgba);
 
 const { appTitle, appShortTitle } = config;
 
@@ -84,9 +90,61 @@ const GlobalMenu = styled.ul`
   }
 `;
 
-const GlobalMenuButton = styled(Button)`
-  color: ${themeVal('color.base')};
+const GlobalMenuLink = styled.a.attrs({
+  'data-place': 'right'
+})`
+  position: relative;
+  display: block;
+  width: 4rem;
+  height: 3rem;
+  line-height: 3rem;
+  text-align: center;
+  transition: all 0.24s ease 0s;
+
+  &::before {
+    ${({ useIcon }) => collecticon(useIcon)}
+    font-size: 1.25rem
+  }
+
+  &::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: ${divide(themeVal('layout.space'), 4)};
+    background: ${themeVal('color.link')};
+    content: '';
+    opacity: 0;
+    transition: all 0.24s ease 0s;
+  }
+
+  &,
+  &:visited {
+    color: inherit;
+  }
+
+  &:hover {
+    color: ${themeVal('color.link')};
+    opacity: 1;
+    background: ${_rgba(themeVal('color.link'), 0.08)};
+  }
+
+  &.active {
+    color: ${themeVal('color.link')};
+
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  span {
+    ${visuallyHidden()}
+  }
 `;
+
+// See documentation of filterComponentProp as to why this is
+const propsToFilter = ['variation', 'size', 'hideText', 'useIcon', 'active'];
+const NavLinkFilter = filterComponentProps(NavLink, propsToFilter);
 
 class PageHeader extends React.Component {
   render () {
@@ -103,21 +161,55 @@ class PageHeader extends React.Component {
             </PageTitle>
           </PageHeadline>
           <PageNav role='navigation'>
-
             <GlobalMenu>
               <li>
-                <GlobalMenuButton
-                  element={Link}
-                  to='/explore'
-                  useIcon='map'
-                  title='Show menu'
-                  hideText
-                  size='large'
+                <GlobalMenuLink
+                  as={NavLinkFilter}
+                  exact
+                  to='/'
+                  useIcon='house'
+                  title='Visit the home page'
+                  data-tip='Home'
                 >
-                  Show menu
-                </GlobalMenuButton>
+                  <span>Home</span>
+                </GlobalMenuLink>
               </li>
-
+              <li>
+                <GlobalMenuLink
+                  as={NavLinkFilter}
+                  exact
+                  to='/explore'
+                  useIcon='compass'
+                  data-tip='Explore'
+                  title='View Explore page'
+                >
+                  <span>Explore</span>
+                </GlobalMenuLink>
+              </li>
+              <li>
+                <GlobalMenuLink
+                  as={NavLinkFilter}
+                  exact
+                  to='/about'
+                  useIcon='circle-information'
+                  data-tip='About'
+                  title='View About page'
+                >
+                  <span>About</span>
+                </GlobalMenuLink>
+              </li>
+              <li>
+                <GlobalMenuLink
+                  as={NavLinkFilter}
+                  exact
+                  to='/share'
+                  useIcon='share'
+                  data-tip='Share'
+                  title='ViewShare page'
+                >
+                  <span>Share</span>
+                </GlobalMenuLink>
+              </li>
             </GlobalMenu>
           </PageNav>
         </PageHeadInner>
