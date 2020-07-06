@@ -1,5 +1,4 @@
 import React from 'react';
-import T from 'prop-types';
 import styled from 'styled-components';
 
 import config from '../../config';
@@ -39,34 +38,6 @@ const PageHeadInner = styled.div`
     ${multiply(themeVal('layout.space'), 1.5)} 0;
   margin: 0 auto;
   height: 100%;
-`;
-
-const PageHeadline = styled.div`
-  margin: ${multiply(themeVal('layout.space'), 2)} 0 0 0;
-  order: 2;
-`;
-
-const PageTitle = styled.h1`
-  font-size: 1.5rem;
-  line-height: 1;
-  writing-mode: vertical-rl;
-  text-align: center;
-  transform: rotate(180deg);
-  margin: 0;
-  * {
-    display: block;
-  }
-  a {
-    transition: all 0.24s ease 0s;
-    &,
-    &:visited {
-      color: inherit;
-    }
-    &:hover {
-      color: ${themeVal('color.link')};
-      opacity: 1;
-    }
-  }
 `;
 
 const PageNav = styled.nav`
@@ -148,18 +119,9 @@ const NavLinkFilter = filterComponentProps(NavLink, propsToFilter);
 
 class PageHeader extends React.Component {
   render () {
-    const { useShortTitle } = this.props;
-
     return (
       <PageHead role='banner'>
         <PageHeadInner>
-          <PageHeadline>
-            <PageTitle>
-              <span>
-                {useShortTitle ? appShortTitle || 'REZoning' : appTitle}
-              </span>
-            </PageTitle>
-          </PageHeadline>
           <PageNav role='navigation'>
             <GlobalMenu>
               <li>
@@ -169,9 +131,9 @@ class PageHeader extends React.Component {
                   to='/'
                   useIcon='house'
                   title='Visit the home page'
-                  data-tip='Home'
+                  data-tip={appShortTitle}
                 >
-                  <span>Home</span>
+                  <span>{appTitle}</span>
                 </GlobalMenuLink>
               </li>
               <li>
@@ -219,7 +181,6 @@ class PageHeader extends React.Component {
 }
 
 PageHeader.propTypes = {
-  useShortTitle: T.bool
 };
 
 export default PageHeader;
