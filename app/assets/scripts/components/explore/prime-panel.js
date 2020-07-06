@@ -2,20 +2,13 @@ import React from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 import Panel, { PanelHeadline, PanelTitle } from '../common/panel';
-import {
-  PanelBlock,
-  PanelBlockHeader,
-  PanelBlockTitle,
-  PanelBlockBody
-} from '../common/panel-block';
-
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 
 import CountryFilterForm from './country-filter-form';
 
 const COUNTRIES = ['Zambia', 'Nairobi', 'Mozambique'];
 const RESOURCES = ['Solar', 'Wind'];
-const FILTERS = [
+const WEIGHTS = [
   { name: 'Grid Size', range: [1, 24], unit: 'km^2' },
   { name: 'LCOE Generation' },
   { name: 'LOCOE Transmission' },
@@ -28,6 +21,17 @@ const FILTERS = [
   { name: 'Land Use Score' },
   { name: 'Capacity Value (Wind Only)' }
 ];
+
+const FILTERS = [
+  { name: 'Zone Score', range: [0, 1] },
+  { name: 'Mean Capacity Factor', range: [0, 1] },
+  { name: 'Electricity Demand', range: [0, 100], unit: 'k' }
+];
+
+const LCOE = [
+  { name: 'Generation - capital [USD/kW] (Cg)'},
+  { name: 'Generation - fixed O&M [USED/MWh]' }
+]
 const PRESETS = [];
 
 const PrimePanel = styled(Panel)`
@@ -55,7 +59,9 @@ function ExpMapPrimePanel (props) {
           <CountryFilterForm
             countryList={COUNTRIES}
             resourceList={RESOURCES}
-            filterList={FILTERS}
+            weightsList={WEIGHTS}
+            filtersList={FILTERS}
+            lcoeList={LCOE}
             presetList={PRESETS}
           />
         </>

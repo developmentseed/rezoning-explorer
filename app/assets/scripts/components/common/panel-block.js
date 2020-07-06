@@ -32,7 +32,6 @@ export const PanelBlockFooter = styled.footer`
   padding: ${glsp(0.5)} ${glsp()};
 `;
 
-
 export const PanelBlockTitle = styled(Heading).attrs({ size: 'medium' })`
   margin: 0;
 `;

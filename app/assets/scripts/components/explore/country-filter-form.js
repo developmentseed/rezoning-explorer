@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 
-import { FormSelect } from '../../styles/form';
+import { FormSelect, FormInput } from '../../styles/form';
 import {
   PanelBlock,
   PanelBlockHeader,
@@ -10,6 +10,7 @@ import {
   PanelBlockScroll,
   PanelBlockFooter
 } from '../common/panel-block';
+import TabbedBlockBody from '../common/tabbed-block-body';
 import Button from '../../styles/button/button';
 import SliderGroup from '../common/slider-group';
 
@@ -21,9 +22,17 @@ const Filter = styled.div`
 
 const ParamScroll = styled(PanelBlockScroll)`
 `;
+const WeightsForm = styled.div`
+`;
+const FiltersForm = styled.div`
+`;
+const LCOEForm = styled.div`
+`;
+
+
 
 function FilterForm (props) {
-  const { countryList, resourceList, filterList } = props;
+  const { countryList, resourceList, weightsList, filtersList, lcoeList} = props;
   return (
     <PanelBlock>
       <PanelBlockHeader>
@@ -47,16 +56,39 @@ function FilterForm (props) {
         </Filter>
 
       </PanelBlockHeader>
-      <PanelBlockBody>
-        <ParamScroll>
-          {filterList.map(filter => (
+
+      <TabbedBlockBody
+        tabContent={[['weights', 'house'], ['filters', 'crosshair'], ['lcoe', 'crosshair']]}
+      >
+        <WeightsForm>
+          {weightsList.map(filter => (
             <Filter key={filter.name}>
               <FilterTitle>{filter.name}</FilterTitle>
               <SliderGroup unit={filter.unit || '%'} range={filter.range || [0, 100]} />
             </Filter>
           ))}
-        </ParamScroll>
-      </PanelBlockBody>
+        </WeightsForm>
+
+        <FiltersForm>
+          {filtersList.map(filter => (
+            <Filter key={filter.name}>
+              <FilterTitle>{filter.name}</FilterTitle>
+              <SliderGroup unit={filter.unit || '%'} range={filter.range || [0, 100]} />
+            </Filter>
+          ))}
+        </FiltersForm>
+
+        <LCOEForm>
+          {lcoeList.map(filter => (
+            <Filter key={filter.name}>
+              <FilterTitle>{filter.name}</FilterTitle>
+              <FormInput />
+            </Filter>
+          ))}
+        </LCOEForm>
+
+      </TabbedBlockBody>
+
 
       <PanelBlockFooter>
         <Button>Reset</Button>
@@ -71,7 +103,7 @@ function FilterForm (props) {
 FilterForm.propTypes = {
   countryList: T.array,
   resourceList: T.array,
-  filterList: T.array
+  weightsList: T.array
 };
 
 export default FilterForm;
