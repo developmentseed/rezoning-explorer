@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import T from 'prop-types';
 import styled from 'styled-components';
 import { PanelBlockScroll, PanelBlockHeader } from './panel-block';
 import Button from '../../styles/button/button';
@@ -8,12 +9,11 @@ const Tab = styled(Button)`
 const TabbedBlockHeader = styled(PanelBlockHeader)`
   display: flex;
   flex-direction: row;
-  wrap: nowrap
 `;
 
 const ContentInner = styled.div`
   padding: 1rem;
-`
+`;
 
 function TabbedBlock (props) {
   const { tabContent, children } = props;
@@ -43,13 +43,17 @@ function TabbedBlock (props) {
           )
         }
       </TabbedBlockHeader>
-        <PanelBlockScroll>
-          <ContentInner>
+      <PanelBlockScroll>
+        <ContentInner>
           {activeContent}
-          </ContentInner>
-        </PanelBlockScroll>
+        </ContentInner>
+      </PanelBlockScroll>
     </>
   );
 }
 
+TabbedBlock.propTypes = {
+  tabContent: T.array,
+  children: T.array
+};
 export default TabbedBlock;

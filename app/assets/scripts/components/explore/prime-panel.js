@@ -29,9 +29,9 @@ const FILTERS = [
 ];
 
 const LCOE = [
-  { name: 'Generation - capital [USD/kW] (Cg)'},
+  { name: 'Generation - capital [USD/kW] (Cg)' },
   { name: 'Generation - fixed O&M [USED/MWh]' }
-]
+];
 const PRESETS = [];
 
 const PrimePanel = styled(Panel)`

@@ -6,21 +6,16 @@ import { FormSelect, FormInput } from '../../styles/form';
 import {
   PanelBlock,
   PanelBlockHeader,
-  PanelBlockBody,
-  PanelBlockScroll,
   PanelBlockFooter
 } from '../common/panel-block';
 import TabbedBlockBody from '../common/tabbed-block-body';
 import Button from '../../styles/button/button';
 import SliderGroup from '../common/slider-group';
 
-const FilterTitle = styled.div`
+/* stylelint-disable */
+const ParamTitle = styled.div`
 `;
-
-const Filter = styled.div`
-`;
-
-const ParamScroll = styled(PanelBlockScroll)`
+const Param = styled.div`
 `;
 const WeightsForm = styled.div`
 `;
@@ -28,32 +23,38 @@ const FiltersForm = styled.div`
 `;
 const LCOEForm = styled.div`
 `;
+/* stylelint-enable */
 
+const SubmissionSection = styled(PanelBlockFooter)`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0rem 1rem;
 
+`;
 
-function FilterForm (props) {
-  const { countryList, resourceList, weightsList, filtersList, lcoeList} = props;
+function ParamForm (props) {
+  const { countryList, resourceList, weightsList, filtersList, lcoeList } = props;
   return (
     <PanelBlock>
       <PanelBlockHeader>
-        <Filter>
-          <FilterTitle>Country</FilterTitle>
+        <Param>
+          <ParamTitle>Country</ParamTitle>
           <FormSelect>
             {countryList.map(country => (
               <option key={country} value={country.replace(/ /g, '-')}>{country}</option>
             ))}
           </FormSelect>
-        </Filter>
+        </Param>
 
-        <Filter>
-          <FilterTitle>Resource</FilterTitle>
+        <Param>
+          <ParamTitle>Resource</ParamTitle>
           <FormSelect>
             {resourceList.map(resource => (
               <option key={resource} value={resource.replace(/ /g, '-')}>{resource}</option>
             ))}
 
           </FormSelect>
-        </Filter>
+        </Param>
 
       </PanelBlockHeader>
 
@@ -62,48 +63,48 @@ function FilterForm (props) {
       >
         <WeightsForm>
           {weightsList.map(filter => (
-            <Filter key={filter.name}>
-              <FilterTitle>{filter.name}</FilterTitle>
+            <Param key={filter.name}>
+              <ParamTitle>{filter.name}</ParamTitle>
               <SliderGroup unit={filter.unit || '%'} range={filter.range || [0, 100]} />
-            </Filter>
+            </Param>
           ))}
         </WeightsForm>
 
         <FiltersForm>
           {filtersList.map(filter => (
-            <Filter key={filter.name}>
-              <FilterTitle>{filter.name}</FilterTitle>
+            <Param key={filter.name}>
+              <ParamTitle>{filter.name}</ParamTitle>
               <SliderGroup unit={filter.unit || '%'} range={filter.range || [0, 100]} />
-            </Filter>
+            </Param>
           ))}
         </FiltersForm>
 
         <LCOEForm>
           {lcoeList.map(filter => (
-            <Filter key={filter.name}>
-              <FilterTitle>{filter.name}</FilterTitle>
+            <Param key={filter.name}>
+              <ParamTitle>{filter.name}</ParamTitle>
               <FormInput />
-            </Filter>
+            </Param>
           ))}
         </LCOEForm>
 
       </TabbedBlockBody>
 
-
-      <PanelBlockFooter>
+      <SubmissionSection>
         <Button>Reset</Button>
         <Button>Apply</Button>
-
-      </PanelBlockFooter>
+      </SubmissionSection>
 
     </PanelBlock>
 
   );
 }
-FilterForm.propTypes = {
+ParamForm.propTypes = {
   countryList: T.array,
   resourceList: T.array,
-  weightsList: T.array
+  weightsList: T.array,
+  filtersList: T.array,
+  lcoeList: T.array
 };
 
-export default FilterForm;
+export default ParamForm;
