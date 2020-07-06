@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import InputRange from 'react-input-range';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { FormInput } from '../../styles/form';
@@ -12,11 +13,11 @@ const SliderWrapper = styled.div`
 function SliderGroup (props) {
   const { range, unit } = props;
 
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(range[0]);
 
   return (
     <SliderWrapper>
-      <FormInput type='range' min={range[0]} max={range[1]} value={value} onChange={(e) => setValue(e.target.value)} />
+      <InputRange minValue={range[0]} maxValue={range[1]} value={value} onChange={(value) => setValue(value)} />
       <FormInput type='text' value={`${value}${unit}`} disabled onChange={(e) => setValue(e.target.value)} />
     </SliderWrapper>
   );

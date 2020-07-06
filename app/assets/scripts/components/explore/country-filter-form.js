@@ -58,7 +58,7 @@ function FilterForm (props) {
       </PanelBlockHeader>
 
       <TabbedBlockBody
-        tabContent={[['weights', 'house'], ['filters', 'crosshair'], ['lcoe', 'crosshair']]}
+        tabContent={[['Weights', 'house'], ['Filters', 'crosshair'], ['LCOE', 'crosshair']]}
       >
         <WeightsForm>
           {weightsList.map(filter => (
