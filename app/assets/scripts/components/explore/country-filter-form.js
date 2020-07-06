@@ -12,8 +12,8 @@ import TabbedBlockBody from '../common/tabbed-block-body';
 import Button from '../../styles/button/button';
 import SliderGroup from '../common/slider-group';
 
-/* stylelint-disable */
 const ParamTitle = styled.div`
+/* stylelint-disable */
 `;
 const Param = styled.div`
 `;
@@ -22,8 +22,8 @@ const WeightsForm = styled.div`
 const FiltersForm = styled.div`
 `;
 const LCOEForm = styled.div`
-`;
 /* stylelint-enable */
+`;
 
 const SubmissionSection = styled(PanelBlockFooter)`
   display: grid;
