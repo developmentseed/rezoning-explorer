@@ -13,13 +13,22 @@ import media, { isLargeViewport } from '../../styles/utils/media-queries';
 
 import CountryFilterForm from './country-filter-form';
 
-const COUNTRIES = ['Zambia', 'Nairobi', 'Mozambique']
-const RESOURCES = ['Solar', 'Wind']
+const COUNTRIES = ['Zambia', 'Nairobi', 'Mozambique'];
+const RESOURCES = ['Solar', 'Wind'];
 const FILTERS = [
-  { name: 'Grid Size', range: [1,24], unit: 'km^2'},
+  { name: 'Grid Size', range: [1, 24], unit: 'km^2' },
   { name: 'LCOE Generation' },
-  { name: 'LOCOE Transmission' }
-]
+  { name: 'LOCOE Transmission' },
+  { name: 'LCOE Road' },
+  { name: 'Distance to Load Centers' },
+  { name: 'Technology Co-Location' },
+  { name: 'Human Footprint' },
+  { name: 'Population Density' },
+  { name: 'Slope' },
+  { name: 'Land Use Score' },
+  { name: 'Capacity Value (Wind Only)' }
+];
+const PRESETS = [];
 
 const PrimePanel = styled(Panel)`
   ${media.largeUp`
@@ -43,18 +52,12 @@ function ExpMapPrimePanel (props) {
       )}
       bodyContent={
         <>
-          <PanelBlock>
-            <PanelBlockHeader>
-              <PanelBlockTitle>Tools</PanelBlockTitle>
-            </PanelBlockHeader>
-            <PanelBlockBody>
-              <CountryFilterForm 
-                countryList={COUNTRIES}
-                resourceList={RESOURCES}
-                filterList={FILTERS}
-              />
-            </PanelBlockBody>
-          </PanelBlock>
+          <CountryFilterForm
+            countryList={COUNTRIES}
+            resourceList={RESOURCES}
+            filterList={FILTERS}
+            presetList={PRESETS}
+          />
         </>
       }
     />
