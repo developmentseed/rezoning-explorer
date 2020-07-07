@@ -44,8 +44,18 @@ const EditButton = styled(Button).attrs({
   hideText: true
 })``;
 
+const SelectionOption = styled.li`
+`;
+
 const SelectionList = styled.ol`
-/* stylelint-enable */
+  /* stylelint-enable */
+
+  > ${SelectionOption}:hover {
+    color:${themeVal('color.tertiary')};
+    background-color: ${themeVal('color.baseAlphaC')};
+    cursor: pointer;
+  }
+
 `;
 
 const SubmissionSection = styled(PanelBlockFooter)`
@@ -68,9 +78,22 @@ function QueryForm (props) {
     return updated;
   };
 
+  const [activeCountry, setActiveCountry] = useState(countryList[0]);
+  const [activeResource, setActiveResource] = useState(resourceList[0]);
+
   const [weights, setWeights] = useState(initListToState(weightsList));
   const [filters, setFilters] = useState(initListToState(filtersList));
   const [lcoe, setLcoe] = useState(lcoeList.map(e => ({ ...e, value: '' })));
+
+  const applyClick = () => {
+    // handle submission and search
+  };
+
+  const resetClick = () => {
+    setWeights(initListToState(weightsList));
+    setFilters(initListToState(filtersList));
+    setLcoe(initListToState(lcoeList));
+  };
 
   return (
     <PanelBlock>
@@ -78,7 +101,7 @@ function QueryForm (props) {
         <HeadOption>
           <Subheading>Country</Subheading>
           <OptionHeadline>
-            <Heading>Zambia</Heading>
+            <Heading>{activeCountry}</Heading>
             <Dropdown
               alignment='right'
               direction='down'
@@ -90,7 +113,11 @@ function QueryForm (props) {
             >
               <SelectionList>
                 {countryList.map(country => (
-                  <li key={country} value={country.replace(/ /g, '-')}>{country}</li>
+                  <SelectionOption
+                    onClick={() => setActiveCountry(country)}
+                    key={country}
+                  >{country}
+                  </SelectionOption>
                 ))}
               </SelectionList>
             </Dropdown>
@@ -101,19 +128,23 @@ function QueryForm (props) {
           <Subheading>Resource</Subheading>
 
           <OptionHeadline>
-            <Heading>Resource</Heading>
+            <Heading>{activeResource}</Heading>
             <Dropdown
               alignment='right'
               direction='down'
               triggerElement={
                 <EditButton>
-                Edit Country Selection
+                  Edit Resource Selection
                 </EditButton>
               }
             >
               <SelectionList>
                 {resourceList.map(resource => (
-                  <li key={resource} value={resource.replace(/ /g, '-')}>{resource}</li>
+                  <SelectionOption
+                    key={resource}
+                    onClick={() => setActiveResource(resource)}
+                  >{resource}
+                  </SelectionOption>
                 ))}
               </SelectionList>
             </Dropdown>
@@ -191,7 +222,7 @@ function QueryForm (props) {
                 id={`${filter.name}`}
                 name={`${filter.name}`}
                 label={filter.name}
-                value={filter.value}
+                value={filter.value || ''}
                 validate={() => true}
                 onChange={(v) => {
                   setLcoe(updateStateList(lcoe, ind, { ...filter, value: v }));
@@ -204,8 +235,8 @@ function QueryForm (props) {
       </TabbedBlockBody>
 
       <SubmissionSection>
-        <Button>Reset</Button>
-        <Button>Apply</Button>
+        <Button type='reset' onClick={resetClick}>Reset</Button>
+        <Button type='submit' onClick={applyClick}>Apply</Button>
       </SubmissionSection>
 
     </PanelBlock>

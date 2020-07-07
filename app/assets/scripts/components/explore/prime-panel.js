@@ -50,7 +50,7 @@ function ExpMapPrimePanel (props) {
       initialState={isLargeViewport()}
       headerContent={(
         <PanelHeadline>
-          <PanelTitle>Prime Panel</PanelTitle>
+          <PanelTitle>Explore</PanelTitle>
         </PanelHeadline>
       )}
       bodyContent={
