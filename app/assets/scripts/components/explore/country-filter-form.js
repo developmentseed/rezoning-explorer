@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
-
-import { FormSelect, FormInput } from '../../styles/form';
+import { themeVal } from '../../styles/utils/general';
 import {
   PanelBlock,
   PanelBlockHeader,
@@ -11,11 +10,30 @@ import {
 import TabbedBlockBody from '../common/tabbed-block-body';
 import Button from '../../styles/button/button';
 import SliderGroup from '../common/slider-group';
+import FormInput from '../../styles/form/input';
+import Dropdown, { DropTitle } from '../common/dropdown';
+import StressedFormGroupInput from '../common/stressed-form-group-input';
+import Heading, { Subheading, headingAlt } from '../../styles/type/heading';
+
+const EditButton = styled(Button).attrs({
+  variation: 'base-plain',
+  size: 'small',
+  useIcon: 'pencil',
+  hideText: true
+})``;
 
 const ParamTitle = styled.div`
 /* stylelint-disable */
 `;
-const Param = styled.div`
+const HeadOption = styled.div`
+  box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
+`;
+const OptionHeadline = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+`;
+const PanelOption = styled.div`
 `;
 const WeightsForm = styled.div`
 `;
@@ -23,6 +41,9 @@ const FiltersForm = styled.div`
 `;
 const LCOEForm = styled.div`
 /* stylelint-enable */
+`;
+
+const SelectionList = styled.ol`
 `;
 
 const SubmissionSection = styled(PanelBlockFooter)`
@@ -34,27 +55,92 @@ const SubmissionSection = styled(PanelBlockFooter)`
 
 function ParamForm (props) {
   const { countryList, resourceList, weightsList, filtersList, lcoeList } = props;
+  const [gridSize, setGridSize] = useState(1);
+
+  const initListToState = list => {
+    return list.map(obj => ({ ...obj, range: obj.range || [0, 100], unit: obj.unit || '%' }));
+  };
+
+  const updateStateList = (list, i, updatedValue) => {
+    const updated = list.slice();
+    updated[i] = updatedValue;
+    return updated;
+  };
+
+  const [weights, setWeights] = useState(initListToState(weightsList));
+  const [filters, setFilters] = useState(initListToState(filtersList));
+  const [lcoe, setLcoe] = useState(lcoeList.map(e => ({ ...e, value: '' })));
+
   return (
     <PanelBlock>
       <PanelBlockHeader>
-        <Param>
-          <ParamTitle>Country</ParamTitle>
-          <FormSelect>
-            {countryList.map(country => (
-              <option key={country} value={country.replace(/ /g, '-')}>{country}</option>
-            ))}
-          </FormSelect>
-        </Param>
+        <HeadOption>
+          <Subheading>Country</Subheading>
+          <OptionHeadline>
+            <Heading>Zambia</Heading>
+            <Dropdown
+              alignment='right'
+              direction='down'
+              triggerElement={
+                <EditButton>
+                Edit Country Selection
+                </EditButton>
+              }
+            >
+              <SelectionList>
+                {countryList.map(country => (
+                  <li key={country} value={country.replace(/ /g, '-')}>{country}</li>
+                ))}
+              </SelectionList>
+            </Dropdown>
+          </OptionHeadline>
+        </HeadOption>
 
-        <Param>
-          <ParamTitle>Resource</ParamTitle>
-          <FormSelect>
-            {resourceList.map(resource => (
-              <option key={resource} value={resource.replace(/ /g, '-')}>{resource}</option>
-            ))}
+        <HeadOption>
+          <Subheading>Resource</Subheading>
 
-          </FormSelect>
-        </Param>
+          <OptionHeadline>
+            <Heading>Resource</Heading>
+            <Dropdown
+              alignment='right'
+              direction='down'
+              triggerElement={
+                <EditButton>
+                Edit Country Selection
+                </EditButton>
+              }
+            >
+              <SelectionList>
+                {resourceList.map(resource => (
+                  <li key={resource} value={resource.replace(/ /g, '-')}>{resource}</li>
+                ))}
+              </SelectionList>
+            </Dropdown>
+          </OptionHeadline>
+        </HeadOption>
+
+        <HeadOption>
+          <Subheading>Grid Size</Subheading>
+          <OptionHeadline>
+            <Heading>{gridSize} km<sup>2</sup></Heading>
+            <Dropdown
+              alignment='right'
+              direction='down'
+              triggerElement={
+                <EditButton>
+                Edit Grid Size
+                </EditButton>
+              }
+            >
+              <SliderGroup
+                unit='km^2'
+                range={[1, 24]}
+                value={gridSize}
+                onChange={(v) => setGridSize(v)}
+              />
+            </Dropdown>
+          </OptionHeadline>
+        </HeadOption>
 
       </PanelBlockHeader>
 
@@ -62,29 +148,55 @@ function ParamForm (props) {
         tabContent={[['Weights', 'house'], ['Filters', 'crosshair'], ['LCOE', 'crosshair']]}
       >
         <WeightsForm>
-          {weightsList.map(filter => (
-            <Param key={filter.name}>
-              <ParamTitle>{filter.name}</ParamTitle>
-              <SliderGroup unit={filter.unit || '%'} range={filter.range || [0, 100]} />
-            </Param>
+          {weights.map((weight, ind) => (
+            <PanelOption key={weight.name}>
+              <ParamTitle>{weight.name}</ParamTitle>
+              <SliderGroup
+                unit={weight.unit || '%'}
+                range={weight.range || [0, 100]}
+                id={weight.name}
+                value={weight.value === undefined ? weight.range[0] : weight.value}
+                onChange={value => {
+                  setWeights(updateStateList(weights, ind, { ...weight, value }));
+                }}
+              />
+            </PanelOption>
           ))}
         </WeightsForm>
 
         <FiltersForm>
-          {filtersList.map(filter => (
-            <Param key={filter.name}>
+          {filters.map((filter, ind) => (
+            <PanelOption key={filter.name}>
               <ParamTitle>{filter.name}</ParamTitle>
-              <SliderGroup unit={filter.unit || '%'} range={filter.range || [0, 100]} />
-            </Param>
+              <SliderGroup
+                unit={filter.unit || '%'}
+                range={filter.range || [0, 100]}
+                id={filter.name}
+                value={filter.value === undefined ? filter.range[0] : filter.value}
+                onChange={value => {
+                  setFilters(updateStateList(filters, ind, { ...filter, value }));
+                }}
+              />
+            </PanelOption>
           ))}
         </FiltersForm>
 
         <LCOEForm>
-          {lcoeList.map(filter => (
-            <Param key={filter.name}>
-              <ParamTitle>{filter.name}</ParamTitle>
-              <FormInput />
-            </Param>
+          {lcoe.map((filter, ind) => (
+            <PanelOption key={filter.name}>
+              <StressedFormGroupInput
+                inputType='text'
+                inputSize='small'
+                id={`${filter.name}`}
+                name={`${filter.name}`}
+                label={filter.name}
+                value={filter.value}
+                validate={() => true}
+                onChange={(v) => {
+                  setLcoe(updateStateList(lcoe, ind, { ...filter, value: v }));
+                }}
+              />
+            </PanelOption>
           ))}
         </LCOEForm>
 

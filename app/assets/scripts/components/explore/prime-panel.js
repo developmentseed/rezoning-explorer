@@ -4,12 +4,12 @@ import styled from 'styled-components';
 import Panel, { PanelHeadline, PanelTitle } from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 
+
 import CountryFilterForm from './country-filter-form';
 
 const COUNTRIES = ['Zambia', 'Nairobi', 'Mozambique'];
 const RESOURCES = ['Solar', 'Wind'];
 const WEIGHTS = [
-  { name: 'Grid Size', range: [1, 24], unit: 'km^2' },
   { name: 'LCOE Generation' },
   { name: 'LOCOE Transmission' },
   { name: 'LCOE Road' },

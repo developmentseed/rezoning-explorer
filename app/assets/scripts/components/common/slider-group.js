@@ -2,29 +2,43 @@ import React, { useState } from 'react';
 import InputRange from 'react-input-range';
 import styled from 'styled-components';
 import T from 'prop-types';
-import { FormInput } from '../../styles/form';
+import { visuallyHidden } from '../../styles/helpers';
+import { validateRangeNum } from '../../utils/utils';
+import StressedFormGroupInput from './stressed-form-group-input';
 
-const SliderWrapper = styled.div`
-  display:grid;
-  grid-template-columns:200px 50px;
-  gap: 0 20px;
+const FormSliderGroup = styled.div`
+  display: grid;
+  align-items: center;
+  grid-gap: 1rem;
+  grid-template-columns: ${({ isRange }) => isRange ? '3rem 1fr 3rem' : '1fr 3rem'};
+
+  label {
+    ${visuallyHidden()}
+  }
 `;
 
 function SliderGroup (props) {
-  const { range, unit } = props;
-
-  const [value, setValue] = useState(range[0]);
-
+  const { range, id, value, onChange } = props;
   return (
-    <SliderWrapper>
-      <InputRange minValue={range[0]} maxValue={range[1]} value={value} onChange={(value) => setValue(value)} />
-      <FormInput type='text' value={`${value}${unit}`} disabled onChange={(e) => setValue(e.target.value)} />
-    </SliderWrapper>
+    <FormSliderGroup>
+      <InputRange minValue={range[0]} maxValue={range[1]} value={value} onChange={onChange} />
+      <StressedFormGroupInput
+        inputType='number'
+        inputSize='small'
+        id={`slider-input-max-${id}`}
+        name={`slider-input-max-${id}}`}
+        label='Max value'
+        value={value}
+        validate={validateRangeNum(range[0], range[1])}
+        onChange={onChange}
+      />
+    </FormSliderGroup>
   );
 }
 SliderGroup.propTypes = {
   range: T.array,
-  unit: T.string
+  id: T.string,
+  onChange: T.func
 };
 
 export default SliderGroup;

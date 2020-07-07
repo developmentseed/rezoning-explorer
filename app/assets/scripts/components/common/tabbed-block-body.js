@@ -16,14 +16,8 @@ const ContentInner = styled.div`
 `;
 
 function TabbedBlock (props) {
-  const { tabContent, children } = props;
+  const { tabContent } = props;
   const [activeTab, setActiveTab] = useState(0);
-  const [activeContent, setActiveContent] = useState(null);
-
-  useEffect(() => {
-    const nextContent = children.length ? children[activeTab] : children;
-    setActiveContent(nextContent);
-  }, [activeTab]);
 
   return (
     <>
@@ -45,7 +39,7 @@ function TabbedBlock (props) {
       </TabbedBlockHeader>
       <PanelBlockScroll>
         <ContentInner>
-          {activeContent}
+          {props.children.length ? props.children[activeTab] : props.children}
         </ContentInner>
       </PanelBlockScroll>
     </>
