@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import config from '../../config';
 
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import {
   themeVal,
   stylizeFunction,
@@ -63,9 +63,37 @@ const GlobalMenu = styled.ul`
   }
 `;
 
-const GlobalMenuLink = styled.a.attrs({
-  'data-place': 'right'
-})`
+const HomeLink = styled.a`
+  position: relative;
+  display: block;
+  width: 4rem;
+  height: 3rem;
+  line-height: 3rem;
+  text-align: center;
+  transition: all 0.24s ease 0s;
+
+  &::before {
+    ${({ useIcon }) => collecticon(useIcon)}
+    font-size: 1.25rem
+  }
+
+  &,
+  &:visited {
+    color: inherit;
+  }
+
+  &.active {
+    color: ${themeVal('color.baseLight')};
+    opacity: 1;
+    background: ${_rgba(themeVal('color.baseLight'), 0.08)};
+  }
+
+  span {
+    ${visuallyHidden()}
+  }
+`;
+
+const GlobalMenuLink = styled.a`
   position: relative;
   display: block;
   width: 4rem;
@@ -107,8 +135,8 @@ class PageHeader extends React.Component {
           <PageNav role='navigation'>
             <GlobalMenu>
               <li>
-                <GlobalMenuLink
-                  as={NavLinkFilter}
+                <HomeLink
+                  as={Link}
                   exact
                   to='/'
                   useIcon='house'
@@ -116,7 +144,7 @@ class PageHeader extends React.Component {
                   data-tip={appShortTitle}
                 >
                   <span>{appTitle}</span>
-                </GlobalMenuLink>
+                </HomeLink>
               </li>
               <li>
                 <GlobalMenuLink
