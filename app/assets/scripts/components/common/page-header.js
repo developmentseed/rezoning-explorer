@@ -61,6 +61,11 @@ const GlobalMenu = styled.ul`
   > *:last-child {
     margin: 0;
   }
+  > *:last-child > * {
+    width: 4rem;
+    height: 3rem;
+    text-align: center;
+  }
 `;
 
 const HomeLink = styled.a`
@@ -71,6 +76,7 @@ const HomeLink = styled.a`
   line-height: 3rem;
   text-align: center;
   transition: all 0.24s ease 0s;
+  margin-bottom: ${multiply(themeVal('layout.space'), 6)};
 
   &::before {
     ${({ useIcon }) => collecticon(useIcon)}
