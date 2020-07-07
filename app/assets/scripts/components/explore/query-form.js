@@ -14,6 +14,9 @@ import Dropdown from '../common/dropdown';
 import StressedFormGroupInput from '../common/stressed-form-group-input';
 import Heading, { Subheading } from '../../styles/type/heading';
 
+const INIT_GRID_SIZE = 1;
+const DEFAULT_RANGE = [0, 100];
+const DEFAULT_UNIT = '%';
 const ParamTitle = styled.div`
 /* stylelint-disable */
 `;
@@ -49,15 +52,14 @@ const SubmissionSection = styled(PanelBlockFooter)`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0rem 1rem;
-
 `;
 
-function ParamForm (props) {
+function QueryForm (props) {
   const { countryList, resourceList, weightsList, filtersList, lcoeList } = props;
-  const [gridSize, setGridSize] = useState(1);
+  const [gridSize, setGridSize] = useState(INIT_GRID_SIZE);
 
   const initListToState = list => {
-    return list.map(obj => ({ ...obj, range: obj.range || [0, 100], unit: obj.unit || '%' }));
+    return list.map(obj => ({ ...obj, range: obj.range || DEFAULT_RANGE, unit: obj.unit || DEFAULT_UNIT }));
   };
 
   const updateStateList = (list, i, updatedValue) => {
@@ -210,7 +212,7 @@ function ParamForm (props) {
 
   );
 }
-ParamForm.propTypes = {
+QueryForm.propTypes = {
   countryList: T.array,
   resourceList: T.array,
   weightsList: T.array,
@@ -218,4 +220,4 @@ ParamForm.propTypes = {
   lcoeList: T.array
 };
 
-export default ParamForm;
+export default QueryForm;

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Panel, { PanelHeadline, PanelTitle } from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 
-import CountryFilterForm from './country-filter-form';
+import QueryForm from './query-form';
 
 const COUNTRIES = ['Zambia', 'Nairobi', 'Mozambique'];
 const RESOURCES = ['Solar', 'Wind'];
@@ -55,7 +55,7 @@ function ExpMapPrimePanel (props) {
       )}
       bodyContent={
         <>
-          <CountryFilterForm
+          <QueryForm
             countryList={COUNTRIES}
             resourceList={RESOURCES}
             weightsList={WEIGHTS}
