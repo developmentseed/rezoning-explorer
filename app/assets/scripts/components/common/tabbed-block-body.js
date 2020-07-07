@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 import { PanelBlockScroll, PanelBlockHeader } from './panel-block';

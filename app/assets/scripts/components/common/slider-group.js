@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import InputRange from 'react-input-range';
 import styled from 'styled-components';
 import T from 'prop-types';
@@ -38,7 +38,8 @@ function SliderGroup (props) {
 SliderGroup.propTypes = {
   range: T.array,
   id: T.string,
-  onChange: T.func
+  onChange: T.func,
+  value: T.oneOfType([T.string, T.number])
 };
 
 export default SliderGroup;

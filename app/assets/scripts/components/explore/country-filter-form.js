@@ -10,17 +10,9 @@ import {
 import TabbedBlockBody from '../common/tabbed-block-body';
 import Button from '../../styles/button/button';
 import SliderGroup from '../common/slider-group';
-import FormInput from '../../styles/form/input';
-import Dropdown, { DropTitle } from '../common/dropdown';
+import Dropdown from '../common/dropdown';
 import StressedFormGroupInput from '../common/stressed-form-group-input';
-import Heading, { Subheading, headingAlt } from '../../styles/type/heading';
-
-const EditButton = styled(Button).attrs({
-  variation: 'base-plain',
-  size: 'small',
-  useIcon: 'pencil',
-  hideText: true
-})``;
+import Heading, { Subheading } from '../../styles/type/heading';
 
 const ParamTitle = styled.div`
 /* stylelint-disable */
@@ -40,10 +32,17 @@ const WeightsForm = styled.div`
 const FiltersForm = styled.div`
 `;
 const LCOEForm = styled.div`
-/* stylelint-enable */
 `;
 
+const EditButton = styled(Button).attrs({
+  variation: 'base-plain',
+  size: 'small',
+  useIcon: 'pencil',
+  hideText: true
+})``;
+
 const SelectionList = styled.ol`
+/* stylelint-enable */
 `;
 
 const SubmissionSection = styled(PanelBlockFooter)`

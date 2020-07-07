@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import Panel, { PanelHeadline, PanelTitle } from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 
-
 import CountryFilterForm from './country-filter-form';
 
 const COUNTRIES = ['Zambia', 'Nairobi', 'Mozambique'];
