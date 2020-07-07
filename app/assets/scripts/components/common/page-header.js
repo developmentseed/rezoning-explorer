@@ -10,18 +10,20 @@ import {
   filterComponentProps
 } from '../../styles/utils/general';
 
+import ShareOptions from './share-options';
+
 import { rgba } from 'polished';
-import { stackSkin } from '../../styles/skins';
 import { visuallyHidden } from '../../styles/helpers';
 import collecticon from '../../styles/collecticons';
-import { multiply, divide } from '../../styles/utils/math';
+import { multiply } from '../../styles/utils/math';
 
 const _rgba = stylizeFunction(rgba);
 
 const { appTitle, appShortTitle } = config;
 
 const PageHead = styled.header`
-  ${stackSkin()}
+  background-color: ${themeVal('color.base')};
+  color: ${themeVal('color.baseLight')};
   position: sticky;
   z-index: 20;
   top: 0;
@@ -77,35 +79,15 @@ const GlobalMenuLink = styled.a.attrs({
     font-size: 1.25rem
   }
 
-  &::after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: ${divide(themeVal('layout.space'), 4)};
-    background: ${themeVal('color.link')};
-    content: '';
-    opacity: 0;
-    transition: all 0.24s ease 0s;
-  }
-
   &,
   &:visited {
     color: inherit;
   }
 
-  &:hover {
-    color: ${themeVal('color.link')};
-    opacity: 1;
-    background: ${_rgba(themeVal('color.link'), 0.08)};
-  }
-
   &.active {
-    color: ${themeVal('color.link')};
-
-    &::after {
-      opacity: 1;
-    }
+    color: ${themeVal('color.baseLight')};
+    opacity: 1;
+    background: ${_rgba(themeVal('color.baseLight'), 0.08)};
   }
 
   span {
@@ -161,16 +143,7 @@ class PageHeader extends React.Component {
                 </GlobalMenuLink>
               </li>
               <li>
-                <GlobalMenuLink
-                  as={NavLinkFilter}
-                  exact
-                  to='/share'
-                  useIcon='share'
-                  data-tip='Share'
-                  title='ViewShare page'
-                >
-                  <span>Share</span>
-                </GlobalMenuLink>
+                <ShareOptions />
               </li>
             </GlobalMenu>
           </PageNav>
