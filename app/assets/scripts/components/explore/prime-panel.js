@@ -48,11 +48,6 @@ function ExpMapPrimePanel (props) {
       direction='left'
       onPanelChange={onPanelChange}
       initialState={isLargeViewport()}
-      headerContent={(
-        <PanelHeadline>
-          <PanelTitle>Explore</PanelTitle>
-        </PanelHeadline>
-      )}
       bodyContent={
         <>
           <QueryForm
