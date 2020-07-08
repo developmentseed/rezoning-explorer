@@ -1,7 +1,7 @@
 import React from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
-import Panel, { PanelHeadline, PanelTitle } from '../common/panel';
+import Panel from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 
 import QueryForm from './query-form';
