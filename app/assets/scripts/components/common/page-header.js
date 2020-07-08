@@ -156,6 +156,18 @@ class PageHeader extends React.Component {
                 <GlobalMenuLink
                   as={NavLinkFilter}
                   exact
+                  to='/'
+                  useIcon='house'
+                  title='Visit the home page'
+                  data-tip={appShortTitle}
+                >
+                  <span>{appTitle}</span>
+                </GlobalMenuLink>
+              </li>
+              <li>
+                <GlobalMenuLink
+                  as={NavLinkFilter}
+                  exact
                   to='/explore'
                   useIcon='compass'
                   data-tip='Explore'
