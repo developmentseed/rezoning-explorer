@@ -50,6 +50,7 @@ const PageNav = styled.nav`
 
 const GlobalMenu = styled.ul`
   display: flex;
+  flex: 1;
   flex-flow: column nowrap;
   justify-content: center;
   margin: 0;
@@ -59,7 +60,7 @@ const GlobalMenu = styled.ul`
     margin: 0;
   }
   > *:last-child {
-    margin: 0;
+    margin-top: auto;
   }
   > *:last-child > * {
     width: 4rem;
@@ -151,6 +152,18 @@ class PageHeader extends React.Component {
                 >
                   <span>{appTitle}</span>
                 </HomeLink>
+              </li>
+              <li>
+                <GlobalMenuLink
+                  as={NavLinkFilter}
+                  exact
+                  to='/'
+                  useIcon='house'
+                  title='Visit the home page'
+                  data-tip={appShortTitle}
+                >
+                  <span>{appTitle}</span>
+                </GlobalMenuLink>
               </li>
               <li>
                 <GlobalMenuLink
