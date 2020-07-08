@@ -13,8 +13,8 @@ base_def: &base_def
 restore_cache_def: &restore_cache_def
   # Download and cache dependencies
   keys:
-  - v2-dependencies-{{ checksum "package.json" }}
-  - v2-dependencies-  # fallback if checksum fails
+  - v1-dependencies-{{ checksum "package.json" }}
+  - v1-dependencies-  # fallback if checksum fails
 
 ##
 ## START Circle CI configuration
@@ -32,15 +32,13 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: v2-dependencies-{{ checksum "package.json" }}
+          key: v1-dependencies-{{ checksum "package.json" }}
   lint:
     <<: *base_def
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - v2-dependencies={{ checksum "package.json" }}
-            - v2-dependencies-
+          <<: *restore_cache_def
       - run: yarn lint
       - run: yarn lint:css
   test:
@@ -97,4 +95,4 @@ workflows:
             - build
           filters:
             branches:
-              only: master
+              only: develop
