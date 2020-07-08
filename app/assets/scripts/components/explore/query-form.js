@@ -221,7 +221,7 @@ function QueryForm (props) {
           {lcoe.map((filter, ind) => (
             <PanelOption key={filter.name}>
               <StressedFormGroupInput
-                inputType='text'
+                inputType='number'
                 inputSize='small'
                 id={`${filter.name}`}
                 name={`${filter.name}`}
