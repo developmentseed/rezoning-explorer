@@ -19,9 +19,12 @@ const DEFAULT_RANGE = [0, 100];
 const DEFAULT_UNIT = '%';
 const ParamTitle = styled.div`
 /* stylelint-disable */
+  opacity: 0.9;
+  font-weight: 600;
 `;
 const HeadOption = styled.div`
   box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
+  padding: 1rem 0;
 `;
 const OptionHeadline = styled.div`
   display: flex;
@@ -29,6 +32,7 @@ const OptionHeadline = styled.div`
   justify-content: start;
 `;
 const PanelOption = styled.div`
+  margin-bottom: 1.5rem;
 `;
 const WeightsForm = styled.div`
 `;
@@ -101,7 +105,7 @@ function QueryForm (props) {
         <HeadOption>
           <Subheading>Country</Subheading>
           <OptionHeadline>
-            <Heading>{activeCountry}</Heading>
+            <Heading size='large'>{activeCountry}</Heading>
             <Dropdown
               alignment='right'
               direction='down'
