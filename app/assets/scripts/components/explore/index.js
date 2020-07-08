@@ -16,6 +16,8 @@ import PrimePanel from './prime-panel';
 import SecPanel from './sec-panel';
 import MbMap from '../common/mb-map/mb-map';
 
+import { ExploreProvider } from '../../context/explore-context';
+
 const ExploreCanvas = styled.div`
   display: grid;
   height: 100%;
@@ -50,38 +52,47 @@ function Explore () {
   const [triggerResize, setTriggerResize] = useState(true);
 
   return (
-    <App
-      pageTitle='Explore'
-    >
-      <Inpage isMapCentric>
-        <InpageHeader>
-          <InpageHeaderInner>
-            <InpageHeadline>
-              <InpageTitle>Explore</InpageTitle>
-            </InpageHeadline>
-          </InpageHeaderInner>
-        </InpageHeader>
-        <InpageBody>
-          <ExploreCanvas>
-            <PrimePanel
-              onPanelChange={() => {
-                setTriggerResize(!triggerResize);
-              }}
-            />
-            <ExploreCarto>
-              <MbMap
-                triggerResize={triggerResize}
+    <ExploreProvider>
+      <App
+        pageTitle='Explore'
+      >
+        <Inpage isMapCentric>
+          <InpageHeader>
+            <InpageHeaderInner>
+              <InpageHeadline>
+                <InpageTitle>Explore</InpageTitle>
+              </InpageHeadline>
+            </InpageHeaderInner>
+          </InpageHeader>
+          <InpageBody>
+            <ExploreCanvas>
+              <PrimePanel
+                onPanelChange={() => {
+                  setTriggerResize(!triggerResize);
+                }}
+                /*
+                resourceList = {resourceList.resources}
+                countryList = {countryList.countries}
+                weightsList = {queryParams.weights}
+                filtersList = {queryParams.filters}
+                lcoeList = {queryParams.lcoe}
+                 */
               />
-            </ExploreCarto>
-            <SecPanel
-              onPanelChange={() => {
-                setTriggerResize(!triggerResize);
-              }}
-            />
-          </ExploreCanvas>
-        </InpageBody>
-      </Inpage>
-    </App>
+              <ExploreCarto>
+                <MbMap
+                  triggerResize={triggerResize}
+                />
+              </ExploreCarto>
+              <SecPanel
+                onPanelChange={() => {
+                  setTriggerResize(!triggerResize);
+                }}
+              />
+            </ExploreCanvas>
+          </InpageBody>
+        </Inpage>
+      </App>
+    </ExploreProvider>
   );
 }
 

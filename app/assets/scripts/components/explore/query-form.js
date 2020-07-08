@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
@@ -84,6 +84,25 @@ function QueryForm (props) {
   const [weights, setWeights] = useState(initListToState(weightsList));
   const [filters, setFilters] = useState(initListToState(filtersList));
   const [lcoe, setLcoe] = useState(lcoeList.map(e => ({ ...e, value: '' })));
+
+  useEffect(() => {
+    setActiveCountry(countryList[0]);
+  }, [countryList]);
+  useEffect(() => {
+    setActiveResource(resourceList[0]);
+  }, [resourceList]);
+
+  useEffect(() => {
+    setWeights(initListToState(weightsList));
+  }, [weightsList]);
+
+  useEffect(() => {
+    setFilters(initListToState(filtersList));
+  }, [filtersList]);
+
+  useEffect(() => {
+    setLcoe(lcoeList.map(e => ({ ...e, value: '' })));
+  }, [lcoeList]);
 
   const applyClick = () => {
     // handle submission and search
