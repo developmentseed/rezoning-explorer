@@ -1,16 +1,37 @@
 import React from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
-
 import Panel, { PanelHeadline, PanelTitle } from '../common/panel';
-import {
-  PanelBlock,
-  PanelBlockHeader,
-  PanelBlockTitle,
-  PanelBlockBody
-} from '../common/panel-block';
-
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
+
+import QueryForm from './query-form';
+
+const COUNTRIES = ['Zambia', 'Nairobi', 'Mozambique'];
+const RESOURCES = ['Solar', 'Wind'];
+const WEIGHTS = [
+  { name: 'LCOE Generation' },
+  { name: 'LOCOE Transmission' },
+  { name: 'LCOE Road' },
+  { name: 'Distance to Load Centers' },
+  { name: 'Technology Co-Location' },
+  { name: 'Human Footprint' },
+  { name: 'Population Density' },
+  { name: 'Slope' },
+  { name: 'Land Use Score' },
+  { name: 'Capacity Value (Wind Only)' }
+];
+
+const FILTERS = [
+  { name: 'Zone Score', range: [0, 1] },
+  { name: 'Mean Capacity Factor', range: [0, 1] },
+  { name: 'Electricity Demand', range: [0, 100], unit: 'k' }
+];
+
+const LCOE = [
+  { name: 'Generation - capital [USD/kW] (Cg)' },
+  { name: 'Generation - fixed O&M [USED/MWh]' }
+];
+const PRESETS = [];
 
 const PrimePanel = styled(Panel)`
   ${media.largeUp`
@@ -29,17 +50,19 @@ function ExpMapPrimePanel (props) {
       initialState={isLargeViewport()}
       headerContent={(
         <PanelHeadline>
-          <PanelTitle>Prime Panel</PanelTitle>
+          <PanelTitle>Explore</PanelTitle>
         </PanelHeadline>
       )}
       bodyContent={
         <>
-          <PanelBlock>
-            <PanelBlockHeader>
-              <PanelBlockTitle>Tools</PanelBlockTitle>
-            </PanelBlockHeader>
-            <PanelBlockBody />
-          </PanelBlock>
+          <QueryForm
+            countryList={COUNTRIES}
+            resourceList={RESOURCES}
+            weightsList={WEIGHTS}
+            filtersList={FILTERS}
+            lcoeList={LCOE}
+            presetList={PRESETS}
+          />
         </>
       }
     />

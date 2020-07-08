@@ -2,11 +2,13 @@ import { createGlobalStyle, css } from 'styled-components';
 import { normalize, rgba } from 'polished';
 
 import { themeVal, stylizeFunction } from './utils/general';
+// import { collecticonsFont } from '@devseed-ui/collecticons';
 import { collecticonsFont } from './collecticons';
 import { unscrollableY, unscrollableX } from './helpers';
 import mapboxStyles from './vendor/mapbox';
 import reactDatepickerStyles from './vendor/react-datepicker';
 import reactTooltipStyles from './vendor/react-tooltip';
+import reactInputRangeStyles from './vendor/react-input-range';
 
 const _rgba = stylizeFunction(rgba);
 
@@ -169,5 +171,6 @@ export default createGlobalStyle`
   ${mapboxStyles()}
   ${reactDatepickerStyles()}
   ${reactTooltipStyles()}
+  ${reactInputRangeStyles()}
   ${baseStyles}
 `;

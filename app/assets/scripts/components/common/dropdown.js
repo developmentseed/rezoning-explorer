@@ -8,7 +8,7 @@ import { rgba, tint } from 'polished';
 import { themeVal, stylizeFunction } from '../../styles/utils/general';
 import { divide, multiply } from '../../styles/utils/math';
 import { headingAlt } from '../../styles/type/heading';
-import { stackSkin } from '../../styles/skins';
+import { surfaceElevatedD } from '../../styles/skins';
 import collecticon from '../../styles/collecticons';
 
 const _rgba = stylizeFunction(rgba);
@@ -366,7 +366,7 @@ const transitions = {
 };
 
 const DropContent = styled.div`
-  ${stackSkin()}
+  ${surfaceElevatedD()}
   color: ${themeVal('type.base.color')};
   border-radius: ${themeVal('shape.rounded')};
   position: relative;
@@ -381,6 +381,14 @@ const DropContent = styled.div`
 
   .tether-target-attached-top.tether-element-attached-bottom & {
     ${transitions.up.end}
+    &.drop-trans-appear,
+    &.drop-trans-enter {
+      ${transitions.up.start}
+    }
+    &.drop-trans-appear-active,
+    &.drop-trans-enter-active {
+      ${transitions.up.end}
+    }
 
     &.drop-trans-exit {
       ${transitions.up.end}
@@ -393,6 +401,14 @@ const DropContent = styled.div`
 
   .tether-target-attached-bottom.tether-element-attached-top & {
     ${transitions.down.end}
+    &.drop-trans-appear,
+    &.drop-trans-enter {
+      ${transitions.down.start}
+    }
+    &.drop-trans-appear-active,
+    &.drop-trans-enter-active {
+      ${transitions.down.end}
+    }
 
     &.drop-trans-exit {
       ${transitions.down.end}
@@ -405,6 +421,14 @@ const DropContent = styled.div`
 
   .tether-target-attached-right.tether-element-attached-left & {
     ${transitions.right.end}
+    &.drop-trans-appear,
+    &.drop-trans-enter {
+      ${transitions.right.start}
+    }
+    &.drop-trans-appear-active,
+    &.drop-trans-enter-active {
+      ${transitions.right.end}
+    }
 
     &.drop-trans-exit {
       ${transitions.right.end}
@@ -417,6 +441,14 @@ const DropContent = styled.div`
 
   .tether-target-attached-left.tether-element-attached-right & {
     ${transitions.left.end}
+    &.drop-trans-appear,
+    &.drop-trans-enter {
+      ${transitions.left.start}
+    }
+    &.drop-trans-appear-active,
+    &.drop-trans-enter-active {
+      ${transitions.left.end}
+    }
 
     &.drop-trans-exit {
       ${transitions.left.end}

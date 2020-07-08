@@ -48,7 +48,7 @@ const SingleMapContainer = styled.div`
 const initializeMap = ({ setMap, mapContainer }) => {
   const map = new mapboxgl.Map({
     container: mapContainer.current,
-    style: 'mapbox://styles/mapbox/streets-v11',
+    style: 'mapbox://styles/mapbox/light-v10',
     center: [0, 0],
     zoom: 5
   });

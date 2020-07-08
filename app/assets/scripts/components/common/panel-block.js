@@ -24,6 +24,13 @@ export const PanelBlockHeader = styled.header`
   z-index: 10;
   padding: ${glsp(0.5)} ${glsp()};
 `;
+export const PanelBlockFooter = styled.footer`
+  box-shadow: 0px 0px 0px 1px ${themeVal('color.baseAlphaB')};
+  background: ${_tint(0.02, themeVal('color.surface'))};
+  position: relative;
+  z-index: 10;
+  padding: ${glsp(0.5)} ${glsp()};
+`;
 
 export const PanelBlockTitle = styled(Heading).attrs({ size: 'medium' })`
   margin: 0;
