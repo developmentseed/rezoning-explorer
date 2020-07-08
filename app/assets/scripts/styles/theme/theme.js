@@ -2,7 +2,7 @@ import { rgba } from 'polished';
 
 let color = {
   baseLight: '#FFFFFF',
-  baseDark: '#323232', // "Black"
+  baseDark: '#2E265B',
   primary: '#2276AC', // Ocean Blue
   secondary: '#2C3E50', // Midnight Blue
   tertiary: '#673285' // Royal Purple

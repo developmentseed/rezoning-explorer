@@ -1,22 +1,29 @@
 import React from 'react';
-import T from 'prop-types';
 import styled from 'styled-components';
 
 import config from '../../config';
 
-import { Link } from 'react-router-dom';
-import { themeVal } from '../../styles/utils/general';
+import { Link, NavLink } from 'react-router-dom';
+import {
+  themeVal,
+  stylizeFunction,
+  filterComponentProps
+} from '../../styles/utils/general';
 
-// import Button from '../../styles/button/button';
-//
-import { Button } from '@devseed-ui/button';
+import ShareOptions from './share-options';
+
+import { rgba } from 'polished';
+import { visuallyHidden } from '../../styles/helpers';
+import collecticon from '../../styles/collecticons';
 import { multiply } from '../../styles/utils/math';
-import { stackSkin } from '../../styles/skins';
+
+const _rgba = stylizeFunction(rgba);
 
 const { appTitle, appShortTitle } = config;
 
 const PageHead = styled.header`
-  ${stackSkin()}
+  background-color: ${themeVal('color.base')};
+  color: ${themeVal('color.baseLight')};
   position: sticky;
   z-index: 20;
   top: 0;
@@ -33,34 +40,6 @@ const PageHeadInner = styled.div`
     ${multiply(themeVal('layout.space'), 1.5)} 0;
   margin: 0 auto;
   height: 100%;
-`;
-
-const PageHeadline = styled.div`
-  margin: ${multiply(themeVal('layout.space'), 2)} 0 0 0;
-  order: 2;
-`;
-
-const PageTitle = styled.h1`
-  font-size: 1.5rem;
-  line-height: 1;
-  writing-mode: vertical-rl;
-  text-align: center;
-  transform: rotate(180deg);
-  margin: 0;
-  * {
-    display: block;
-  }
-  a {
-    transition: all 0.24s ease 0s;
-    &,
-    &:visited {
-      color: inherit;
-    }
-    &:hover {
-      color: ${themeVal('color.link')};
-      opacity: 1;
-    }
-  }
 `;
 
 const PageNav = styled.nav`
@@ -82,42 +61,124 @@ const GlobalMenu = styled.ul`
   > *:last-child {
     margin: 0;
   }
+  > *:last-child > * {
+    width: 4rem;
+    height: 3rem;
+    text-align: center;
+  }
 `;
 
-const GlobalMenuButton = styled(Button)`
-  color: ${themeVal('color.base')};
+const HomeLink = styled.a`
+  position: relative;
+  display: block;
+  width: 4rem;
+  height: 3rem;
+  line-height: 3rem;
+  text-align: center;
+  transition: all 0.24s ease 0s;
+  margin-bottom: ${multiply(themeVal('layout.space'), 6)};
+
+  &::before {
+    ${({ useIcon }) => collecticon(useIcon)}
+    font-size: 1.25rem
+  }
+
+  &,
+  &:visited {
+    color: inherit;
+  }
+
+  &.active {
+    color: ${themeVal('color.baseLight')};
+    opacity: 1;
+    background: ${_rgba(themeVal('color.baseLight'), 0.08)};
+  }
+
+  span {
+    ${visuallyHidden()}
+  }
 `;
+
+const GlobalMenuLink = styled.a`
+  position: relative;
+  display: block;
+  width: 4rem;
+  height: 3rem;
+  line-height: 3rem;
+  text-align: center;
+  transition: all 0.24s ease 0s;
+
+  &::before {
+    ${({ useIcon }) => collecticon(useIcon)}
+    font-size: 1.25rem
+  }
+
+  &,
+  &:visited {
+    color: inherit;
+  }
+
+  &.active {
+    color: ${themeVal('color.baseLight')};
+    opacity: 1;
+    background: ${_rgba(themeVal('color.baseLight'), 0.08)};
+  }
+
+  span {
+    ${visuallyHidden()}
+  }
+`;
+
+// See documentation of filterComponentProp as to why this is
+const propsToFilter = ['variation', 'size', 'hideText', 'useIcon', 'active'];
+const NavLinkFilter = filterComponentProps(NavLink, propsToFilter);
 
 class PageHeader extends React.Component {
   render () {
-    const { useShortTitle } = this.props;
-
     return (
       <PageHead role='banner'>
         <PageHeadInner>
-          <PageHeadline>
-            <PageTitle>
-              <span>
-                {useShortTitle ? appShortTitle || 'REZoning' : appTitle}
-              </span>
-            </PageTitle>
-          </PageHeadline>
           <PageNav role='navigation'>
-
             <GlobalMenu>
               <li>
-                <GlobalMenuButton
-                  element={Link}
-                  to='/explore'
-                  useIcon='map'
-                  title='Show menu'
-                  hideText
-                  size='large'
+                <HomeLink
+                  as={Link}
+                  exact
+                  to='/'
+                  useIcon='house'
+                  title='Visit the home page'
+                  data-tip={appShortTitle}
                 >
-                  Show menu
-                </GlobalMenuButton>
+                  <span>{appTitle}</span>
+                </HomeLink>
               </li>
-
+              <li>
+                <GlobalMenuLink
+                  as={NavLinkFilter}
+                  exact
+                  to='/explore'
+                  useIcon='compass'
+                  data-tip='Explore'
+                  title='View Explore page'
+                >
+                  <span>Explore</span>
+                </GlobalMenuLink>
+              </li>
+              <li>
+                <GlobalMenuLink
+                  as={NavLinkFilter}
+                  exact
+                  to='/about'
+                  useIcon='circle-information'
+                  data-tip='About'
+                  title='View About page'
+                >
+                  <span>About</span>
+                </GlobalMenuLink>
+              </li>
+              <li>
+                <ShareOptions />
+              </li>
             </GlobalMenu>
           </PageNav>
         </PageHeadInner>
@@ -127,7 +188,6 @@ class PageHeader extends React.Component {
 }
 
 PageHeader.propTypes = {
-  useShortTitle: T.bool
 };
 
 export default PageHeader;

@@ -99,6 +99,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.10.1",
     "@devseed-ui/button": "^2.4.2",
+    "clipboard": "^2.0.6",
     "element-resize-event": "^3.0.3",
     "history": "^4.10.0",
     "jest-styled-components": "^7.0.2",
@@ -114,6 +115,8 @@
     "react-redux": "^7.2.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
+    "react-tether": "^2.0.7",
+    "react-transition-group": "^4.4.1",
     "redux": "^4.0.5",
     "styled-components": "5.0.0",
     "stylelint-processor-styled-components": "^1.10.0"
