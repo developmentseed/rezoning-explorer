@@ -20,7 +20,6 @@ const DEFAULT_UNIT = '%';
 const ParamTitle = styled.div`
 /* stylelint-disable */
   opacity: 0.9;
-  font-weight: 600;
 `;
 const HeadOption = styled.div`
   box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
