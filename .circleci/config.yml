@@ -72,7 +72,7 @@ jobs:
           name: Deploy to surge
           command: |
             cp /workspace/dist/index.html /workspace/dist/200.html
-            ./node_modules/surge/lib/cli.js --project /workspace/dist --domain rezoning-web.surge.sh
+            ./node_modules/surge/lib/cli.js --project /workspace/dist --domain rezoning.surge.sh
 
 workflows:
   version: 2
