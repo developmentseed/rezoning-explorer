@@ -389,6 +389,7 @@ const DropContent = styled.div`
     &.drop-trans-enter-active {
       ${transitions.up.end}
     }
+
     &.drop-trans-exit {
       ${transitions.up.end}
     }
@@ -408,6 +409,7 @@ const DropContent = styled.div`
     &.drop-trans-enter-active {
       ${transitions.down.end}
     }
+
     &.drop-trans-exit {
       ${transitions.down.end}
     }
@@ -427,6 +429,7 @@ const DropContent = styled.div`
     &.drop-trans-enter-active {
       ${transitions.right.end}
     }
+
     &.drop-trans-exit {
       ${transitions.right.end}
     }
@@ -446,6 +449,7 @@ const DropContent = styled.div`
     &.drop-trans-enter-active {
       ${transitions.left.end}
     }
+
     &.drop-trans-exit {
       ${transitions.left.end}
     }
@@ -453,6 +457,24 @@ const DropContent = styled.div`
     &.drop-trans-exit-active {
       ${transitions.left.start}
     }
+  }
+
+  &&.drop-trans-appear,
+  &&.drop-trans-enter {
+    ${({ direction }) => transitions[direction].start}
+  }
+
+  &&.drop-trans-enter-active,
+  &&.drop-trans-appear-active {
+    ${({ direction }) => transitions[direction].end}
+  }
+
+  &&.drop-trans-exit {
+    ${({ direction }) => transitions[direction].end}
+  }
+
+  &&.drop-trans-exit-active {
+    ${({ direction }) => transitions[direction].start}
   }
 `;
 

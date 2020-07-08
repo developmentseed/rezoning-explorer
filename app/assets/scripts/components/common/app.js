@@ -9,7 +9,6 @@ import PageFooter from './page-footer';
 
 import config from '../../config';
 import SizeAwareElement from './size-aware-element';
-import { mediaRanges } from '../../styles/theme/theme';
 
 const { appTitle, appDescription } = config;
 
@@ -25,33 +24,6 @@ const PageBody = styled.main`
 `;
 
 class App extends Component {
-  constructor (props) {
-    super(props);
-
-    this.state = {
-      isMediumDown: false
-    };
-
-    this.resizeListener = this.resizeListener.bind(this);
-  }
-
-  componentDidMount () {
-    window.scrollTo(0, 0);
-  }
-
-  // Handle cases where the page is updated without changing
-  componentDidUpdate (prevProps) {
-    if (this.props.location && this.props.location.pathname !== prevProps.location.pathname) {
-      window.scrollTo(0, 0);
-    }
-  }
-
-  resizeListener ({ width, height }) {
-    this.setState({
-      isMediumDown: width < mediaRanges.large[0]
-    });
-  }
-
   render () {
     const { pageTitle, hideFooter, children } = this.props;
     const title = pageTitle ? `${pageTitle} — ` : '';
@@ -64,7 +36,7 @@ class App extends Component {
         hideFooter={hideFooter}
       >
         <MetaTags title={`${title}${appTitle}`} description={appDescription} />
-        <PageHeader isMediumDown={this.state.isMediumDown} />
+        <PageHeader />
         <PageBody role='main'>
           {children}
         </PageBody>
@@ -77,8 +49,7 @@ class App extends Component {
 App.propTypes = {
   pageTitle: T.string,
   hideFooter: T.bool,
-  children: T.node,
-  location: T.object
+  children: T.node
 };
 
 export default withRouter(App);
