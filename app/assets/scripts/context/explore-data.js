@@ -1,4 +1,5 @@
 import { makeActions, makeFetchThunk, makeAPIReducer } from './reduxeed';
+import { wrapLogReducer } from './contexeed';
 
 const queryDataActions = makeActions('QUERY_DATA_SINGLE');
 
@@ -12,5 +13,5 @@ export function fetchQueryData (type) {
   });
 }
 
-const queryDataReducer = makeAPIReducer('QUERY_DATA_SINGLE');
+const queryDataReducer = wrapLogReducer(makeAPIReducer('QUERY_DATA_SINGLE'));
 export default queryDataReducer;

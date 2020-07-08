@@ -70,13 +70,6 @@ function Explore () {
                 onPanelChange={() => {
                   setTriggerResize(!triggerResize);
                 }}
-                /*
-                resourceList = {resourceList.resources}
-                countryList = {countryList.countries}
-                weightsList = {queryParams.weights}
-                filtersList = {queryParams.filters}
-                lcoeList = {queryParams.lcoe}
-                 */
               />
               <ExploreCarto>
                 <MbMap
