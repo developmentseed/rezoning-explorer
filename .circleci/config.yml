@@ -32,6 +32,7 @@ jobs:
       - save_cache:
           paths:
             - node_modules
+            - app/assets/scripts/config/local.js
           key: v1-dependencies-{{ checksum "package.json" }}
   lint:
     <<: *base_def

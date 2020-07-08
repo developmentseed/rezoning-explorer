@@ -21,7 +21,6 @@ import defaultsDeep from 'lodash.defaultsdeep';
 
 import production from './config/production';
 import staging from './config/staging';
-// eslint-disable-next-line import/no-unresolved
 import local from './config/local';
 
 let config = production || {};
