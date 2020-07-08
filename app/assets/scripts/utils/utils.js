@@ -1,5 +1,5 @@
 import React from 'react';
-import * as d3 from 'd3';
+// import * as d3 from 'd3';
 
 /**
  * Calculates the integer remainder of a division of a by n, handling negative
@@ -120,6 +120,7 @@ export function filterComponentProps (Comp, filterProps = []) {
   });
 }
 
+/* eslint-disable-next-line */
 const toDateAccessor = d => utcDate(d.date);
 /**
  * Returns the closed object to the given date.
@@ -127,6 +128,8 @@ const toDateAccessor = d => utcDate(d.date);
  * @param {array} data Array of data objects. Each object must have a date property
  * @param {Date} date The date by which to bisect the array.
  */
+
+/*
 export const bisectByDate = (data, date, accessor = toDateAccessor) => {
   // Define bisector function. Is used to find where this date would fin in the
   // data array
@@ -149,3 +152,4 @@ export const bisectByDate = (data, date, accessor = toDateAccessor) => {
       : docL;
   }
 };
+*/
