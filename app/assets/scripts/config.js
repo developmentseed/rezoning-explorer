@@ -22,18 +22,16 @@ import defaultsDeep from 'lodash.defaultsdeep';
 import production from './config/production';
 import staging from './config/staging';
 // eslint-disable-next-line import/no-unresolved
-// import local from './config/local';
-// import test from './config/test';
+import local from './config/local';
 
-// var config = configurations.production || {};
 let config = production || {};
 
 if (process.env.NODE_ENV === 'staging') {
   config = defaultsDeep(staging, config);
 }
-/*
+
 if (process.env.NODE_ENV === 'development') {
   config = defaultsDeep(local || {}, config);
-} */
+}
 
 export default config;
