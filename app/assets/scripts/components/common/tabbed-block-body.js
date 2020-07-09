@@ -51,7 +51,7 @@ const Tab = styled(Button)`
 const TabbedBlockHeader = styled(PanelBlockHeader)`
   padding: 0 1rem;
   ul {
-    ${listReset};
+    ${listReset}
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
