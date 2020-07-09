@@ -50,6 +50,7 @@ const PageNav = styled.nav`
 
 const GlobalMenu = styled.ul`
   display: flex;
+  flex: 1;
   flex-flow: column nowrap;
   justify-content: center;
   margin: 0;
@@ -59,7 +60,7 @@ const GlobalMenu = styled.ul`
     margin: 0;
   }
   > *:last-child {
-    margin: 0;
+    margin-top: auto;
   }
   > *:last-child > * {
     width: 4rem;
@@ -131,7 +132,8 @@ const GlobalMenuLink = styled.a`
 
 // See documentation of filterComponentProp as to why this is
 const propsToFilter = ['variation', 'size', 'hideText', 'useIcon', 'active'];
-const NavLinkFilter = filterComponentProps(NavLink, propsToFilter);
+const StyledNavLink = filterComponentProps(NavLink, propsToFilter);
+const StyledLink = filterComponentProps(Link, propsToFilter);
 
 class PageHeader extends React.Component {
   render () {
@@ -142,8 +144,7 @@ class PageHeader extends React.Component {
             <GlobalMenu>
               <li>
                 <HomeLink
-                  as={Link}
-                  exact
+                  as={StyledLink}
                   to='/'
                   useIcon='house'
                   title='Visit the home page'
@@ -154,7 +155,19 @@ class PageHeader extends React.Component {
               </li>
               <li>
                 <GlobalMenuLink
-                  as={NavLinkFilter}
+                  as={StyledNavLink}
+                  exact
+                  to='/'
+                  useIcon='house'
+                  title='Visit the home page'
+                  data-tip={appShortTitle}
+                >
+                  <span>{appTitle}</span>
+                </GlobalMenuLink>
+              </li>
+              <li>
+                <GlobalMenuLink
+                  as={StyledNavLink}
                   exact
                   to='/explore'
                   useIcon='compass'
@@ -166,7 +179,7 @@ class PageHeader extends React.Component {
               </li>
               <li>
                 <GlobalMenuLink
-                  as={NavLinkFilter}
+                  as={StyledNavLink}
                   exact
                   to='/about'
                   useIcon='circle-information'

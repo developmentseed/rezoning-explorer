@@ -13,8 +13,8 @@ base_def: &base_def
 restore_cache_def: &restore_cache_def
   # Download and cache dependencies
   keys:
-  - v1-dependencies-{{ checksum "package.json" }}
-  - v1-dependencies-  # fallback if checksum fails
+  - v3-dependencies-{{ checksum "package.json" }}
+  - v3-dependencies-  # fallback if checksum fails
 
 ##
 ## START Circle CI configuration
@@ -32,7 +32,8 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+            - app/assets/scripts/config/local.js
+          key: v3-dependencies-{{ checksum "package.json" }}
   lint:
     <<: *base_def
     steps:
@@ -72,7 +73,7 @@ jobs:
           name: Deploy to surge
           command: |
             cp /workspace/dist/index.html /workspace/dist/200.html
-            ./node_modules/surge/lib/cli.js --project /workspace/dist --domain rezoning-web.surge.sh
+            ./node_modules/surge/lib/cli.js --project /workspace/dist --domain https://rezoning.surge.sh
 
 workflows:
   version: 2
