@@ -28,7 +28,7 @@ const HeadOption = styled.div`
 const OptionHeadline = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: space-between;
 `;
 const PanelOption = styled.div`
   margin-bottom: 1.5rem;
@@ -45,7 +45,9 @@ const EditButton = styled(Button).attrs({
   size: 'small',
   useIcon: 'pencil',
   hideText: true
-})``;
+})`
+  opacity: 50%;
+`;
 
 const SelectionOption = styled.li`
 `;
@@ -180,7 +182,7 @@ function QueryForm (props) {
       </PanelBlockHeader>
 
       <TabbedBlockBody
-        tabContent={[['Weights', 'house'], ['Filters', 'crosshair'], ['LCOE', 'crosshair']]}
+        tabContent={[['Weights', 'house'], ['Filters', 'compass'], ['LCOE', 'circle-information']]}
       >
         <WeightsForm>
           {weights.map((weight, ind) => (
