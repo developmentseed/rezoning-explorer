@@ -54,7 +54,7 @@ const Tab = styled(Button)`
 `;
 
 const TabbedBlockHeader = styled(PanelBlockHeader)`
-  padding: 0 1rem;
+  padding: 0 1.5rem;
   ul {
     ${listReset}
     display: flex;
@@ -64,7 +64,7 @@ const TabbedBlockHeader = styled(PanelBlockHeader)`
 `;
 
 const ContentInner = styled.div`
-  padding: 1.5rem 1rem;
+  padding: 1.5rem;
 `;
 
 function TabbedBlock (props) {

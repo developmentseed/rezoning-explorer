@@ -35,7 +35,7 @@ const PRESETS = [];
 
 const PrimePanel = styled(Panel)`
   ${media.largeUp`
-    width: 18rem;
+    width: 20rem;
   `}
 `;
 
