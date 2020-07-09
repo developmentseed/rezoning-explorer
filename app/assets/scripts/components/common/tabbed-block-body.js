@@ -29,7 +29,7 @@ const Tab = styled(Button)`
     margin: 0;
     bottom: 0;
     left: 50%;
-    content: ''
+    content: '';
     width: 0;
     height: 2px;
     background: ${themeVal('color.base')};
@@ -41,6 +41,7 @@ const Tab = styled(Button)`
 
   ${({ active }) => active && css`
       color: ${themeVal('color.base')};
+      /* stylelint-disable-next-line no-duplicate-selectors */
       &::after {
         width: 105%;
       }
