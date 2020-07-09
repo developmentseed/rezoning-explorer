@@ -3,12 +3,59 @@ import T from 'prop-types';
 import styled from 'styled-components';
 import { PanelBlockScroll, PanelBlockHeader } from './panel-block';
 import Button from '../../styles/button/button';
+import { listReset } from '../../styles/helpers/index';
+import { themeVal } from '../../styles/utils/general';
+
 const Tab = styled(Button)`
-  flex: 1;
+  display: inline-flex;
+  user-select: none;
+  position: relative;
+  transition: color .16s ease-in-out 0s;
+  padding: 0.75rem 0;
+  color: ${themeVal('color.baseAlphaD')};
+
+  &,
+  &:visited {
+    color: inherit;
+  }
+
+  &:hover {
+    opacity: 1;
+    color: ${themeVal('color.base')};
+  }
+
+  &::after {
+    position: absolute;
+    margin: 0;
+    bottom: 0;
+    left: 50%;
+    content: '';
+    width: 0;
+    height: 2px;
+    background: ${themeVal('color.base')};
+    transform: translate(-50%, 0);
+
+    /* Animation */
+    transition: width 0.24s ease-in-out 0s;
+  }
+
+  &.active {
+    color: ${themeVal('color.base')};
+
+    &::after {
+      width: 105%;
+    }
+  }
 `;
+
 const TabbedBlockHeader = styled(PanelBlockHeader)`
-  display: flex;
-  flex-direction: row;
+  padding: 0 1rem;
+  ul {
+    ${listReset};
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+  }
 `;
 
 const ContentInner = styled.div`
@@ -21,21 +68,26 @@ function TabbedBlock (props) {
 
   return (
     <>
-      <TabbedBlockHeader>
-        {
-          tabContent.map(([name, icon], ind) => (
-            <Tab
-              key={name}
-              active={ind === activeTab}
-              useIcon={icon}
-              title='Show menu'
-              size='small'
-              onClick={() => setActiveTab(ind)}
-            >
-              {name}
-            </Tab>)
-          )
-        }
+      <TabbedBlockHeader as='nav' role='navigation'>
+        <ul>
+          {
+            tabContent.map(([name, icon], ind) => (
+              <li key={name}>
+                <Tab
+                  as='a'
+                  active={ind === activeTab}
+                  useIcon={icon}
+                  title='Show menu'
+                  size='small'
+                  variation='achromic-plain'
+                  onClick={() => setActiveTab(ind)}
+                >
+                  {name}
+                </Tab>
+              </li>)
+            )
+          }
+        </ul>
       </TabbedBlockHeader>
       <PanelBlockScroll>
         <ContentInner>
