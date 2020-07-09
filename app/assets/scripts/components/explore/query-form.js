@@ -66,7 +66,7 @@ const SubmissionSection = styled(PanelBlockFooter)`
 const DropdownScroll = styled(Dropdown)`
   max-height: 60vh;
   overflow-y:scroll;
-`
+`;
 
 function QueryForm (props) {
   const { countryList, resourceList, weightsList, filtersList, lcoeList } = props;
