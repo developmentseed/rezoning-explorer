@@ -63,6 +63,10 @@ const SubmissionSection = styled(PanelBlockFooter)`
   grid-template-columns: 1fr 1fr;
   gap: 0rem 1rem;
 `;
+const DropdownScroll = styled(Dropdown)`
+  max-height: 60vh;
+  overflow-y:scroll;
+`
 
 function QueryForm (props) {
   const { countryList, resourceList, weightsList, filtersList, lcoeList } = props;
@@ -88,21 +92,6 @@ function QueryForm (props) {
   useEffect(() => {
     setActiveCountry(countryList[0]);
   }, [countryList]);
-  useEffect(() => {
-    setActiveResource(resourceList[0]);
-  }, [resourceList]);
-
-  useEffect(() => {
-    setWeights(initListToState(weightsList));
-  }, [weightsList]);
-
-  useEffect(() => {
-    setFilters(initListToState(filtersList));
-  }, [filtersList]);
-
-  useEffect(() => {
-    setLcoe(lcoeList.map(e => ({ ...e, value: '' })));
-  }, [lcoeList]);
 
   const applyClick = () => {
     // handle submission and search
@@ -121,7 +110,7 @@ function QueryForm (props) {
           <Subheading>Country</Subheading>
           <OptionHeadline>
             <Heading>{activeCountry}</Heading>
-            <Dropdown
+            <DropdownScroll
               alignment='right'
               direction='down'
               triggerElement={
@@ -139,7 +128,7 @@ function QueryForm (props) {
                   </SelectionOption>
                 ))}
               </SelectionList>
-            </Dropdown>
+            </DropdownScroll>
           </OptionHeadline>
         </HeadOption>
 
