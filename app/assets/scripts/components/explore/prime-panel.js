@@ -1,36 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 import Panel, { PanelHeadline, PanelTitle } from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
+import ExploreContext from '../../context/explore-context';
 
 import QueryForm from './query-form';
 
-const COUNTRIES = ['Zambia', 'Nairobi', 'Mozambique'];
-const RESOURCES = ['Solar', 'Wind'];
-const WEIGHTS = [
-  { name: 'LCOE Generation' },
-  { name: 'LOCOE Transmission' },
-  { name: 'LCOE Road' },
-  { name: 'Distance to Load Centers' },
-  { name: 'Technology Co-Location' },
-  { name: 'Human Footprint' },
-  { name: 'Population Density' },
-  { name: 'Slope' },
-  { name: 'Land Use Score' },
-  { name: 'Capacity Value (Wind Only)' }
-];
+import { resourceList, weightsList, filtersList, lcoeList } from './panel-data';
 
-const FILTERS = [
-  { name: 'Zone Score', range: [0, 1] },
-  { name: 'Mean Capacity Factor', range: [0, 1] },
-  { name: 'Electricity Demand', range: [0, 100], unit: 'k' }
-];
-
-const LCOE = [
-  { name: 'Generation - capital [USD/kW] (Cg)' },
-  { name: 'Generation - fixed O&M [USED/MWh]' }
-];
 const PRESETS = [];
 
 const PrimePanel = styled(Panel)`
@@ -41,6 +19,10 @@ const PrimePanel = styled(Panel)`
 
 function ExpMapPrimePanel (props) {
   const { onPanelChange } = props;
+  const { countries } = useContext(ExploreContext);
+
+  const countryList = countries.isReady()
+    ? countries.getData().countries.map(c => c.name) : [];
 
   return (
     <PrimePanel
@@ -56,11 +38,11 @@ function ExpMapPrimePanel (props) {
       bodyContent={
         <>
           <QueryForm
-            countryList={COUNTRIES}
-            resourceList={RESOURCES}
-            weightsList={WEIGHTS}
-            filtersList={FILTERS}
-            lcoeList={LCOE}
+            countryList={countryList}
+            resourceList={resourceList}
+            weightsList={weightsList}
+            filtersList={filtersList}
+            lcoeList={lcoeList}
             presetList={PRESETS}
           />
         </>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
@@ -63,6 +63,10 @@ const SubmissionSection = styled(PanelBlockFooter)`
   grid-template-columns: 1fr 1fr;
   gap: 0rem 1rem;
 `;
+const DropdownScroll = styled(Dropdown)`
+  max-height: 60vh;
+  overflow-y:scroll;
+`;
 
 function QueryForm (props) {
   const { countryList, resourceList, weightsList, filtersList, lcoeList } = props;
@@ -85,6 +89,10 @@ function QueryForm (props) {
   const [filters, setFilters] = useState(initListToState(filtersList));
   const [lcoe, setLcoe] = useState(lcoeList.map(e => ({ ...e, value: '' })));
 
+  useEffect(() => {
+    setActiveCountry(countryList[0]);
+  }, [countryList]);
+
   const applyClick = () => {
     // handle submission and search
   };
@@ -102,7 +110,7 @@ function QueryForm (props) {
           <Subheading>Country</Subheading>
           <OptionHeadline>
             <Heading>{activeCountry}</Heading>
-            <Dropdown
+            <DropdownScroll
               alignment='right'
               direction='down'
               triggerElement={
@@ -120,7 +128,7 @@ function QueryForm (props) {
                   </SelectionOption>
                 ))}
               </SelectionList>
-            </Dropdown>
+            </DropdownScroll>
           </OptionHeadline>
         </HeadOption>
 
