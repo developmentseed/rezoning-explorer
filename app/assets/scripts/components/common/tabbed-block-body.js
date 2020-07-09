@@ -16,12 +16,14 @@ const Tab = styled(Button)`
 
   &,
   &:visited {
-    color: inherit;
+    background-color: transparent;
+    color: ${themeVal('color.baseAlphaD')};
   }
 
   &:hover {
     opacity: 1;
     color: ${themeVal('color.base')};
+    background-color: transparent;
   }
 
   &::after {
@@ -40,7 +42,10 @@ const Tab = styled(Button)`
   }
 
   ${({ active }) => active && css`
-      color: ${themeVal('color.base')};
+      &,
+      &:visited {
+        color: ${themeVal('color.base')};
+      }
       /* stylelint-disable-next-line no-duplicate-selectors */
       &::after {
         width: 105%;
@@ -59,7 +64,7 @@ const TabbedBlockHeader = styled(PanelBlockHeader)`
 `;
 
 const ContentInner = styled.div`
-  padding: 1rem;
+  padding: 1.5rem 1rem;
 `;
 
 function TabbedBlock (props) {
@@ -79,7 +84,6 @@ function TabbedBlock (props) {
                   useIcon={icon}
                   title='Show menu'
                   size='small'
-                  variation='achromic-plain'
                   onClick={() => setActiveTab(ind)}
                 >
                   {name}
