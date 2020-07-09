@@ -30,7 +30,8 @@ const FormLabel = styled(LabelBase)`
   display: inline-flex;
   align-items: center;
   font-family: ${themeVal('type.base.family')};
-  font-size: 1rem;
+  font-weight: ${themeVal('type.base.bold')};
+  font-size: 0.875rem;
   line-height: 1.5;
 
   &[for] {
