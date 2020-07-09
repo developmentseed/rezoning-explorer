@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import T from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { PanelBlockScroll, PanelBlockHeader } from './panel-block';
 import Button from '../../styles/button/button';
 import { listReset } from '../../styles/helpers/index';
@@ -29,7 +29,7 @@ const Tab = styled(Button)`
     margin: 0;
     bottom: 0;
     left: 50%;
-    content: '';
+    content: ''
     width: 0;
     height: 2px;
     background: ${themeVal('color.base')};
@@ -39,13 +39,12 @@ const Tab = styled(Button)`
     transition: width 0.24s ease-in-out 0s;
   }
 
-  &.active {
-    color: ${themeVal('color.base')};
-
-    &::after {
-      width: 105%;
-    }
-  }
+  ${({ active }) => active && css`
+      color: ${themeVal('color.base')};
+      &::after {
+        width: 105%;
+      }
+    `}
 `;
 
 const TabbedBlockHeader = styled(PanelBlockHeader)`
