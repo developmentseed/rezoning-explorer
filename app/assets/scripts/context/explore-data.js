@@ -1,11 +1,14 @@
 import { makeActions, makeFetchThunk, makeAPIReducer } from './reduxeed';
 import { wrapLogReducer } from './contexeed';
+import config from '../config';
+
+const { api } = config;
 
 const queryDataActions = makeActions('QUERY_DATA_SINGLE');
 
-export function fetchQueryData (type) {
+export function fetchQueryData (query) {
   return makeFetchThunk({
-    url: `http://localhost:8080/${type}.json`,
+    url: `${api}/${query}`,
     // cache: true,
     // statePath: ['spotlight', 'single', id],
     requestFn: queryDataActions.request,

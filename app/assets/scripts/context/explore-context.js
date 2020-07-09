@@ -8,13 +8,9 @@ const ExploreContext = createContext({});
 
 export function ExploreProvider (props) {
   const [countries, dispatchCountries] = useReducer(queryDataReducer, initialApiRequestState);
-  const [resources, dispatchResources] = useReducer(queryDataReducer, initialApiRequestState);
-  const [queryParams, dispatchQueryParams] = useReducer(queryDataReducer, initialApiRequestState);
 
   const getQueryData = () => {
-    fetchQueryData('country')(dispatchCountries);
-    fetchQueryData('resource')(dispatchResources);
-    fetchQueryData('query')(dispatchQueryParams);
+    fetchQueryData('countries')(dispatchCountries);
   };
 
   useEffect(getQueryData, []);
@@ -23,9 +19,7 @@ export function ExploreProvider (props) {
     <>
       <ExploreContext.Provider
         value={{
-          countries,
-          resources,
-          queryParams
+          countries
         }}
       >
         {props.children}

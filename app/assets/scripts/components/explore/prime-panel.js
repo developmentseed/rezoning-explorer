@@ -7,6 +7,8 @@ import ExploreContext from '../../context/explore-context';
 
 import QueryForm from './query-form';
 
+import { resourceList, weightsList, filtersList, lcoeList } from './panel-data';
+
 const PRESETS = [];
 
 const PrimePanel = styled(Panel)`
@@ -17,11 +19,10 @@ const PrimePanel = styled(Panel)`
 
 function ExpMapPrimePanel (props) {
   const { onPanelChange } = props;
-  const { resources, countries, queryParams } = useContext(ExploreContext);
+  const { countries } = useContext(ExploreContext);
 
-  const resourceList = resources.isReady() ? resources.getData().resources : [];
-  const countryList = countries.isReady() ? countries.getData().countries : [];
-  const { weightsList, lcoeList, filtersList } = queryParams.isReady() ? queryParams.getData() : { weightsList: [], lcoeList: [], filtersList: [] };
+  const countryList = countries.isReady()
+    ? countries.getData().countries.map(c => c.name) : [];
 
   return (
     <PrimePanel
