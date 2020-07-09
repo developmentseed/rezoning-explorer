@@ -15,6 +15,9 @@ import { themeVal } from '../../styles/utils/general';
 import PrimePanel from './prime-panel';
 import SecPanel from './sec-panel';
 import MbMap from '../common/mb-map/mb-map';
+import Modal from '../common/modal';
+
+import CardList from '../common/card-list';
 
 import { ExploreProvider } from '../../context/explore-context';
 
@@ -50,6 +53,7 @@ const ExploreCarto = styled.section`
 
 function Explore () {
   const [triggerResize, setTriggerResize] = useState(true);
+  const [showCountrySelect, setShowCountrySelect] = useState(true);
 
   return (
     <ExploreProvider>
@@ -70,11 +74,19 @@ function Explore () {
                 onPanelChange={() => {
                   setTriggerResize(!triggerResize);
                 }}
+                onCountryEdit={() => setShowCountrySelect(!showCountrySelect)}
               />
+              <Modal
+                visible={showCountrySelect}
+              >
+                <CardList>
+                </CardList>
+              </Modal>
+
               <ExploreCarto>
                 <MbMap
                   triggerResize={triggerResize}
-                />
+                />e
               </ExploreCarto>
               <SecPanel
                 onPanelChange={() => {

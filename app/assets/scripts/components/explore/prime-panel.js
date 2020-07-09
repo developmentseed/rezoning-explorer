@@ -18,7 +18,7 @@ const PrimePanel = styled(Panel)`
 `;
 
 function ExpMapPrimePanel (props) {
-  const { onPanelChange } = props;
+  const { onPanelChange, onCountryEdit } = props;
   const { countries } = useContext(ExploreContext);
 
   const countryList = countries.isReady()
@@ -44,6 +44,7 @@ function ExpMapPrimePanel (props) {
             filtersList={filtersList}
             lcoeList={lcoeList}
             presetList={PRESETS}
+            onCountryEdit={onCountryEdit}
           />
         </>
       }

@@ -69,7 +69,7 @@ const DropdownScroll = styled(Dropdown)`
 `;
 
 function QueryForm (props) {
-  const { countryList, resourceList, weightsList, filtersList, lcoeList } = props;
+  const { countryList, resourceList, weightsList, filtersList, lcoeList, onCountryEdit } = props;
   const [gridSize, setGridSize] = useState(INIT_GRID_SIZE);
 
   const initListToState = list => {
@@ -110,6 +110,10 @@ function QueryForm (props) {
           <Subheading>Country</Subheading>
           <OptionHeadline>
             <Heading>{activeCountry}</Heading>
+            <EditButton onClick={onCountryEdit}>
+                Edit Country Selection
+            </EditButton>
+
             <DropdownScroll
               alignment='right'
               direction='down'
