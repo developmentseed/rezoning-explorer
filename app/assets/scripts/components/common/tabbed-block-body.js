@@ -76,22 +76,23 @@ function TabbedBlock (props) {
     <>
       <TabbedBlockHeader as='nav' role='navigation'>
         <ul>
-          {
-            tabContent.map(([name, icon], ind) => (
-              <li key={name}>
-                <Tab
-                  as='a'
-                  active={ind === activeTab}
-                  useIcon={icon}
-                  title='Show menu'
-                  size='small'
-                  onClick={() => setActiveTab(ind)}
-                >
-                  {name}
-                </Tab>
-              </li>)
-            )
-          }
+          {tabContent.map(([name, icon], ind) => (
+            <li key={name}>
+              <Tab
+                as='a'
+                active={ind === activeTab}
+                useIcon={icon}
+                title='Show menu'
+                size='small'
+                onClick={(e) => {
+                  e.preventDefault();
+                  setActiveTab(ind);
+                }}
+              >
+                {name}
+              </Tab>
+            </li>
+          ))}
         </ul>
       </TabbedBlockHeader>
       <PanelBlockScroll>
