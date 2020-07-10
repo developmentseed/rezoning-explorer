@@ -1,18 +1,71 @@
 import React, { useState } from 'react';
 import T from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { PanelBlockScroll, PanelBlockHeader } from './panel-block';
 import Button from '../../styles/button/button';
+import { listReset } from '../../styles/helpers/index';
+import { themeVal } from '../../styles/utils/general';
+
 const Tab = styled(Button)`
-  flex: 1;
+  display: inline-flex;
+  user-select: none;
+  position: relative;
+  transition: color .16s ease-in-out 0s;
+  padding: 0.75rem 0;
+  color: ${themeVal('color.baseAlphaD')};
+
+  &,
+  &:visited {
+    background-color: transparent;
+    color: ${themeVal('color.baseAlphaD')};
+  }
+
+  &:hover {
+    opacity: 1;
+    color: ${themeVal('color.base')};
+    background-color: transparent;
+  }
+
+  &::after {
+    position: absolute;
+    margin: 0;
+    bottom: 0;
+    left: 50%;
+    content: '';
+    width: 0;
+    height: 2px;
+    background: ${themeVal('color.base')};
+    transform: translate(-50%, 0);
+
+    /* Animation */
+    transition: width 0.24s ease-in-out 0s;
+  }
+
+  ${({ active }) => active && css`
+      /* stylelint-disable-next-line */
+      &,
+      &:visited {
+        color: ${themeVal('color.base')};
+      }
+      /* stylelint-disable-next-line no-duplicate-selectors */
+      &::after {
+        width: 105%;
+      }
+    `}
 `;
+
 const TabbedBlockHeader = styled(PanelBlockHeader)`
-  display: flex;
-  flex-direction: row;
+  padding: 0 1.5rem;
+  ul {
+    ${listReset}
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+  }
 `;
 
 const ContentInner = styled.div`
-  padding: 1rem;
+  padding: 1.5rem;
 `;
 
 function TabbedBlock (props) {
@@ -21,21 +74,26 @@ function TabbedBlock (props) {
 
   return (
     <>
-      <TabbedBlockHeader>
-        {
-          tabContent.map(([name, icon], ind) => (
-            <Tab
-              key={name}
-              active={ind === activeTab}
-              useIcon={icon}
-              title='Show menu'
-              size='small'
-              onClick={() => setActiveTab(ind)}
-            >
-              {name}
-            </Tab>)
-          )
-        }
+      <TabbedBlockHeader as='nav' role='navigation'>
+        <ul>
+          {tabContent.map(([name, icon], ind) => (
+            <li key={name}>
+              <Tab
+                as='a'
+                active={ind === activeTab}
+                useIcon={icon}
+                title='Show menu'
+                size='small'
+                onClick={(e) => {
+                  e.preventDefault();
+                  setActiveTab(ind);
+                }}
+              >
+                {name}
+              </Tab>
+            </li>
+          ))}
+        </ul>
       </TabbedBlockHeader>
       <PanelBlockScroll>
         <ContentInner>

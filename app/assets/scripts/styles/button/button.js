@@ -106,6 +106,7 @@ const Button = styled(BaseButton)`
   border: 0;
   font-family: ${themeVal('type.base.family')};
   font-weight: ${themeVal('type.base.bold')};
+  text-transform: uppercase;
   cursor: pointer;
 
   /* States */
@@ -464,13 +465,13 @@ function renderButtonRadius (props) {
       return css`
         border-radius: ${themeVal('shape.ellipsoid')};
       `;
-    case 'square':
+    case 'rounded':
       return css`
-        border-radius: 0;
+        border-radius: ${themeVal('shape.rounded')};
       `;
     default:
       return css`
-        border-radius: ${themeVal('shape.rounded')};
+        border-radius: 0;
       `;
   }
 }

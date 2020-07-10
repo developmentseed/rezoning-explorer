@@ -2,7 +2,7 @@ import { rgba } from 'polished';
 
 let color = {
   baseLight: '#FFFFFF',
-  baseDark: '#2E265B',
+  baseDark: '#2E265B', // Deep Ocean
   primary: '#2276AC', // Ocean Blue
   secondary: '#2C3E50', // Midnight Blue
   tertiary: '#673285' // Royal Purple
@@ -38,7 +38,7 @@ const type = {
     size: '1rem',
     line: '1.5',
     color: color.base,
-    family: '"Open Sans", sans-serif',
+    family: '"IBM Plex Sans", sans-serif',
     style: 'normal',
     weight: 300,
     light: 300,
@@ -49,7 +49,7 @@ const type = {
     antialiasing: true
   },
   heading: {
-    family: '"Open Sans", sans-serif',
+    family: '"IBM Plex Sans", sans-serif',
     style: 'normal',
     weight: 700,
     light: 300,
@@ -57,6 +57,11 @@ const type = {
     medium: 400,
     bold: 700,
     extrabold: 800
+  },
+  mono: {
+    family: '"IBM Plex Mono", monospaced',
+    style: 'normal',
+    weight: 400
   }
 };
 

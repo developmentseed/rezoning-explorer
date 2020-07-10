@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
-import Panel, { PanelHeadline, PanelTitle } from '../common/panel';
+import Panel from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import ExploreContext from '../../context/explore-context';
 
@@ -13,7 +13,7 @@ const PRESETS = [];
 
 const PrimePanel = styled(Panel)`
   ${media.largeUp`
-    width: 18rem;
+    width: 20rem;
   `}
 `;
 
@@ -30,11 +30,6 @@ function ExpMapPrimePanel (props) {
       direction='left'
       onPanelChange={onPanelChange}
       initialState={isLargeViewport()}
-      headerContent={(
-        <PanelHeadline>
-          <PanelTitle>Explore</PanelTitle>
-        </PanelHeadline>
-      )}
       bodyContent={
         <>
           <QueryForm
