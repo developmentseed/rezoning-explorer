@@ -1,24 +1,22 @@
 import React from 'react';
 import styled from 'styled-components';
+import ShadowScrollbar from '../common/shadow-scrollbar';
 import T from 'prop-types';
 
 const CardWrapper = styled.article`
-  height: ${({ size }) => size === 'large' ? '50px' : '15px'}
+  height: ${({ size }) => size === 'large' ? '100px' : '15px'};
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  max-width: 100px;
+  justify-content:start;
 `;
 
 const CardMedia = styled.figure`
 `;
 const CardThumb = styled.div`
-    min-width: 4rem;
+  min-width: 4rem;
 `;
 const CardIcon = styled.img`
-      width: 3rem;
-      height: 2.5rem;
-
+  height: 100%;
 `;
 const CardTitle = styled.h4`
 `;
@@ -46,15 +44,21 @@ Card.propTypes = {
   size: T.oneOf(['small', 'large'])
 };
 
-const CardListWrapper = styled.ol`
+const CardListWrapper = styled(ShadowScrollbar)`
+  height: 60vh;
+`;
+const CardListContainer = styled.ol`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2.5rem;
 `;
 
 function CardList ({ data, renderItem }) {
   return (
     <CardListWrapper>
-      {data.map(renderItem)}
+      <CardListContainer>
+        {data.map(renderItem)}
+      </CardListContainer>
     </CardListWrapper>
   );
 }
