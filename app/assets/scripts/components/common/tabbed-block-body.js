@@ -42,6 +42,7 @@ const Tab = styled(Button)`
   }
 
   ${({ active }) => active && css`
+      /* stylelint-disable-next-line */
       &,
       &:visited {
         color: ${themeVal('color.base')};
