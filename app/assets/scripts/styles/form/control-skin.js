@@ -38,7 +38,7 @@ const controlSkin = () => css`
   height: ${({ size }) => heightMatrix[size]};
   padding: ${({ size }) => paddingMatrix[size]};
   background-color: ${themeVal('color.surface')};
-  border: ${themeVal('layout.border')} solid ${themeVal('color.baseAlphaB')};
+  border: ${themeVal('layout.border')} solid ${themeVal('color.baseAlphaC')};
   border-radius: ${themeVal('shape.rounded')};
   font-family: inherit;
   font-size: ${({ size }) => fontSizeMatrix[size]};
@@ -61,13 +61,13 @@ const controlSkin = () => css`
   }
 
   &:hover {
-    border-color: ${themeVal('color.baseAlphaC')};
+    border-color: ${themeVal('color.baseAlphaD')};
   }
 
   &:focus,
   &:active {
     outline: 0;
-    border-color: ${themeVal('color.baseAlphaD')};
+    border-color: ${themeVal('color.base')};
   }
 
   ${({ invalid }) =>

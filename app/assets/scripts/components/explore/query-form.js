@@ -18,44 +18,46 @@ const INIT_GRID_SIZE = 1;
 const DEFAULT_RANGE = [0, 100];
 const DEFAULT_UNIT = '%';
 const ParamTitle = styled.div`
-/* stylelint-disable */
+  /* stylelint-disable */
+  opacity: 0.9;
+  font-size: 0.875rem;
+  font-weight: ${themeVal('type.base.bold')};
 `;
 const HeadOption = styled.div`
   box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
+  padding: 1rem 0;
 `;
 const OptionHeadline = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: space-between;
 `;
 const PanelOption = styled.div`
+  margin-bottom: 1.5rem;
 `;
-const WeightsForm = styled.div`
-`;
-const FiltersForm = styled.div`
-`;
-const LCOEForm = styled.div`
-`;
+const WeightsForm = styled.div``;
+const FiltersForm = styled.div``;
+const LCOEForm = styled.div``;
 
 const EditButton = styled(Button).attrs({
   variation: 'base-plain',
   size: 'small',
   useIcon: 'pencil',
   hideText: true
-})``;
-
-const SelectionOption = styled.li`
+})`
+  opacity: 50%;
 `;
+
+const SelectionOption = styled.li``;
 
 const SelectionList = styled.ol`
   /* stylelint-enable */
 
   > ${SelectionOption}:hover {
-    color:${themeVal('color.tertiary')};
+    color: ${themeVal('color.tertiary')};
     background-color: ${themeVal('color.baseAlphaC')};
     cursor: pointer;
   }
-
 `;
 
 const SubmissionSection = styled(PanelBlockFooter)`
@@ -63,17 +65,24 @@ const SubmissionSection = styled(PanelBlockFooter)`
   grid-template-columns: 1fr 1fr;
   gap: 0rem 1rem;
 `;
-const DropdownScroll = styled(Dropdown)`
-  max-height: 60vh;
-  overflow-y:scroll;
-`;
 
 function QueryForm (props) {
-  const { countryList, resourceList, weightsList, filtersList, lcoeList, onCountryEdit } = props;
+  const {
+    countryList,
+    resourceList,
+    weightsList,
+    filtersList,
+    lcoeList,
+    onCountryEdit
+  } = props;
   const [gridSize, setGridSize] = useState(INIT_GRID_SIZE);
 
-  const initListToState = list => {
-    return list.map(obj => ({ ...obj, range: obj.range || DEFAULT_RANGE, unit: obj.unit || DEFAULT_UNIT }));
+  const initListToState = (list) => {
+    return list.map((obj) => ({
+      ...obj,
+      range: obj.range || DEFAULT_RANGE,
+      unit: obj.unit || DEFAULT_UNIT
+    }));
   };
 
   const updateStateList = (list, i, updatedValue) => {
@@ -87,7 +96,7 @@ function QueryForm (props) {
 
   const [weights, setWeights] = useState(initListToState(weightsList));
   const [filters, setFilters] = useState(initListToState(filtersList));
-  const [lcoe, setLcoe] = useState(lcoeList.map(e => ({ ...e, value: '' })));
+  const [lcoe, setLcoe] = useState(lcoeList.map((e) => ({ ...e, value: '' })));
 
   useEffect(() => {
     setActiveCountry(countryList[0]);
@@ -109,30 +118,27 @@ function QueryForm (props) {
         <HeadOption>
           <Subheading>Country</Subheading>
           <OptionHeadline>
-            <Heading>{activeCountry}</Heading>
+            <Heading size='large'>{activeCountry}</Heading>
             <EditButton onClick={onCountryEdit}>
                 Edit Country Selection
             </EditButton>
 
-            <DropdownScroll
+            <Dropdown
               alignment='right'
               direction='down'
-              triggerElement={
-                <EditButton>
-                Edit Country Selection
-                </EditButton>
-              }
+              triggerElement={<EditButton>Edit Country Selection</EditButton>}
             >
               <SelectionList>
-                {countryList.map(country => (
+                {countryList.map((country) => (
                   <SelectionOption
                     onClick={() => setActiveCountry(country)}
                     key={country}
-                  >{country}
+                  >
+                    {country}
                   </SelectionOption>
                 ))}
               </SelectionList>
-            </DropdownScroll>
+            </Dropdown>
           </OptionHeadline>
         </HeadOption>
 
@@ -144,18 +150,15 @@ function QueryForm (props) {
             <Dropdown
               alignment='right'
               direction='down'
-              triggerElement={
-                <EditButton>
-                  Edit Resource Selection
-                </EditButton>
-              }
+              triggerElement={<EditButton>Edit Resource Selection</EditButton>}
             >
               <SelectionList>
-                {resourceList.map(resource => (
+                {resourceList.map((resource) => (
                   <SelectionOption
                     key={resource}
                     onClick={() => setActiveResource(resource)}
-                  >{resource}
+                  >
+                    {resource}
                   </SelectionOption>
                 ))}
               </SelectionList>
@@ -166,15 +169,13 @@ function QueryForm (props) {
         <HeadOption>
           <Subheading>Grid Size</Subheading>
           <OptionHeadline>
-            <Heading>{gridSize} km<sup>2</sup></Heading>
+            <Heading>
+              {gridSize} km<sup>2</sup>
+            </Heading>
             <Dropdown
               alignment='right'
               direction='down'
-              triggerElement={
-                <EditButton>
-                Edit Grid Size
-                </EditButton>
-              }
+              triggerElement={<EditButton>Edit Grid Size</EditButton>}
             >
               <SliderGroup
                 unit='km^2'
@@ -185,11 +186,14 @@ function QueryForm (props) {
             </Dropdown>
           </OptionHeadline>
         </HeadOption>
-
       </PanelBlockHeader>
 
       <TabbedBlockBody
-        tabContent={[['Weights', 'house'], ['Filters', 'crosshair'], ['LCOE', 'crosshair']]}
+        tabContent={[
+          ['Weights', 'sliders-horizontal'],
+          ['Filters', 'compass'],
+          ['LCOE', 'disc-dollar']
+        ]}
       >
         <WeightsForm>
           {weights.map((weight, ind) => (
@@ -199,9 +203,13 @@ function QueryForm (props) {
                 unit={weight.unit || '%'}
                 range={weight.range || [0, 100]}
                 id={weight.name}
-                value={weight.value === undefined ? weight.range[0] : weight.value}
-                onChange={value => {
-                  setWeights(updateStateList(weights, ind, { ...weight, value }));
+                value={
+                  weight.value === undefined ? weight.range[0] : weight.value
+                }
+                onChange={(value) => {
+                  setWeights(
+                    updateStateList(weights, ind, { ...weight, value })
+                  );
                 }}
               />
             </PanelOption>
@@ -216,9 +224,13 @@ function QueryForm (props) {
                 unit={filter.unit || '%'}
                 range={filter.range || [0, 100]}
                 id={filter.name}
-                value={filter.value === undefined ? filter.range[0] : filter.value}
-                onChange={value => {
-                  setFilters(updateStateList(filters, ind, { ...filter, value }));
+                value={
+                  filter.value === undefined ? filter.range[0] : filter.value
+                }
+                onChange={(value) => {
+                  setFilters(
+                    updateStateList(filters, ind, { ...filter, value })
+                  );
                 }}
               />
             </PanelOption>
@@ -229,7 +241,7 @@ function QueryForm (props) {
           {lcoe.map((filter, ind) => (
             <PanelOption key={filter.name}>
               <StressedFormGroupInput
-                inputType='text'
+                inputType='number'
                 inputSize='small'
                 id={`${filter.name}`}
                 name={`${filter.name}`}
@@ -243,16 +255,29 @@ function QueryForm (props) {
             </PanelOption>
           ))}
         </LCOEForm>
-
       </TabbedBlockBody>
 
       <SubmissionSection>
-        <Button type='reset' onClick={resetClick}>Reset</Button>
-        <Button type='submit' onClick={applyClick}>Apply</Button>
+        <Button
+          type='reset'
+          size='small'
+          onClick={resetClick}
+          variation='base-raised-light'
+          useIcon='arrow-loop'
+        >
+          Reset
+        </Button>
+        <Button
+          type='submit'
+          size='small'
+          onClick={applyClick}
+          variation='base-raised-dark'
+          useIcon='tick--small'
+        >
+          Apply
+        </Button>
       </SubmissionSection>
-
     </PanelBlock>
-
   );
 }
 QueryForm.propTypes = {

@@ -25,7 +25,7 @@ export const PanelSelf = styled.section`
 
   ${({ revealed }) => revealed && css`
     ${panelSkin()}
-    max-width: 100vw;
+    max-width: calc(100vw - 4rem);
     z-index: 15;
 
     ${media.largeUp`
