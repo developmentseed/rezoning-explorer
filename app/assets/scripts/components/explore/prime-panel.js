@@ -77,6 +77,10 @@ function ExpMapPrimePanel (props) {
             title={country.name}
             iconPath={`/assets/graphics/content/flags-4x3/${country.id}.svg`}
             size='small'
+            onClick={() => {
+              setShowCountrySelect(false);
+            }}
+
           />
         )}
       />
@@ -96,6 +100,9 @@ function ExpMapPrimePanel (props) {
             title={resource}
             // iconPath={`/assets/graphics/content/flags-4x3/${country.id}.svg`}
             size='large'
+            onClick={() => {
+              setShowResourceSelect(false);
+            }}
           />
         )}
       />

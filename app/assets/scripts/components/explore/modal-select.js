@@ -9,13 +9,12 @@ function ModalSelect (props) {
   return (
     <Modal
       id='country-select'
+      className='select'
       size='medium'
       revealed={revealed}
       onOverlayClick={onOverlayClick}
       closeButton={false}
-
       renderHeader={renderHeader}
-
       content={
         <CardList
           data={data}

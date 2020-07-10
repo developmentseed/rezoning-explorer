@@ -21,10 +21,11 @@ const CardIcon = styled.img`
 const CardTitle = styled.h4`
 `;
 
-export const Card = ({ title, iconPath, size }) => {
+export const Card = ({ title, iconPath, size, onClick }) => {
   return (
     <CardWrapper
       size={size}
+      onClick={onClick}
     >
       <CardMedia>
         <CardThumb>
