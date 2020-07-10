@@ -17,6 +17,7 @@ import Heading, { Subheading } from '../../styles/type/heading';
 const INIT_GRID_SIZE = 1;
 const DEFAULT_RANGE = [0, 100];
 const DEFAULT_UNIT = '%';
+
 const ParamTitle = styled.div`
   /* stylelint-disable */
   opacity: 0.9;
@@ -73,7 +74,8 @@ function QueryForm (props) {
     weightsList,
     filtersList,
     lcoeList,
-    onCountryEdit
+    onCountryEdit,
+    onResourceEdit
   } = props;
   const [gridSize, setGridSize] = useState(INIT_GRID_SIZE);
 
@@ -147,6 +149,7 @@ function QueryForm (props) {
 
           <OptionHeadline>
             <Heading>{activeResource}</Heading>
+            <EditButton onClick={onResourceEdit}>Edit Resource Selection</EditButton>
             <Dropdown
               alignment='right'
               direction='down'
@@ -285,7 +288,9 @@ QueryForm.propTypes = {
   resourceList: T.array,
   weightsList: T.array,
   filtersList: T.array,
-  lcoeList: T.array
+  lcoeList: T.array,
+  onResourceEdit: T.func,
+  onCountryEdit: T.func
 };
 
 export default QueryForm;

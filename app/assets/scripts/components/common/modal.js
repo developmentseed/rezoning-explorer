@@ -1,28 +1,29 @@
 import React from 'react';
+import T from 'prop-types';
 import styled from 'styled-components';
 
-const ModalWrapper = styled.div`
-  position: fixed;
-  z-index: 16;
-  width: 60vw;
-  height: 60vh;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  background: white;
+import { ModalHeader as LibraryModalHeader } from '@devseed-ui/modal';
+
+const HeaderWrapper = styled(LibraryModalHeader)`
+  display: grid;
+  grid-template-columns: 1fr;
 `;
 
-function Modal (props) {
-  const { visible, children } = props;
+const Headline = styled.h1`
+  text-align: center; 
+`;
+
+export const ModalHeader = ({ title, children }) => {
   return (
-    <>
-      {visible &&
-      <ModalWrapper>
-        {props.children}
-      </ModalWrapper>}
+    <HeaderWrapper>
+      <Headline>{title}</Headline>
+      {children}
+    </HeaderWrapper>
 
-    </>
   );
-}
+};
 
-export default Modal;
+ModalHeader.propTypes = {
+  title: T.string,
+  children: T.node
+};

@@ -1,4 +1,4 @@
-export const resourceList = ['Zambia', 'Nairobi', 'Mozambique'];
+export const resourceList = ['Solar', 'Wind', 'Off-Shore Wind'];
 
 export const filtersList = [
   { name: 'Zone Score', range: [0, 1] },
