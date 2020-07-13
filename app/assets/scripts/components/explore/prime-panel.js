@@ -32,10 +32,10 @@ function ExpMapPrimePanel (props) {
   const [showCountrySelect, setShowCountrySelect] = useState(true);
   const [showResourceSelect, setShowResourceSelect] = useState(true);
 
-  const [selectedCountry, setSelectedCountry] = useState('Select a country');
+  const [selectedCountry, setSelectedCountry] = useState(null);
   const [countryFilter, setCountryFilter] = useState('');
 
-  const [selectedResource, setSelectedResource] = useState('Select a resource');
+  const [selectedResource, setSelectedResource] = useState(null);
 
   const { countries } = useContext(ExploreContext);
 
@@ -64,7 +64,9 @@ function ExpMapPrimePanel (props) {
       <ModalSelect
         revealed={showResourceSelect}
         onOverlayClick={() => {
-          setShowResourceSelect(false);
+          if (selectedResource) {
+            setShowResourceSelect(false);
+          }
         }}
         data={resourceList}
         renderHeader={() => (
@@ -87,7 +89,9 @@ function ExpMapPrimePanel (props) {
       <ModalSelect
         revealed={showCountrySelect}
         onOverlayClick={() => {
-          setShowCountrySelect(false);
+          if (selectedResource) {
+            setShowCountrySelect(false);
+          }
         }}
         data={countries.isReady() ? countries.getData().countries : []}
         renderHeader={() => (
