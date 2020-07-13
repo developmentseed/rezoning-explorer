@@ -18,7 +18,7 @@ const CardWrapper = styled.article`
     0 16px 48px -16px ${themeVal('color.baseAlphaB')};
 
   cursor: pointer;
-
+  transition: all .16s ease 0s;
   &:hover {
     box-shadow: 0 0 32px 4px ${themeVal('color.baseAlphaA')},
       0 16px 48px -8px ${themeVal('color.baseAlphaB')};
@@ -30,6 +30,18 @@ const CardMedia = styled.figure`
   display: flex;
   margin: 0.5rem;
   margin-right: 0;
+  position: relative;
+  &:before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    content: "";
+    box-shadow: inset 0 0 0 1px ${themeVal('color.baseAlphaB')};
+    pointer-events: none;
+  }
 `;
 const CardIcon = styled.img`
   width: 3rem;
