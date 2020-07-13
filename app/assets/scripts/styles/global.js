@@ -163,6 +163,10 @@ const baseStyles = css`
       min-height: ${({ innerHeight }) => `${innerHeight}px`};
     }
   }
+
+  #country-select {
+    background: ${_rgba(themeVal('color.surface'), 0.64)};;
+  }
 `;
 
 export default createGlobalStyle`
