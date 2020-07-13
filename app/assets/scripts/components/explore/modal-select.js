@@ -4,7 +4,7 @@ import { Modal } from '@devseed-ui/modal';
 import CardList from '../common/card-list';
 
 function ModalSelect (props) {
-  const { revealed, onOverlayClick, data, renderHeader, renderCard } = props;
+  const { revealed, onOverlayClick, data, renderHeader, renderCard, filterCard } = props;
 
   return (
     <Modal
@@ -15,10 +15,12 @@ function ModalSelect (props) {
       onOverlayClick={onOverlayClick}
       closeButton={false}
       renderHeader={renderHeader}
+      filterCard={filterCard}
       content={
         <CardList
           data={data}
-          renderItem={renderCard}
+          renderCard={renderCard}
+          filterCard={filterCard}
         />
       }
     />

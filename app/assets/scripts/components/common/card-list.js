@@ -4,7 +4,7 @@ import ShadowScrollbar from '../common/shadow-scrollbar';
 import T from 'prop-types';
 
 const CardWrapper = styled.article`
-  height: ${({ size }) => size === 'large' ? '100px' : '15px'};
+  height: ${({ size }) => size === 'large' ? '5rem' : '3rem'};
   display: flex;
   flex-direction: row;
   justify-content:start;
@@ -54,11 +54,14 @@ const CardListContainer = styled.ol`
   gap: 2.5rem;
 `;
 
-function CardList ({ data, renderItem }) {
+function CardList ({ data, renderCard, filterCard = () => true }) {
   return (
     <CardListWrapper>
       <CardListContainer>
-        {data.map(renderItem)}
+        { data
+          .filter(filterCard)
+          .map(renderCard)
+        }
       </CardListContainer>
     </CardListWrapper>
   );
@@ -66,7 +69,9 @@ function CardList ({ data, renderItem }) {
 
 CardList.propTypes = {
   data: T.array,
-  renderItem: T.func
+  renderCard: T.func,
+  filterCard: T.func,
+  onClick: T.func
 };
 
 export default CardList;

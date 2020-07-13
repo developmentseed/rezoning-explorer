@@ -29,6 +29,7 @@ function ExpMapPrimePanel (props) {
 
   const [showCountrySelect, setShowCountrySelect] = useState(false);
   const [showResourceSelect, setShowResourceSelect] = useState(false);
+  const [countryFilter, setCountryFilter] = useState('');
 
   const { countries } = useContext(ExploreContext);
 
@@ -57,6 +58,7 @@ function ExpMapPrimePanel (props) {
           </>
         }
       />
+
       <ModalSelect
         revealed={showCountrySelect}
         onOverlayClick={() => {
@@ -68,9 +70,12 @@ function ExpMapPrimePanel (props) {
             <SearchBar
               type='text'
               placeholder='Start typing countryname to see your choice, or click on a country below'
+              onChange={e => setCountryFilter(e.target.value)}
+              value={countryFilter}
             />
           </ModalHeader>
         )}
+        filterCard={(country) => country.name.includes(countryFilter)}
         renderCard={(country) => (
           <Card
             key={country.name}
@@ -79,8 +84,8 @@ function ExpMapPrimePanel (props) {
             size='small'
             onClick={() => {
               setShowCountrySelect(false);
+              console.log(country)
             }}
-
           />
         )}
       />
@@ -92,7 +97,7 @@ function ExpMapPrimePanel (props) {
         }}
         data={resourceList}
         renderHeader={() => (
-          <ModalHeader title='Select Country' />
+          <ModalHeader title='Select Resouce' />
         )}
         renderCard={(resource) => (
           <Card
