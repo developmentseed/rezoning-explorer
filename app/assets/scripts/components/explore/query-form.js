@@ -116,7 +116,7 @@ function QueryForm (props) {
         <HeadOption>
           <Subheading>Country</Subheading>
           <OptionHeadline>
-            <Heading size='xlarge' variation='primary'>{activeCountry}</Heading>
+            <Heading size='large' variation='primary'>{activeCountry}</Heading>
             <Dropdown
               alignment='right'
               direction='down'
