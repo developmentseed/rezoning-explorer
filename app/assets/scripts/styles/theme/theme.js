@@ -1,16 +1,15 @@
-import { rgba } from 'polished';
+import { rgba, desaturate, lighten } from 'polished';
 
 let color = {
   baseLight: '#FFFFFF',
-  baseDark: '#2E265B', // Deep Ocean
-  primary: '#2276AC', // Ocean Blue
+  primary: '#2E265B', // Deep Ocean
   secondary: '#2C3E50', // Midnight Blue
   tertiary: '#673285' // Royal Purple
 };
 
 color = {
   ...color,
-  base: color.baseDark,
+  base: color.primary,
   background: color.baseLight,
   surface: color.baseLight,
   link: color.primary,
@@ -37,7 +36,7 @@ const type = {
     root: '16px',
     size: '1rem',
     line: '1.5',
-    color: color.base,
+    color: lighten(0.16, (desaturate(0.28, color.primary))),
     family: '"IBM Plex Sans", sans-serif',
     style: 'normal',
     weight: 300,
