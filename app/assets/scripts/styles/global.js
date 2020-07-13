@@ -164,7 +164,7 @@ const baseStyles = css`
     }
   }
 
-  #country-select {
+  #modal-select {
     background: ${themeVal('color.baseAlphaB')};
   }
 `;

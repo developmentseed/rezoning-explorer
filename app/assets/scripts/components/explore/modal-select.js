@@ -8,7 +8,7 @@ function ModalSelect (props) {
 
   return (
     <Modal
-      id='country-select'
+      id='modal-select'
       className='select'
       size='xlarge'
       revealed={revealed}
