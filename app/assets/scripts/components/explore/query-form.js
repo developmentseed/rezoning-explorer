@@ -19,7 +19,6 @@ const DEFAULT_RANGE = [0, 100];
 const DEFAULT_UNIT = '%';
 const ParamTitle = styled.div`
   /* stylelint-disable */
-  opacity: 0.9;
   font-size: 0.875rem;
   font-weight: ${themeVal('type.base.bold')};
 `;
@@ -117,7 +116,7 @@ function QueryForm (props) {
         <HeadOption>
           <Subheading>Country</Subheading>
           <OptionHeadline>
-            <Heading size='large'>{activeCountry}</Heading>
+            <Heading size='xlarge' variation='primary'>{activeCountry}</Heading>
             <Dropdown
               alignment='right'
               direction='down'
@@ -141,7 +140,7 @@ function QueryForm (props) {
           <Subheading>Resource</Subheading>
 
           <OptionHeadline>
-            <Heading>{activeResource}</Heading>
+            <Heading size='large' variation='primary'>{activeResource}</Heading>
             <Dropdown
               alignment='right'
               direction='down'
@@ -266,7 +265,7 @@ function QueryForm (props) {
           type='submit'
           size='small'
           onClick={applyClick}
-          variation='base-raised-dark'
+          variation='primary-raised-dark'
           useIcon='tick--small'
         >
           Apply

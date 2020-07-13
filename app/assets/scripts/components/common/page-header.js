@@ -22,7 +22,7 @@ const _rgba = stylizeFunction(rgba);
 const { appTitle, appShortTitle } = config;
 
 const PageHead = styled.header`
-  background-color: ${themeVal('color.base')};
+  background-color: ${themeVal('color.primary')};
   color: ${themeVal('color.baseLight')};
   position: sticky;
   z-index: 20;
