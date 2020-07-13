@@ -165,7 +165,7 @@ const baseStyles = css`
   }
 
   #country-select {
-    background: ${_rgba(themeVal('color.surface'), 0.64)};;
+    background: ${themeVal('color.baseAlphaB')};
   }
 `;
 
