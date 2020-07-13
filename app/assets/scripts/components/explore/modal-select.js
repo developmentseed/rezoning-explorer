@@ -10,7 +10,7 @@ function ModalSelect (props) {
     <Modal
       id='country-select'
       className='select'
-      size='medium'
+      size='xlarge'
       revealed={revealed}
       onOverlayClick={onOverlayClick}
       closeButton={false}
