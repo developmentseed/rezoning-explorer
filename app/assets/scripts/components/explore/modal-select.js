@@ -32,6 +32,7 @@ ModalSelect.propTypes = {
   onOverlayClick: T.func,
   data: T.array,
   renderHeader: T.func,
-  renderCard: T.func
+  renderCard: T.func,
+  filterCard: T.func
 };
 export default ModalSelect;

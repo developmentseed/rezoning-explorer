@@ -22,21 +22,21 @@ const PrimePanel = styled(Panel)`
   `}
 `;
 const SearchBar = styled(FormInput)`
+/* stylelint-disable no-empty-source */
 `;
 
 function ExpMapPrimePanel (props) {
   const { onPanelChange } = props;
 
-  const [showCountrySelect, setShowCountrySelect] = useState(false);
-  const [showResourceSelect, setShowResourceSelect] = useState(false);
+  const [showCountrySelect, setShowCountrySelect] = useState(true);
+  const [showResourceSelect, setShowResourceSelect] = useState(true);
 
-  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState('Select a country');
   const [countryFilter, setCountryFilter] = useState('');
 
-  const { countries } = useContext(ExploreContext);
+  const [selectedResource, setSelectedResource] = useState('Select a resource');
 
-  /*const countryList = countries.isReady()
-    ? countries.getData().countries.map(c => c.name) : [];*/
+  const { countries } = useContext(ExploreContext);
 
   return (
     <>
@@ -49,7 +49,7 @@ function ExpMapPrimePanel (props) {
           <>
             <QueryForm
               country={selectedCountry}
-              resourceList={resourceList}
+              resource={selectedResource}
               weightsList={weightsList}
               filtersList={filtersList}
               lcoeList={lcoeList}
@@ -59,6 +59,28 @@ function ExpMapPrimePanel (props) {
             />
           </>
         }
+      />
+      <ModalSelect
+        revealed={showResourceSelect}
+        onOverlayClick={() => {
+          setShowResourceSelect(false);
+        }}
+        data={resourceList}
+        renderHeader={() => (
+          <ModalHeader title='Select Resouce' />
+        )}
+        renderCard={(resource) => (
+          <Card
+            key={resource}
+            title={resource}
+            // iconPath={`/assets/graphics/content/flags-4x3/${country.id}.svg`}
+            size='large'
+            onClick={() => {
+              setShowResourceSelect(false);
+              setSelectedResource(resource);
+            }}
+          />
+        )}
       />
 
       <ModalSelect
@@ -86,36 +108,12 @@ function ExpMapPrimePanel (props) {
             size='small'
             onClick={() => {
               setShowCountrySelect(false);
-              setSelectedCountry(country.name)
+              setSelectedCountry(country.name);
             }}
           />
         )}
       />
-
-      <ModalSelect
-        revealed={showResourceSelect}
-        onOverlayClick={() => {
-          setShowResourceSelect(false);
-        }}
-        data={resourceList}
-        renderHeader={() => (
-          <ModalHeader title='Select Resouce' />
-        )}
-        renderCard={(resource) => (
-          <Card
-            key={resource}
-            title={resource}
-            // iconPath={`/assets/graphics/content/flags-4x3/${country.id}.svg`}
-            size='large'
-            onClick={() => {
-              setShowResourceSelect(false);
-            }}
-          />
-        )}
-      />
-
     </>
-
   );
 }
 

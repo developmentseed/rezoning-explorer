@@ -11,6 +11,7 @@ const CardWrapper = styled.article`
 `;
 
 const CardMedia = styled.figure`
+/* stylelint-disable */
 `;
 const CardThumb = styled.div`
   min-width: 4rem;
@@ -19,6 +20,7 @@ const CardIcon = styled.img`
   height: 100%;
 `;
 const CardTitle = styled.h4`
+/* stylelint-enable */
 `;
 
 export const Card = ({ title, iconPath, size, onClick }) => {
@@ -42,7 +44,8 @@ export const Card = ({ title, iconPath, size, onClick }) => {
 Card.propTypes = {
   title: T.string,
   iconPath: T.string,
-  size: T.oneOf(['small', 'large'])
+  size: T.oneOf(['small', 'large']),
+  onClick: T.func
 };
 
 const CardListWrapper = styled(ShadowScrollbar)`
@@ -60,8 +63,7 @@ function CardList ({ data, renderCard, filterCard = () => true }) {
       <CardListContainer>
         { data
           .filter(filterCard)
-          .map(renderCard)
-        }
+          .map(renderCard)}
       </CardListContainer>
     </CardListWrapper>
   );
@@ -70,8 +72,7 @@ function CardList ({ data, renderCard, filterCard = () => true }) {
 CardList.propTypes = {
   data: T.array,
   renderCard: T.func,
-  filterCard: T.func,
-  onClick: T.func
+  filterCard: T.func
 };
 
 export default CardList;
