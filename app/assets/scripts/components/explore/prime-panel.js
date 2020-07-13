@@ -22,7 +22,8 @@ const PrimePanel = styled(Panel)`
   `}
 `;
 const SearchBar = styled(FormInput)`
-/* stylelint-disable no-empty-source */
+  max-width: 60ch;
+  margin: 0 auto;
 `;
 
 function ExpMapPrimePanel (props) {
@@ -93,7 +94,7 @@ function ExpMapPrimePanel (props) {
           <ModalHeader title='Select Country'>
             <SearchBar
               type='text'
-              placeholder='Start typing countryname to see your choice, or click on a country below'
+              placeholder='Start typing country name to see your choice, or click on a country below'
               onChange={e => setCountryFilter(e.target.value)}
               value={countryFilter}
             />
