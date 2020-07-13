@@ -36,7 +36,7 @@ const type = {
     root: '16px',
     size: '1rem',
     line: '1.5',
-    color: lighten(0.16, (desaturate(0.28, color.primary))),
+    color: lighten(0.12, (desaturate(0.28, color.primary))),
     family: '"IBM Plex Sans", sans-serif',
     style: 'normal',
     weight: 300,
