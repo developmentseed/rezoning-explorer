@@ -69,7 +69,7 @@ const SubmissionSection = styled(PanelBlockFooter)`
 
 function QueryForm (props) {
   const {
-    countryList,
+    country,
     resourceList,
     weightsList,
     filtersList,
@@ -93,16 +93,18 @@ function QueryForm (props) {
     return updated;
   };
 
-  const [activeCountry, setActiveCountry] = useState(countryList[0]);
+  // const [activeCountry, setActiveCountry] = useState(countryList[0]);
   const [activeResource, setActiveResource] = useState(resourceList[0]);
 
   const [weights, setWeights] = useState(initListToState(weightsList));
   const [filters, setFilters] = useState(initListToState(filtersList));
   const [lcoe, setLcoe] = useState(lcoeList.map((e) => ({ ...e, value: '' })));
 
+  /*
   useEffect(() => {
     setActiveCountry(countryList[0]);
   }, [countryList]);
+  */
 
   const applyClick = () => {
     // handle submission and search
@@ -120,10 +122,11 @@ function QueryForm (props) {
         <HeadOption>
           <Subheading>Country</Subheading>
           <OptionHeadline>
-            <Heading size='large'>{activeCountry}</Heading>
+            <Heading size='large'>{country}</Heading>
             <EditButton onClick={onCountryEdit}>
                 Edit Country Selection
             </EditButton>
+            {/*
 
             <Dropdown
               alignment='right'
@@ -140,7 +143,7 @@ function QueryForm (props) {
                   </SelectionOption>
                 ))}
               </SelectionList>
-            </Dropdown>
+            </Dropdown> */}
           </OptionHeadline>
         </HeadOption>
 

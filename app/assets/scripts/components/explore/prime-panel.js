@@ -29,12 +29,14 @@ function ExpMapPrimePanel (props) {
 
   const [showCountrySelect, setShowCountrySelect] = useState(false);
   const [showResourceSelect, setShowResourceSelect] = useState(false);
+
+  const [selectedCountry, setSelectedCountry] = useState(null);
   const [countryFilter, setCountryFilter] = useState('');
 
   const { countries } = useContext(ExploreContext);
 
-  const countryList = countries.isReady()
-    ? countries.getData().countries.map(c => c.name) : [];
+  /*const countryList = countries.isReady()
+    ? countries.getData().countries.map(c => c.name) : [];*/
 
   return (
     <>
@@ -46,7 +48,7 @@ function ExpMapPrimePanel (props) {
         bodyContent={
           <>
             <QueryForm
-              countryList={countryList}
+              country={selectedCountry}
               resourceList={resourceList}
               weightsList={weightsList}
               filtersList={filtersList}
@@ -84,7 +86,7 @@ function ExpMapPrimePanel (props) {
             size='small'
             onClick={() => {
               setShowCountrySelect(false);
-              console.log(country)
+              setSelectedCountry(country.name)
             }}
           />
         )}
