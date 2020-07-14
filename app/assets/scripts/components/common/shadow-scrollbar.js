@@ -39,7 +39,7 @@ const ScrollShadow = styled.div`
         `;
       case 'dark':
         return css`
-          background: linear-gradient(to bottom, ${_rgba(themeVal('color.baseDark'), 1)} 0%, ${_rgba(themeVal('color.baseDark'), 0)} 100%);
+          background: linear-gradient(to bottom, ${_rgba(themeVal('color.primary'), 1)} 0%, ${_rgba(themeVal('color.primary'), 0)} 100%);
         `;
     }
   }}

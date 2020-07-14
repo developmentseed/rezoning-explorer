@@ -51,7 +51,7 @@ export default () => css`
     height: 0.5rem;
 
     &--active {
-      background: ${themeVal('color.base')};
+      background: ${themeVal('color.primary')};
     }
   }
 `;

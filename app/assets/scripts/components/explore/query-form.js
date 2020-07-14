@@ -116,7 +116,7 @@ function QueryForm (props) {
         <HeadOption>
           <Subheading>Country</Subheading>
           <OptionHeadline>
-            <Heading size='large'>{country}</Heading>
+            <Heading size='large' variation='primary'>{country}</Heading>
             <EditButton onClick={onCountryEdit}>
                 Edit Country Selection
             </EditButton>
@@ -127,7 +127,7 @@ function QueryForm (props) {
           <Subheading>Resource</Subheading>
 
           <OptionHeadline>
-            <Heading>{resource}</Heading>
+            <Heading size='large' variation='primary'>{resource}</Heading>
             <EditButton onClick={onResourceEdit}>Edit Resource Selection</EditButton>
           </OptionHeadline>
         </HeadOption>
@@ -255,7 +255,7 @@ function QueryForm (props) {
           type='submit'
           size='small'
           onClick={applyClick}
-          variation='base-raised-dark'
+          variation='primary-raised-dark'
           useIcon='tick--small'
         >
           Apply
