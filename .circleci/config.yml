@@ -50,6 +50,23 @@ jobs:
           <<: *restore_cache_def
       - run: yarn gulp collecticons
       - run: yarn test
+  ci:
+    docker:
+      - image: cypress/base:12
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - cypress-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - cypress-deps-{{ .Branch }}-
+            - cypress-deps-
+      - run: yarn install
+      - save_cache:
+          key: cypress-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+      - run: yarn cy:test
   build:
     <<: *base_def
     steps:
@@ -86,6 +103,7 @@ workflows:
       - test:
           requires:
             - prepare
+      - ci
       - build:
           requires:
             - prepare
