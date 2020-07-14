@@ -7,7 +7,7 @@ const AccordionFoldSelf = styled.section`
 `;
 
 const AccordionFoldBody = styled.div`
-  overflow: hidden;
+  overflow: visible;
   transition: max-height 320ms ease-in-out, opacity 320ms ease-in-out;
   opacity: ${({ isExpanded }) => (isExpanded ? 1 : 0)};
   max-height: ${({ isExpanded }) => (isExpanded ? '400vh' : 0)};

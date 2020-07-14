@@ -43,11 +43,13 @@ const OptionHeadline = styled.div`
   justify-content: space-between;
 `;
 
-const FormWrapper = styled.div`
+const FormWrapper = styled.section`
   /* stylelint-disable-next-line */
 `;
+
 const FormGroupWrapper = styled.div`
-  /* stylelint-disable-next-line */
+  box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
+  padding: 1rem 0;
 `;
 
 const EditButton = styled(Button).attrs({
@@ -218,76 +220,74 @@ function QueryForm (props) {
           ))}
         </FormWrapper>
 
-        <FormWrapper>
-          <Accordion allowMultiple>
-            {({ checkExpanded, setExpanded }) => (
-              Object.entries(filters)
-                .map(([group, list], idx) => {
-                  return (
-                    <AccordionFold
-                      key={group}
-                      forwardedAs={FormGroupWrapper}
-                      isFoldExpanded={checkExpanded(idx)}
-                      setFoldExpanded={(v) => setExpanded(idx, v)}
-                      renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                        <AccordionFoldTrigger
-                          isExpanded={isFoldExpanded}
-                          onClick={() => setFoldExpanded(!isFoldExpanded)}
-                        >
-                          <Heading size='medium' variation='primary'>
-                            {makeTitleCase(group.replace(/_/g, ' '))}
-                          </Heading>
-                        </AccordionFoldTrigger>
-                      )}
-                      renderBody={() => (
-                        list.map((filter, ind) => (
-                          <PanelOption key={filter.name}>
-                            <OptionHeadline>
-                              <PanelOptionTitle>{filter.name}</PanelOptionTitle>
-                              <FormSwitch
-                                hideText
-                                name={`toggle-${filter.name.replace(/ /g, '-')}`}
-                                disabled={filter.disabled}
-                                checked={filter.active}
-                                onChange={() => {
-                                  setFilters({
-                                    ...filters,
-                                    [group]: updateStateList(list, ind, { ...filter, active: !filter.active })
-                                  }
-                                  );
-                                }}
-
-                              >
-                                Toggle filter
-                              </FormSwitch>
-
-                            </OptionHeadline>
-                            <SliderGroup
-                              unit={filter.unit || '%'}
-                              range={filter.range || [0, 100]}
-                              id={filter.name}
-                              value={
-                                filter.value === undefined ? filter.range[0] : filter.value
-                              }
-                              onChange={(value) => {
+        <Accordion allowMultiple as={FormWrapper}>
+          {({ checkExpanded, setExpanded }) => (
+            Object.entries(filters)
+              .map(([group, list], idx) => {
+                return (
+                  <AccordionFold
+                    key={group}
+                    forwardedAs={FormGroupWrapper}
+                    isFoldExpanded={checkExpanded(idx)}
+                    setFoldExpanded={(v) => setExpanded(idx, v)}
+                    renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                      <AccordionFoldTrigger
+                        isExpanded={isFoldExpanded}
+                        onClick={() => setFoldExpanded(!isFoldExpanded)}
+                      >
+                        <Heading size='medium' variation='primary'>
+                          {makeTitleCase(group.replace(/_/g, ' '))}
+                        </Heading>
+                      </AccordionFoldTrigger>
+                    )}
+                    renderBody={() => (
+                      list.map((filter, ind) => (
+                        <PanelOption key={filter.name}>
+                          <OptionHeadline>
+                            <PanelOptionTitle>{filter.name}</PanelOptionTitle>
+                            <FormSwitch
+                              hideText
+                              name={`toggle-${filter.name.replace(/ /g, '-')}`}
+                              disabled={filter.disabled}
+                              checked={filter.active}
+                              onChange={() => {
                                 setFilters({
                                   ...filters,
-                                  [group]: updateStateList(list, ind, { ...filter, value })
+                                  [group]: updateStateList(list, ind, { ...filter, active: !filter.active })
                                 }
                                 );
                               }}
-                            />
 
-                          </PanelOption>
-                        )))}
-                    />
+                            >
+                                Toggle filter
+                            </FormSwitch>
 
-                  );
-                })
-            )}
+                          </OptionHeadline>
+                          <SliderGroup
+                            unit={filter.unit || '%'}
+                            range={filter.range || [0, 100]}
+                            id={filter.name}
+                            value={
+                              filter.value === undefined ? filter.range[0] : filter.value
+                            }
+                            onChange={(value) => {
+                              setFilters({
+                                ...filters,
+                                [group]: updateStateList(list, ind, { ...filter, value })
+                              }
+                              );
+                            }}
+                          />
 
-          </Accordion>
-        </FormWrapper>
+                        </PanelOption>
+                      )))}
+                  />
+
+                );
+              })
+          )}
+
+        </Accordion>
 
         <FormWrapper>
           {lcoe.map((filter, ind) => (
