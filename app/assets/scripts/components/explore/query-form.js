@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
@@ -17,6 +17,7 @@ import Heading, { Subheading } from '../../styles/type/heading';
 const INIT_GRID_SIZE = 1;
 const DEFAULT_RANGE = [0, 100];
 const DEFAULT_UNIT = '%';
+
 const ParamTitle = styled.div`
   /* stylelint-disable */
   font-size: 0.875rem;
@@ -48,7 +49,7 @@ const EditButton = styled(Button).attrs({
 `;
 
 const SelectionOption = styled.li``;
-
+/* eslint-disable-next-line */
 const SelectionList = styled.ol`
   /* stylelint-enable */
 
@@ -65,40 +66,35 @@ const SubmissionSection = styled(PanelBlockFooter)`
   gap: 0rem 1rem;
 `;
 
+const initListToState = (list) => {
+  return list.map((obj) => ({
+    ...obj,
+    range: obj.range || DEFAULT_RANGE,
+    unit: obj.unit || DEFAULT_UNIT
+  }));
+};
+
+const updateStateList = (list, i, updatedValue) => {
+  const updated = list.slice();
+  updated[i] = updatedValue;
+  return updated;
+};
+
 function QueryForm (props) {
   const {
-    countryList,
-    resourceList,
+    country,
+    resource,
     weightsList,
     filtersList,
-    lcoeList
+    lcoeList,
+    onCountryEdit,
+    onResourceEdit
   } = props;
   const [gridSize, setGridSize] = useState(INIT_GRID_SIZE);
-
-  const initListToState = (list) => {
-    return list.map((obj) => ({
-      ...obj,
-      range: obj.range || DEFAULT_RANGE,
-      unit: obj.unit || DEFAULT_UNIT
-    }));
-  };
-
-  const updateStateList = (list, i, updatedValue) => {
-    const updated = list.slice();
-    updated[i] = updatedValue;
-    return updated;
-  };
-
-  const [activeCountry, setActiveCountry] = useState(countryList[0]);
-  const [activeResource, setActiveResource] = useState(resourceList[0]);
 
   const [weights, setWeights] = useState(initListToState(weightsList));
   const [filters, setFilters] = useState(initListToState(filtersList));
   const [lcoe, setLcoe] = useState(lcoeList.map((e) => ({ ...e, value: '' })));
-
-  useEffect(() => {
-    setActiveCountry(countryList[0]);
-  }, [countryList]);
 
   const applyClick = () => {
     // handle submission and search
@@ -116,23 +112,10 @@ function QueryForm (props) {
         <HeadOption>
           <Subheading>Country</Subheading>
           <OptionHeadline>
-            <Heading size='large' variation='primary'>{activeCountry}</Heading>
-            <Dropdown
-              alignment='right'
-              direction='down'
-              triggerElement={<EditButton>Edit Country Selection</EditButton>}
-            >
-              <SelectionList>
-                {countryList.map((country) => (
-                  <SelectionOption
-                    onClick={() => setActiveCountry(country)}
-                    key={country}
-                  >
-                    {country}
-                  </SelectionOption>
-                ))}
-              </SelectionList>
-            </Dropdown>
+            <Heading size='large' variation='primary'>{country}</Heading>
+            <EditButton onClick={onCountryEdit}>
+                Edit Country Selection
+            </EditButton>
           </OptionHeadline>
         </HeadOption>
 
@@ -140,23 +123,8 @@ function QueryForm (props) {
           <Subheading>Resource</Subheading>
 
           <OptionHeadline>
-            <Heading size='large' variation='primary'>{activeResource}</Heading>
-            <Dropdown
-              alignment='right'
-              direction='down'
-              triggerElement={<EditButton>Edit Resource Selection</EditButton>}
-            >
-              <SelectionList>
-                {resourceList.map((resource) => (
-                  <SelectionOption
-                    key={resource}
-                    onClick={() => setActiveResource(resource)}
-                  >
-                    {resource}
-                  </SelectionOption>
-                ))}
-              </SelectionList>
-            </Dropdown>
+            <Heading size='large' variation='primary'>{resource}</Heading>
+            <EditButton onClick={onResourceEdit}>Edit Resource Selection</EditButton>
           </OptionHeadline>
         </HeadOption>
 
@@ -275,11 +243,13 @@ function QueryForm (props) {
   );
 }
 QueryForm.propTypes = {
-  countryList: T.array,
-  resourceList: T.array,
+  country: T.string,
+  resource: T.string,
   weightsList: T.array,
   filtersList: T.array,
-  lcoeList: T.array
+  lcoeList: T.array,
+  onResourceEdit: T.func,
+  onCountryEdit: T.func
 };
 
 export default QueryForm;

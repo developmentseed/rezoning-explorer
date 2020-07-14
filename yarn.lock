@@ -938,6 +938,15 @@
   dependencies:
     lodash.get "^4.4.2"
 
+"@devseed-ui/button@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@devseed-ui/button/-/button-2.4.0.tgz#f0e90f2efb7f3e976b725384070bd9799a22206d"
+  integrity sha512-yBxmXU5M0ltqjk+2lRf5egTk51skMvrAy7m/wYnzmOWiNfC/W7dgh7EqAvSnzKdGFr+deP9QHo9WilYiteXfQw==
+  dependencies:
+    "@devseed-ui/base" "^2.2.0"
+    "@devseed-ui/collecticons" "0.12.0"
+    "@devseed-ui/helpers" "^2.3.0"
+
 "@devseed-ui/button@2.4.2", "@devseed-ui/button@^2.4.2":
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/@devseed-ui/button/-/button-2.4.2.tgz#62c1156340d54f3a94541f9902163fda977a14a8"
@@ -987,6 +996,16 @@
   dependencies:
     "@devseed-ui/base" "2.2.0"
     "@devseed-ui/theme" "2.3.0"
+
+"@devseed-ui/modal@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@devseed-ui/modal/-/modal-1.0.3.tgz#394f48e0025743729de8af6325a85bb3510d2045"
+  integrity sha512-IWLiXJXCwFK/kYu7ZJcjFXwoJWrThlpWI3rKt4RyJVq6sfcU7klTx2/OTz69JnrQDhbV+0AkykulpLW1WldJ+A==
+  dependencies:
+    "@devseed-ui/base" "2.2.0"
+    "@devseed-ui/button" "2.4.0"
+    "@devseed-ui/helpers" "2.3.0"
+    react-transition-group "^4.3.0"
 
 "@devseed-ui/theme@2.3.0":
   version "2.3.0"
@@ -9357,7 +9376,7 @@ react-tether@^2.0.7:
     prop-types "^15.6.2"
     tether "^1.4.5"
 
-react-transition-group@^4.4.1:
+react-transition-group@^4.3.0, react-transition-group@^4.4.1:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.1.tgz#63868f9325a38ea5ee9535d828327f85773345c9"
   integrity sha512-Djqr7OQ2aPUiYurhPalTrVy9ddmFCCzwhqQmtN+J3+3DzLO209Fdr70QrN8Z3DsglWql6iY1lDWAfpFiBtuKGw==

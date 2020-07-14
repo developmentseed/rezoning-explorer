@@ -71,11 +71,13 @@ function Explore () {
                   setTriggerResize(!triggerResize);
                 }}
               />
+
               <ExploreCarto>
                 <MbMap
                   triggerResize={triggerResize}
                 />
               </ExploreCarto>
+
               <SecPanel
                 onPanelChange={() => {
                   setTriggerResize(!triggerResize);

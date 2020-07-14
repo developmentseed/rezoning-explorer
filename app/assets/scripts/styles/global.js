@@ -163,6 +163,10 @@ const baseStyles = css`
       min-height: ${({ innerHeight }) => `${innerHeight}px`};
     }
   }
+
+  #modal-select {
+    background: ${themeVal('color.baseAlphaB')};
+  }
 `;
 
 export default createGlobalStyle`

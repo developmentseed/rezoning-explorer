@@ -65,7 +65,7 @@ const type = {
 };
 
 const shape = {
-  rounded: '0.25rem',
+  rounded: '0.125rem',
   ellipsoid: '320rem'
 };
 
@@ -96,23 +96,4 @@ export const mediaRanges = {
   medium: [768, 1023],
   large: [1024, 1399],
   xlarge: [1400, null]
-};
-
-export const indicatorGroupColors = {
-  economic: {
-    color: '#C0C0C0',
-    name: 'Grey'
-  },
-  'water-quality': {
-    color: '#154F8D',
-    name: 'Deep blue'
-  },
-  'air-quality': {
-    color: '#f2a73a',
-    name: 'Gold'
-  },
-  'greenhouse-gas': {
-    color: '#189C54',
-    name: 'Dark Green'
-  }
 };
