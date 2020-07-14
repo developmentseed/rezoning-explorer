@@ -13,13 +13,17 @@ import SliderGroup from '../common/slider-group';
 import Dropdown from '../common/dropdown';
 import StressedFormGroupInput from '../common/stressed-form-group-input';
 import Heading, { Subheading } from '../../styles/type/heading';
+import { FormSwitch } from '../../styles/form/switch';
 
 const INIT_GRID_SIZE = 1;
 const DEFAULT_RANGE = [0, 100];
 const DEFAULT_UNIT = '%';
 
-const ParamTitle = styled.div`
-  /* stylelint-disable */
+const PanelOption = styled.div`
+  margin-bottom: 1.5rem;
+`;
+
+const PanelOptionTitle = styled.div`
   opacity: 0.9;
   font-size: 0.875rem;
   font-weight: ${themeVal('type.base.bold')};
@@ -28,17 +32,16 @@ const HeadOption = styled.div`
   box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
   padding: 1rem 0;
 `;
+
 const OptionHeadline = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 `;
-const PanelOption = styled.div`
-  margin-bottom: 1.5rem;
+
+const FormWrapper = styled.div`
+  /* stylelint-disable-next-line */
 `;
-const WeightsForm = styled.div``;
-const FiltersForm = styled.div``;
-const LCOEForm = styled.div``;
 
 const EditButton = styled(Button).attrs({
   variation: 'base-plain',
@@ -49,17 +52,16 @@ const EditButton = styled(Button).attrs({
   opacity: 50%;
 `;
 
+/*
 const SelectionOption = styled.li``;
-/* eslint-disable-next-line */
 const SelectionList = styled.ol`
-  /* stylelint-enable */
-
   > ${SelectionOption}:hover {
     color: ${themeVal('color.tertiary')};
     background-color: ${themeVal('color.baseAlphaC')};
     cursor: pointer;
   }
 `;
+*/
 
 const SubmissionSection = styled(PanelBlockFooter)`
   display: grid;
@@ -71,7 +73,8 @@ const initListToState = (list) => {
   return list.map((obj) => ({
     ...obj,
     range: obj.range || DEFAULT_RANGE,
-    unit: obj.unit || DEFAULT_UNIT
+    unit: obj.unit || DEFAULT_UNIT,
+    active: true
   }));
 };
 
@@ -158,10 +161,10 @@ function QueryForm (props) {
           ['LCOE', 'disc-dollar']
         ]}
       >
-        <WeightsForm>
+        <FormWrapper>
           {weights.map((weight, ind) => (
             <PanelOption key={weight.name}>
-              <ParamTitle>{weight.name}</ParamTitle>
+              <PanelOptionTitle>{weight.name}</PanelOptionTitle>
               <SliderGroup
                 unit={weight.unit || '%'}
                 range={weight.range || [0, 100]}
@@ -177,12 +180,29 @@ function QueryForm (props) {
               />
             </PanelOption>
           ))}
-        </WeightsForm>
+        </FormWrapper>
 
-        <FiltersForm>
+        <FormWrapper>
           {filters.map((filter, ind) => (
             <PanelOption key={filter.name}>
-              <ParamTitle>{filter.name}</ParamTitle>
+              <OptionHeadline>
+                <PanelOptionTitle>{filter.name}</PanelOptionTitle>
+                <FormSwitch
+                  hideText
+                  name={`toggle-${filter.name.replace(/ /g, '-')}`}
+                  disabled={filter.disabled}
+                  checked={filter.active}
+                  onChange={() => {
+                    setFilters(
+                      updateStateList(filters, ind, { ...filter, active: !filter.active })
+                    );
+                  }}
+
+                >
+                  Toggle filter
+                </FormSwitch>
+
+              </OptionHeadline>
               <SliderGroup
                 unit={filter.unit || '%'}
                 range={filter.range || [0, 100]}
@@ -196,11 +216,12 @@ function QueryForm (props) {
                   );
                 }}
               />
+
             </PanelOption>
           ))}
-        </FiltersForm>
+        </FormWrapper>
 
-        <LCOEForm>
+        <FormWrapper>
           {lcoe.map((filter, ind) => (
             <PanelOption key={filter.name}>
               <StressedFormGroupInput
@@ -217,7 +238,7 @@ function QueryForm (props) {
               />
             </PanelOption>
           ))}
-        </LCOEForm>
+        </FormWrapper>
       </TabbedBlockBody>
 
       <SubmissionSection>
