@@ -130,7 +130,7 @@ export default () => css`
     &.mapboxgl-ctrl-geocoder--collapsed {
       width: 2rem;
       min-width: 2rem;
-      background: ${themeVal('color.baseDark')};
+      background: ${themeVal('color.primary')};
     }
 
     .mapboxgl-ctrl-geocoder--icon {
@@ -188,7 +188,7 @@ export default () => css`
 
         &:hover {
           opacity: 1;
-          background: ${_rgba(themeVal('color.base'), 0.04)};
+          background: ${_rgba(themeVal('color.primary'), 0.04)};
           color: inherit;
         }
       }
@@ -203,10 +203,10 @@ export default () => css`
         }
 
         &.active > a {
-          background: ${_rgba(themeVal('color.base'), 0.08)};
+          background: ${_rgba(themeVal('color.primary'), 0.08)};
 
           &:hover {
-            background: ${_rgba(themeVal('color.base'), 0.12)};
+            background: ${_rgba(themeVal('color.primary'), 0.12)};
           }
         }
       }
@@ -222,7 +222,7 @@ export default () => css`
     padding: 0 0.5rem;
     font-size: 0.75rem;
     line-height: 1.25rem;
-    background: ${_rgba(themeVal('color.baseDark'), 0.64)};
+    background: ${_rgba(themeVal('color.baseLight'), 0.32)};
     opacity: 1;
   }
 

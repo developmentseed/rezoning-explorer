@@ -22,7 +22,7 @@ const Tab = styled(Button)`
 
   &:hover {
     opacity: 1;
-    color: ${themeVal('color.base')};
+    color: ${themeVal('color.primary')};
     background-color: transparent;
   }
 
@@ -34,7 +34,7 @@ const Tab = styled(Button)`
     content: '';
     width: 0;
     height: 2px;
-    background: ${themeVal('color.base')};
+    background: ${themeVal('color.primary')};
     transform: translate(-50%, 0);
 
     /* Animation */
@@ -45,7 +45,7 @@ const Tab = styled(Button)`
       /* stylelint-disable-next-line */
       &,
       &:visited {
-        color: ${themeVal('color.base')};
+        color: ${themeVal('color.primary')};
       }
       /* stylelint-disable-next-line no-duplicate-selectors */
       &::after {

@@ -22,7 +22,7 @@ const PageFootInner = styled.div`
 `;
 
 const PageCredits = styled.p`
-  color: ${_rgba(themeVal('color.base'), 0.64)};
+  color: ${_rgba(themeVal('color.primary'), 0.64)};
 `;
 
 const PageFooter = props => {
