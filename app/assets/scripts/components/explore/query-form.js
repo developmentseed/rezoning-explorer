@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
-import { themeVal } from '../../styles/utils/general';
+import { themeVal, makeTitleCase } from '../../styles/utils/general';
 import {
   PanelBlock,
   PanelBlockHeader,
@@ -14,6 +14,10 @@ import Dropdown from '../common/dropdown';
 import StressedFormGroupInput from '../common/stressed-form-group-input';
 import Heading, { Subheading } from '../../styles/type/heading';
 import { FormSwitch } from '../../styles/form/switch';
+import { glsp } from '../../styles/utils/theme-values';
+import collecticon from '../../styles/collecticons';
+
+import { Accordion, AccordionFold } from '../../components/accordion';
 
 const INIT_GRID_SIZE = 1;
 const DEFAULT_RANGE = [0, 100];
@@ -42,6 +46,9 @@ const OptionHeadline = styled.div`
 const FormWrapper = styled.div`
   /* stylelint-disable-next-line */
 `;
+const FormGroupWrapper = styled.div`
+  /* stylelint-disable-next-line */
+`;
 
 const EditButton = styled(Button).attrs({
   variation: 'base-plain',
@@ -50,6 +57,26 @@ const EditButton = styled(Button).attrs({
   hideText: true
 })`
   opacity: 50%;
+`;
+
+export const AccordionFoldTrigger = styled.a`
+  display: flex;
+  align-items: center;
+  margin: -${glsp(0.5)} -${glsp()};
+  padding: ${glsp(0.5)} ${glsp()};
+
+  &,
+  &:visited {
+    color: inherit;
+  }
+
+  &:after {
+    ${collecticon('chevron-down--small')}
+    margin-left: auto;
+    transition: transform 240ms ease-in-out;
+    transform: ${({ isExpanded }) =>
+      isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
+  }
 `;
 
 /*
@@ -78,6 +105,15 @@ const initListToState = (list) => {
   }));
 };
 
+const initObjectToState = (obj) => {
+  return Object.keys(obj).reduce((accum, key) => {
+    return ({
+      ...accum,
+      [key]: initListToState(obj[key])
+    });
+  }, {});
+};
+
 const updateStateList = (list, i, updatedValue) => {
   const updated = list.slice();
   updated[i] = updatedValue;
@@ -89,7 +125,7 @@ function QueryForm (props) {
     country,
     resource,
     weightsList,
-    filtersList,
+    filtersLists,
     lcoeList,
     onCountryEdit,
     onResourceEdit
@@ -97,7 +133,7 @@ function QueryForm (props) {
   const [gridSize, setGridSize] = useState(INIT_GRID_SIZE);
 
   const [weights, setWeights] = useState(initListToState(weightsList));
-  const [filters, setFilters] = useState(initListToState(filtersList));
+  const [filters, setFilters] = useState(initObjectToState(filtersLists));
   const [lcoe, setLcoe] = useState(lcoeList.map((e) => ({ ...e, value: '' })));
 
   const applyClick = () => {
@@ -106,7 +142,7 @@ function QueryForm (props) {
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));
-    setFilters(initListToState(filtersList));
+    setFilters(initObjectToState(filtersLists));
     setLcoe(initListToState(lcoeList));
   };
 
@@ -183,42 +219,74 @@ function QueryForm (props) {
         </FormWrapper>
 
         <FormWrapper>
-          {filters.map((filter, ind) => (
-            <PanelOption key={filter.name}>
-              <OptionHeadline>
-                <PanelOptionTitle>{filter.name}</PanelOptionTitle>
-                <FormSwitch
-                  hideText
-                  name={`toggle-${filter.name.replace(/ /g, '-')}`}
-                  disabled={filter.disabled}
-                  checked={filter.active}
-                  onChange={() => {
-                    setFilters(
-                      updateStateList(filters, ind, { ...filter, active: !filter.active })
-                    );
-                  }}
+          <Accordion allowMultiple>
+            {({ checkExpanded, setExpanded }) => (
+              Object.entries(filters)
+                .map(([group, list], idx) => {
+                  return (
+                    <AccordionFold
+                      key={group}
+                      forwardedAs={FormGroupWrapper}
+                      isFoldExpanded={checkExpanded(idx)}
+                      setFoldExpanded={(v) => setExpanded(idx, v)}
+                      renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                        <AccordionFoldTrigger
+                          isExpanded={isFoldExpanded}
+                          onClick={() => setFoldExpanded(!isFoldExpanded)}
+                        >
+                          <Heading size='medium' variation='primary'>
+                            {makeTitleCase(group.replace(/_/g, ' '))}
+                          </Heading>
+                        </AccordionFoldTrigger>
+                      )}
+                      renderBody={() => (
+                        list.map((filter, ind) => (
+                          <PanelOption key={filter.name}>
+                            <OptionHeadline>
+                              <PanelOptionTitle>{filter.name}</PanelOptionTitle>
+                              <FormSwitch
+                                hideText
+                                name={`toggle-${filter.name.replace(/ /g, '-')}`}
+                                disabled={filter.disabled}
+                                checked={filter.active}
+                                onChange={() => {
+                                  setFilters({
+                                    ...filters,
+                                    [group]: updateStateList(list, ind, { ...filter, active: !filter.active })
+                                  }
+                                  );
+                                }}
 
-                >
-                  Toggle filter
-                </FormSwitch>
+                              >
+                                Toggle filter
+                              </FormSwitch>
 
-              </OptionHeadline>
-              <SliderGroup
-                unit={filter.unit || '%'}
-                range={filter.range || [0, 100]}
-                id={filter.name}
-                value={
-                  filter.value === undefined ? filter.range[0] : filter.value
-                }
-                onChange={(value) => {
-                  setFilters(
-                    updateStateList(filters, ind, { ...filter, value })
+                            </OptionHeadline>
+                            <SliderGroup
+                              unit={filter.unit || '%'}
+                              range={filter.range || [0, 100]}
+                              id={filter.name}
+                              value={
+                                filter.value === undefined ? filter.range[0] : filter.value
+                              }
+                              onChange={(value) => {
+                                setFilters({
+                                  ...filters,
+                                  [group]: updateStateList(list, ind, { ...filter, value })
+                                }
+                                );
+                              }}
+                            />
+
+                          </PanelOption>
+                        )))}
+                    />
+
                   );
-                }}
-              />
+                })
+            )}
 
-            </PanelOption>
-          ))}
+          </Accordion>
         </FormWrapper>
 
         <FormWrapper>
@@ -268,7 +336,7 @@ QueryForm.propTypes = {
   country: T.string,
   resource: T.string,
   weightsList: T.array,
-  filtersList: T.array,
+  filtersLists: T.object,
   lcoeList: T.array,
   onResourceEdit: T.func,
   onCountryEdit: T.func

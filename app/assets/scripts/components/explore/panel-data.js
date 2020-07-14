@@ -1,10 +1,22 @@
 export const resourceList = ['Solar', 'Wind', 'Off-Shore Wind'];
 
-export const filtersList = [
-  { name: 'Zone Score', range: [0, 1] },
-  { name: 'Mean Capacity Factor', range: [0, 1] },
-  { name: 'Electricity Demand', range: [0, 100], unit: 'k' }
-];
+export const filtersLists = {
+  zone_parameters: [
+    { name: 'Zone Score', range: [0, 1] },
+    { name: 'Mean Capacity Factor', range: [0, 1] },
+    { name: 'Electricity Demand', range: [0, 100], unit: 'k' }
+  ],
+  infrastructure_layers: [
+    { name: 'Zone Score', range: [0, 1] },
+    { name: 'Mean Capacity Factor', range: [0, 1] },
+    { name: 'Electricity Demand', range: [0, 100], unit: 'k' }
+  ],
+  environmental_layers: [
+    { name: 'Zone Score', range: [0, 1] },
+    { name: 'Mean Capacity Factor', range: [0, 1] },
+    { name: 'Electricity Demand', range: [0, 100], unit: 'k' }
+  ]
+};
 
 export const lcoeList = [
   { name: 'Generation - capital [USD/kW] (Cg)' },
