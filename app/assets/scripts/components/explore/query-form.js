@@ -24,6 +24,7 @@ const DEFAULT_RANGE = [0, 100];
 const DEFAULT_UNIT = '%';
 
 const PanelOption = styled.div`
+  ${({ hidden }) => hidden && 'display: none;'}
   margin-bottom: 1.5rem;
 `;
 
@@ -248,9 +249,9 @@ function QueryForm (props) {
                           </Heading>
                         </AccordionFoldTrigger>
                       )}
-                      renderBody={() => (
+                      renderBody={({ isFoldExpanded }) => (
                         list.map((filter, ind) => (
-                          <PanelOption key={filter.name}>
+                          <PanelOption key={filter.name} hidden={!isFoldExpanded}>
                             <OptionHeadline>
                               <PanelOptionTitle>{filter.name}</PanelOptionTitle>
                               <FormSwitch
