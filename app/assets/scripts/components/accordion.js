@@ -11,7 +11,8 @@ const AccordionFoldBody = styled.div`
   transition: max-height 320ms ease-in-out, opacity 320ms ease-in-out;
   opacity: ${({ isExpanded }) => (isExpanded ? 1 : 0)};
   max-height: ${({ isExpanded }) => (isExpanded ? '400vh' : 0)};
-    padding-top: 2rem;
+padding-top: 2rem;
+${({ isExpanded }) => !isExpanded && 'display: none;'}
 `;
 
 /**
