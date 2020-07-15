@@ -25,12 +25,12 @@ const ParamTitle = styled.div`
 `;
 const HeadOption = styled.div`
   box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
-  padding: 1rem 0;
+  padding: 0.5rem 0;
 `;
 const OptionHeadline = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
 `;
 const PanelOption = styled.div`
   margin-bottom: 1.5rem;
@@ -46,6 +46,7 @@ const EditButton = styled(Button).attrs({
   hideText: true
 })`
   opacity: 50%;
+  margin-left: auto;
 `;
 
 const SelectionOption = styled.li``;
@@ -110,10 +111,9 @@ function QueryForm (props) {
     <PanelBlock>
       <PanelBlockHeader>
         <HeadOption>
-          <Subheading>Country</Subheading>
           <OptionHeadline>
-            <Heading size='large' variation='primary'>{country}</Heading>
-            <EditButton onClick={onCountryEdit}>
+            <Heading size='large' variation='primary'>{country || 'Select Country'}</Heading>
+            <EditButton onClick={onCountryEdit} title='Edit Country'>
                 Edit Country Selection
             </EditButton>
           </OptionHeadline>
@@ -121,23 +121,22 @@ function QueryForm (props) {
 
         <HeadOption>
           <Subheading>Resource</Subheading>
-
           <OptionHeadline>
-            <Heading size='large' variation='primary'>{resource}</Heading>
-            <EditButton onClick={onResourceEdit}>Edit Resource Selection</EditButton>
+            <Heading variation='primary'>{resource || 'Select Resource'}</Heading>
+            <EditButton onClick={onResourceEdit} title='Edit Resource'>Edit Resource Selection</EditButton>
           </OptionHeadline>
         </HeadOption>
 
         <HeadOption>
           <Subheading>Grid Size</Subheading>
           <OptionHeadline>
-            <Heading>
+            <Heading variation='primary'>
               {gridSize} km<sup>2</sup>
             </Heading>
             <Dropdown
               alignment='right'
               direction='down'
-              triggerElement={<EditButton>Edit Grid Size</EditButton>}
+              triggerElement={<EditButton title='Edit Grid Size'>Edit Grid Size</EditButton>}
             >
               <SliderGroup
                 unit='km^2'
