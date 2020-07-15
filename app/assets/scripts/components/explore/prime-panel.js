@@ -12,7 +12,7 @@ import { Card } from '../common/card-list';
 
 import QueryForm from './query-form';
 
-import { resourceList, weightsList, filtersList, lcoeList } from './panel-data';
+import { resourceList, weightsList, filtersLists, lcoeList } from './panel-data';
 
 const PRESETS = [];
 
@@ -52,7 +52,7 @@ function ExpMapPrimePanel (props) {
               country={selectedCountry}
               resource={selectedResource}
               weightsList={weightsList}
-              filtersList={filtersList}
+              filtersLists={filtersLists}
               lcoeList={lcoeList}
               presetList={PRESETS}
               onCountryEdit={() => setShowCountrySelect(true)}

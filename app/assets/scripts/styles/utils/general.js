@@ -124,3 +124,8 @@ export function filterComponentProps (Comp, filterProps = []) {
     return <Comp ref={ref} {...props} />;
   });
 }
+
+/* Transform string into title case */
+export function makeTitleCase (text) {
+  return text.split(' ').map(word => `${word[0].toUpperCase()}${word.slice(1)}`).join(' ');
+}

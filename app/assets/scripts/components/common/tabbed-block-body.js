@@ -97,7 +97,11 @@ function TabbedBlock (props) {
       </TabbedBlockHeader>
       <PanelBlockScroll>
         <ContentInner>
-          {props.children.length ? props.children[activeTab] : props.children}
+          {
+            React.Children.map(props.children, (child, i) =>
+              React.cloneElement(child, { active: i === activeTab })
+            )
+          }
         </ContentInner>
       </PanelBlockScroll>
     </>
