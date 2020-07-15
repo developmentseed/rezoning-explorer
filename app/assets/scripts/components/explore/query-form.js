@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
-import { themeVal } from '../../styles/utils/general';
+import { themeVal, makeTitleCase } from '../../styles/utils/general';
 import {
   PanelBlock,
   PanelBlockHeader,
@@ -13,13 +13,23 @@ import SliderGroup from '../common/slider-group';
 import Dropdown from '../common/dropdown';
 import StressedFormGroupInput from '../common/stressed-form-group-input';
 import Heading, { Subheading } from '../../styles/type/heading';
+import { FormSwitch } from '../../styles/form/switch';
+import { glsp } from '../../styles/utils/theme-values';
+import collecticon from '../../styles/collecticons';
+
+import { Accordion, AccordionFold } from '../../components/accordion';
 
 const INIT_GRID_SIZE = 1;
 const DEFAULT_RANGE = [0, 100];
 const DEFAULT_UNIT = '%';
 
-const ParamTitle = styled.div`
-  /* stylelint-disable */
+const PanelOption = styled.div`
+  ${({ hidden }) => hidden && 'display: none;'}
+  margin-bottom: 1.5rem;
+`;
+
+const PanelOptionTitle = styled.div`
+  opacity: 0.9;
   font-size: 0.875rem;
   font-weight: ${themeVal('type.base.bold')};
 `;
@@ -27,17 +37,24 @@ const HeadOption = styled.div`
   box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
   padding: 1rem 0;
 `;
+
 const OptionHeadline = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 `;
-const PanelOption = styled.div`
-  margin-bottom: 1.5rem;
+
+const FormWrapper = styled.section`
+  ${({ active }) => {
+    if (!active) { return 'display: none;'; }
+  }
+  }
 `;
-const WeightsForm = styled.div``;
-const FiltersForm = styled.div``;
-const LCOEForm = styled.div``;
+
+const FormGroupWrapper = styled.div`
+  box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
+  padding: 1rem 0;
+`;
 
 const EditButton = styled(Button).attrs({
   variation: 'base-plain',
@@ -48,17 +65,38 @@ const EditButton = styled(Button).attrs({
   opacity: 50%;
 `;
 
-const SelectionOption = styled.li``;
-/* eslint-disable-next-line */
-const SelectionList = styled.ol`
-  /* stylelint-enable */
+export const AccordionFoldTrigger = styled.a`
+  display: flex;
+  align-items: center;
+  margin: -${glsp(0.5)} -${glsp()};
+  padding: ${glsp(0.5)} ${glsp()};
 
+  &,
+  &:visited {
+    color: inherit;
+  }
+    &:active {
+        transform: none;
+    }
+  &:after {
+    ${collecticon('chevron-down--small')}
+    margin-left: auto;
+    transition: transform 240ms ease-in-out;
+    transform: ${({ isExpanded }) =>
+      isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
+  }
+`;
+
+/*
+const SelectionOption = styled.li``;
+const SelectionList = styled.ol`
   > ${SelectionOption}:hover {
     color: ${themeVal('color.tertiary')};
     background-color: ${themeVal('color.baseAlphaC')};
     cursor: pointer;
   }
 `;
+*/
 
 const SubmissionSection = styled(PanelBlockFooter)`
   display: grid;
@@ -70,8 +108,18 @@ const initListToState = (list) => {
   return list.map((obj) => ({
     ...obj,
     range: obj.range || DEFAULT_RANGE,
-    unit: obj.unit || DEFAULT_UNIT
+    unit: obj.unit || DEFAULT_UNIT,
+    active: true
   }));
+};
+
+const initObjectToState = (obj) => {
+  return Object.keys(obj).reduce((accum, key) => {
+    return ({
+      ...accum,
+      [key]: initListToState(obj[key])
+    });
+  }, {});
 };
 
 const updateStateList = (list, i, updatedValue) => {
@@ -85,7 +133,7 @@ function QueryForm (props) {
     country,
     resource,
     weightsList,
-    filtersList,
+    filtersLists,
     lcoeList,
     onCountryEdit,
     onResourceEdit
@@ -93,7 +141,7 @@ function QueryForm (props) {
   const [gridSize, setGridSize] = useState(INIT_GRID_SIZE);
 
   const [weights, setWeights] = useState(initListToState(weightsList));
-  const [filters, setFilters] = useState(initListToState(filtersList));
+  const [filters, setFilters] = useState(initObjectToState(filtersLists));
   const [lcoe, setLcoe] = useState(lcoeList.map((e) => ({ ...e, value: '' })));
 
   const applyClick = () => {
@@ -102,7 +150,7 @@ function QueryForm (props) {
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));
-    setFilters(initListToState(filtersList));
+    setFilters(initObjectToState(filtersLists));
     setLcoe(initListToState(lcoeList));
   };
 
@@ -157,10 +205,10 @@ function QueryForm (props) {
           ['LCOE', 'disc-dollar']
         ]}
       >
-        <WeightsForm>
+        <FormWrapper>
           {weights.map((weight, ind) => (
             <PanelOption key={weight.name}>
-              <ParamTitle>{weight.name}</ParamTitle>
+              <PanelOptionTitle>{weight.name}</PanelOptionTitle>
               <SliderGroup
                 unit={weight.unit || '%'}
                 range={weight.range || [0, 100]}
@@ -176,30 +224,78 @@ function QueryForm (props) {
               />
             </PanelOption>
           ))}
-        </WeightsForm>
+        </FormWrapper>
 
-        <FiltersForm>
-          {filters.map((filter, ind) => (
-            <PanelOption key={filter.name}>
-              <ParamTitle>{filter.name}</ParamTitle>
-              <SliderGroup
-                unit={filter.unit || '%'}
-                range={filter.range || [0, 100]}
-                id={filter.name}
-                value={
-                  filter.value === undefined ? filter.range[0] : filter.value
-                }
-                onChange={(value) => {
-                  setFilters(
-                    updateStateList(filters, ind, { ...filter, value })
+        <FormWrapper>
+          <Accordion
+            initialState={[true, ...Object.keys(filters).slice(1).map(_ => false)]}
+          >
+            {({ checkExpanded, setExpanded }) => (
+              Object.entries(filters)
+                .map(([group, list], idx) => {
+                  return (
+                    <AccordionFold
+                      key={group}
+                      forwardedAs={FormGroupWrapper}
+                      isFoldExpanded={checkExpanded(idx)}
+                      setFoldExpanded={(v) => setExpanded(idx, v)}
+                      renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                        <AccordionFoldTrigger
+                          isExpanded={isFoldExpanded}
+                          onClick={() => setFoldExpanded(!isFoldExpanded)}
+                        >
+                          <Heading size='medium' variation='primary'>
+                            {makeTitleCase(group.replace(/_/g, ' '))}
+                          </Heading>
+                        </AccordionFoldTrigger>
+                      )}
+                      renderBody={({ isFoldExpanded }) => (
+                        list.map((filter, ind) => (
+                          <PanelOption key={filter.name} hidden={!isFoldExpanded}>
+                            <OptionHeadline>
+                              <PanelOptionTitle>{filter.name}</PanelOptionTitle>
+                              <FormSwitch
+                                hideText
+                                name={`toggle-${filter.name.replace(/ /g, '-')}`}
+                                disabled={filter.disabled}
+                                checked={filter.active}
+                                onChange={() => {
+                                  setFilters({
+                                    ...filters,
+                                    [group]: updateStateList(list, ind, { ...filter, active: !filter.active })
+                                  });
+                                }}
+                              >
+                                Toggle filter
+                              </FormSwitch>
+
+                            </OptionHeadline>
+                            <SliderGroup
+                              unit={filter.unit}
+                              range={filter.range}
+                              id={filter.name}
+                              value={
+                                filter.value === undefined ? filter.range[0] : filter.value
+                              }
+                              onChange={(value) => {
+                                setFilters({
+                                  ...filters,
+                                  [group]: updateStateList(list, ind, { ...filter, value })
+                                });
+                              }}
+                            />
+                          </PanelOption>
+                        )))}
+                    />
+
                   );
-                }}
-              />
-            </PanelOption>
-          ))}
-        </FiltersForm>
+                })
+            )}
 
-        <LCOEForm>
+          </Accordion>
+        </FormWrapper>
+
+        <FormWrapper>
           {lcoe.map((filter, ind) => (
             <PanelOption key={filter.name}>
               <StressedFormGroupInput
@@ -216,7 +312,7 @@ function QueryForm (props) {
               />
             </PanelOption>
           ))}
-        </LCOEForm>
+        </FormWrapper>
       </TabbedBlockBody>
 
       <SubmissionSection>
@@ -246,7 +342,7 @@ QueryForm.propTypes = {
   country: T.string,
   resource: T.string,
   weightsList: T.array,
-  filtersList: T.array,
+  filtersLists: T.object,
   lcoeList: T.array,
   onResourceEdit: T.func,
   onCountryEdit: T.func

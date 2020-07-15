@@ -173,7 +173,7 @@ export const FormSwitch = styled(FormSwitchElement)`
 
   ${({ checked }) => (checked ? `${FormOptionUi},` : '')}
   input:checked ~ ${FormOptionUi} { /* stylelint-disable-line */
-    background: ${themeVal('color.link')};
+    background: ${themeVal('color.primary')};
 
     &::before {
       left: 100%;
