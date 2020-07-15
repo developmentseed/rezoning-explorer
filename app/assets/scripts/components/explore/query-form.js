@@ -71,7 +71,9 @@ export const AccordionFoldTrigger = styled.a`
   &:visited {
     color: inherit;
   }
-
+    &:active {
+        transform: none;
+    }
   &:after {
     ${collecticon('chevron-down--small')}
     margin-left: auto;
