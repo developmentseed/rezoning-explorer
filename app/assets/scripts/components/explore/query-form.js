@@ -190,7 +190,6 @@ function QueryForm (props) {
                 <FormSwitch
                   hideText
                   name={`toggle-${filter.name.replace(/ /g, '-')}`}
-                  disabled={filter.disabled}
                   checked={filter.active}
                   onChange={() => {
                     setFilters(
@@ -210,10 +209,13 @@ function QueryForm (props) {
                 value={
                   filter.value === undefined ? filter.range[0] : filter.value
                 }
+                disabled={!filter.active}
                 onChange={(value) => {
-                  setFilters(
-                    updateStateList(filters, ind, { ...filter, value })
-                  );
+                  if (filter.active) {
+                    setFilters(
+                      updateStateList(filters, ind, { ...filter, value })
+                    );
+                  }
                 }}
               />
 

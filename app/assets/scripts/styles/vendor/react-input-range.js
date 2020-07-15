@@ -35,10 +35,11 @@ export default () => css`
     }
 
     .input-range--disabled & {
+    /*
       background: none;
       border: none;
       box-shadow: none;
-      transform: none;
+      transform: none;*/
       ${disabled()}
     }
   }
@@ -53,5 +54,11 @@ export default () => css`
     &--active {
       background: ${themeVal('color.primary')};
     }
+
+  }
+
+  .input-range--disabled .input-range__track.input-range__track--active {
+    background: ${themeVal('color.primary')};
+    ${disabled()}
   }
 `;

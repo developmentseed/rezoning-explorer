@@ -32,6 +32,7 @@ export default function StressedFormGroupInput (props) {
     inputSize,
     inputVariation,
     placeholder,
+    disabled,
     onChange
   } = props;
 
@@ -56,6 +57,7 @@ export default function StressedFormGroupInput (props) {
               ref={ref}
               type={inputType}
               variation={inputVariation}
+              readOnly={disabled}
               name={name}
               id={id}
               invalid={errored}
@@ -83,5 +85,6 @@ StressedFormGroupInput.propTypes = {
   inputVariation: T.string,
   placeholder: T.oneOfType([T.string, T.number]),
   validate: T.func,
-  onChange: T.func
+  onChange: T.func,
+  disabled: T.bool
 };
