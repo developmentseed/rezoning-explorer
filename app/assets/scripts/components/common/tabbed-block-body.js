@@ -70,16 +70,25 @@ const TabControlBar = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
+  padding-bottom: 1.5rem;
   > ${Subheading} {
     grid-column: span 5;
   }
 
   > ${Button}.drop-trigger {
-    padding: 0.25rem 0;
     grid-column: 1 / 4;
+    padding-left: 0;
+    text-transform: none;
+    text-align: left;
     > span {
       ${truncated()}
       max-width: 80%;
+    }
+    &,
+    &:hover,
+    &:active,
+    &.active {
+      background-color: initial;
     }
   }
 
