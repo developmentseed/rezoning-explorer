@@ -135,6 +135,7 @@ function QueryForm (props) {
     weightsList,
     filtersLists,
     lcoeList,
+    presets,
     onCountryEdit,
     onResourceEdit
   } = props;
@@ -199,9 +200,17 @@ function QueryForm (props) {
       </PanelBlockHeader>
 
       <TabbedBlockBody>
-        <FormWrapper 
+        <FormWrapper
           name='weights'
           icon='sliders-horizontal'
+          presets={presets.weights}
+          setPreset={(preset) => {
+            if (preset === 'reset') {
+              setWeights(initListToState(weightsList));
+            } else {
+              setWeights(initListToState(presets.weights[preset]));
+            }
+          }}
         >
           {weights.map((weight, ind) => (
             <PanelOption key={weight.name}>
@@ -226,6 +235,7 @@ function QueryForm (props) {
         <FormWrapper
           name='filters'
           icon='compass'
+          presets={presets.filters}
         >
           <Accordion
             initialState={[true, ...Object.keys(filters).slice(1).map(_ => false)]}
@@ -298,6 +308,15 @@ function QueryForm (props) {
         <FormWrapper
           name='lcoe'
           icon='disc-dollar'
+          presets={presets.lcoe}
+          setPreset={(preset) => {
+            if (preset === 'reset') {
+              setLcoe(initListToState(lcoeList));
+            } else {
+              setLcoe(initListToState(presets.lcoe[preset]));
+            }
+            
+          }}
         >
           {lcoe.map((filter, ind) => (
             <PanelOption key={filter.name}>
@@ -341,6 +360,10 @@ function QueryForm (props) {
     </PanelBlock>
   );
 }
+FormWrapper.propTypes = {
+  setPreset: T.func
+};
+
 QueryForm.propTypes = {
   country: T.string,
   resource: T.string,
@@ -348,7 +371,8 @@ QueryForm.propTypes = {
   filtersLists: T.object,
   lcoeList: T.array,
   onResourceEdit: T.func,
-  onCountryEdit: T.func
+  onCountryEdit: T.func,
+  presets: T.object
 };
 
 export default QueryForm;

@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Children } from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import { PanelBlockScroll, PanelBlockHeader } from './panel-block';
 import Button from '../../styles/button/button';
 import { listReset } from '../../styles/helpers/index';
 import { themeVal } from '../../styles/utils/general';
+
+import FormSelect from '../../styles/form/select';
 
 const Tab = styled(Button)`
   display: inline-flex;
@@ -64,37 +66,37 @@ const TabbedBlockHeader = styled(PanelBlockHeader)`
   }
 `;
 
+const TabControlBar = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  ${({ active }) => {
+    if (!active) { return 'display: none;'; }
+  }
+  }
+`;
+
 const ContentInner = styled.div`
   padding: 1.5rem;
 `;
 
 function TabbedBlock (props) {
+  const { children } = props;
+  const childArray = Children.toArray(children);
   const [activeTab, setActiveTab] = useState(0);
+  const [activeContent, setActiveContent] = useState(childArray[activeTab]);
+  const [presetValue, setPresetValue] = useState(childArray.map( _ => 'default'));
+
+  useEffect(() => {
+    setActiveContent(childArray[activeTab]);
+  }, [activeTab]);
 
   return (
     <>
       <TabbedBlockHeader as='nav' role='navigation'>
         <ul>
-          {/* tabContent.map(([name, icon], ind) => (
-            <li key={name}>
-              <Tab
-                as='a'
-                active={ind === activeTab}
-                useIcon={icon}
-                title='Show menu'
-                size='small'
-                onClick={(e) => {
-                  e.preventDefault();
-                  setActiveTab(ind);
-                }}
-              >
-                {name}
-              </Tab>
-            </li>
-          )) */}
-
           {
-            React.Children.map(props.children, (child, ind) => {
+            Children.map(children, (child, ind) => {
               const { name, icon } = child.props;
               return (
                 <li key={name}>
@@ -119,10 +121,49 @@ function TabbedBlock (props) {
       </TabbedBlockHeader>
       <PanelBlockScroll>
         <ContentInner>
+
           {
-            React.Children.map(props.children, (child, i) =>
-              React.cloneElement(child, { active: i === activeTab })
-            )
+            Children.map(children, (child, i) => {
+              const active = i === activeTab;
+              return (
+                <>
+                  <TabControlBar
+                    active={active}
+                  >
+                    <FormSelect
+                      value={presetValue[i]}
+                      onChange={({ target }) => {
+                        activeContent.props.setPreset(target.value);
+                        presetValue[i] = target.value
+                        setPresetValue(presetValue)
+                      }}
+                    >
+                      <option key='default' value='default' disabled>NONE</option>
+                      {
+                        Object.keys(activeContent.props.presets).map(preset => (
+                          <option key={preset} value={preset}>{preset}</option>
+                        ))
+                      }
+                    </FormSelect>
+                    <Button
+                      type='reset'
+                      size='small'
+                      onClick={() => {
+                        activeContent.props.setPreset('reset')
+                        presetValue[i] = 'default'
+                        setPresetValue(presetValue)
+                      }}
+                      variation='base-raised-light'
+                      useIcon='arrow-loop'
+                    >
+                        Reset
+                    </Button>
+                  </TabControlBar>
+
+                  {React.cloneElement(child, { active: active })}
+                </>
+              );
+            })
           }
         </ContentInner>
       </PanelBlockScroll>
@@ -131,6 +172,6 @@ function TabbedBlock (props) {
 }
 
 TabbedBlock.propTypes = {
-  children: T.node
+  children: T.node.isRequired
 };
 export default TabbedBlock;
