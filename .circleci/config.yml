@@ -57,12 +57,12 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - cypress-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - cypress-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
             - cypress-deps-{{ .Branch }}-
             - cypress-deps-
       - run: yarn install
       - save_cache:
-          key: cypress-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          key: cypress-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
             - ~/.npm
             - ~/.cache
