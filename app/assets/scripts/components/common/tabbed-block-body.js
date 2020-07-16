@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Children } from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import { PanelBlockScroll, PanelBlockHeader } from './panel-block';
 import Button from '../../styles/button/button';
-import { listReset } from '../../styles/helpers/index';
+import { Subheading } from '../../styles/type/heading';
+import { listReset, truncated } from '../../styles/helpers';
 import { themeVal } from '../../styles/utils/general';
+import Dropdown, { DropMenu, DropMenuItem } from './dropdown';
 
 const Tab = styled(Button)`
   display: inline-flex;
@@ -64,43 +66,152 @@ const TabbedBlockHeader = styled(PanelBlockHeader)`
   }
 `;
 
+const TabControlBar = styled.div`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  padding-bottom: 1.5rem;
+  > ${Subheading} {
+    grid-column: span 5;
+  }
+
+  > ${Button}.drop-trigger {
+    grid-column: 1 / 4;
+    padding-left: 0;
+    text-transform: none;
+    text-align: left;
+    > span {
+      ${truncated()}
+      max-width: 80%;
+    }
+    &,
+    &:hover,
+    &:active,
+    &.active {
+      background-color: initial;
+    }
+  }
+
+  > ${Button}.preset-reset {
+    grid-column: 4 / -1;
+  }
+
+  ${({ active }) => {
+      if (!active) { return 'display: none;'; }
+    }
+  }
+`;
+
+const PresetMenu = styled(DropMenu)`
+  padding: 0;
+`;
+
 const ContentInner = styled.div`
   padding: 1.5rem;
 `;
 
 function TabbedBlock (props) {
-  const { tabContent } = props;
+  const { children } = props;
+  const childArray = Children.toArray(children);
   const [activeTab, setActiveTab] = useState(0);
+  const [activeContent, setActiveContent] = useState(childArray[activeTab]);
+  const [presetValue, setPresetValue] = useState(childArray.map(_ => 'Select'));
+
+  useEffect(() => {
+    setActiveContent(childArray[activeTab]);
+  }, [activeTab]);
 
   return (
     <>
       <TabbedBlockHeader as='nav' role='navigation'>
         <ul>
-          {tabContent.map(([name, icon], ind) => (
-            <li key={name}>
-              <Tab
-                as='a'
-                active={ind === activeTab}
-                useIcon={icon}
-                title='Show menu'
-                size='small'
-                onClick={(e) => {
-                  e.preventDefault();
-                  setActiveTab(ind);
-                }}
-              >
-                {name}
-              </Tab>
-            </li>
-          ))}
+          {
+            Children.map(children, (child, ind) => {
+              const { name, icon } = child.props;
+              return (
+                <li key={name}>
+                  <Tab
+                    as='a'
+                    active={ind === activeTab}
+                    useIcon={icon}
+                    title='Show menu'
+                    size='small'
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveTab(ind);
+                    }}
+                  >
+                    {name}
+                  </Tab>
+                </li>
+              );
+            })
+          }
         </ul>
       </TabbedBlockHeader>
       <PanelBlockScroll>
         <ContentInner>
+
           {
-            React.Children.map(props.children, (child, i) =>
-              React.cloneElement(child, { active: i === activeTab })
-            )
+            Children.map(children, (child, i) => {
+              const active = i === activeTab;
+              return (
+                <>
+                  <TabControlBar
+                    active={active}
+                  >
+                    <Subheading>Preset Priority</Subheading>
+                    <Dropdown
+                      alignment='left'
+                      triggerElement={
+                        <Button
+                          className='drop-trigger'
+                          variation='primary-plain'
+                          useIcon={['chevron-down--small', 'after']}
+                        >
+                          {presetValue[i]}
+                        </Button>
+                      }
+                    >
+                      <PresetMenu>
+                        {
+                          Object.keys(activeContent.props.presets).map(preset => (
+                            <DropMenuItem
+                              key={preset}
+                              onClick={() => {
+                                activeContent.props.setPreset(preset);
+                                presetValue[i] = preset;
+                                setPresetValue(presetValue);
+                                Dropdown.closeAll();
+                              }}
+                            >
+                              {preset}
+                            </DropMenuItem>
+                          ))
+                        }
+                      </PresetMenu>
+                    </Dropdown>
+
+                    <Button
+                      type='reset'
+                      size='small'
+                      className='preset-reset'
+                      onClick={() => {
+                        activeContent.props.setPreset('reset');
+                        presetValue[i] = 'Select';
+                        setPresetValue(presetValue);
+                      }}
+                      variation='base-raised-light'
+                      useIcon='arrow-loop'
+                    >
+                        Reset
+                    </Button>
+                  </TabControlBar>
+
+                  {React.cloneElement(child, { active: active })}
+                </>
+              );
+            })
           }
         </ContentInner>
       </PanelBlockScroll>
@@ -109,7 +220,6 @@ function TabbedBlock (props) {
 }
 
 TabbedBlock.propTypes = {
-  tabContent: T.array,
-  children: T.array
+  children: T.node.isRequired
 };
 export default TabbedBlock;

@@ -97,17 +97,6 @@ export const AccordionFoldTrigger = styled.a`
   }
 `;
 
-/*
-const SelectionOption = styled.li``;
-const SelectionList = styled.ol`
-  > ${SelectionOption}:hover {
-    color: ${themeVal('color.tertiary')};
-    background-color: ${themeVal('color.baseAlphaC')};
-    cursor: pointer;
-  }
-`;
-*/
-
 const SubmissionSection = styled(PanelBlockFooter)`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -119,7 +108,7 @@ const initListToState = (list) => {
     ...obj,
     range: obj.range || DEFAULT_RANGE,
     unit: obj.unit || DEFAULT_UNIT,
-    active: true
+    active: obj.active === undefined ? true : obj.active
   }));
 };
 
@@ -145,6 +134,7 @@ function QueryForm (props) {
     weightsList,
     filtersLists,
     lcoeList,
+    presets,
     onCountryEdit,
     onResourceEdit
   } = props;
@@ -206,14 +196,19 @@ function QueryForm (props) {
         </HeadOption>
       </PanelBlockHeader>
 
-      <TabbedBlockBody
-        tabContent={[
-          ['Weights', 'sliders-horizontal'],
-          ['Filters', 'filter'],
-          ['LCOE', 'disc-dollar']
-        ]}
-      >
-        <FormWrapper>
+      <TabbedBlockBody>
+        <FormWrapper
+          name='weights'
+          icon='sliders-horizontal'
+          presets={presets.weights}
+          setPreset={(preset) => {
+            if (preset === 'reset') {
+              setWeights(initListToState(weightsList));
+            } else {
+              setWeights(initListToState(presets.weights[preset]));
+            }
+          }}
+        >
           {weights.map((weight, ind) => (
             <PanelOption key={weight.name}>
               <PanelOptionTitle>{weight.name}</PanelOptionTitle>
@@ -234,8 +229,19 @@ function QueryForm (props) {
           ))}
         </FormWrapper>
 
-        <FormWrapper>
+        <FormWrapper
+          name='filters'
+          icon='filter'
+          presets={presets.filters}
+          setPreset={(preset) => {
+            if (preset === 'reset') {
+              setFilters(initObjectToState(filtersLists));
+            } else {
+              setFilters(initObjectToState(presets.filters[preset]));
+            }
+          }}
 
+        >
           <Accordion
             initialState={[true, ...Object.keys(filters).slice(1).map(_ => false)]}
           >
@@ -305,7 +311,18 @@ function QueryForm (props) {
           </Accordion>
         </FormWrapper>
 
-        <FormWrapper>
+        <FormWrapper
+          name='lcoe'
+          icon='disc-dollar'
+          presets={presets.lcoe}
+          setPreset={(preset) => {
+            if (preset === 'reset') {
+              setLcoe(initListToState(lcoeList));
+            } else {
+              setLcoe(initListToState(presets.lcoe[preset]));
+            }
+          }}
+        >
           {lcoe.map((filter, ind) => (
             <PanelOption key={filter.name}>
               <StressedFormGroupInput
@@ -346,6 +363,14 @@ function QueryForm (props) {
     </PanelBlock>
   );
 }
+
+FormWrapper.propTypes = {
+  setPreset: T.func.isRequired,
+  presets: T.oneOfType([T.object, T.array]).isRequired,
+  name: T.string,
+  icon: T.string
+};
+
 QueryForm.propTypes = {
   country: T.string,
   resource: T.string,
@@ -353,7 +378,8 @@ QueryForm.propTypes = {
   filtersLists: T.object,
   lcoeList: T.array,
   onResourceEdit: T.func,
-  onCountryEdit: T.func
+  onCountryEdit: T.func,
+  presets: T.object
 };
 
 export default QueryForm;

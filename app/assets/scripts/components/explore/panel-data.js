@@ -1,3 +1,5 @@
+import { randomRange } from '../../utils/utils';
+
 export const resourceList = ['Solar', 'Wind', 'Off-Shore Wind'];
 
 export const filtersLists = {
@@ -35,3 +37,28 @@ export const weightsList = [
   { name: 'Land Use Score' },
   { name: 'Capacity Value (Wind Only)' }
 ];
+
+export const presets = {
+  weights: {
+    'Power Output': weightsList.map(weight => ({
+      ...weight,
+      value: weight.range ? randomRange(weight.range[0], weight.range[1]) : randomRange(0, 100)
+    }))
+  },
+  filters: {
+    Optimization: Object.entries(filtersLists).reduce((accum, [name, group]) => {
+      return (
+        {
+          ...accum,
+          [name]: group.map(filter => ({ ...filter, value: filter.range ? randomRange(filter.range[0], filter.range[1]) : randomRange(0, 100) }))
+        }
+      );
+    }, {})
+  },
+  lcoe: {
+    'Greatest Savings': lcoeList.map(lcoe => ({
+      ...lcoe,
+      value: lcoe.range ? randomRange(lcoe.range[0], lcoe.range[1]) : randomRange(0, 100)
+    }))
+  }
+};
