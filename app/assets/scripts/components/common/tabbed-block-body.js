@@ -4,10 +4,9 @@ import styled, { css } from 'styled-components';
 import { PanelBlockScroll, PanelBlockHeader } from './panel-block';
 import Button from '../../styles/button/button';
 import { Subheading } from '../../styles/type/heading';
-import { listReset } from '../../styles/helpers/index';
+import { listReset, truncated } from '../../styles/helpers';
 import { themeVal } from '../../styles/utils/general';
-
-import FormSelect from '../../styles/form/select';
+import Dropdown, { DropMenu, DropMenuItem } from './dropdown';
 
 const Tab = styled(Button)`
   display: inline-flex;
@@ -67,10 +66,6 @@ const TabbedBlockHeader = styled(PanelBlockHeader)`
   }
 `;
 
-const PresetSelect = styled(FormSelect)`  
-  /* stylelint-disable-next-line */
-`;
-
 const TabControlBar = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -79,11 +74,16 @@ const TabControlBar = styled.div`
     grid-column: span 5;
   }
 
-  > ${PresetSelect} {
-    grid-column: 1 / span 3;
+  > ${Button}.drop-trigger {
+    padding: 0.25rem 0;
+    grid-column: 1 / 4;
+    > span {
+      ${truncated()}
+      max-width: 80%;
+    }
   }
 
-  > ${Button} {
+  > ${Button}.preset-reset {
     grid-column: 4 / -1;
   }
 
@@ -91,6 +91,10 @@ const TabControlBar = styled.div`
       if (!active) { return 'display: none;'; }
     }
   }
+`;
+
+const PresetMenu = styled(DropMenu)`
+  padding: 0;
 `;
 
 const ContentInner = styled.div`
@@ -102,7 +106,7 @@ function TabbedBlock (props) {
   const childArray = Children.toArray(children);
   const [activeTab, setActiveTab] = useState(0);
   const [activeContent, setActiveContent] = useState(childArray[activeTab]);
-  const [presetValue, setPresetValue] = useState(childArray.map(_ => 'default'));
+  const [presetValue, setPresetValue] = useState(childArray.map(_ => 'Select'));
 
   useEffect(() => {
     setActiveContent(childArray[activeTab]);
@@ -148,24 +152,41 @@ function TabbedBlock (props) {
                     active={active}
                   >
                     <Subheading>Preset Priority</Subheading>
-                    <PresetSelect
-                      value={presetValue[i]}
-                      onChange={({ target }) => {
-                        activeContent.props.setPreset(target.value);
-                        presetValue[i] = target.value;
-                        setPresetValue(presetValue);
-                      }}
-                    >
-                      <option key='default' value='default' disabled>Select</option>
-                      {
-                        Object.keys(activeContent.props.presets).map(preset => (
-                          <option key={preset} value={preset}>{preset}</option>
-                        ))
+                    <Dropdown
+                      alignment='left'
+                      triggerElement={
+                        <Button
+                          className='drop-trigger'
+                          variation='primary-plain'
+                          useIcon={['chevron-down--small', 'after']}
+                        >
+                          {presetValue[i]}
+                        </Button>
                       }
-                    </PresetSelect>
+                    >
+                      <PresetMenu>
+                        {
+                          Object.keys(activeContent.props.presets).map(preset => (
+                            <DropMenuItem
+                              key={preset}
+                              onClick={() => {
+                                activeContent.props.setPreset(preset);
+                                presetValue[i] = preset;
+                                setPresetValue(presetValue);
+                                Dropdown.closeAll();
+                              }}
+                            >
+                              {preset}
+                            </DropMenuItem>
+                          ))
+                        }
+                      </PresetMenu>
+                    </Dropdown>
+
                     <Button
                       type='reset'
                       size='small'
+                      className='preset-reset'
                       onClick={() => {
                         activeContent.props.setPreset('reset');
                         presetValue[i] = 'default';

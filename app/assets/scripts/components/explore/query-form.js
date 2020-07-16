@@ -87,17 +87,6 @@ export const AccordionFoldTrigger = styled.a`
   }
 `;
 
-/*
-const SelectionOption = styled.li``;
-const SelectionList = styled.ol`
-  > ${SelectionOption}:hover {
-    color: ${themeVal('color.tertiary')};
-    background-color: ${themeVal('color.baseAlphaC')};
-    cursor: pointer;
-  }
-`;
-*/
-
 const SubmissionSection = styled(PanelBlockFooter)`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -367,8 +356,12 @@ function QueryForm (props) {
     </PanelBlock>
   );
 }
+
 FormWrapper.propTypes = {
-  setPreset: T.func
+  setPreset: T.func.isRequired,
+  presets: T.oneOfType([T.object, T.array]).isRequired,
+  name: T.string,
+  icon: T.string
 };
 
 QueryForm.propTypes = {

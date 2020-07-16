@@ -46,7 +46,7 @@ export const presets = {
     }))
   },
   filters: {
-    test: Object.entries(filtersLists).reduce((accum, [name, group]) => {
+    Optimization: Object.entries(filtersLists).reduce((accum, [name, group]) => {
       return (
         {
           ...accum,
@@ -56,7 +56,7 @@ export const presets = {
     }, {})
   },
   lcoe: {
-    test: lcoeList.map(lcoe => ({
+    'Greatest Savings': lcoeList.map(lcoe => ({
       ...lcoe,
       value: lcoe.range ? randomRange(lcoe.range[0], lcoe.range[1]) : randomRange(0, 100)
     }))
