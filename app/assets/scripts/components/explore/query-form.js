@@ -320,7 +320,6 @@ function QueryForm (props) {
       <SubmissionSection>
         <Button
           type='reset'
-          size='small'
           onClick={resetClick}
           variation='base-raised-light'
           useIcon='arrow-loop'
@@ -329,7 +328,6 @@ function QueryForm (props) {
         </Button>
         <Button
           type='submit'
-          size='small'
           onClick={applyClick}
           variation='primary-raised-dark'
           useIcon='tick--small'
