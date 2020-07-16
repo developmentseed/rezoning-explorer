@@ -198,14 +198,11 @@ function QueryForm (props) {
         </HeadOption>
       </PanelBlockHeader>
 
-      <TabbedBlockBody
-        tabContent={[
-          ['Weights', 'sliders-horizontal'],
-          ['Filters', 'compass'],
-          ['LCOE', 'disc-dollar']
-        ]}
-      >
-        <FormWrapper>
+      <TabbedBlockBody>
+        <FormWrapper 
+          name='weights'
+          icon='sliders-horizontal'
+        >
           {weights.map((weight, ind) => (
             <PanelOption key={weight.name}>
               <PanelOptionTitle>{weight.name}</PanelOptionTitle>
@@ -226,7 +223,10 @@ function QueryForm (props) {
           ))}
         </FormWrapper>
 
-        <FormWrapper>
+        <FormWrapper
+          name='filters'
+          icon='compass'
+        >
           <Accordion
             initialState={[true, ...Object.keys(filters).slice(1).map(_ => false)]}
           >
@@ -295,7 +295,10 @@ function QueryForm (props) {
           </Accordion>
         </FormWrapper>
 
-        <FormWrapper>
+        <FormWrapper
+          name='lcoe'
+          icon='disc-dollar'
+        >
           {lcoe.map((filter, ind) => (
             <PanelOption key={filter.name}>
               <StressedFormGroupInput

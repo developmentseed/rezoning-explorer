@@ -69,14 +69,13 @@ const ContentInner = styled.div`
 `;
 
 function TabbedBlock (props) {
-  const { tabContent } = props;
   const [activeTab, setActiveTab] = useState(0);
 
   return (
     <>
       <TabbedBlockHeader as='nav' role='navigation'>
         <ul>
-          {tabContent.map(([name, icon], ind) => (
+          {/* tabContent.map(([name, icon], ind) => (
             <li key={name}>
               <Tab
                 as='a'
@@ -92,7 +91,30 @@ function TabbedBlock (props) {
                 {name}
               </Tab>
             </li>
-          ))}
+          )) */}
+
+          {
+            React.Children.map(props.children, (child, ind) => {
+              const { name, icon } = child.props;
+              return (
+                <li key={name}>
+                  <Tab
+                    as='a'
+                    active={ind === activeTab}
+                    useIcon={icon}
+                    title='Show menu'
+                    size='small'
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveTab(ind);
+                    }}
+                  >
+                    {name}
+                  </Tab>
+                </li>
+              );
+            })
+          }
         </ul>
       </TabbedBlockHeader>
       <PanelBlockScroll>
@@ -109,7 +131,6 @@ function TabbedBlock (props) {
 }
 
 TabbedBlock.propTypes = {
-  tabContent: T.array,
-  children: T.array
+  children: T.node
 };
 export default TabbedBlock;
