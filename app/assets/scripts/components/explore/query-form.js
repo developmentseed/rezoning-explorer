@@ -54,6 +54,10 @@ const FormWrapper = styled.section`
 const FormGroupWrapper = styled.div`
   box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
   padding: 1rem 0;
+
+  &:first-of-type {
+    padding-top: 0;
+  }
 `;
 
 const EditButton = styled(Button).attrs({
