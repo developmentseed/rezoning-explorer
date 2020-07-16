@@ -68,33 +68,29 @@ const TabbedBlockHeader = styled(PanelBlockHeader)`
 `;
 
 const PresetSelect = styled(FormSelect)`  
+  /* stylelint-disable-next-line */
 `;
+:xa
 
 const TabControlBar = styled.div`
-/*
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  */
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  > ${Subheading} {
+    grid-column: span 5;
+  }
 
-display: grid;
-grid-template-columns: repeat(5, 1fr);
-gap: 10px;
-> ${Subheading} {
-  grid-column: span 5;
-}
+  > ${PresetSelect} {
+    grid-column: 1 / span 3;
+  }
 
-> ${PresetSelect} {
-  grid-column: 1 / span 3;
-}
-
-> ${Button} {
-  grid-column: 4 / -1;
-}
+  > ${Button} {
+    grid-column: 4 / -1;
+  }
 
   ${({ active }) => {
-    if (!active) { return 'display: none;'; }
-  }
+      if (!active) { return 'display: none;'; }
+    }
   }
 `;
 

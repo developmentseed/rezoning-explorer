@@ -242,7 +242,6 @@ function QueryForm (props) {
             } else {
               setFilters(initObjectToState(presets.filters[preset]));
             }
-            
           }}
 
         >
@@ -324,7 +323,6 @@ function QueryForm (props) {
             } else {
               setLcoe(initListToState(presets.lcoe[preset]));
             }
-            
           }}
         >
           {lcoe.map((filter, ind) => (
