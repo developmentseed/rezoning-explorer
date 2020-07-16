@@ -34,14 +34,21 @@ const PanelOptionTitle = styled.div`
   font-weight: ${themeVal('type.base.bold')};
 `;
 const HeadOption = styled.div`
-  box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
-  padding: 1rem 0;
+  padding: 0.5rem 0;
+  &:last-of-type {
+    box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
+  }
 `;
 
 const OptionHeadline = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
+  align-items: center;
+
+  & >:first-child {
+    min-width: 5rem;
+  }
 `;
 
 const FormWrapper = styled.section`
@@ -63,6 +70,7 @@ const EditButton = styled(Button).attrs({
   hideText: true
 })`
   opacity: 50%;
+  margin-left: auto;
 `;
 
 export const AccordionFoldTrigger = styled.a`
@@ -158,34 +166,32 @@ function QueryForm (props) {
     <PanelBlock>
       <PanelBlockHeader>
         <HeadOption>
-          <Subheading>Country</Subheading>
           <OptionHeadline>
-            <Heading size='large' variation='primary'>{country}</Heading>
-            <EditButton onClick={onCountryEdit}>
+            <Heading size='large' variation='primary'>{country || 'Select Country'}</Heading>
+            <EditButton onClick={onCountryEdit} title='Edit Country'>
                 Edit Country Selection
             </EditButton>
           </OptionHeadline>
         </HeadOption>
 
         <HeadOption>
-          <Subheading>Resource</Subheading>
-
           <OptionHeadline>
-            <Heading size='large' variation='primary'>{resource}</Heading>
-            <EditButton onClick={onResourceEdit}>Edit Resource Selection</EditButton>
+            <Subheading>Resource:  </Subheading>
+            <Subheading variation='primary'><strong>{resource || 'Select Resource'}</strong></Subheading>
+            <EditButton onClick={onResourceEdit} title='Edit Resource'>Edit Resource Selection</EditButton>
           </OptionHeadline>
         </HeadOption>
 
         <HeadOption>
-          <Subheading>Grid Size</Subheading>
           <OptionHeadline>
-            <Heading>
-              {gridSize} km<sup>2</sup>
-            </Heading>
+            <Subheading>Grid Size:  </Subheading>
+            <Subheading variation='primary'>
+              <strong>{gridSize} km<sup>2</sup></strong>
+            </Subheading>
             <Dropdown
               alignment='right'
               direction='down'
-              triggerElement={<EditButton>Edit Grid Size</EditButton>}
+              triggerElement={<EditButton title='Edit Grid Size'>Edit Grid Size</EditButton>}
             >
               <SliderGroup
                 unit='km^2'
