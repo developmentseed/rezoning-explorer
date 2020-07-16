@@ -49,12 +49,6 @@ const OptionHeadline = styled.div`
   }
 `;
 
-const FilterHeadline = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
 const FormWrapper = styled.section`
   ${({ active }) => {
     if (!active) { return 'display: none;'; }
@@ -273,7 +267,7 @@ function QueryForm (props) {
                       renderBody={({ isFoldExpanded }) => (
                         list.map((filter, ind) => (
                           <PanelOption key={filter.name} hidden={!isFoldExpanded}>
-                            <FilterHeadline>
+                            <OptionHeadline>
                               <PanelOptionTitle>{filter.name}</PanelOptionTitle>
                               <FormSwitch
                                 hideText
@@ -290,7 +284,7 @@ function QueryForm (props) {
                                 Toggle filter
                               </FormSwitch>
 
-                            </FilterHeadline>
+                            </OptionHeadline>
 
                             <SliderGroup
                               unit={filter.unit || '%'}
