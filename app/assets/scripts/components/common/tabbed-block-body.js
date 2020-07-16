@@ -70,7 +70,6 @@ const TabbedBlockHeader = styled(PanelBlockHeader)`
 const PresetSelect = styled(FormSelect)`  
   /* stylelint-disable-next-line */
 `;
-:xa
 
 const TabControlBar = styled.div`
   display: grid;
