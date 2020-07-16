@@ -13,8 +13,8 @@ base_def: &base_def
 restore_cache_def: &restore_cache_def
   # Download and cache dependencies
   keys:
-  - v3-dependencies-{{ checksum "package.json" }}
-  - v3-dependencies-  # fallback if checksum fails
+  - v1-dependencies-{{ checksum "package.json" }}
+  - v1-dependencies-  # fallback if checksum fails
 
 ##
 ## START Circle CI configuration
@@ -33,7 +33,7 @@ jobs:
           paths:
             - node_modules
             - app/assets/scripts/config/local.js
-          key: v3-dependencies-{{ checksum "package.json" }}
+          key: v1-dependencies-{{ checksum "package.json" }}
   lint:
     <<: *base_def
     steps:
@@ -50,6 +50,23 @@ jobs:
           <<: *restore_cache_def
       - run: yarn gulp collecticons
       - run: yarn test
+  ci:
+    docker:
+      - image: cypress/base:12
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - cypress-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - cypress-deps-{{ .Branch }}-
+            - cypress-deps-
+      - run: yarn install
+      - save_cache:
+          key: cypress-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+      - run: yarn cy:test
   build:
     <<: *base_def
     steps:
@@ -86,6 +103,7 @@ workflows:
       - test:
           requires:
             - prepare
+      - ci
       - build:
           requires:
             - prepare

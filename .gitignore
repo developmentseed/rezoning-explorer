@@ -114,3 +114,4 @@ tmp
 .tmp
 dist
 .vscode/*
+cypress/videos/*
