@@ -15,7 +15,7 @@ const Tab = styled(Button)`
   transition: color .16s ease-in-out 0s;
   padding: 0.75rem 0;
   color: ${themeVal('color.baseAlphaD')};
-
+  font-weight: ${themeVal('type.heading.weight')};
   &,
   &:visited {
     background-color: transparent;
@@ -198,7 +198,7 @@ function TabbedBlock (props) {
                       className='preset-reset'
                       onClick={() => {
                         activeContent.props.setPreset('reset');
-                        presetValue[i] = 'default';
+                        presetValue[i] = 'Select';
                         setPresetValue(presetValue);
                       }}
                       variation='base-raised-light'

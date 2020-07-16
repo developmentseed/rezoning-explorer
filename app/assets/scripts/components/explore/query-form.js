@@ -29,16 +29,27 @@ const PanelOption = styled.div`
 `;
 
 const PanelOptionTitle = styled.div`
-  opacity: 0.9;
-  font-size: 0.875rem;
-  font-weight: ${themeVal('type.base.bold')};
+  font-weight: ${themeVal('type.base.weight')};
 `;
 const HeadOption = styled.div`
-  box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
-  padding: 1rem 0;
+  padding: 0.5rem 0;
+  &:last-of-type {
+    box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
+  }
 `;
 
 const OptionHeadline = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+
+  & >:first-child {
+    min-width: 5rem;
+  }
+`;
+
+const FilterHeadline = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -54,6 +65,10 @@ const FormWrapper = styled.section`
 const FormGroupWrapper = styled.div`
   box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
   padding: 1rem 0;
+
+  &:first-of-type {
+    padding-top: 0;
+  }
 `;
 
 const EditButton = styled(Button).attrs({
@@ -63,6 +78,7 @@ const EditButton = styled(Button).attrs({
   hideText: true
 })`
   opacity: 50%;
+  margin-left: auto;
 `;
 
 export const AccordionFoldTrigger = styled.a`
@@ -148,34 +164,32 @@ function QueryForm (props) {
     <PanelBlock>
       <PanelBlockHeader>
         <HeadOption>
-          <Subheading>Country</Subheading>
           <OptionHeadline>
-            <Heading size='large' variation='primary'>{country}</Heading>
-            <EditButton onClick={onCountryEdit}>
+            <Heading size='large' variation='primary'>{country || 'Select Country'}</Heading>
+            <EditButton onClick={onCountryEdit} title='Edit Country'>
                 Edit Country Selection
             </EditButton>
           </OptionHeadline>
         </HeadOption>
 
         <HeadOption>
-          <Subheading>Resource</Subheading>
-
           <OptionHeadline>
-            <Heading size='large' variation='primary'>{resource}</Heading>
-            <EditButton onClick={onResourceEdit}>Edit Resource Selection</EditButton>
+            <Subheading>Resource:  </Subheading>
+            <Subheading variation='primary'><strong>{resource || 'Select Resource'}</strong></Subheading>
+            <EditButton onClick={onResourceEdit} title='Edit Resource'>Edit Resource Selection</EditButton>
           </OptionHeadline>
         </HeadOption>
 
         <HeadOption>
-          <Subheading>Grid Size</Subheading>
           <OptionHeadline>
-            <Heading>
-              {gridSize} km<sup>2</sup>
-            </Heading>
+            <Subheading>Grid Size:  </Subheading>
+            <Subheading variation='primary'>
+              <strong>{gridSize} km<sup>2</sup></strong>
+            </Subheading>
             <Dropdown
               alignment='right'
               direction='down'
-              triggerElement={<EditButton>Edit Grid Size</EditButton>}
+              triggerElement={<EditButton title='Edit Grid Size'>Edit Grid Size</EditButton>}
             >
               <SliderGroup
                 unit='km^2'
@@ -223,7 +237,7 @@ function QueryForm (props) {
 
         <FormWrapper
           name='filters'
-          icon='compass'
+          icon='filter'
           presets={presets.filters}
           setPreset={(preset) => {
             if (preset === 'reset') {
@@ -259,7 +273,7 @@ function QueryForm (props) {
                       renderBody={({ isFoldExpanded }) => (
                         list.map((filter, ind) => (
                           <PanelOption key={filter.name} hidden={!isFoldExpanded}>
-                            <OptionHeadline>
+                            <FilterHeadline>
                               <PanelOptionTitle>{filter.name}</PanelOptionTitle>
                               <FormSwitch
                                 hideText
@@ -276,29 +290,30 @@ function QueryForm (props) {
                                 Toggle filter
                               </FormSwitch>
 
-                            </OptionHeadline>
+                            </FilterHeadline>
+
                             <SliderGroup
-                              unit={filter.unit}
-                              range={filter.range}
+                              unit={filter.unit || '%'}
+                              range={filter.range || [0, 100]}
                               id={filter.name}
                               value={
                                 filter.value === undefined ? filter.range[0] : filter.value
                               }
+                              disabled={!filter.active}
                               onChange={(value) => {
-                                setFilters({
-                                  ...filters,
-                                  [group]: updateStateList(list, ind, { ...filter, value })
-                                });
+                                if (filter.active) {
+                                  setFilters({
+                                    ...filters,
+                                    [group]: updateStateList(list, ind, { ...filter, value })
+                                  });
+                                }
                               }}
                             />
                           </PanelOption>
                         )))}
-                    />
-
-                  );
+                    />);
                 })
             )}
-
           </Accordion>
         </FormWrapper>
 
@@ -336,7 +351,6 @@ function QueryForm (props) {
       <SubmissionSection>
         <Button
           type='reset'
-          size='small'
           onClick={resetClick}
           variation='base-raised-light'
           useIcon='arrow-loop'
@@ -345,7 +359,6 @@ function QueryForm (props) {
         </Button>
         <Button
           type='submit'
-          size='small'
           onClick={applyClick}
           variation='primary-raised-dark'
           useIcon='tick--small'

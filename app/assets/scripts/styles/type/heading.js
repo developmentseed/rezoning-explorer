@@ -58,6 +58,9 @@ export const Subheading = styled.h2`
   font-family: ${themeVal('type.base.family')};
   font-weight: ${themeVal('type.heading.regular')};
   text-transform: uppercase;
+  ${({ variation }) => variation && css`
+    color: ${getHeadingColor};
+  `}
 `;
 
 export const headingAlt = () => css`

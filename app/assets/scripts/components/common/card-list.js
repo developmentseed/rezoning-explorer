@@ -14,14 +14,14 @@ const CardWrapper = styled.article`
   align-items: center;
   border: 1px solid ${themeVal('color.baseAlphaC')};
 
-  box-shadow: 0 0 32px 2px ${themeVal('color.baseAlphaA')},
-    0 16px 48px -16px ${themeVal('color.baseAlphaB')};
+  box-shadow: 0 0 16px 2px ${themeVal('color.baseAlphaA')},
+    0 8px 24px -16px ${themeVal('color.baseAlphaB')};
 
   cursor: pointer;
   transition: all .16s ease 0s;
   &:hover {
-    box-shadow: 0 0 32px 4px ${themeVal('color.baseAlphaA')},
-      0 16px 48px -8px ${themeVal('color.baseAlphaB')};
+    box-shadow: 0 0 16px 4px ${themeVal('color.baseAlphaA')},
+      0 8px 24px -8px ${themeVal('color.baseAlphaB')};
     transform: translate(0, -0.125rem);
   }
 `;
@@ -76,6 +76,7 @@ const CardListContainer = styled.ol`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
   gap: 2rem;
+  padding: 1rem 1rem 1rem 0;
 `;
 
 function CardList ({ data, renderCard, filterCard = () => true }) {
