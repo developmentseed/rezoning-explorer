@@ -201,7 +201,7 @@ function QueryForm (props) {
       <TabbedBlockBody
         tabContent={[
           ['Weights', 'sliders-horizontal'],
-          ['Filters', 'compass'],
+          ['Filters', 'filter'],
           ['LCOE', 'disc-dollar']
         ]}
       >
