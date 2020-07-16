@@ -32,6 +32,7 @@ function SliderGroup (props) {
         disabled={disabled}
         validate={validateRangeNum(range[0], range[1])}
         onChange={onChange}
+        title={disabled && 'Enable this input to interact'}
       />
     </FormSliderGroup>
   );
