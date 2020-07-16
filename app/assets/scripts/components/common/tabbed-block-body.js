@@ -3,6 +3,7 @@ import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import { PanelBlockScroll, PanelBlockHeader } from './panel-block';
 import Button from '../../styles/button/button';
+import { Subheading } from '../../styles/type/heading';
 import { listReset } from '../../styles/helpers/index';
 import { themeVal } from '../../styles/utils/general';
 
@@ -66,10 +67,31 @@ const TabbedBlockHeader = styled(PanelBlockHeader)`
   }
 `;
 
+const PresetSelect = styled(FormSelect)`  
+`;
+
 const TabControlBar = styled.div`
+/*
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  */
+
+display: grid;
+grid-template-columns: repeat(5, 1fr);
+gap: 10px;
+> ${Subheading} {
+  grid-column: span 5;
+}
+
+> ${PresetSelect} {
+  grid-column: 1 / span 3;
+}
+
+> ${Button} {
+  grid-column: 4 / -1;
+}
+
   ${({ active }) => {
     if (!active) { return 'display: none;'; }
   }
@@ -85,7 +107,7 @@ function TabbedBlock (props) {
   const childArray = Children.toArray(children);
   const [activeTab, setActiveTab] = useState(0);
   const [activeContent, setActiveContent] = useState(childArray[activeTab]);
-  const [presetValue, setPresetValue] = useState(childArray.map( _ => 'default'));
+  const [presetValue, setPresetValue] = useState(childArray.map(_ => 'default'));
 
   useEffect(() => {
     setActiveContent(childArray[activeTab]);
@@ -130,28 +152,29 @@ function TabbedBlock (props) {
                   <TabControlBar
                     active={active}
                   >
-                    <FormSelect
+                    <Subheading>Preset Priority</Subheading>
+                    <PresetSelect
                       value={presetValue[i]}
                       onChange={({ target }) => {
                         activeContent.props.setPreset(target.value);
-                        presetValue[i] = target.value
-                        setPresetValue(presetValue)
+                        presetValue[i] = target.value;
+                        setPresetValue(presetValue);
                       }}
                     >
-                      <option key='default' value='default' disabled>NONE</option>
+                      <option key='default' value='default' disabled>Select</option>
                       {
                         Object.keys(activeContent.props.presets).map(preset => (
                           <option key={preset} value={preset}>{preset}</option>
                         ))
                       }
-                    </FormSelect>
+                    </PresetSelect>
                     <Button
                       type='reset'
                       size='small'
                       onClick={() => {
-                        activeContent.props.setPreset('reset')
-                        presetValue[i] = 'default'
-                        setPresetValue(presetValue)
+                        activeContent.props.setPreset('reset');
+                        presetValue[i] = 'default';
+                        setPresetValue(presetValue);
                       }}
                       variation='base-raised-light'
                       useIcon='arrow-loop'

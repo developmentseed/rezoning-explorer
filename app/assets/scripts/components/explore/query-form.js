@@ -109,7 +109,7 @@ const initListToState = (list) => {
     ...obj,
     range: obj.range || DEFAULT_RANGE,
     unit: obj.unit || DEFAULT_UNIT,
-    active: true
+    active: obj.active === undefined ? true : obj.active
   }));
 };
 
@@ -236,6 +236,15 @@ function QueryForm (props) {
           name='filters'
           icon='compass'
           presets={presets.filters}
+          setPreset={(preset) => {
+            if (preset === 'reset') {
+              setFilters(initObjectToState(filtersLists));
+            } else {
+              setFilters(initObjectToState(presets.filters[preset]));
+            }
+            
+          }}
+
         >
           <Accordion
             initialState={[true, ...Object.keys(filters).slice(1).map(_ => false)]}
