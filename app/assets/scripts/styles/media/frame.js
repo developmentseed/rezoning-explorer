@@ -12,7 +12,7 @@ const BWindowFrame = styled.div`
 
   ::before, ::after {
     content: '';
-    background: ${themeVal('color.smoke')};
+    background: ${themeVal('color.baseAlphaB')};
   }
   
   ::before {
