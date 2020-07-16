@@ -24,13 +24,20 @@ const ParamTitle = styled.div`
   font-weight: ${themeVal('type.base.bold')};
 `;
 const HeadOption = styled.div`
-  box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
   padding: 0.5rem 0;
+  &:last-of-type {
+    box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
+  }
 `;
 const OptionHeadline = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  align-items: center;
+
+  & >:first-child {
+    min-width: 5rem;
+  }
 `;
 const PanelOption = styled.div`
   margin-bottom: 1.5rem;
@@ -120,19 +127,19 @@ function QueryForm (props) {
         </HeadOption>
 
         <HeadOption>
-          <Subheading>Resource</Subheading>
           <OptionHeadline>
-            <Heading variation='primary'>{resource || 'Select Resource'}</Heading>
+            <Subheading>Resource:  </Subheading>
+            <Subheading variation='primary'><strong>{resource || 'Select Resource'}</strong></Subheading>
             <EditButton onClick={onResourceEdit} title='Edit Resource'>Edit Resource Selection</EditButton>
           </OptionHeadline>
         </HeadOption>
 
         <HeadOption>
-          <Subheading>Grid Size</Subheading>
           <OptionHeadline>
-            <Heading variation='primary'>
-              {gridSize} km<sup>2</sup>
-            </Heading>
+            <Subheading>Grid Size:  </Subheading>
+            <Subheading variation='primary'>
+              <strong>{gridSize} km<sup>2</sup></strong>
+            </Subheading>
             <Dropdown
               alignment='right'
               direction='down'
