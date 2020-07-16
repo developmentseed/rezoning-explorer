@@ -29,9 +29,7 @@ const PanelOption = styled.div`
 `;
 
 const PanelOptionTitle = styled.div`
-  opacity: 0.9;
-  font-size: 0.875rem;
-  font-weight: ${themeVal('type.base.bold')};
+  font-weight: ${themeVal('type.base.weight')};
 `;
 const HeadOption = styled.div`
   padding: 0.5rem 0;
@@ -61,6 +59,10 @@ const FormWrapper = styled.section`
 const FormGroupWrapper = styled.div`
   box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
   padding: 1rem 0;
+
+  &:first-of-type {
+    padding-top: 0;
+  }
 `;
 
 const EditButton = styled(Button).attrs({
@@ -207,7 +209,7 @@ function QueryForm (props) {
       <TabbedBlockBody
         tabContent={[
           ['Weights', 'sliders-horizontal'],
-          ['Filters', 'compass'],
+          ['Filters', 'filter'],
           ['LCOE', 'disc-dollar']
         ]}
       >
@@ -324,7 +326,6 @@ function QueryForm (props) {
       <SubmissionSection>
         <Button
           type='reset'
-          size='small'
           onClick={resetClick}
           variation='base-raised-light'
           useIcon='arrow-loop'
@@ -333,7 +334,6 @@ function QueryForm (props) {
         </Button>
         <Button
           type='submit'
-          size='small'
           onClick={applyClick}
           variation='primary-raised-dark'
           useIcon='tick--small'

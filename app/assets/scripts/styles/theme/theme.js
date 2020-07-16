@@ -39,10 +39,11 @@ const type = {
     color: lighten(0.12, (desaturate(0.28, color.primary))),
     family: '"IBM Plex Sans", sans-serif',
     style: 'normal',
-    weight: 300,
+    weight: 400,
     light: 300,
     regular: 400,
     medium: 400,
+    semibold: 600,
     bold: 700,
     extrabold: 800,
     antialiasing: true
@@ -50,12 +51,11 @@ const type = {
   heading: {
     family: '"IBM Plex Sans", sans-serif',
     style: 'normal',
-    weight: 700,
+    weight: 600,
     light: 300,
     regular: 400,
-    medium: 400,
-    bold: 700,
-    extrabold: 800
+    semibold: 600,
+    bold: 700
   },
   mono: {
     family: '"IBM Plex Mono", monospaced',
