@@ -29,9 +29,7 @@ const PanelOption = styled.div`
 `;
 
 const PanelOptionTitle = styled.div`
-  opacity: 0.9;
-  font-size: 0.875rem;
-  font-weight: ${themeVal('type.base.bold')};
+  font-weight: ${themeVal('type.base.weight')};
 `;
 const HeadOption = styled.div`
   box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
