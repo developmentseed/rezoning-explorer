@@ -235,6 +235,7 @@ function QueryForm (props) {
         </FormWrapper>
 
         <FormWrapper>
+
           <Accordion
             initialState={[true, ...Object.keys(filters).slice(1).map(_ => false)]}
           >
@@ -278,28 +279,29 @@ function QueryForm (props) {
                               </FormSwitch>
 
                             </OptionHeadline>
+
                             <SliderGroup
-                              unit={filter.unit}
-                              range={filter.range}
+                              unit={filter.unit || '%'}
+                              range={filter.range || [0, 100]}
                               id={filter.name}
                               value={
                                 filter.value === undefined ? filter.range[0] : filter.value
                               }
+                              disabled={!filter.active}
                               onChange={(value) => {
-                                setFilters({
-                                  ...filters,
-                                  [group]: updateStateList(list, ind, { ...filter, value })
-                                });
+                                if (filter.active) {
+                                  setFilters({
+                                    ...filters,
+                                    [group]: updateStateList(list, ind, { ...filter, value })
+                                  });
+                                }
                               }}
                             />
                           </PanelOption>
                         )))}
-                    />
-
-                  );
+                    />);
                 })
             )}
-
           </Accordion>
         </FormWrapper>
 

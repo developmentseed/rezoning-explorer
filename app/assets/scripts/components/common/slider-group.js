@@ -18,10 +18,10 @@ const FormSliderGroup = styled.div`
 `;
 
 function SliderGroup (props) {
-  const { range, id, value, onChange } = props;
+  const { range, id, value, onChange, disabled } = props;
   return (
     <FormSliderGroup>
-      <InputRange minValue={range[0]} maxValue={range[1]} value={value} onChange={onChange} />
+      <InputRange minValue={range[0]} maxValue={range[1]} value={value} onChange={onChange} disabled={disabled} />
       <StressedFormGroupInput
         inputType='number'
         inputSize='small'
@@ -29,8 +29,10 @@ function SliderGroup (props) {
         name={`slider-input-max-${id}}`}
         label='Max value'
         value={value}
+        disabled={disabled}
         validate={validateRangeNum(range[0], range[1])}
         onChange={onChange}
+        title={disabled && 'Enable this input to interact'}
       />
     </FormSliderGroup>
   );
@@ -39,7 +41,8 @@ SliderGroup.propTypes = {
   range: T.array,
   id: T.string,
   onChange: T.func,
-  value: T.oneOfType([T.string, T.number])
+  value: T.oneOfType([T.string, T.number]),
+  disabled: T.bool
 };
 
 export default SliderGroup;

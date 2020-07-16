@@ -7,14 +7,14 @@ export const filtersLists = {
     { name: 'Electricity Demand', range: [0, 100], unit: 'k' }
   ],
   infrastructure_layers: [
-    { name: 'Zone Score', range: [0, 1] },
-    { name: 'Mean Capacity Factor', range: [0, 1] },
-    { name: 'Electricity Demand', range: [0, 100], unit: 'k' }
+    { name: 'Layer score', range: [0, 1] },
+    { name: 'Prop 2', range: [0, 1] },
+    { name: 'Prop 3', range: [0, 100], unit: 'k' }
   ],
   environmental_layers: [
-    { name: 'Zone Score', range: [0, 1] },
-    { name: 'Mean Capacity Factor', range: [0, 1] },
-    { name: 'Electricity Demand', range: [0, 100], unit: 'k' }
+    { name: 'Env Prop 1', range: [0, 1] },
+    { name: 'Env Prop 2', range: [0, 1] },
+    { name: 'Env Prop 3', range: [0, 100], unit: 'k' }
   ]
 };
 
