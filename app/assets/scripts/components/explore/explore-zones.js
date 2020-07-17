@@ -90,10 +90,9 @@ function ExploreZones () {
     <ZonesWrapper>
       <ZonesHeader>All Zones</ZonesHeader>
 
-
-      { selectedZone ?
-        <SelectedZone zone={selectedZone} resetZone={() => setSelectedZone(null)}/> :
-        <CardList
+      { selectedZone
+        ? <SelectedZone zone={selectedZone} resetZone={() => setSelectedZone(null)} />
+        : <CardList
           numColumns={1}
           data={CARD_DATA}
           renderCard={(data) => (
@@ -115,6 +114,7 @@ function ExploreZones () {
               </CardDetails>
             </Card>
           )}
+          /* eslint-disable-next-line */
           />}
 
     </ZonesWrapper>

@@ -87,7 +87,7 @@ const CardListWrapper = styled(ShadowScrollbar)`
 
 function CardList ({ data, renderCard, filterCard = () => true, numColumns }) {
   return (
-    <CardListWrapper >
+    <CardListWrapper>
       <CardListContainer numColumns={numColumns} className='list-container'>
         {data.filter(filterCard).map(renderCard)}
       </CardListContainer>
