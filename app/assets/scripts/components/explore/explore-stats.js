@@ -12,7 +12,6 @@ const STATS = [
 ];
 
 const StatsWrapper = styled.section`
-  height: 20rem;
   display: grid;
   grid-template-rows: 1fr 1fr;
 `;

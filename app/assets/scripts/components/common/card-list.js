@@ -6,7 +6,7 @@ import T from 'prop-types';
 import { truncated } from '../../styles/helpers/index';
 import { themeVal } from '../../styles/utils/general';
 
-const CardWrapper = styled.article`
+export const CardWrapper = styled.article`
   height: ${({ size }) => (size === 'large' ? '5rem' : '3.5rem')};
   display: flex;
   flex-direction: row;
@@ -69,20 +69,41 @@ Card.propTypes = {
   onClick: T.func
 };
 
-const CardListWrapper = styled(ShadowScrollbar)`
-  height: 60vh;
-`;
 const CardListContainer = styled.ol`
+/*
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  grid-template-columns: ${({ numColumns }) => {
+    if (numColumns) {
+      return `repeat(${numColumns}, 1fr);`;
+    } else {
+      return 'repeat(auto-fit, minmax(16rem, 1fr));';
+    }
+  }}
   gap: 2rem;
   padding: 1rem 1rem 1rem 0;
+  */
+`;
+const CardListWrapper = styled(ShadowScrollbar)`
+  height: 60vh;
+
+  ol {
+    display: grid;
+    grid-template-columns: ${({ numColumns }) => {
+      if (numColumns) {
+        return `repeat(${numColumns}, 1fr);`;
+      } else {
+        return 'repeat(auto-fit, minmax(16rem, 1fr));';
+      }
+    }}
+    gap: 2rem;
+    /*padding: 1rem 1rem 1rem 0;*/
+  }
 `;
 
-function CardList ({ data, renderCard, filterCard = () => true }) {
+function CardList ({ data, renderCard, filterCard = () => true, numColumns }) {
   return (
-    <CardListWrapper>
-      <CardListContainer>
+    <CardListWrapper numColumns={numColumns}>
+      <CardListContainer className='list-container'>
         {data.filter(filterCard).map(renderCard)}
       </CardListContainer>
     </CardListWrapper>
@@ -92,7 +113,8 @@ function CardList ({ data, renderCard, filterCard = () => true }) {
 CardList.propTypes = {
   data: T.array,
   renderCard: T.func,
-  filterCard: T.func
+  filterCard: T.func,
+  numColumns: T.number
 };
 
 export default CardList;
