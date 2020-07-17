@@ -1,21 +1,45 @@
 import React from 'react';
 import styled from 'styled-components';
+import StatSummary from '../common/table';
+import Heading from '../../styles/type/heading';
+
+const STATS = [
+  { label: 'Matching Zones', data: 26 },
+  { label: 'kWh/m2 per year', data: 2309 },
+  { label: 'GWh per year', data: 1.223 },
+  { label: 'kWh/m2 per year', data: 2309 }
+];
 
 const StatsWrapper = styled.section`
-  height: 12rem;
+  height: 25rem;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
 `;
 
 const LineChart = styled.div`
-  height: 50%;
 `;
-const StatSummary = styled.div`
-  height: 50%;
+
+const CellData = styled(Heading)`
 `;
+const CellLabel = styled.div`
+  font-size: 0.75rem;
+`;
+
 function ExploreStats () {
   return (
     <StatsWrapper>
       <LineChart />
-      <StatSummary />
+      <StatSummary
+        title='Total Output'
+        data={STATS}
+        dimension={[2, 2]}
+        renderCell={datum => (
+          <>
+            <CellData>{datum.data}</CellData>
+            <CellLabel>{datum.label}</CellLabel>
+          </>
+        )}
+      />
     </StatsWrapper>
   );
 }

@@ -17,16 +17,19 @@ import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import ExploreStats from './explore-stats';
 import ExploreZones from './explore-zones';
 
-const PrimePanel = styled(Panel)`
+const SecPanel = styled(Panel)`
   ${media.largeUp`
     width: 18rem;
   `}
+`;
+const PanelBlockBodyInner = styled.div`
+  padding: 1.5rem;
 `;
 
 function ExpMapSecPanel (props) {
   const { onPanelChange } = props;
   return (
-    <PrimePanel
+    <SecPanel
       collapsible
       direction='right'
       onPanelChange={onPanelChange}
@@ -40,9 +43,10 @@ function ExpMapSecPanel (props) {
               </Heading>
             </PanelBlockHeader>
             <PanelBlockBody>
-              <ExploreStats />
-              <ExploreZones />
-
+              <PanelBlockBodyInner>
+                <ExploreStats />
+                <ExploreZones />
+              </PanelBlockBodyInner>
             </PanelBlockBody>
           </PanelBlock>
         </>
