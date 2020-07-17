@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Heading, { Subheading } from '../../styles/type/heading';
-import BaseCardList, { CardWrapper } from '../common/card-list';
+import CardList, { CardWrapper } from '../common/card-list';
 import { themeVal } from '../../styles/utils/general';
 
 const CARD_DATA = [
@@ -24,16 +24,13 @@ const CARD_DATA = [
 ];
 
 const ZonesWrapper = styled.section`
+  ol.list-container {
+    padding: 0;
+    gap: 0;
+  }
 `;
 
 const ZonesHeader = styled(Subheading)`
-`;
-
-const CardList = styled(BaseCardList)`
-  ol.list-container {
-    /* not working */
-    padding: 0;
-  }
 `;
 
 const Card = styled(CardWrapper)`
@@ -50,8 +47,9 @@ const Card = styled(CardWrapper)`
    }
 
 `;
+
 const CardIcon = styled.div`
-  background: ${({ color }) => color};
+  background: ${({ color }) => `${color}`};
   width: 3rem;
   height: 3rem;;
   text-align: center;

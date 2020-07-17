@@ -90,13 +90,13 @@ const CardListWrapper = styled(ShadowScrollbar)`
     display: grid;
     grid-template-columns: ${({ numColumns }) => {
       if (numColumns) {
-        return `repeat(${numColumns}, 1fr);`;
+        return `repeat(${numColumns}, 1fr)`;
       } else {
-        return 'repeat(auto-fit, minmax(16rem, 1fr));';
+        return 'repeat(auto-fit, minmax(16rem, 1fr))';
       }
-    }}
+    }};
     gap: 2rem;
-    /*padding: 1rem 1rem 1rem 0;*/
+    padding: 1rem 1rem 1rem 0;
   }
 `;
 
