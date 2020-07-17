@@ -21,6 +21,7 @@ color = {
 
 color = {
   ...color,
+  smoke: rgba(color.base, 0.16),
   baseAlphaA: rgba(color.base, 0.04),
   baseAlphaB: rgba(color.base, 0.08),
   baseAlphaC: rgba(color.base, 0.16),
