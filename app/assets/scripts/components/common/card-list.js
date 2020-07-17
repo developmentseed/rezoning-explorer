@@ -70,7 +70,6 @@ Card.propTypes = {
 };
 
 const CardListContainer = styled.ol`
-/*
   display: grid;
   grid-template-columns: ${({ numColumns }) => {
     if (numColumns) {
@@ -81,29 +80,15 @@ const CardListContainer = styled.ol`
   }}
   gap: 2rem;
   padding: 1rem 1rem 1rem 0;
-  */
 `;
 const CardListWrapper = styled(ShadowScrollbar)`
-  height: 60vh;
-
-  ol {
-    display: grid;
-    grid-template-columns: ${({ numColumns }) => {
-      if (numColumns) {
-        return `repeat(${numColumns}, 1fr)`;
-      } else {
-        return 'repeat(auto-fit, minmax(16rem, 1fr))';
-      }
-    }};
-    gap: 2rem;
-    padding: 1rem 1rem 1rem 0;
-  }
+  height: 45vh;
 `;
 
 function CardList ({ data, renderCard, filterCard = () => true, numColumns }) {
   return (
-    <CardListWrapper numColumns={numColumns}>
-      <CardListContainer className='list-container'>
+    <CardListWrapper >
+      <CardListContainer numColumns={numColumns} className='list-container'>
         {data.filter(filterCard).map(renderCard)}
       </CardListContainer>
     </CardListWrapper>
