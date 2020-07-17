@@ -10,7 +10,12 @@ import {
   PanelBlockBody
 } from '../common/panel-block';
 
+import Heading from '../../styles/type/heading';
+
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
+
+import ExploreStats from './explore-stats';
+import ExploreZones from './explore-zones';
 
 const PrimePanel = styled(Panel)`
   ${media.largeUp`
@@ -26,18 +31,19 @@ function ExpMapSecPanel (props) {
       direction='right'
       onPanelChange={onPanelChange}
       initialState={isLargeViewport()}
-      headerContent={(
-        <PanelHeadline>
-          <PanelTitle>Secondary Panel</PanelTitle>
-        </PanelHeadline>
-      )}
       bodyContent={
         <>
           <PanelBlock>
             <PanelBlockHeader>
-              <PanelBlockTitle>Tools</PanelBlockTitle>
+              <Heading size='large'>
+                National
+              </Heading>
             </PanelBlockHeader>
-            <PanelBlockBody />
+            <PanelBlockBody>
+              <ExploreStats />
+              <ExploreZones />
+
+            </PanelBlockBody>
           </PanelBlock>
         </>
       }

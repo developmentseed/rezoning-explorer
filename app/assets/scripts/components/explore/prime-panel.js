@@ -27,8 +27,8 @@ const SearchBar = styled(FormInput)`
 function ExpMapPrimePanel (props) {
   const { onPanelChange } = props;
 
-  const [showCountrySelect, setShowCountrySelect] = useState(true);
-  const [showResourceSelect, setShowResourceSelect] = useState(true);
+  const [showCountrySelect, setShowCountrySelect] = useState(false);
+  const [showResourceSelect, setShowResourceSelect] = useState(false);
 
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [countryFilter, setCountryFilter] = useState('');
