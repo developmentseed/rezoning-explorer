@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import StatSummary from '../common/table';
+import BarChart from '../common/bar-chart';
 import Heading from '../../styles/type/heading';
 
 const STATS = [
@@ -11,12 +12,9 @@ const STATS = [
 ];
 
 const StatsWrapper = styled.section`
-  height: 25rem;
+  height: 20rem;
   display: grid;
   grid-template-rows: 1fr 1fr;
-`;
-
-const LineChart = styled.div`
 `;
 
 const CellData = styled(Heading)`
@@ -28,7 +26,9 @@ const CellLabel = styled.div`
 function ExploreStats () {
   return (
     <StatsWrapper>
-      <LineChart />
+      <BarChart
+        title='Calculated Zone Scores'
+      />
       <StatSummary
         title='Total Output'
         data={STATS}
