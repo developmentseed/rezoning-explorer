@@ -18,6 +18,7 @@ import { glsp } from '../../styles/utils/theme-values';
 import collecticon from '../../styles/collecticons';
 
 import { Accordion, AccordionFold } from '../../components/accordion';
+import InfoButton from '../common/info-button';
 
 const INIT_GRID_SIZE = 1;
 const DEFAULT_RANGE = [0, 100];
@@ -38,7 +39,7 @@ const HeadOption = styled.div`
   }
 `;
 
-const OptionHeadline = styled.div`
+const HeadOptionHeadline = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -46,6 +47,16 @@ const OptionHeadline = styled.div`
 
   & >:first-child {
     min-width: 5rem;
+  }
+`;
+
+const OptionHeadline = styled(HeadOptionHeadline)`
+  display: grid;
+  > ${FormSwitch} {
+    grid-column-start: 5;
+  }
+  > ${Button}.info-button {
+    grid-column-start: 4;
   }
 `;
 
@@ -158,24 +169,24 @@ function QueryForm (props) {
     <PanelBlock>
       <PanelBlockHeader>
         <HeadOption>
-          <OptionHeadline>
+          <HeadOptionHeadline>
             <Heading size='large' variation='primary'>{country || 'Select Country'}</Heading>
             <EditButton onClick={onCountryEdit} title='Edit Country'>
                 Edit Country Selection
             </EditButton>
-          </OptionHeadline>
+          </HeadOptionHeadline>
         </HeadOption>
 
         <HeadOption>
-          <OptionHeadline>
+          <HeadOptionHeadline>
             <Subheading>Resource:  </Subheading>
             <Subheading variation='primary'><strong>{resource || 'Select Resource'}</strong></Subheading>
             <EditButton onClick={onResourceEdit} title='Edit Resource'>Edit Resource Selection</EditButton>
-          </OptionHeadline>
+          </HeadOptionHeadline>
         </HeadOption>
 
         <HeadOption>
-          <OptionHeadline>
+          <HeadOptionHeadline>
             <Subheading>Grid Size:  </Subheading>
             <Subheading variation='primary'>
               <strong>{gridSize} km<sup>2</sup></strong>
@@ -192,7 +203,7 @@ function QueryForm (props) {
                 onChange={(v) => setGridSize(v)}
               />
             </Dropdown>
-          </OptionHeadline>
+          </HeadOptionHeadline>
         </HeadOption>
       </PanelBlockHeader>
 
@@ -269,6 +280,9 @@ function QueryForm (props) {
                           <PanelOption key={filter.name} hidden={!isFoldExpanded}>
                             <OptionHeadline>
                               <PanelOptionTitle>{filter.name}</PanelOptionTitle>
+                              {
+                                filter.info && <InfoButton info={filter.info} id={filter.name}>Info</InfoButton>
+                              }
                               <FormSwitch
                                 hideText
                                 name={`toggle-${filter.name.replace(/ /g, '-')}`}
