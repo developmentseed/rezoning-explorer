@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useEffect } from 'react';
+import React, { createContext, useReducer, useEffect, useState } from 'react';
 import T from 'prop-types';
 
 import queryDataReducer, { fetchQueryData } from '../context/explore-data';
@@ -7,7 +7,13 @@ import { initialApiRequestState } from '../context/contexeed';
 const ExploreContext = createContext({});
 
 export function ExploreProvider (props) {
-  const [countries, dispatchCountries] = useReducer(queryDataReducer, initialApiRequestState);
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedResource, setSelectedResource] = useState(null);
+
+  const [countries, dispatchCountries] = useReducer(
+    queryDataReducer,
+    initialApiRequestState
+  );
 
   const getQueryData = () => {
     fetchQueryData('countries')(dispatchCountries);
@@ -19,7 +25,11 @@ export function ExploreProvider (props) {
     <>
       <ExploreContext.Provider
         value={{
-          countries
+          countries,
+          selectedCountry,
+          setSelectedCountry,
+          selectedResource,
+          setSelectedResource
         }}
       >
         {props.children}
