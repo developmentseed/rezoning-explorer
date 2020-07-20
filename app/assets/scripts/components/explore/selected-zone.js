@@ -8,6 +8,15 @@ const Details = styled.div`
 const LineChart = styled.div`
 `;
 
+const Wrapper = styled.div`
+  display: grid;
+  gap: 10px;
+  > ${Button} {
+    padding: 0;
+    width: 15%;
+  }
+`
+
 function SelectedZone (props) {
   const { zone, resetZone } = props;
   const { id, country, energy_source, details } = zone;
@@ -19,8 +28,8 @@ function SelectedZone (props) {
   };
   return (
 
-    <>
-      <Button onClick={resetZone} useIcon={['chevron-left--small', 'before']}>
+    <Wrapper>
+      <Button onClick={resetZone} size='small' useIcon={['chevron-left--small', 'before']}>
         See All Zones
       </Button>
       <LineChart title='Supply Curve' />
@@ -32,7 +41,7 @@ function SelectedZone (props) {
           </React.Fragment>
         ))}
       </Details>
-    </>
+    </Wrapper>
   );
 }
 

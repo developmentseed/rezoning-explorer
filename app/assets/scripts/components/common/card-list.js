@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import ShadowScrollbar from '../common/shadow-scrollbar';
+import { PanelBlockBody } from '../common/panel-block';
 import T from 'prop-types';
 
 import { truncated } from '../../styles/helpers/index';
@@ -81,16 +82,21 @@ const CardListContainer = styled.ol`
   gap: 2rem;
   padding: 1rem 1rem 1rem 0;
 `;
-const CardListWrapper = styled(ShadowScrollbar)`
-  height: 45vh;
+const CardListScroll = styled(ShadowScrollbar)`
+  flex: 1;
+`;
+const CardListWrapper = styled(PanelBlockBody)`
+  height: 100%;
 `;
 
 function CardList ({ data, renderCard, filterCard = () => true, numColumns }) {
   return (
     <CardListWrapper>
-      <CardListContainer numColumns={numColumns} className='list-container'>
-        {data.filter(filterCard).map(renderCard)}
-      </CardListContainer>
+      <CardListScroll>
+        <CardListContainer numColumns={numColumns} className='list-container'>
+          {data.filter(filterCard).map(renderCard)}
+        </CardListContainer>
+      </CardListScroll>
     </CardListWrapper>
   );
 }

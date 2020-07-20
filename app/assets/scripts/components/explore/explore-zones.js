@@ -35,9 +35,12 @@ const ZonesWrapper = styled.section`
     padding: 0;
     gap: 0;
   }
+  display: grid;
+  grid-template-rows: 1fr 5fr;
 `;
 
 const ZonesHeader = styled(Subheading)`
+  padding: 1rem 0;
 `;
 
 const Card = styled(CardWrapper)`

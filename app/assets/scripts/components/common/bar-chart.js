@@ -12,6 +12,7 @@ const ChartBody = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  height: 140px;
 `;
 
 const ChartHeader = styled(Subheading)`
