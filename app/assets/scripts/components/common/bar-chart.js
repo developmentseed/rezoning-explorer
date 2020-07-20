@@ -15,7 +15,6 @@ const ChartBody = styled.div`
   height: 140px;
 `;
 
-
 function BarChart ({ title }) {
   return (
     <ChartWrapper>
