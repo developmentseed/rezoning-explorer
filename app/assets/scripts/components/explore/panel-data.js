@@ -4,7 +4,7 @@ export const resourceList = ['Solar', 'Wind', 'Off-Shore Wind'];
 
 export const filtersLists = {
   zone_parameters: [
-    { name: 'Zone Score', range: [0, 1] },
+    { name: 'Zone Score', range: [0, 1], info: 'This filter has info.' },
     { name: 'Mean Capacity Factor', range: [0, 1] },
     { name: 'Electricity Demand', range: [0, 100], unit: 'k' }
   ],
