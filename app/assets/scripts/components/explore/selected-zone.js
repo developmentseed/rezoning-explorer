@@ -1,11 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
+import T from 'prop-types';
 import Heading, { Subheading } from '../../styles/type/heading';
 import Button from '../../styles/button/button';
 
 const Details = styled.div`
+/* stylelint-disable */
 `;
 const LineChart = styled.div`
+/* stylelint-enable */
+
 `;
 
 const Wrapper = styled.div`
@@ -15,10 +19,11 @@ const Wrapper = styled.div`
     padding: 0;
     width: 15%;
   }
-`
+`;
 
 function SelectedZone (props) {
   const { zone, resetZone } = props;
+  /* eslint-disable-next-line */
   const { id, country, energy_source, details } = zone;
   const detailsList = {
     id,
@@ -44,5 +49,10 @@ function SelectedZone (props) {
     </Wrapper>
   );
 }
+
+SelectedZone.propTypes = {
+  zone: T.object.isRequired,
+  resetZone: T.func
+};
 
 export default SelectedZone;

@@ -8,9 +8,12 @@ const TableContainer = styled.div`
   grid-template-rows: 1fr 4fr;
 `;
 const TableHeader = styled.div`
+  /* stylelint-disable */
 `;
 
 const TableBody = styled.div`
+  /* stylelint-enable */
+
 `;
 
 const TableList = styled.ul`

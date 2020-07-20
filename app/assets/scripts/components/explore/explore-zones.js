@@ -60,7 +60,7 @@ const Card = styled(CardWrapper)`
 const CardIcon = styled.div`
   background: ${({ color }) => `${color}`};
   width: 3rem;
-  height: 3rem;;
+  height: 3rem;
   text-align: center;
   color: white;
   display: flex;

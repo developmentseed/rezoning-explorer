@@ -15,13 +15,11 @@ const ChartBody = styled.div`
   height: 140px;
 `;
 
-const ChartHeader = styled(Subheading)`
-`;
 
 function BarChart ({ title }) {
   return (
     <ChartWrapper>
-      <ChartHeader>{title}</ChartHeader>
+      <Subheading>{title}</Subheading>
       <ChartBody>
         <div>Chart Place Holder</div>
       </ChartBody>

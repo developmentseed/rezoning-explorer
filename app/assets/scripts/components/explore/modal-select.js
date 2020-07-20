@@ -6,7 +6,7 @@ import CardList from '../common/card-list';
 
 const BodyOuter = styled.div`
   height: 45vh;
-`
+`;
 
 function ModalSelect (props) {
   const { revealed, onOverlayClick, data, renderHeader, renderCard, filterCard } = props;
@@ -23,11 +23,11 @@ function ModalSelect (props) {
       filterCard={filterCard}
       content={
         <BodyOuter>
-        <CardList
-          data={data}
-          renderCard={renderCard}
-          filterCard={filterCard}
-        />
+          <CardList
+            data={data}
+            renderCard={renderCard}
+            filterCard={filterCard}
+          />
         </BodyOuter>
       }
     />

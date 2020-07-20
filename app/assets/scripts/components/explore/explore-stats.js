@@ -16,8 +16,6 @@ const StatsWrapper = styled.section`
   grid-template-rows: 1.5fr 1fr;
 `;
 
-const CellData = styled(Heading)`
-`;
 const CellLabel = styled.div`
   font-size: 0.75rem;
 `;
@@ -34,7 +32,7 @@ function ExploreStats () {
         dimension={[2, 2]}
         renderCell={datum => (
           <>
-            <CellData>{datum.data}</CellData>
+            <Heading>{datum.data}</Heading>
             <CellLabel>{datum.label}</CellLabel>
           </>
         )}
