@@ -23,6 +23,10 @@ const SecPanel = styled(Panel)`
 `;
 const PanelBlockBodyInner = styled.div`
   padding: 1.5rem;
+  display: grid;
+  grid-template-rows: 1fr 1.5fr;
+  gap: 20px;
+  height: 100%;
 `;
 
 function ExpMapSecPanel (props) {
