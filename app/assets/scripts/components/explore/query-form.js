@@ -52,6 +52,8 @@ const HeadOptionHeadline = styled.div`
 
 const OptionHeadline = styled(HeadOptionHeadline)`
   display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
   > ${FormSwitch} {
     grid-column-start: 5;
   }
