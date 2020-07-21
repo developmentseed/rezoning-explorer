@@ -120,7 +120,7 @@ function ExpMapPrimePanel (props) {
       setSelectedResource(null);
       setShowResourceSelect(true);
     }
-  });
+  }, [countries, location.search]);
 
   return (
     <>

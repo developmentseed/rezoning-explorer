@@ -1,4 +1,9 @@
 describe('Explore view', () => {
+  // Set a desktop screen as default for all tests
+  beforeEach(() => {
+    cy.viewport('macbook-13');
+  });
+
   it('Visit /explore, apply selections', () => {
     cy.visit('/explore');
 
@@ -144,6 +149,38 @@ describe('Explore view', () => {
     cy.get('#selected-resource-prime-panel-heading').should('contain', 'Wind');
 
     // URL is kept
+    cy.url().should(
+      'eq',
+      'http://localhost:9000/explore?countryId=BI&resource=Wind'
+    );
+  });
+
+  it('Select and change a country', () => {
+    // Select country and resource first
+    cy.visit('/explore');
+    cy.get('#country-BF-card').click();
+    cy.get('#resource-Wind-card').click();
+
+    // Both modals are hidden
+    cy.get('#select-country-modal-header').should('not.exist');
+    cy.get('#select-resource-modal-header').should('not.exist');
+
+    // Reopen country modal and select
+    cy.get('#select-country-button').click();
+
+    // Country modal should open
+    cy.get('#select-country-modal-header').should('exist');
+
+    // Select another country
+    cy.get('#country-BI-card').click();
+
+    // Panel should be updated with country name
+    cy.get('#selected-country-prime-panel-heading').should(
+      'contain',
+      'Burundi'
+    );
+
+    // And the URL should be updated too
     cy.url().should(
       'eq',
       'http://localhost:9000/explore?countryId=BI&resource=Wind'

@@ -175,7 +175,7 @@ function QueryForm (props) {
             <Heading size='large' variation='primary'>
               {country || 'Select Country'}
             </Heading>
-            <EditButton onClick={onCountryEdit} title='Edit Country'>
+            <EditButton id='select-country-button' onClick={onCountryEdit} title='Edit Country'>
               Edit Country Selection
             </EditButton>
           </HeadOptionHeadline>
