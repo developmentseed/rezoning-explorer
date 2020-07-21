@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import T from 'prop-types';
 import Button from '../../styles/button/button';
 import Dl from '../../styles/type/definition-list';
+import ShadowScrollbar from '../common/shadow-scrollbar';
 
 const Details = styled.div`
 /* stylelint-disable */
@@ -14,7 +15,8 @@ const LineChart = styled.div`
 
 const Wrapper = styled.div`
   display: grid;
-  gap: 10px;
+  grid-template-rows: 2rem auto 1fr;
+  gap: 0.5rem;
   padding: 0 1.5rem;
   > ${Button} {
     text-align: left;
@@ -41,14 +43,16 @@ function SelectedZone (props) {
         See All Zones
       </Button>
       <LineChart title='Supply Curve' />
-      <Details>
-        {Object.entries(detailsList).map(([label, data]) => (
-          <Dl key={`${id}-${label}`}>
-            <dt>{label}</dt>
-            <dd>{data}</dd>
-          </Dl>
-        ))}
-      </Details>
+      <ShadowScrollbar>
+        <Details>
+          {Object.entries(detailsList).map(([label, data]) => (
+            <Dl key={`${id}-${label}`}>
+              <dt>{label}</dt>
+              <dd>{data}</dd>
+            </Dl>
+          ))}
+        </Details>
+      </ShadowScrollbar>
     </Wrapper>
   );
 }
