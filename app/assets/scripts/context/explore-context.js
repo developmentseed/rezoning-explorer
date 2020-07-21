@@ -3,6 +3,7 @@ import T from 'prop-types';
 
 import queryDataReducer, { fetchQueryData } from '../context/explore-data';
 import { initialApiRequestState } from '../context/contexeed';
+import { showGlobalLoading, hideGlobalLoading } from '../components/common/global-loading';
 
 const ExploreContext = createContext({});
 
@@ -10,7 +11,11 @@ export function ExploreProvider (props) {
   const [countries, dispatchCountries] = useReducer(queryDataReducer, initialApiRequestState);
 
   const getQueryData = () => {
-    fetchQueryData('countries')(dispatchCountries);
+    (async () => {
+      showGlobalLoading();
+      await fetchQueryData('countries')(dispatchCountries);
+      hideGlobalLoading();
+    })();
   };
 
   useEffect(getQueryData, []);

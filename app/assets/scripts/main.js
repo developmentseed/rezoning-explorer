@@ -8,6 +8,7 @@ import GlobalContext, { GlobalProvider } from './context/global-context';
 import history from './utils/history.js';
 
 import GlobalStyles from './styles/global';
+import { GlobalLoading } from './components/common/global-loading';
 
 import theme from './styles/theme/theme';
 
@@ -39,6 +40,7 @@ function Root () {
             <Route exact path='/explore' component={Explore} />
             <Route exact path='/about' component={About} />
           </Switch>
+          <GlobalLoading />
         </GlobalProvider>
       </ThemeProvider>
     </Router>
