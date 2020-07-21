@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
-import Heading, { Subheading } from '../../styles/type/heading';
 import Button from '../../styles/button/button';
+import Dl from '../../styles/type/definition-list';
 
 const Details = styled.div`
 /* stylelint-disable */
@@ -15,9 +15,12 @@ const LineChart = styled.div`
 const Wrapper = styled.div`
   display: grid;
   gap: 10px;
+  padding: 0 1.5rem;
   > ${Button} {
-    padding: 0;
-    width: 15%;
+    text-align: left;
+    margin-left: -1.5rem;
+    padding-left: 1.5rem;
+    width: calc(100% + 3rem);
   }
 `;
 
@@ -40,10 +43,10 @@ function SelectedZone (props) {
       <LineChart title='Supply Curve' />
       <Details>
         {Object.entries(detailsList).map(([label, data]) => (
-          <React.Fragment key={`${id}-${label}`}>
-            <Subheading>{label}</Subheading>
-            <Heading size='small'>{data}</Heading>
-          </React.Fragment>
+          <Dl key={`${id}-${label}`}>
+            <dt>{label}</dt>
+            <dd>{data}</dd>
+          </Dl>
         ))}
       </Details>
     </Wrapper>

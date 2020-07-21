@@ -17,13 +17,19 @@ import ExploreStats from './explore-stats';
 import ExploreZones from './explore-zones';
 
 const SecPanel = styled(Panel)`
+  padding: 0.5rem 0;
   ${media.largeUp`
     width: 18rem;
   `}
+  ${media.xlargeUp`
+    width: 20rem;
+  `}
 `;
 const PanelBlockBodyInner = styled.div`
-  padding: 1.5rem;
+  padding: 1rem 0;
+  flex: 1;
   display: grid;
+  grid-template-rows: 1fr 1.5fr;
 `;
 
 function ExpMapSecPanel (props) {

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Heading, { Subheading } from '../../styles/type/heading';
+import { Subheading } from '../../styles/type/heading';
 import CardList, { CardWrapper } from '../common/card-list';
 import { themeVal } from '../../styles/utils/general';
 import SelectedZone from './selected-zone';
+import Dl from '../../styles/type/definition-list';
 
 const CARD_DATA = [
   {
@@ -36,24 +37,24 @@ const ZonesWrapper = styled.section`
     gap: 0;
   }
   display: grid;
-  grid-template-rows: 1fr 5fr;
+  grid-template-rows: auto 5fr;
 `;
 
 const ZonesHeader = styled(Subheading)`
-  padding: 1rem 0;
+  padding: 1rem 1.5rem;
 `;
 
 const Card = styled(CardWrapper)`
-  display: grid;
-  grid-template-columns: 1fr 4fr;
-  gap: 0.5rem;
+  display: flex;
   height: auto;
   box-shadow: none;
   border:none;
   border-bottom: 1px solid ${themeVal('color.baseAlphaC')};
+  padding: 0.5rem 1.5rem;
   &:hover {
      box-shadow: none;
-     transform: translate(0, -0.125rem);
+     transform: none;
+     background: ${themeVal('color.baseAlphaB')};
    }
 `;
 
@@ -66,24 +67,35 @@ const CardIcon = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-right: 1rem;
 `;
 
 const CardDetails = styled.ul`
-  display: grid;
-  grid-template-rows: repeat(auto-fit, 1fr);
-  grid-gap: 4px;
+  display: flex;
+  flex-flow: column nowrap;
+  flex: 1;
 `;
-const Detail = styled.div`
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  /*padding: 0 0.5rem;*/
-`;
-const Label = styled(Subheading)`
-  font-size: 0.6rem;
-`;
-const Data = styled(Heading)`
-  font-size: 0.6rem;
-  text-align: right;
+const Detail = styled(Dl)`
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+
+  & ~ & {
+    padding-top: 0.125rem;
+  }
+
+  dt,
+  dd {
+    margin: 0;
+  }
+  dt {
+    font-size: 0.875rem;
+  }
+  dd {
+    text-align: right;
+    font-family: ${themeVal('type.mono.family')};
+    color: ${themeVal('color.primary')};
+  }
 `;
 
 function ExploreZones () {
@@ -110,8 +122,8 @@ function ExploreZones () {
               <CardDetails>
                 {Object.entries(data.details).map(([label, data]) => (
                   <Detail key={`${data.id}-${label}`}>
-                    <Label>{label.replace(/_/g, ' ')}</Label>
-                    <Data>{data}</Data>
+                    <dt>{label.replace(/_/g, ' ')}</dt>
+                    <dd>{data}</dd>
                   </Detail>
                 ))}
               </CardDetails>

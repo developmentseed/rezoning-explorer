@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import StatSummary from '../common/table';
 import BarChart from '../common/bar-chart';
-import Heading from '../../styles/type/heading';
+import { themeVal } from '../../styles/utils/general';
 
 const STATS = [
   { label: 'Matching Zones', data: 26 },
@@ -14,10 +14,16 @@ const STATS = [
 const StatsWrapper = styled.section`
   display: grid;
   grid-template-rows: 1.5fr 1fr;
-`;
-
-const CellLabel = styled.div`
-  font-size: 0.75rem;
+  padding: 0 1.5rem;
+  dd {
+    font-family: ${themeVal('type.mono.family')};
+    font-size: 1.25rem;
+    line-height: 1;
+    color: ${themeVal('color.primary')};
+  }
+  dt {
+    font-size: 0.875rem;
+  }
 `;
 
 function ExploreStats () {
@@ -30,11 +36,12 @@ function ExploreStats () {
         title='Total Output'
         data={STATS}
         dimension={[2, 2]}
+        gap={1}
         renderCell={datum => (
-          <>
-            <Heading>{datum.data}</Heading>
-            <CellLabel>{datum.label}</CellLabel>
-          </>
+          <dl>
+            <dd>{datum.data}</dd>
+            <dt>{datum.label}</dt>
+          </dl>
         )}
       />
     </StatsWrapper>
