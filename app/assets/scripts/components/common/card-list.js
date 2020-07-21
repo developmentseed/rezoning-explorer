@@ -51,9 +51,9 @@ const CardTitle = styled.h4`
   padding: 1rem;
 `;
 
-export const Card = ({ title, iconPath, size, onClick }) => {
+export const Card = ({ id, title, iconPath, size, onClick }) => {
   return (
-    <CardWrapper size={size} onClick={onClick}>
+    <CardWrapper id={id} size={size} onClick={onClick}>
       <CardMedia>
         <CardIcon src={iconPath} />
       </CardMedia>
@@ -63,6 +63,7 @@ export const Card = ({ title, iconPath, size, onClick }) => {
 };
 
 Card.propTypes = {
+  id: T.string,
   title: T.string,
   iconPath: T.string,
   size: T.oneOf(['small', 'large']),

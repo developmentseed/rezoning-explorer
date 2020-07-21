@@ -94,24 +94,31 @@ function ExpMapPrimePanel (props) {
       location.search.substr(1)
     );
 
-    if (countries.isReady() && countryId && !selectedCountry) {
-      const countryFromUrl = countries
+    if (!countryId) {
+      // If not countryId is set, open modal
+      setSelectedCountry(null);
+      setShowCountrySelect(true);
+    } else if (countries.isReady()) {
+      const countryProps = countries
         .getData()
         .countries.find((c) => c.id === countryId);
 
-      if (countryFromUrl) {
-        setSelectedCountry(countryFromUrl);
+      // If countryId is set and country is available, hide modal
+      if (countryProps) {
+        setSelectedCountry(countryProps);
+        setShowCountrySelect(false);
       } else {
+        setSelectedCountry(null);
         setShowCountrySelect(true);
       }
     }
 
-    if (resource && !selectedResource) {
-      if (resourceList.indexOf(resource) > -1) {
-        setSelectedResource(resource);
-      } else {
-        setShowResourceSelect(true);
-      }
+    // Apply resource from URL or open modal if not set/valid
+    if (resource && resourceList.indexOf(resource) > -1) {
+      setSelectedResource(resource);
+    } else {
+      setSelectedResource(null);
+      setShowResourceSelect(true);
     }
   });
 
@@ -138,16 +145,22 @@ function ExpMapPrimePanel (props) {
         }
       />
       <ModalSelect
-        revealed={showResourceSelect}
+        revealed={showResourceSelect && !showCountrySelect}
         onOverlayClick={() => {
           if (selectedResource) {
             setShowResourceSelect(false);
           }
         }}
         data={resourceList}
-        renderHeader={() => <ModalHeader title='Select Resource' />}
+        renderHeader={() => (
+          <ModalHeader
+            id='select-resource-modal-header'
+            title='Select Resource'
+          />
+        )}
         renderCard={(resource) => (
           <Card
+            id={`resource-${resource}-card`}
             key={resource}
             title={resource}
             size='large'
@@ -169,7 +182,7 @@ function ExpMapPrimePanel (props) {
         }}
         data={countries.isReady() ? countries.getData().countries : []}
         renderHeader={() => (
-          <ModalHeader title='Select Country'>
+          <ModalHeader id='select-country-modal-header' title='Select Country'>
             <SearchBar
               type='text'
               placeholder='Start typing country name to see your choice, or click on a country below'
@@ -181,7 +194,8 @@ function ExpMapPrimePanel (props) {
         filterCard={(country) => country.name.includes(countryFilter)}
         renderCard={(country) => (
           <Card
-            key={country.name}
+            id={`country-${country.id}-card`}
+            key={country.id}
             title={country.name}
             iconPath={`/assets/graphics/content/flags-4x3/${country.id}.svg`}
             size='small'
