@@ -4,9 +4,15 @@ import T from 'prop-types';
 import Button from '../../styles/button/button';
 import Dl from '../../styles/type/definition-list';
 import ShadowScrollbar from '../common/shadow-scrollbar';
+import { themeVal } from '../../styles/utils/general';
 
 const Details = styled.div`
 /* stylelint-disable */
+  dd {
+    font-family: ${themeVal('type.mono.family')};
+    font-weight: ${themeVal('type.base.bold')};
+    color: ${themeVal('color.primary')};
+  }
 `;
 const LineChart = styled.div`
 /* stylelint-enable */
