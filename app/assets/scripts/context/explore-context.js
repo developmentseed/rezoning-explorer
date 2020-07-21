@@ -10,15 +10,17 @@ const ExploreContext = createContext({});
 export function ExploreProvider (props) {
   const [countries, dispatchCountries] = useReducer(queryDataReducer, initialApiRequestState);
 
-  const getQueryData = () => {
-    (async () => {
-      showGlobalLoading();
-      await fetchQueryData('countries')(dispatchCountries);
-      hideGlobalLoading();
-    })();
+  const getQueryData = async () => {
+    showGlobalLoading();
+    await fetchQueryData('countries')(dispatchCountries);
+    hideGlobalLoading();
   };
 
-  useEffect(getQueryData, []);
+  const onMount = () => {
+    getQueryData();
+  };
+
+  useEffect(onMount, []);
 
   return (
     <>
