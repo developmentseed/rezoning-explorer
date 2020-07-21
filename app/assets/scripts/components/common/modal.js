@@ -13,9 +13,9 @@ const Headline = styled.h1`
   text-align: center; 
 `;
 
-export const ModalHeader = ({ title, children }) => {
+export const ModalHeader = ({ id, title, children }) => {
   return (
-    <HeaderWrapper>
+    <HeaderWrapper id={id}>
       <Headline>{title}</Headline>
       {children}
     </HeaderWrapper>
@@ -24,6 +24,7 @@ export const ModalHeader = ({ title, children }) => {
 };
 
 ModalHeader.propTypes = {
+  id: T.string,
   title: T.string,
   children: T.node
 };

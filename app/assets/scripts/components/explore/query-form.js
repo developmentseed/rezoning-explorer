@@ -171,16 +171,18 @@ function QueryForm (props) {
     <PanelBlock>
       <PanelBlockHeader>
         <HeadOption>
-          <HeadOptionHeadline>
-            <Heading size='large' variation='primary'>{country || 'Select Country'}</Heading>
-            <EditButton onClick={onCountryEdit} title='Edit Country'>
-                Edit Country Selection
+          <HeadOptionHeadline id='selected-country-prime-panel-heading'>
+            <Heading size='large' variation='primary'>
+              {country || 'Select Country'}
+            </Heading>
+            <EditButton id='select-country-button' onClick={onCountryEdit} title='Edit Country'>
+              Edit Country Selection
             </EditButton>
           </HeadOptionHeadline>
         </HeadOption>
 
         <HeadOption>
-          <HeadOptionHeadline>
+          <HeadOptionHeadline id='selected-resource-prime-panel-heading'>
             <Subheading>Resource:  </Subheading>
             <Subheading variation='primary'><strong>{resource || 'Select Resource'}</strong></Subheading>
             <EditButton onClick={onResourceEdit} title='Edit Resource'>Edit Resource Selection</EditButton>
