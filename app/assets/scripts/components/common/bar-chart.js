@@ -5,7 +5,7 @@ import { Subheading } from '../../styles/type/heading';
 
 const ChartWrapper = styled.div`
   display: grid;
-  grid-template-rows: 1fr 4fr;
+  /*grid-template-rows: 1fr 4fr;*/
 `;
 const ChartBody = styled.div`
   text-align: center;

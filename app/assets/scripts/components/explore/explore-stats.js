@@ -13,7 +13,7 @@ const STATS = [
 
 const StatsWrapper = styled.section`
   display: grid;
-  grid-template-rows: 1.5fr 1fr;
+  /*grid-template-rows: 1.5fr 1fr;*/
   padding: 0 1.5rem;
   dd {
     font-family: ${themeVal('type.mono.family')};

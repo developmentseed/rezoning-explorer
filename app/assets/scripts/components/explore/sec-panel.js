@@ -29,7 +29,8 @@ const PanelBlockBodyInner = styled.div`
   padding: 1rem 0;
   flex: 1;
   display: grid;
-  grid-template-rows: 1fr 1.5fr;
+  /*grid-template-rows: 1fr 1.5fr;*/
+  grid-template-rows: auto 1.5fr;
 `;
 
 function ExpMapSecPanel (props) {
