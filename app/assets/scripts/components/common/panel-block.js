@@ -22,7 +22,7 @@ export const PanelBlockHeader = styled.header`
   background: ${_tint(0.02, themeVal('color.surface'))};
   position: relative;
   z-index: 10;
-  padding: ${glsp(0.5)} ${glsp(1.5)};
+  padding: ${glsp()} ${glsp(1.5)};
 `;
 export const PanelBlockFooter = styled.footer`
   box-shadow: 0px -1px 1px -1px ${themeVal('color.baseAlphaD')};

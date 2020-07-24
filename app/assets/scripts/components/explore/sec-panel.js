@@ -17,7 +17,6 @@ import ExploreStats from './explore-stats';
 import ExploreZones from './explore-zones';
 
 const SecPanel = styled(Panel)`
-  padding: 0.5rem 0;
   ${media.largeUp`
     width: 18rem;
   `}
