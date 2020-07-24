@@ -1,7 +1,12 @@
 import React from 'react';
 import T from 'prop-types';
+import styled from 'styled-components';
 import { Modal } from '@devseed-ui/modal';
 import CardList from '../common/card-list';
+
+const BodyOuter = styled.div`
+  height: 45vh;
+`;
 
 function ModalSelect (props) {
   const { revealed, onOverlayClick, data, renderHeader, renderCard, filterCard } = props;
@@ -17,11 +22,13 @@ function ModalSelect (props) {
       renderHeader={renderHeader}
       filterCard={filterCard}
       content={
-        <CardList
-          data={data}
-          renderCard={renderCard}
-          filterCard={filterCard}
-        />
+        <BodyOuter>
+          <CardList
+            data={data}
+            renderCard={renderCard}
+            filterCard={filterCard}
+          />
+        </BodyOuter>
       }
     />
   );

@@ -2,42 +2,58 @@ import React from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 
-import Panel, { PanelHeadline, PanelTitle } from '../common/panel';
+import Panel from '../common/panel';
 import {
   PanelBlock,
   PanelBlockHeader,
-  PanelBlockTitle,
   PanelBlockBody
 } from '../common/panel-block';
 
+import Heading from '../../styles/type/heading';
+
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 
-const PrimePanel = styled(Panel)`
+import ExploreStats from './explore-stats';
+import ExploreZones from './explore-zones';
+
+const SecPanel = styled(Panel)`
   ${media.largeUp`
     width: 18rem;
   `}
+  ${media.xlargeUp`
+    width: 20rem;
+  `}
+`;
+const PanelBlockBodyInner = styled.div`
+  padding: 1rem 0;
+  flex: 1;
+  display: grid;
+  /*grid-template-rows: 1fr 1.5fr;*/
+  grid-template-rows: auto 1.5fr;
 `;
 
 function ExpMapSecPanel (props) {
   const { onPanelChange } = props;
   return (
-    <PrimePanel
+    <SecPanel
       collapsible
       direction='right'
       onPanelChange={onPanelChange}
       initialState={isLargeViewport()}
-      headerContent={(
-        <PanelHeadline>
-          <PanelTitle>Secondary Panel</PanelTitle>
-        </PanelHeadline>
-      )}
       bodyContent={
         <>
           <PanelBlock>
             <PanelBlockHeader>
-              <PanelBlockTitle>Tools</PanelBlockTitle>
+              <Heading size='large'>
+                National
+              </Heading>
             </PanelBlockHeader>
-            <PanelBlockBody />
+            <PanelBlockBody>
+              <PanelBlockBodyInner>
+                <ExploreStats />
+                <ExploreZones />
+              </PanelBlockBodyInner>
+            </PanelBlockBody>
           </PanelBlock>
         </>
       }

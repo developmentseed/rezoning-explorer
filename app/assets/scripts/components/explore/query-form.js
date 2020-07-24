@@ -33,9 +33,12 @@ const PanelOptionTitle = styled.div`
   font-weight: ${themeVal('type.base.weight')};
 `;
 const HeadOption = styled.div`
-  padding: 0.5rem 0;
+  & ~ & {
+    padding-top: ${glsp(0.5)};
+  }
   &:last-of-type {
     box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
+    padding-bottom: ${glsp(0.5)};
   }
 `;
 
