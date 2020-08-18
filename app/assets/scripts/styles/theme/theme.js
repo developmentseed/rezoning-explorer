@@ -2,8 +2,8 @@ import { rgba, desaturate, lighten } from 'polished';
 
 let color = {
   baseLight: '#FFFFFF',
-  primary: '#2E265B', // Deep Ocean
-  secondary: '#2C3E50', // Midnight Blue
+  primary: '#23A6F5',
+  secondary: '#098EDE',
   tertiary: '#673285' // Royal Purple
 };
 
