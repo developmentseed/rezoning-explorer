@@ -19,6 +19,7 @@ import collecticon from '../../styles/collecticons';
 
 import { Accordion, AccordionFold } from '../../components/accordion';
 import InfoButton from '../common/info-button';
+import GridSetter from './grid-setter';
 
 const INIT_GRID_SIZE = 1;
 const DEFAULT_RANGE = [0, 100];
@@ -81,7 +82,7 @@ const FormGroupWrapper = styled.div`
   }
 `;
 
-const EditButton = styled(Button).attrs({
+export const EditButton = styled(Button).attrs({
   variation: 'base-plain',
   size: 'small',
   useIcon: 'pencil',
@@ -198,18 +199,10 @@ function QueryForm (props) {
             <Subheading variation='primary'>
               <strong>{gridSize} km<sup>2</sup></strong>
             </Subheading>
-            <Dropdown
-              alignment='right'
-              direction='down'
-              triggerElement={<EditButton title='Edit Grid Size'>Edit Grid Size</EditButton>}
-            >
-              <SliderGroup
-                unit='km^2'
-                range={[1, 24]}
-                value={gridSize}
-                onChange={(v) => setGridSize(v)}
-              />
-            </Dropdown>
+            
+            <GridSetter 
+              gridOptions={[9,25,50]}
+            />
           </HeadOptionHeadline>
         </HeadOption>
       </PanelBlockHeader>
