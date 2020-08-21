@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import InputRange from 'react-input-range';
-
 import Dropdown from '../common/dropdown';
 import { EditButton } from './query-form';
 import Button from '../../styles/button/button';
@@ -60,6 +59,10 @@ const GridSetButton = styled(Button)`
     `}
 `;
 
+const DropdownWide = styled(Dropdown)`
+  max-width: 18rem;
+`;
+
 const GridSlider = ({ gridOptions, gridSize, setGridSize }) => {
   return (
     <>
@@ -70,7 +73,9 @@ const GridSlider = ({ gridOptions, gridSize, setGridSize }) => {
         step={1}
         value={gridOptions.indexOf(gridSize)}
         onChange={(v) => {
-          setGridSize(gridOptions[v]);
+          if (v > 0) {
+            setGridSize(gridOptions[v]);
+          }
         }}
       />
       <Labels>
@@ -79,15 +84,11 @@ const GridSlider = ({ gridOptions, gridSize, setGridSize }) => {
     </>);
 };
 
-const DropdownWide = styled(Dropdown)`
-  max-width: 20rem;
-`;
-
 function GridSetter (props) {
-  const { 
+  const {
     gridOptions,
-    setGridSize, 
-    gridSize, 
+    setGridSize,
+    gridSize,
     setGridMode,
     gridMode
   } = props;
@@ -117,7 +118,7 @@ function GridSetter (props) {
           > Use Boundaries
           </GridSetButton>
         </GridSetHeader>
-        {gridMode && <GridSlider setGridSize={setGridSize} gridOptions={gridOptions} gridSize={gridSize}/>}
+        {gridMode && <GridSlider setGridSize={setGridSize} gridOptions={[0, ...gridOptions]} gridSize={gridSize} />}
       </GridSetInner>
     </DropdownWide>
 
@@ -135,7 +136,7 @@ GridSetter.propTypes = {
 GridSlider.propTypes = {
   gridOptions: T.array.isRequired,
   setGridSize: T.func,
-  gridSize: T.number,
+  gridSize: T.number
 
 };
 
