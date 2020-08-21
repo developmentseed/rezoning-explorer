@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import InputRange from 'react-input-range';
 
@@ -6,10 +7,9 @@ import Dropdown from '../common/dropdown';
 import { EditButton } from './query-form';
 import Button from '../../styles/button/button';
 import { themeVal } from '../../styles/utils/general';
-import Heading, { Subheading } from '../../styles/type/heading';
+import { Subheading } from '../../styles/type/heading';
 
 const GridSetInner = styled.div`
-  padding-bottom: 1rem;
 `;
 
 const GridSetHeader = styled.div`
@@ -22,6 +22,7 @@ const Labels = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  padding-bottom: 1rem;
 `;
 const Label = styled(Subheading)``;
 
@@ -59,8 +60,7 @@ const GridSetButton = styled(Button)`
     `}
 `;
 
-const GridSlider = ({ gridOptions, setGridSize}) => {
-  const [value, setValue] = useState(0);
+const GridSlider = ({ gridOptions, gridSize, setGridSize }) => {
   return (
     <>
       <InputRange
@@ -68,10 +68,9 @@ const GridSlider = ({ gridOptions, setGridSize}) => {
         minValue={0}
         maxValue={gridOptions.length - 1}
         step={1}
-        value={value}
+        value={gridOptions.indexOf(gridSize)}
         onChange={(v) => {
-          setValue(v)
-          setGridSize(gridOptions[v])
+          setGridSize(gridOptions[v]);
         }}
       />
       <Labels>
@@ -85,8 +84,13 @@ const DropdownWide = styled(Dropdown)`
 `;
 
 function GridSetter (props) {
-  const { gridOptions, setGridSize } = props;
-  const [gridMode, setGridMode] = useState(true);
+  const { 
+    gridOptions,
+    setGridSize, 
+    gridSize, 
+    setGridMode,
+    gridMode
+  } = props;
   return (
     <DropdownWide
       alignment='right'
@@ -113,11 +117,26 @@ function GridSetter (props) {
           > Use Boundaries
           </GridSetButton>
         </GridSetHeader>
-        {gridMode && <GridSlider setGridSize={setGridSize} gridOptions={gridOptions} />}
+        {gridMode && <GridSlider setGridSize={setGridSize} gridOptions={gridOptions} gridSize={gridSize}/>}
       </GridSetInner>
     </DropdownWide>
 
   );
 }
+
+GridSetter.propTypes = {
+  gridOptions: T.array.isRequired,
+  setGridSize: T.func,
+  gridSize: T.number,
+  setGridMode: T.func,
+  gridMode: T.bool
+};
+
+GridSlider.propTypes = {
+  gridOptions: T.array.isRequired,
+  setGridSize: T.func,
+  gridSize: T.number,
+
+};
 
 export default GridSetter;
