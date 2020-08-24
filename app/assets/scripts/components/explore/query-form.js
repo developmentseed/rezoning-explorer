@@ -10,7 +10,6 @@ import {
 import TabbedBlockBody from '../common/tabbed-block-body';
 import Button from '../../styles/button/button';
 import SliderGroup from '../common/slider-group';
-import Dropdown from '../common/dropdown';
 import StressedFormGroupInput from '../common/stressed-form-group-input';
 import Heading, { Subheading } from '../../styles/type/heading';
 import { FormSwitch } from '../../styles/form/switch';
@@ -19,8 +18,9 @@ import collecticon from '../../styles/collecticons';
 
 import { Accordion, AccordionFold } from '../../components/accordion';
 import InfoButton from '../common/info-button';
+import GridSetter from './grid-setter';
 
-const INIT_GRID_SIZE = 1;
+const GRID_OPTIONS = [9, 25, 50];
 const DEFAULT_RANGE = [0, 100];
 const DEFAULT_UNIT = '%';
 
@@ -81,7 +81,7 @@ const FormGroupWrapper = styled.div`
   }
 `;
 
-const EditButton = styled(Button).attrs({
+export const EditButton = styled(Button).attrs({
   variation: 'base-plain',
   size: 'small',
   useIcon: 'pencil',
@@ -154,7 +154,8 @@ function QueryForm (props) {
     onCountryEdit,
     onResourceEdit
   } = props;
-  const [gridSize, setGridSize] = useState(INIT_GRID_SIZE);
+  const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
+  const [gridMode, setGridMode] = useState(true);
 
   const [weights, setWeights] = useState(initListToState(weightsList));
   const [filters, setFilters] = useState(initObjectToState(filtersLists));
@@ -196,20 +197,19 @@ function QueryForm (props) {
           <HeadOptionHeadline>
             <Subheading>Grid Size:  </Subheading>
             <Subheading variation='primary'>
-              <strong>{gridSize} km<sup>2</sup></strong>
+              <strong>
+                {gridMode
+                  ? `${gridSize} km²` : 'Boundaries'}
+              </strong>
             </Subheading>
-            <Dropdown
-              alignment='right'
-              direction='down'
-              triggerElement={<EditButton title='Edit Grid Size'>Edit Grid Size</EditButton>}
-            >
-              <SliderGroup
-                unit='km^2'
-                range={[1, 24]}
-                value={gridSize}
-                onChange={(v) => setGridSize(v)}
-              />
-            </Dropdown>
+
+            <GridSetter
+              gridOptions={GRID_OPTIONS}
+              gridSize={gridSize}
+              setGridSize={setGridSize}
+              gridMode={gridMode}
+              setGridMode={setGridMode}
+            />
           </HeadOptionHeadline>
         </HeadOption>
       </PanelBlockHeader>
