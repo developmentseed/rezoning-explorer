@@ -6,7 +6,7 @@ import { themeVal } from '../../styles/utils/general';
 import SelectedZone from './selected-zone';
 import Dl from '../../styles/type/definition-list';
 
-const CARD_DATA = [
+export const CARD_DATA = [
   {
     id: 'AB',
     color: '#2c2a59',
@@ -98,8 +98,11 @@ const Detail = styled(Dl)`
   }
 `;
 
-function ExploreZones () {
+function ExploreZones (props) {
+  const { zones } = props;
   const [selectedZone, setSelectedZone] = useState(null);
+
+  const zoneData = zones.isReady() ? zones.getData() : [];
 
   return (
     <ZonesWrapper>
@@ -108,8 +111,8 @@ function ExploreZones () {
       { selectedZone
         ? <SelectedZone zone={selectedZone} resetZone={() => setSelectedZone(null)} />
         : <CardList
-          numColumns={1}
-          data={CARD_DATA}
+          numColmns={1}
+          data={zoneData}
           renderCard={(data) => (
             <Card
               size='large'
