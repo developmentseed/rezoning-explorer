@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import T from 'prop-types';
 import { Subheading } from '../../styles/type/heading';
 import CardList, { CardWrapper } from '../common/card-list';
 import { themeVal } from '../../styles/utils/general';
@@ -115,7 +116,8 @@ function ExploreZones () {
           unFocus={() => setFocusZone(null)}
           selected={selectedZones[focusZone.id] || false}
           onSelect={() => setSelectedZones({ ...selectedZones, [focusZone.id]: !selectedZones[focusZone.id] })}
-          />
+          /* eslint-disable-next-line */
+        />
         : <>
           <CardList
             numColumns={1}
@@ -157,11 +159,10 @@ function ExploreZones () {
                 </FormCheckable>
               </Card>
             )}
-          /* eslint-disable-next-line */
-            />
-            <ExportZonesButton onExport = {() =>{}} />
-          </>}
-
+          />
+          <ExportZonesButton onExport={() => {}} />
+          {/* eslint-disable-next-line */}
+        </>}
     </ZonesWrapper>
   );
 }
@@ -171,8 +172,7 @@ const ExportWrapper = styled.div`
   justify-content: center;
 `;
 
-
-const ExportZonesButton = ({ onExport, small}) => {
+const ExportZonesButton = ({ onExport, small }) => {
   return (
     <ExportWrapper>
       <Button
@@ -187,5 +187,9 @@ const ExportZonesButton = ({ onExport, small}) => {
 
   );
 };
-export { ExportZonesButton}
+ExportZonesButton.propTypes = {
+  onExport: T.func,
+  small: T.bool
+};
+export { ExportZonesButton };
 export default ExploreZones;
