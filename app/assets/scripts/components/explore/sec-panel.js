@@ -14,7 +14,7 @@ import Heading from '../../styles/type/heading';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 
 import ExploreContext from '../../context/explore-context';
-import ZoneAnalysisPanel from './zone-analysis-panel'
+import ZoneAnalysisPanel from './zone-analysis-panel';
 
 const SecPanel = styled(Panel)`
   ${media.largeUp`

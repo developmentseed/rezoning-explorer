@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import T from 'prop-types';
 import styled from 'styled-components';
 import { Subheading } from '../../styles/type/heading';
 import CardList, { CardWrapper } from '../common/card-list';
@@ -138,4 +139,8 @@ function ExploreZones (props) {
     </ZonesWrapper>
   );
 }
+
+ExploreZones.propTypes = {
+  zones: T.object
+};
 export default ExploreZones;
