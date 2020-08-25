@@ -16,15 +16,15 @@ function ZoneAnalysisPanel (props) {
   return (
     <>
       <GenerateZones>
-      <Button
-        as='a'
-        useIcon={['layout-grid-3x3', 'before']}
-        size='small'
-        onClick={generateZones}
-        variation='primary-raised-dark'
-      >
-        Generate Zones
-      </Button>
+        <Button
+          as='a'
+          useIcon={['layout-grid-3x3', 'before']}
+          size='small'
+          onClick={generateZones}
+          variation='primary-raised-dark'
+        >
+          Generate Zones
+        </Button>
       </GenerateZones>
       <ExploreStats
         zones={currentZones}
