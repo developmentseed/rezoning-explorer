@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import { Subheading } from '../../styles/type/heading';
 import CardList, { CardWrapper } from '../common/card-list';
 import { themeVal } from '../../styles/utils/general';
-import SelectedZone from './selected-zone';
+import FocusZone from './focus-zone';
 import Dl from '../../styles/type/definition-list';
 import { FormCheckable } from '../../styles/form/checkable';
+import Button from '../../styles/button/button';
 
 const CARD_DATA = [
   {
@@ -100,60 +101,91 @@ const Detail = styled(Dl)`
 `;
 
 function ExploreZones () {
-  const [selectedZone, setSelectedZone] = useState(null);
+  const [focusZone, setFocusZone] = useState(null);
 
-  const [zoneExportSet, setZoneExportSet] = useState({});
+  const [selectedZones, setSelectedZones] = useState({});
 
   return (
     <ZonesWrapper>
       <ZonesHeader>All Zones</ZonesHeader>
 
-      { selectedZone
-        ? <SelectedZone zone={selectedZone} resetZone={() => setSelectedZone(null)} />
-        : <CardList
-          numColumns={1}
-          data={CARD_DATA}
-          renderCard={(data) => (
-            <Card
-              size='large'
-              key={data.id}
-              onClick={() => {
-                setSelectedZone(data);
-              }}
-            >
-              <CardIcon
-                color={data.color}
+      { focusZone
+        ? <FocusZone
+          zone={focusZone}
+          unFocus={() => setFocusZone(null)}
+          selected={selectedZones[focusZone.id] || false}
+          onSelect={() => setSelectedZones({ ...selectedZones, [focusZone.id]: !selectedZones[focusZone.id] })}
+          />
+        : <>
+          <CardList
+            numColumns={1}
+            data={CARD_DATA}
+            renderCard={(data) => (
+              <Card
+                size='large'
+                key={data.id}
+                onClick={() => {
+                  setFocusZone(data);
+                }}
               >
-                <div>{data.id}</div>
-              </CardIcon>
-              <CardDetails>
-                {Object.entries(data.details).map(([label, data]) => (
-                  <Detail key={`${data.id}-${label}`}>
-                    <dt>{label.replace(/_/g, ' ')}</dt>
-                    <dd>{data}</dd>
-                  </Detail>
-                ))}
-              </CardDetails>
-              <FormCheckable
-                name={data.id}
-                id={data.id}
-                type='checkbox'
-                hideText
-                checked={zoneExportSet[data.id] || false}
-                onChange={(e) => {
-                  setZoneExportSet({ ...zoneExportSet, [data.id]: !zoneExportSet[data.id] });
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >Select {data.id}
-              </FormCheckable>
-            </Card>
-          )}
+                <CardIcon
+                  color={data.color}
+                >
+                  <div>{data.id}</div>
+                </CardIcon>
+                <CardDetails>
+                  {Object.entries(data.details).map(([label, data]) => (
+                    <Detail key={`${data.id}-${label}`}>
+                      <dt>{label.replace(/_/g, ' ')}</dt>
+                      <dd>{data}</dd>
+                    </Detail>
+                  ))}
+                </CardDetails>
+                <FormCheckable
+                  name={data.id}
+                  id={data.id}
+                  type='checkbox'
+                  hideText
+                  checked={selectedZones[data.id] || false}
+                  onChange={(e) => {
+                    setSelectedZones({ ...selectedZones, [data.id]: !selectedZones[data.id] });
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >Select {data.id}
+                </FormCheckable>
+              </Card>
+            )}
           /* eslint-disable-next-line */
-          />}
+            />
+            <ExportZonesButton onExport = {() =>{}} />
+          </>}
 
     </ZonesWrapper>
   );
 }
+const ExportWrapper = styled.div`
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+`;
+
+
+const ExportZonesButton = ({ onExport, small}) => {
+  return (
+    <ExportWrapper>
+      <Button
+        as='a'
+        useIcon='download'
+        variation='primary-raised-dark'
+        size='small'
+      >
+        { small ? 'Export' : 'Export Selected Zones'}
+      </Button>
+    </ExportWrapper>
+
+  );
+};
+export { ExportZonesButton}
 export default ExploreZones;
