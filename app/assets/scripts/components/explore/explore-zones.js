@@ -5,6 +5,7 @@ import CardList, { CardWrapper } from '../common/card-list';
 import { themeVal } from '../../styles/utils/general';
 import SelectedZone from './selected-zone';
 import Dl from '../../styles/type/definition-list';
+import { FormCheckable } from '../../styles/form/checkable';
 
 const CARD_DATA = [
   {
@@ -101,6 +102,8 @@ const Detail = styled(Dl)`
 function ExploreZones () {
   const [selectedZone, setSelectedZone] = useState(null);
 
+  const [zoneExportSet, setZoneExportSet] = useState({});
+
   return (
     <ZonesWrapper>
       <ZonesHeader>All Zones</ZonesHeader>
@@ -114,9 +117,13 @@ function ExploreZones () {
             <Card
               size='large'
               key={data.id}
-              onClick={() => setSelectedZone(data)}
+              onClick={() => {
+                setSelectedZone(data);
+              }}
             >
-              <CardIcon color={data.color}>
+              <CardIcon
+                color={data.color}
+              >
                 <div>{data.id}</div>
               </CardIcon>
               <CardDetails>
@@ -127,6 +134,20 @@ function ExploreZones () {
                   </Detail>
                 ))}
               </CardDetails>
+              <FormCheckable
+                name={data.id}
+                id={data.id}
+                type='checkbox'
+                hideText
+                checked={zoneExportSet[data.id] || false}
+                onChange={(e) => {
+                  setZoneExportSet({ ...zoneExportSet, [data.id]: !zoneExportSet[data.id] });
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >Select {data.id}
+              </FormCheckable>
             </Card>
           )}
           /* eslint-disable-next-line */
