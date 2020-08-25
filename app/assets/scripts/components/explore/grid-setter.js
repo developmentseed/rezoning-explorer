@@ -8,7 +8,6 @@ import Button from '../../styles/button/button';
 import { themeVal } from '../../styles/utils/general';
 import { Subheading } from '../../styles/type/heading';
 
-
 const GridSetInner = styled.div`
 /* stylelint-disable-next-line */
 `;
