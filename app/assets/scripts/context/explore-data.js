@@ -22,7 +22,7 @@ const generateZonesActions = makeActions('GENERATE_ZONES');
 
 export function fetchGenerateZones () {
   return makeFetchThunk({
-    url: 'http://localhost:8080/zones.json',
+    url: '/public/zones.json',
     // cache: true,
     // statePath: ['spotlight', 'single', id],
     requestFn: generateZonesActions.request,

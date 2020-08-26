@@ -5,7 +5,7 @@
       "country":"Zambia",
       "energy_source":"PVSolar",
       "details":{
-         "zone_score":0.782,
+         "zone_score":0.7892,
          "total_lcoe":145.3,
          "generation":39552,
          "kWh-m2/year": 500,
@@ -14,29 +14,29 @@
       }
    },
    {
-      "id":"CD",
-      "color":"#353d6d",
-      "country":"Zambia",
+      "id":"CX",
+      "color":"#353d6e",
+      "country":"Zajbia",
       "energy_source":"PVSolar",
       "details":{
-         "zone_score":0.782,
-         "total_lcoe":145.3,
-         "generation":39552,
+         "zone_score":0.781,
+         "total_lcoe":1455.3,
+         "generation":395752,
          "kWh-m2/year": 435,
          "GWh/year": 0.94,
          "kw/day": 234
       }
    },
    {
-      "id":"EF",
+      "id":"EZ",
       "color":"#4f5698",
-      "country":"Zambia",
+      "country":"Zabia",
       "energy_source":"PVSolar",
       "details":{
          "zone_score":0.782,
          "total_lcoe":145.3,
-         "generation":39552,
-         "kWh-m2/year": 235,
+         "generation":39252,
+         "kWh-m2/year": 245,
          "GWh/year": 0.41,
          "kw/day": 863
       }
