@@ -19,7 +19,7 @@ function ZoneAnalysisPanel (props) {
         <Button
           as='a'
           useIcon={['layout-grid-3x3', 'before']}
-          size='small'
+          size='medium'
           onClick={generateZones}
           variation='primary-raised-dark'
         >
