@@ -34,8 +34,9 @@ const Wrapper = styled.div`
   }
 `;
 const FocusZoneFooter = styled.div`
-  display: grid;
-  grid-template-columns: auto auto;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: stretch;
 `;
 
 function FocusZone (props) {
@@ -75,7 +76,7 @@ function FocusZone (props) {
             onClick={(e) => {
               e.stopPropagation();
             }}
-          >Select this zone
+          >Add zone to selection
           </FormCheckable>
 
           <ExportZonesButton onExport={() => {}} small />

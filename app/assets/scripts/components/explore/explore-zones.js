@@ -47,6 +47,10 @@ const ZonesHeader = styled(Subheading)`
   padding: 1rem 1.5rem;
 `;
 
+const ZoneCheckbox = styled(FormCheckable)`
+  margin-left: 1rem;
+`;
+
 const Card = styled(CardWrapper)`
   display: flex;
   height: auto;
@@ -143,7 +147,7 @@ function ExploreZones () {
                     </Detail>
                   ))}
                 </CardDetails>
-                <FormCheckable
+                <ZoneCheckbox
                   name={data.id}
                   id={data.id}
                   type='checkbox'
@@ -156,7 +160,7 @@ function ExploreZones () {
                     e.stopPropagation();
                   }}
                 >Select {data.id}
-                </FormCheckable>
+                </ZoneCheckbox>
               </Card>
             )}
           />
@@ -170,6 +174,10 @@ const ExportWrapper = styled.div`
   padding: 0.5rem;
   display: flex;
   justify-content: center;
+  width: 100%;
+  ${Button} {
+    width: 100%;
+  }
 `;
 
 const ExportZonesButton = ({ onExport, small }) => {
@@ -179,7 +187,6 @@ const ExportZonesButton = ({ onExport, small }) => {
         as='a'
         useIcon='download'
         variation='primary-raised-dark'
-        size='small'
       >
         { small ? 'Export' : 'Export Selected Zones'}
       </Button>
