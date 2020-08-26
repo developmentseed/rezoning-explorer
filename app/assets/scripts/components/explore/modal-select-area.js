@@ -9,18 +9,28 @@ import { Card } from '../common/card-list';
 import { ModalHeader } from '@devseed-ui/modal';
 
 const SearchBar = styled(FormInput)`
-  max-width: 60ch;
-  margin: 0 auto;
+  width: 100%;
 `;
 
 const HeaderWrapper = styled(ModalHeader)`
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-flow: column nowrap;
+  width: 80%;
+  margin: 0 auto;
 `;
 
-const Headline = styled.h1`
+const Headline = styled.h3`
   text-align: center;
-  ${({ disabled }) => disabled && 'opacity: 0.24'}
+  cursor: pointer;
+  ${({ disabled }) => disabled && 'opacity: 0.24'};
+  & + & {
+    padding-left: 2rem;
+  }
+`;
+
+const HeadlineTabs = styled.div`
+  display: flex;
+  margin-bottom: 1rem;
 `;
 
 function ModalSelectArea () {
@@ -48,18 +58,20 @@ function ModalSelectArea () {
       data={areaList}
       renderHeader={() => (
         <HeaderWrapper id='select-area-modal-header'>
-          <Headline
-            disabled={areaType !== 'country'}
-            onClick={() => setAreaType('country')}
-          >
-            Select Country
-          </Headline>
-          <Headline
-            disabled={areaType !== 'region'}
-            onClick={() => setAreaType('region')}
-          >
-            Select Region
-          </Headline>
+          <HeadlineTabs>
+            <Headline
+              disabled={areaType !== 'country'}
+              onClick={() => setAreaType('country')}
+            >
+              Select Country
+            </Headline>
+            <Headline
+              disabled={areaType !== 'region'}
+              onClick={() => setAreaType('region')}
+            >
+              Select Region
+            </Headline>
+          </HeadlineTabs>
           <SearchBar
             type='text'
             placeholder='Start typing area name to see your choice, or select one below'
