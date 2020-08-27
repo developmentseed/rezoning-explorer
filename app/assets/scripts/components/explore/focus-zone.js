@@ -34,9 +34,14 @@ const Wrapper = styled.div`
   }
 `;
 const FocusZoneFooter = styled.div`
-  display: flex;
+  /*display: flex;
   flex-flow: column nowrap;
-  justify-content: stretch;
+  justify-content: stretch;*/
+
+
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 0.25rem;
 `;
 
 function FocusZone (props) {

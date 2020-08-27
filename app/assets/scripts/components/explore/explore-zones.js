@@ -164,14 +164,14 @@ function ExploreZones () {
               </Card>
             )}
           />
-          <ExportZonesButton onExport={() => {}} />
+          <ExportZonesButton usePadding onExport={() => {}} />
           {/* eslint-disable-next-line */}
         </>}
     </ZonesWrapper>
   );
 }
 const ExportWrapper = styled.div`
-  padding: 0.5rem;
+  ${({ usePadding }) => usePadding && 'padding: 0.5rem;'}
   display: flex;
   justify-content: center;
   width: 100%;
@@ -180,9 +180,11 @@ const ExportWrapper = styled.div`
   }
 `;
 
-const ExportZonesButton = ({ onExport, small }) => {
+const ExportZonesButton = ({ onExport, small, usePadding }) => {
   return (
-    <ExportWrapper>
+    <ExportWrapper
+      usePadding={usePadding}
+    >
       <Button
         as='a'
         useIcon='download'
@@ -196,7 +198,8 @@ const ExportZonesButton = ({ onExport, small }) => {
 };
 ExportZonesButton.propTypes = {
   onExport: T.func,
-  small: T.bool
+  small: T.bool,
+  usePadding: T.bool
 };
 export { ExportZonesButton };
 export default ExploreZones;
