@@ -93,6 +93,7 @@
     "react-test-renderer": "^16.13.1",
     "require-globify": "^1.4.1",
     "shapefile": "^0.6.6",
+    "simplify-geojson": "^1.0.3",
     "start-server-and-test": "^1.11.2",
     "stylelint": "^13.3.2",
     "stylelint-config-recommended": "^2.2.0",

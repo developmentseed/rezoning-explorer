@@ -22,6 +22,10 @@ readline.createInterface({
     writeCurrent()
     features = []
   }
+  feature.properties = {
+    id: feature.properties.GID_1,
+    name: feature.properties.NAME_1
+  }
   currentCountry = country
   features.push(feature)
 }).on('close', () => {
