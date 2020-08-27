@@ -115,3 +115,4 @@ tmp
 dist
 .vscode/*
 cypress/videos/*
+app/assets/data
