@@ -1,7 +1,10 @@
 import React, { createContext, useReducer, useEffect, useState } from 'react';
 import T from 'prop-types';
 
-import queryDataReducer, { fetchQueryData } from '../context/explore-data';
+import {
+  queryDataReducer, fetchQueryData,
+  generateZonesReducer, fetchGenerateZones
+} from '../context/explore-data';
 import { initialApiRequestState } from '../context/contexeed';
 import { showGlobalLoading, hideGlobalLoading } from '../components/common/global-loading';
 
@@ -16,9 +19,20 @@ export function ExploreProvider (props) {
     initialApiRequestState
   );
 
+  const [currentZones, dispatchCurrentZones] = useReducer(
+    generateZonesReducer,
+    initialApiRequestState
+  );
+
   const getQueryData = async () => {
     showGlobalLoading();
     await fetchQueryData('countries')(dispatchCountries);
+    hideGlobalLoading();
+  };
+
+  const generateZones = async () => {
+    showGlobalLoading();
+    await fetchGenerateZones()(dispatchCurrentZones);
     hideGlobalLoading();
   };
 
@@ -36,7 +50,9 @@ export function ExploreProvider (props) {
           selectedCountry,
           setSelectedCountry,
           selectedResource,
-          setSelectedResource
+          setSelectedResource,
+          currentZones,
+          generateZones
         }}
       >
         {props.children}

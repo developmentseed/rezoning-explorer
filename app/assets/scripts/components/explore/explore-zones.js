@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import T from 'prop-types';
+import styled from 'styled-components';
 import { Subheading } from '../../styles/type/heading';
 import CardList, { CardWrapper } from '../common/card-list';
 import { themeVal } from '../../styles/utils/general';
@@ -9,7 +9,7 @@ import Dl from '../../styles/type/definition-list';
 import { FormCheckable } from '../../styles/form/checkable';
 import Button from '../../styles/button/button';
 
-const CARD_DATA = [
+export const CARD_DATA = [
   {
     id: 'AB',
     color: '#2c2a59',
@@ -105,10 +105,14 @@ const Detail = styled(Dl)`
   }
 `;
 
-function ExploreZones () {
+function ExploreZones (props) {
+  const { zones } = props;
+
   const [focusZone, setFocusZone] = useState(null);
 
   const [selectedZones, setSelectedZones] = useState({});
+
+  const zoneData = zones.isReady() ? zones.getData() : [];
 
   return (
     <ZonesWrapper>
@@ -120,12 +124,13 @@ function ExploreZones () {
           unFocus={() => setFocusZone(null)}
           selected={selectedZones[focusZone.id] || false}
           onSelect={() => setSelectedZones({ ...selectedZones, [focusZone.id]: !selectedZones[focusZone.id] })}
+
           /* eslint-disable-next-line */
         />
         : <>
           <CardList
             numColumns={1}
-            data={CARD_DATA}
+            data={zoneData}
             renderCard={(data) => (
               <Card
                 size='large'
@@ -202,4 +207,9 @@ ExportZonesButton.propTypes = {
   usePadding: T.bool
 };
 export { ExportZonesButton };
+
+ExploreZones.propTypes = {
+  zones: T.object
+};
+
 export default ExploreZones;
