@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 
@@ -13,8 +13,8 @@ import Heading from '../../styles/type/heading';
 
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 
-import ExploreStats from './explore-stats';
-import ExploreZones from './explore-zones';
+import ExploreContext from '../../context/explore-context';
+import ZoneAnalysisPanel from './zone-analysis-panel';
 
 const SecPanel = styled(Panel)`
   ${media.largeUp`
@@ -28,12 +28,13 @@ const PanelBlockBodyInner = styled.div`
   padding: 1rem 0;
   flex: 1;
   display: grid;
-  /*grid-template-rows: 1fr 1.5fr;*/
-  grid-template-rows: auto 1.5fr;
+  grid-template-rows: auto 1fr 1fr;
 `;
 
 function ExpMapSecPanel (props) {
   const { onPanelChange } = props;
+  const { currentZones, generateZones } = useContext(ExploreContext);
+
   return (
     <SecPanel
       collapsible
@@ -50,8 +51,10 @@ function ExpMapSecPanel (props) {
             </PanelBlockHeader>
             <PanelBlockBody>
               <PanelBlockBodyInner>
-                <ExploreStats />
-                <ExploreZones />
+                <ZoneAnalysisPanel
+                  currentZones={currentZones}
+                  generateZones={generateZones}
+                />
               </PanelBlockBodyInner>
             </PanelBlockBody>
           </PanelBlock>

@@ -68,7 +68,8 @@ function serve () {
     [
       'app/*.html',
       'app/assets/graphics/**/*',
-      '!app/assets/icons/collecticons/**/*'
+      '!app/assets/icons/collecticons/**/*',
+      'app/public/*'
     ],
     bs.reload
   );
@@ -91,6 +92,7 @@ module.exports.default = gulp.series(
   collecticons,
   gulp.parallel(vendorScripts, javascript),
   gulp.parallel(html, imagesImagemin),
+  publicFiles,
   finish
 );
 
@@ -241,6 +243,15 @@ function imagesImagemin () {
       ])
     )
     .pipe(gulp.dest('dist/assets/graphics'));
+}
+
+// //////////////////////////////////////////////////////////////////////////////
+// --------------------------- Public Files -----------------------------------//
+// ----------------------------------------------------------------------------//
+function publicFiles () {
+  return gulp.src(
+    ['app/public/**/*'])
+    .pipe(gulp.dest('dist/public'));
 }
 
 /**
