@@ -9,7 +9,7 @@ let currentCountry = null;
 let features = [];
 
 function writeCurrent () {
-  console.log(`writing ${currentCountry}`);
+  console.log(`writing ${currentCountry}`); // eslint-disable-line
   const fc = { type: 'FeatureCollection', features };
   fs.writeFileSync(
     path.join(regionsDir, `${currentCountry}.geojson`),
