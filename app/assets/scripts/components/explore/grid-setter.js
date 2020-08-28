@@ -9,6 +9,7 @@ import { themeVal } from '../../styles/utils/general';
 import { Subheading } from '../../styles/type/heading';
 
 const GridSetInner = styled.div`
+/* stylelint-disable-next-line */
 `;
 
 const GridSetHeader = styled.div`
@@ -23,7 +24,9 @@ const Labels = styled.div`
   justify-content: space-between;
   padding-bottom: 1rem;
 `;
-const Label = styled(Subheading)``;
+const Label = styled(Subheading)`
+/* stylelint-disable-next-line */
+`;
 
 const GridSetButton = styled(Button)`
   display: inline-flex;

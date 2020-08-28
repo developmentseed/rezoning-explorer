@@ -1,10 +1,20 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useReducer, useState } from 'react';
 import T from 'prop-types';
 import { useHistory, useLocation } from 'react-router';
 import QsState from '../utils/qs-state';
 
 import countries from '../../data/countries.json';
 import regions from '../../data/regions.json';
+
+import {
+  generateZonesReducer,
+  fetchGenerateZones
+} from '../context/explore-data';
+import { initialApiRequestState } from '../context/contexeed';
+import {
+  showGlobalLoading,
+  hideGlobalLoading
+} from '../components/common/global-loading';
 
 // Parse region and country files into area list
 const areas = regions
@@ -16,7 +26,6 @@ const areas = regions
       id: c['alpha-2'].toLowerCase() // set id from alpha-2
     }))
   );
-
 const ExploreContext = createContext({});
 
 const qsStateHelper = new QsState({
@@ -70,6 +79,17 @@ export function ExploreProvider (props) {
     }
   }, [location.search]);
 
+  const generateZones = async () => {
+    showGlobalLoading();
+    await fetchGenerateZones()(dispatchCurrentZones);
+    hideGlobalLoading();
+  };
+
+  const [currentZones, dispatchCurrentZones] = useReducer(
+    generateZonesReducer,
+    initialApiRequestState
+  );
+
   return (
     <>
       <ExploreContext.Provider
@@ -82,7 +102,9 @@ export function ExploreProvider (props) {
           showSelectAreaModal,
           setShowSelectAreaModal,
           showSelectResourceModal,
-          setShowSelectResourceModal
+          setShowSelectResourceModal,
+          currentZones,
+          generateZones
         }}
       >
         {props.children}

@@ -16,5 +16,18 @@ export function fetchQueryData (query) {
   });
 }
 
-const queryDataReducer = wrapLogReducer(makeAPIReducer('QUERY_DATA_SINGLE'));
-export default queryDataReducer;
+export const queryDataReducer = wrapLogReducer(makeAPIReducer('QUERY_DATA_SINGLE'));
+
+const generateZonesActions = makeActions('GENERATE_ZONES');
+
+export function fetchGenerateZones () {
+  return makeFetchThunk({
+    url: '/public/zones.json',
+    // cache: true,
+    // statePath: ['spotlight', 'single', id],
+    requestFn: generateZonesActions.request,
+    receiveFn: generateZonesActions.receive
+  });
+}
+
+export const generateZonesReducer = wrapLogReducer(makeAPIReducer('GENERATE_ZONES'));
