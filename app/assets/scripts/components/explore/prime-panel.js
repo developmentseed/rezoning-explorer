@@ -164,6 +164,7 @@ function ExpMapPrimePanel (props) {
             key={resource.name}
             title={resource.name}
             size='large'
+            borderlessMedia
             iconPath={resource.iconPath}
             onClick={() => {
               setShowResourceSelect(false);

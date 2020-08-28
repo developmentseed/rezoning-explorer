@@ -41,6 +41,9 @@ const CardMedia = styled.figure`
     z-index: 3;
     content: "";
     box-shadow: inset 0 0 0 1px ${themeVal('color.baseAlphaB')};
+    ${({ borderlessMedia }) => borderlessMedia && css`
+        box-shadow: none;
+      `}
     pointer-events: none;
   }
 `;
@@ -52,10 +55,10 @@ const CardTitle = styled.h4`
   padding: 1rem;
 `;
 
-export const Card = ({ id, title, iconPath, size, onClick }) => {
+export const Card = ({ id, title, iconPath, size, onClick, borderlessMedia }) => {
   return (
     <CardWrapper id={id} size={size} onClick={onClick}>
-      <CardMedia>
+      <CardMedia borderlessMedia={borderlessMedia}>
         <CardIcon src={iconPath} />
       </CardMedia>
       <CardTitle>{title}</CardTitle>
@@ -68,7 +71,8 @@ Card.propTypes = {
   title: T.string,
   iconPath: T.string,
   size: T.oneOf(['small', 'large']),
-  onClick: T.func
+  onClick: T.func,
+  borderlessMedia: T.bool
 };
 
 const CardListContainer = styled.ol`
