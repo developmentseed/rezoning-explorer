@@ -160,10 +160,11 @@ function ExpMapPrimePanel (props) {
         )}
         renderCard={(resource) => (
           <Card
-            id={`resource-${resource}-card`}
-            key={resource}
-            title={resource}
+            id={`resource-${resource.name}-card`}
+            key={resource.name}
+            title={resource.name}
             size='large'
+            iconPath={resource.iconPath}
             onClick={() => {
               setShowResourceSelect(false);
               setSelectedResource(resource);
