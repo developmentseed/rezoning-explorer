@@ -22,7 +22,7 @@ const HeaderWrapper = styled(ModalHeader)`
 const Headline = styled.h3`
   text-align: center;
   cursor: pointer;
-  ${({ disabled }) => disabled && 'opacity: 0.24'};
+  ${({ disabled }) => disabled && 'opacity: 0.24;'}
   & + & {
     padding-left: 2rem;
   }
