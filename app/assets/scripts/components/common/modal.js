@@ -9,7 +9,7 @@ const HeaderWrapper = styled(LibraryModalHeader)`
   grid-template-columns: 1fr;
 `;
 
-const Headline = styled.h1`
+const Headline = styled.h3`
   text-align: center; 
 `;
 
