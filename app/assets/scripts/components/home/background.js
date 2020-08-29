@@ -47,13 +47,13 @@ const StyledSvg = styled.svg`
   bottom: -10%;
   right: -20%;
   
-  ${wireStyles()};
+  ${wireStyles()}
   @keyframes dash {
     to {
       stroke-dashoffset: 0;
     }
   }
-  ${zoneStyles()};
+  ${zoneStyles()}
   @keyframes glow {
     100% {
       opacity: 1;
