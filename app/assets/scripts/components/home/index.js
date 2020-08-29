@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import App from '../common/app';
 import {
   Inpage,
@@ -11,7 +12,8 @@ import {
 } from '../../styles/inpage';
 import Button from '../../styles/button/button';
 import Prose from '../../styles/type/prose';
-import { filterComponentProps } from '../../styles/utils/general';
+import { themeVal, filterComponentProps } from '../../styles/utils/general';
+import HomepageBackground from './background';
 
 import { Link } from 'react-router-dom';
 
@@ -19,10 +21,19 @@ import { Link } from 'react-router-dom';
 const propsToFilter = ['variation', 'size', 'hideText', 'useIcon', 'active'];
 const StyledLink = filterComponentProps(Link, propsToFilter);
 
+const HomeInpage = styled(Inpage)`
+  background: rgb(2, 0, 36);
+  color: ${themeVal('color.background')};
+  padding-top: 12rem;
+  ${Button} {
+    margin-top: 4rem;
+  }
+`;
+
 function Home () {
   return (
     <App pageTitle='Home'>
-      <Inpage>
+      <HomeInpage>
         <InpageHeader>
           <InpageHeaderInner>
             <InpageHeadline>
@@ -43,7 +54,8 @@ function Home () {
             </Button>
           </InpageBodyInner>
         </InpageBody>
-      </Inpage>
+      </HomeInpage>
+      <HomepageBackground />
     </App>
   );
 }
