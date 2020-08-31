@@ -4,21 +4,21 @@ describe('Explore view', () => {
     cy.viewport('macbook-13');
   });
 
-  it('Visit /explore, apply selections', () => {
+  it.only('Visit /explore, apply selections', () => {
     cy.visit('/explore');
 
     // Show select country modal, select a country
-    cy.get('#select-country-modal-header').should('exist');
-    cy.get('#country-BF-card').click();
+    cy.get('#select-area-modal-header').should('exist');
+    cy.get('#area-bf-card').click();
 
     // URL is updated
     cy.url().should(
       'eq',
-      'http://localhost:9000/explore?countryId=BF&resource='
+      'http://localhost:9000/explore?areaId=bf'
     );
 
     // Display "Select Resource" modal
-    cy.get('#select-country-modal-header').should('not.exist');
+    cy.get('#select-area-modal-header').should('not.exist');
     cy.get('#select-resource-modal-header').should('exist');
 
     // Click on Resource button
@@ -27,11 +27,11 @@ describe('Explore view', () => {
     // URL is updated
     cy.url().should(
       'eq',
-      'http://localhost:9000/explore?countryId=BF&resource=Wind'
+      'http://localhost:9000/explore?areaId=bf&resourceId=Wind'
     );
 
     // Both modals are hidden
-    cy.get('#select-country-modal-header').should('not.exist');
+    cy.get('#select-area-modal-header').should('not.exist');
     cy.get('#select-resource-modal-header').should('not.exist');
 
     // Prime panel contain selections
@@ -45,7 +45,7 @@ describe('Explore view', () => {
     cy.go('back');
     cy.url().should(
       'eq',
-      'http://localhost:9000/explore?countryId=BF&resource='
+      'http://localhost:9000/explore?areaId=bf'
     );
 
     // And redisplay resource modal
@@ -56,25 +56,25 @@ describe('Explore view', () => {
     cy.url().should('eq', 'http://localhost:9000/explore');
 
     // And redisplay resource modal
-    cy.get('#select-country-modal-header').should('exist');
+    cy.get('#select-area-modal-header').should('exist');
     cy.get('#select-resource-modal-header').should('not.exist');
   });
 
-  it('Visit /explore?resource=Wind', () => {
-    cy.visit('/explore?resource=Wind');
+  it('Visit /explore?resourceId=Wind', () => {
+    cy.visit('/explore?resourceId=Wind');
 
     // Show select country modal, select a country
-    cy.get('#select-country-modal-header').should('exist');
+    cy.get('#select-area-modal-header').should('exist');
     cy.get('#country-BF-card').click();
 
     // URL is updated
     cy.url().should(
       'eq',
-      'http://localhost:9000/explore?countryId=BF&resource=Wind'
+      'http://localhost:9000/explore?areaId=bf&resourceId=Wind'
     );
 
     // Hide all modals
-    cy.get('#select-country-modal-header').should('not.exist');
+    cy.get('#select-area-modal-header').should('not.exist');
     cy.get('#select-resource-modal-header').should('not.exist');
 
     // Prime panel contains selections
@@ -86,10 +86,10 @@ describe('Explore view', () => {
 
     // Hitting "Back" should update the URL
     cy.go('back');
-    cy.url().should('eq', 'http://localhost:9000/explore?resource=Wind');
+    cy.url().should('eq', 'http://localhost:9000/explore?resourceId=Wind');
 
     // And redisplay country modal
-    cy.get('#select-country-modal-header').should('exist');
+    cy.get('#select-area-modal-header').should('exist');
     cy.get('#select-resource-modal-header').should('not.exist');
 
     // Hitting "Back" again should update the URL
@@ -98,19 +98,19 @@ describe('Explore view', () => {
     // URL is updated
     cy.url().should(
       'eq',
-      'http://localhost:9000/explore?countryId=BF&resource=Wind'
+      'http://localhost:9000/explore?areaId=bf&resourceId=Wind'
     );
 
     // Display "Select Resource" modal
-    cy.get('#select-country-modal-header').should('not.exist');
+    cy.get('#select-area-modal-header').should('not.exist');
     cy.get('#select-resource-modal-header').should('not.exist');
   });
 
-  it('Visit /explore?countryId=BI', () => {
-    cy.visit('/explore?countryId=BI');
+  it('Visit /explore?areaId=bi', () => {
+    cy.visit('/explore?areaId=bi');
 
     // Display "Select Resource" modal
-    cy.get('#select-country-modal-header').should('not.exist');
+    cy.get('#select-area-modal-header').should('not.exist');
     cy.get('#select-resource-modal-header').should('exist');
 
     // Click on Resource button
@@ -119,11 +119,11 @@ describe('Explore view', () => {
     // URL is updated
     cy.url().should(
       'eq',
-      'http://localhost:9000/explore?countryId=BI&resource=Wind'
+      'http://localhost:9000/explore?areaId=bi&resourceId=Wind'
     );
 
     // Both modals are hidden
-    cy.get('#select-country-modal-header').should('not.exist');
+    cy.get('#select-area-modal-header').should('not.exist');
     cy.get('#select-resource-modal-header').should('not.exist');
 
     // Prime panel contain selections
@@ -134,11 +134,11 @@ describe('Explore view', () => {
     cy.get('#selected-resource-prime-panel-heading').should('contain', 'Wind');
   });
 
-  it('Visit /explore?countryId=BI&resource=Wind', () => {
-    cy.visit('/explore?countryId=BI&resource=Wind');
+  it('Visit /explore?areaId=bi&resourceId=Wind', () => {
+    cy.visit('/explore?areaId=bi&resourceId=Wind');
 
     // Both modals are hidden
-    cy.get('#select-country-modal-header').should('not.exist');
+    cy.get('#select-area-modal-header').should('not.exist');
     cy.get('#select-resource-modal-header').should('not.exist');
 
     // Prime panel contain selections
@@ -151,7 +151,7 @@ describe('Explore view', () => {
     // URL is kept
     cy.url().should(
       'eq',
-      'http://localhost:9000/explore?countryId=BI&resource=Wind'
+      'http://localhost:9000/explore?areaId=bi&resourceId=Wind'
     );
   });
 
@@ -162,14 +162,14 @@ describe('Explore view', () => {
     cy.get('#resource-Wind-card').click();
 
     // Both modals are hidden
-    cy.get('#select-country-modal-header').should('not.exist');
+    cy.get('#select-area-modal-header').should('not.exist');
     cy.get('#select-resource-modal-header').should('not.exist');
 
     // Reopen country modal and select
     cy.get('#select-country-button').click();
 
     // Country modal should open
-    cy.get('#select-country-modal-header').should('exist');
+    cy.get('#select-area-modal-header').should('exist');
 
     // Select another country
     cy.get('#country-BI-card').click();
@@ -183,7 +183,7 @@ describe('Explore view', () => {
     // And the URL should be updated too
     cy.url().should(
       'eq',
-      'http://localhost:9000/explore?countryId=BI&resource=Wind'
+      'http://localhost:9000/explore?areaId=bi&resourceId=Wind'
     );
   });
 });
