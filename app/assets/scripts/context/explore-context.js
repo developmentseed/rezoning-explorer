@@ -59,10 +59,14 @@ export function ExploreProvider (props) {
       areaId: selectedAreaId,
       resourceId: selectedResource
     });
-    history.push({ search: qString });
+
+    // Push params as new URL, if different from current URL
+    if (qString !== location.search.substr(1)) {
+      history.push({ search: qString });
+    }
   }, [selectedAreaId, selectedResource]);
 
-  // Update context on URL changes
+  // Update context on URL change
   useEffect(() => {
     const { areaId, resourceId } = qsStateHelper.getState(
       location.search.substr(1)

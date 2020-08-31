@@ -53,7 +53,6 @@ describe('Explore view', () => {
 
     // Hitting "Back" again should update the URL
     cy.go('back');
-    cy.go('back'); // This is a temporary fix, please refer to https://github.com/developmentseed/rezoning-web/pull/79
     cy.url().should('eq', 'http://localhost:9000/explore');
 
     // And redisplay resource modal
