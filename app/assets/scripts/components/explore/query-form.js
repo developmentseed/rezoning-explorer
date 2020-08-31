@@ -422,7 +422,7 @@ QueryForm.propTypes = {
   onResourceEdit: T.func,
   onAreaEdit: T.func,
   presets: T.object,
-  onInputTouched: T.func,
+  onInputTouched: T.func
 };
 
 export default QueryForm;

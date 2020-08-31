@@ -213,7 +213,8 @@ ExportZonesButton.propTypes = {
 export { ExportZonesButton };
 
 ExploreZones.propTypes = {
-  zones: T.object
+  zones: T.object,
+  active: T.bool
 };
 
 export default ExploreZones;
