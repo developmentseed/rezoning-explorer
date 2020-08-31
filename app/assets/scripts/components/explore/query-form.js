@@ -179,7 +179,7 @@ function QueryForm (props) {
     <PanelBlock>
       <PanelBlockHeader>
         <HeadOption>
-          <HeadOptionHeadline id='selected-country-prime-panel-heading'>
+          <HeadOptionHeadline id='selected-area-prime-panel-heading'>
             <Heading size='large' variation='primary'>
               {selectedArea ? selectedArea.name : 'Select Area'}
             </Heading>

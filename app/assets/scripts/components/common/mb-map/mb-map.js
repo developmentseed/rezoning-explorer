@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import T from 'prop-types';
 import styled, { withTheme } from 'styled-components';
 import mapboxgl from 'mapbox-gl';
@@ -6,6 +6,9 @@ import config from '../../../config';
 import { glsp } from '../../../styles/utils/theme-values';
 import { resizeMap } from './mb-map-utils';
 
+import ExploreContext from '../../../context/explore-context';
+
+const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
 localStorage.setItem('MapboxAccessToken', config.mbToken);
 
@@ -45,12 +48,14 @@ const SingleMapContainer = styled.div`
   bottom: 0;
 `;
 
-const initializeMap = ({ setMap, mapContainer }) => {
+const initializeMap = ({ selectedArea, setMap, mapContainer }) => {
   const map = new mapboxgl.Map({
     container: mapContainer.current,
     style: 'mapbox://styles/mapbox/light-v10',
     center: [0, 0],
-    zoom: 5
+    zoom: 5,
+    bounds: selectedArea && selectedArea.bounds,
+    fitBoundsOptions
   });
 
   map.on('load', () => {
@@ -64,21 +69,32 @@ function MbMap (props) {
   const [map, setMap] = useState(null);
   const mapContainer = useRef(null);
 
+  const { selectedArea } = useContext(ExploreContext);
+
+  // Initialize map on mount
   useEffect(() => {
-    if (!map) initializeMap({ setMap, mapContainer });
+    if (!map) initializeMap({ setMap, mapContainer, selectedArea });
   }, [map]);
 
+  // Watch window size changes
   useEffect(() => {
     if (map) {
       resizeMap(map);
     }
   }, [triggerResize]);
 
+  useEffect(() => {
+    // Map must be loaded
+    if (!map) return;
+
+    if (selectedArea && selectedArea.bounds) {
+      map.fitBounds(selectedArea.bounds, fitBoundsOptions);
+    }
+  }, [selectedArea]);
+
   return (
     <MapsContainer>
-      <SingleMapContainer
-        ref={mapContainer}
-      />
+      <SingleMapContainer ref={mapContainer} />
     </MapsContainer>
   );
 }

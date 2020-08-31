@@ -22,8 +22,10 @@ const areas = regions
   .concat(
     countries.map((c) => ({
       ...c,
+      id: c.gid, // set id from GADM GID
       type: 'country', // add area type
-      id: c['alpha-2'].toLowerCase() // set id from alpha-2
+      alpha2: c.alpha2, // set id from alpha-2
+      bounds: c.bounds ? c.bounds.split(',').map((x) => parseFloat(x)) : null
     }))
   );
 const ExploreContext = createContext({});
