@@ -5,18 +5,25 @@ import ExploreStats from './explore-stats';
 import ExploreZones from './explore-zones';
 import Button from '../../styles/button/button';
 
-const GenerateZones = styled.div`
+const PanelInner = styled.div`
+  padding: 1rem 0;
+  flex: 1;
+  display: grid;
+  grid-template-rows: auto 1fr auto 1fr;
+
+`;
+const ZoneRequest = styled.div`
   padding-bottom: 0.5rem;
   display: flex;
   justify-content: center;
 `;
 
 function ZoneAnalysisPanel (props) {
-  const { currentZones, generateZones, inputTouched, firstQuery } = props;
+  const { currentZones, generateZones, inputTouched, zonesGenerated } = props;
   return (
-    <>
-      <GenerateZones>
-        {inputTouched &&
+    <PanelInner>
+      <ZoneRequest>
+        {!zonesGenerated &&
           <Button
             as='a'
             useIcon={['layout-grid-3x3', 'before']}
@@ -24,25 +31,39 @@ function ZoneAnalysisPanel (props) {
             onClick={generateZones}
             variation='primary-raised-dark'
           >
-            {firstQuery ? 'Generate Zones' : 'Regenerate Zones'}
+            Generate Zones
           </Button>}
-      </GenerateZones>
+      </ZoneRequest>
       <ExploreStats
         zones={currentZones}
         active={inputTouched}
       />
+      <ZoneRequest>
+        {inputTouched &&
+            zonesGenerated &&
+          <Button
+            as='a'
+            useIcon={['layout-grid-3x3', 'before']}
+            size='medium'
+            onClick={generateZones}
+            variation='primary-raised-dark'
+          >
+            Recalculate Zones
+          </Button>}
+      </ZoneRequest>
+
       {currentZones.isReady() &&
         <ExploreZones
           zones={currentZones}
           active={inputTouched}
         />}
-    </>
+    </PanelInner>
   );
 }
 ZoneAnalysisPanel.propTypes = {
   currentZones: T.object,
   generateZones: T.func,
   inputTouched: T.bool,
-  firstQuery: T.bool
+  zonesGenerated: T.bool
 };
 export default ZoneAnalysisPanel;

@@ -24,16 +24,10 @@ const SecPanel = styled(Panel)`
     width: 20rem;
   `}
 `;
-const PanelBlockBodyInner = styled.div`
-  padding: 1rem 0;
-  flex: 1;
-  display: grid;
-  grid-template-rows: auto 1fr 1fr;
-`;
 
 function ExpMapSecPanel (props) {
   const { onPanelChange } = props;
-  const { currentZones, generateZones, inputTouched, firstQuery } = useContext(ExploreContext);
+  const { currentZones, generateZones, inputTouched, zonesGenerated } = useContext(ExploreContext);
 
   return (
     <SecPanel
@@ -50,14 +44,12 @@ function ExpMapSecPanel (props) {
               </Heading>
             </PanelBlockHeader>
             <PanelBlockBody>
-              <PanelBlockBodyInner>
-                <ZoneAnalysisPanel
-                  currentZones={currentZones}
-                  generateZones={generateZones}
-                  inputTouched={inputTouched}
-                  firstQuery={firstQuery}
-                />
-              </PanelBlockBodyInner>
+              <ZoneAnalysisPanel
+                currentZones={currentZones}
+                generateZones={generateZones}
+                inputTouched={inputTouched}
+                zonesGenerated={zonesGenerated}
+              />
             </PanelBlockBody>
           </PanelBlock>
         </>

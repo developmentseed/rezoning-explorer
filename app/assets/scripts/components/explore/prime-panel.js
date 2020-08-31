@@ -40,7 +40,8 @@ function ExpMapPrimePanel (props) {
     setShowSelectAreaModal,
     showSelectResourceModal,
     setShowSelectResourceModal,
-    setInputTouched
+    setInputTouched,
+    setZonesGenerated
   } = useContext(ExploreContext);
 
   return (
@@ -63,6 +64,9 @@ function ExpMapPrimePanel (props) {
               onResourceEdit={() => setShowSelectResourceModal(true)}
               onInputTouched={() => {
                 setInputTouched(true);
+              }}
+              onSelectionChange={() => {
+                setZonesGenerated(false);
               }}
             />
           </>

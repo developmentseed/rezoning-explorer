@@ -154,7 +154,8 @@ function QueryForm (props) {
     presets,
     onAreaEdit,
     onResourceEdit,
-    onInputTouched
+    onInputTouched,
+    onSelectionChange
   } = props;
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
   const [gridMode, setGridMode] = useState(true);
@@ -174,6 +175,7 @@ function QueryForm (props) {
   };
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
+  useEffect(onSelectionChange, [area, resource, gridSize]);
 
   return (
     <PanelBlock>
@@ -422,7 +424,8 @@ QueryForm.propTypes = {
   onResourceEdit: T.func,
   onAreaEdit: T.func,
   presets: T.object,
-  onInputTouched: T.func
+  onInputTouched: T.func,
+  onSelectionChange: T.func
 };
 
 export default QueryForm;
