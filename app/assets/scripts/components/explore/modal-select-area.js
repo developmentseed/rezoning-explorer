@@ -89,7 +89,7 @@ function ModalSelectArea () {
           title={area.name}
           iconPath={
             areaType === 'country'
-              ? `/assets/graphics/content/flags-4x3/${area.id}.svg`
+              ? `/assets/graphics/content/flags-4x3/${area.alpha2.toLowerCase()}.svg`
               : undefined
           }
           size='small'
