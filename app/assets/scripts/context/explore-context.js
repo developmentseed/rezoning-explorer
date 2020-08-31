@@ -85,9 +85,14 @@ export function ExploreProvider (props) {
     }
   }, [location.search]);
 
+  const [inputTouched, setInputTouched] = useState(true);
+  const [firstQuery, setFirstQuery] = useState(true);
+
   const generateZones = async () => {
     showGlobalLoading();
     await fetchGenerateZones()(dispatchCurrentZones);
+    setInputTouched(false);
+    firstQuery && setFirstQuery(false);
     hideGlobalLoading();
   };
 
@@ -110,7 +115,10 @@ export function ExploreProvider (props) {
           showSelectResourceModal,
           setShowSelectResourceModal,
           currentZones,
-          generateZones
+          generateZones,
+          inputTouched,
+          setInputTouched,
+          firstQuery
         }}
       >
         {props.children}

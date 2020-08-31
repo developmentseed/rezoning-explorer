@@ -12,32 +12,37 @@ const GenerateZones = styled.div`
 `;
 
 function ZoneAnalysisPanel (props) {
-  const { currentZones, generateZones } = props;
+  const { currentZones, generateZones, inputTouched, firstQuery } = props;
   return (
     <>
       <GenerateZones>
-        <Button
-          as='a'
-          useIcon={['layout-grid-3x3', 'before']}
-          size='medium'
-          onClick={generateZones}
-          variation='primary-raised-dark'
-        >
-          Generate Zones
-        </Button>
+        {inputTouched &&
+          <Button
+            as='a'
+            useIcon={['layout-grid-3x3', 'before']}
+            size='medium'
+            onClick={generateZones}
+            variation='primary-raised-dark'
+          >
+            {firstQuery ? 'Generate Zones' : 'Regenerate Zones'}
+          </Button>}
       </GenerateZones>
       <ExploreStats
         zones={currentZones}
+        active={inputTouched}
       />
       {currentZones.isReady() &&
-      <ExploreZones
-        zones={currentZones}
-      />}
+        <ExploreZones
+          zones={currentZones}
+          active={inputTouched}
+        />}
     </>
   );
 }
 ZoneAnalysisPanel.propTypes = {
   currentZones: T.object,
-  generateZones: T.func
+  generateZones: T.func,
+  inputTouched: T.bool,
+  firstQuery: T.bool
 };
 export default ZoneAnalysisPanel;

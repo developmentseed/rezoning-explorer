@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal, makeTitleCase } from '../../styles/utils/general';
@@ -15,8 +15,6 @@ import Heading, { Subheading } from '../../styles/type/heading';
 import { FormSwitch } from '../../styles/form/switch';
 import { glsp } from '../../styles/utils/theme-values';
 import collecticon from '../../styles/collecticons';
-
-import ExploreContext from '../../context/explore-context';
 
 import { Accordion, AccordionFold } from '../../components/accordion';
 import InfoButton from '../common/info-button';
@@ -147,16 +145,16 @@ const updateStateList = (list, i, updatedValue) => {
 };
 
 function QueryForm (props) {
-  const { selectedArea } = useContext(ExploreContext);
-
   const {
+    area,
     resource,
     weightsList,
     filtersLists,
     lcoeList,
     presets,
     onAreaEdit,
-    onResourceEdit
+    onResourceEdit,
+    onInputTouched
   } = props;
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
   const [gridMode, setGridMode] = useState(true);
@@ -175,13 +173,15 @@ function QueryForm (props) {
     setLcoe(initListToState(lcoeList));
   };
 
+  useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
+
   return (
     <PanelBlock>
       <PanelBlockHeader>
         <HeadOption>
           <HeadOptionHeadline id='selected-area-prime-panel-heading'>
             <Heading size='large' variation='primary'>
-              {selectedArea ? selectedArea.name : 'Select Area'}
+              {area ? area.name : 'Select Area'}
             </Heading>
             <EditButton
               id='select-area-button'
@@ -414,13 +414,15 @@ FormWrapper.propTypes = {
 };
 
 QueryForm.propTypes = {
+  area: T.string,
   resource: T.string,
   weightsList: T.array,
   filtersLists: T.object,
   lcoeList: T.array,
   onResourceEdit: T.func,
   onAreaEdit: T.func,
-  presets: T.object
+  presets: T.object,
+  onInputTouched: T.func,
 };
 
 export default QueryForm;

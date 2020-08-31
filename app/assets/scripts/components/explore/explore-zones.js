@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import T from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Subheading } from '../../styles/type/heading';
 import CardList, { CardWrapper } from '../common/card-list';
 import { themeVal } from '../../styles/utils/general';
@@ -41,6 +41,10 @@ const ZonesWrapper = styled.section`
   }
   display: grid;
   grid-template-rows: auto 5fr;
+  ${({ active }) => active && css`
+    pointer-events:none;
+    opacity: 0.4;
+  `}
 `;
 
 const ZonesHeader = styled(Subheading)`
@@ -106,7 +110,7 @@ const Detail = styled(Dl)`
 `;
 
 function ExploreZones (props) {
-  const { zones } = props;
+  const { zones, active } = props;
 
   const [focusZone, setFocusZone] = useState(null);
 
@@ -115,7 +119,7 @@ function ExploreZones (props) {
   const zoneData = zones.isReady() ? zones.getData() : [];
 
   return (
-    <ZonesWrapper>
+    <ZonesWrapper active={active}>
       <ZonesHeader>All Zones</ZonesHeader>
 
       { focusZone
