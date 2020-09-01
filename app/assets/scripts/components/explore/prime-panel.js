@@ -114,7 +114,7 @@ function ExpMapPrimePanel (props) {
     }
 
     // Apply resource from URL or open modal if not set/valid
-    if (resource && resourceList.indexOf(resource) > -1) {
+    if (resource && resourceList.find(res => res.name === resource)) {
       setSelectedResource(resource);
     } else {
       setSelectedResource(null);
@@ -168,8 +168,8 @@ function ExpMapPrimePanel (props) {
             iconPath={resource.iconPath}
             onClick={() => {
               setShowResourceSelect(false);
-              setSelectedResource(resource);
-              setUrl({ resource });
+              setSelectedResource(resource.name);
+              setUrl({ resource: resource.name });
             }}
           />
         )}
