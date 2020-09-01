@@ -9,7 +9,11 @@ const BodyOuter = styled.div`
 `;
 
 function ModalSelect (props) {
-  const { revealed, onOverlayClick, data, renderHeader, renderCard, filterCard } = props;
+  const {
+    revealed, onOverlayClick, data,
+    renderHeader, renderCard, filterCard,
+    nonScrolling
+  } = props;
 
   return (
     <Modal
@@ -27,6 +31,7 @@ function ModalSelect (props) {
             data={data}
             renderCard={renderCard}
             filterCard={filterCard}
+            nonScrolling={nonScrolling}
           />
         </BodyOuter>
       }
@@ -40,6 +45,7 @@ ModalSelect.propTypes = {
   data: T.array,
   renderHeader: T.func,
   renderCard: T.func,
-  filterCard: T.func
+  filterCard: T.func,
+  nonScrolling: T.bool
 };
 export default ModalSelect;

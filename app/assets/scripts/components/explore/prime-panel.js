@@ -173,6 +173,7 @@ function ExpMapPrimePanel (props) {
             }}
           />
         )}
+        nonScrolling
       />
 
       <ModalSelect

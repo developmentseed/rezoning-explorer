@@ -92,16 +92,27 @@ const CardListScroll = styled(ShadowScrollbar)`
 `;
 const CardListWrapper = styled(PanelBlockBody)`
   height: 100%;
+  ${({ nonScrolling }) => nonScrolling && css`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  `}
 `;
 
-function CardList ({ data, renderCard, filterCard = () => true, numColumns }) {
+function CardList ({ data, renderCard, filterCard = () => true, numColumns, nonScrolling }) {
   return (
-    <CardListWrapper>
-      <CardListScroll>
-        <CardListContainer numColumns={numColumns} className='list-container'>
+    <CardListWrapper nonScrolling={nonScrolling}>
+      { nonScrolling
+        ? <CardListContainer numColumns={numColumns} className='list-container'>
           {data.filter(filterCard).map(renderCard)}
+          {/* eslint-disable-next-line */}
         </CardListContainer>
-      </CardListScroll>
+        : <CardListScroll>
+          <CardListContainer numColumns={numColumns} className='list-container'>
+            {data.filter(filterCard).map(renderCard)}
+          </CardListContainer>
+          {/* eslint-disable-next-line */}
+        </CardListScroll>}
     </CardListWrapper>
   );
 }
@@ -110,7 +121,8 @@ CardList.propTypes = {
   data: T.array,
   renderCard: T.func,
   filterCard: T.func,
-  numColumns: T.number
+  numColumns: T.number,
+  nonScrolling: T.bool
 };
 
 export default CardList;
