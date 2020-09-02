@@ -1,6 +1,6 @@
 import React from 'react';
 import T from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import StatSummary from '../common/table';
 import BarChart from '../common/bar-chart';
 import { themeVal } from '../../styles/utils/general';
@@ -18,6 +18,11 @@ const StatsWrapper = styled.section`
   dt {
     font-size: 0.875rem;
   }
+  ${({ active }) => active && css`
+    pointer-events:none;
+    opacity: 0.4;
+  `}
+
 `;
 
 const parseZones = (zones) => {
@@ -44,10 +49,10 @@ const parseZones = (zones) => {
 };
 
 function ExploreStats (props) {
-  const { zones } = props;
+  const { zones, active } = props;
   const statData = parseZones(zones.isReady() ? zones.getData() : []);
   return (
-    <StatsWrapper>
+    <StatsWrapper active={active}>
       {
         zones.isReady() &&
           <BarChart
@@ -71,6 +76,7 @@ function ExploreStats (props) {
 }
 
 ExploreStats.propTypes = {
-  zones: T.object
+  zones: T.object,
+  active: T.bool
 };
 export default ExploreStats;

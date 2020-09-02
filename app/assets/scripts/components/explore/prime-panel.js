@@ -34,11 +34,14 @@ function ExpMapPrimePanel (props) {
    */
   const {
     selectedResource,
+    selectedArea,
     setSelectedResource,
     showSelectAreaModal,
     setShowSelectAreaModal,
     showSelectResourceModal,
-    setShowSelectResourceModal
+    setShowSelectResourceModal,
+    setInputTouched,
+    setZonesGenerated
   } = useContext(ExploreContext);
 
   return (
@@ -51,6 +54,7 @@ function ExpMapPrimePanel (props) {
         bodyContent={
           <>
             <QueryForm
+              area={selectedArea}
               resource={selectedResource}
               weightsList={weightsList}
               filtersLists={filtersLists}
@@ -58,6 +62,12 @@ function ExpMapPrimePanel (props) {
               presets={presets}
               onAreaEdit={() => setShowSelectAreaModal(true)}
               onResourceEdit={() => setShowSelectResourceModal(true)}
+              onInputTouched={() => {
+                setInputTouched(true);
+              }}
+              onSelectionChange={() => {
+                setZonesGenerated(false);
+              }}
             />
           </>
         }
