@@ -740,61 +740,61 @@
   {
     "gid": "LBN",
     "alpha2": "LB",
-    "name": "B",
+    "name": "Lebanon",
     "bounds": "35.103,33.055,36.622,34.691"
   },
   {
     "gid": "LBR",
     "alpha2": "LR",
-    "name": "R",
+    "name": "Liberia",
     "bounds": "-11.486,4.353,-7.365,8.552"
   },
   {
     "gid": "LBY",
     "alpha2": "LY",
-    "name": "Y",
+    "name": "Libya",
     "bounds": "9.392,19.508,25.148,33.165"
   },
   {
     "gid": "LCA",
     "alpha2": "LC",
-    "name": "C",
+    "name": "Saint Lucia",
     "bounds": "-61.08,13.707,-60.87,14.11"
   },
   {
     "gid": "LIE",
     "alpha2": "LI",
-    "name": "I",
+    "name": "Liechtenstein",
     "bounds": "9.472,47.047,9.637,47.272"
   },
   {
     "gid": "LKA",
     "alpha2": "LK",
-    "name": "K",
+    "name": "Sri Lanka",
     "bounds": "79.522,5.918,81.879,9.836"
   },
   {
     "gid": "LSO",
     "alpha2": "LS",
-    "name": "S",
+    "name": "Lesotho",
     "bounds": "27.011,-30.676,29.456,-28.571"
   },
   {
     "gid": "LTU",
     "alpha2": "LT",
-    "name": "T",
+    "name": "Lithuania",
     "bounds": "20.951,53.89,26.847,56.447"
   },
   {
     "gid": "LUX",
     "alpha2": "LU",
-    "name": "U",
+    "name": "Luxembourg",
     "bounds": "5.744,49.448,6.531,50.182"
   },
   {
     "gid": "LVA",
     "alpha2": "LV",
-    "name": "V",
+    "name": "Latvia",
     "bounds": "20.971,55.664,28.241,58.086"
   },
   {
