@@ -102,17 +102,17 @@ const CardListWrapper = styled(PanelBlockBody)`
 function CardList ({ data, renderCard, filterCard = () => true, numColumns, nonScrolling }) {
   return (
     <CardListWrapper nonScrolling={nonScrolling}>
-      { nonScrolling
-        ? <CardListContainer numColumns={numColumns} className='list-container'>
+      {nonScrolling ? (
+        <CardListContainer numColumns={numColumns} className='list-container'>
           {data.filter(filterCard).map(renderCard)}
-          {/* eslint-disable-next-line */}
         </CardListContainer>
-        : <CardListScroll>
+      ) : (
+        <CardListScroll>
           <CardListContainer numColumns={numColumns} className='list-container'>
             {data.filter(filterCard).map(renderCard)}
           </CardListContainer>
-          {/* eslint-disable-next-line */}
-        </CardListScroll>}
+        </CardListScroll>
+      )}
     </CardListWrapper>
   );
 }
