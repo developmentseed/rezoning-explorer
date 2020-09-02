@@ -32,11 +32,17 @@ const FormCheckableElement = (props) => {
     onChange,
     className,
     textPlacement,
-    hideText
+    hideText,
+    onClick
   } = props;
 
   return (
-    <label htmlFor={id} className={className} title={title}>
+    <label
+      htmlFor={id}
+      className={className}
+      title={title}
+      onClick={onClick}
+    >
       <input
         type={type}
         name={name}
@@ -62,7 +68,8 @@ FormCheckableElement.propTypes = {
   type: T.oneOf(['checkbox', 'radio']),
   checked: T.bool,
   children: T.node.isRequired,
-  onChange: T.func
+  onChange: T.func,
+  onClick: T.func
 };
 
 FormCheckableElement.defaultProps = {

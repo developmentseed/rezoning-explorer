@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal, makeTitleCase } from '../../styles/utils/general';
@@ -15,6 +15,8 @@ import Heading, { Subheading } from '../../styles/type/heading';
 import { FormSwitch } from '../../styles/form/switch';
 import { glsp } from '../../styles/utils/theme-values';
 import collecticon from '../../styles/collecticons';
+
+import ExploreContext from '../../context/explore-context';
 
 import { Accordion, AccordionFold } from '../../components/accordion';
 import InfoButton from '../common/info-button';
@@ -48,7 +50,7 @@ const HeadOptionHeadline = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  & >:first-child {
+  & > :first-child {
     min-width: 5rem;
   }
 `;
@@ -67,9 +69,10 @@ const OptionHeadline = styled(HeadOptionHeadline)`
 
 const FormWrapper = styled.section`
   ${({ active }) => {
-    if (!active) { return 'display: none;'; }
-  }
-  }
+    if (!active) {
+      return 'display: none;';
+    }
+  }}
 `;
 
 const FormGroupWrapper = styled.div`
@@ -101,9 +104,9 @@ export const AccordionFoldTrigger = styled.a`
   &:visited {
     color: inherit;
   }
-    &:active {
-        transform: none;
-    }
+  &:active {
+    transform: none;
+  }
   &:after {
     ${collecticon('chevron-down--small')}
     margin-left: auto;
@@ -130,10 +133,10 @@ const initListToState = (list) => {
 
 const initObjectToState = (obj) => {
   return Object.keys(obj).reduce((accum, key) => {
-    return ({
+    return {
       ...accum,
       [key]: initListToState(obj[key])
-    });
+    };
   }, {});
 };
 
@@ -144,14 +147,15 @@ const updateStateList = (list, i, updatedValue) => {
 };
 
 function QueryForm (props) {
+  const { selectedArea } = useContext(ExploreContext);
+
   const {
-    country,
     resource,
     weightsList,
     filtersLists,
     lcoeList,
     presets,
-    onCountryEdit,
+    onAreaEdit,
     onResourceEdit
   } = props;
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
@@ -175,32 +179,37 @@ function QueryForm (props) {
     <PanelBlock>
       <PanelBlockHeader>
         <HeadOption>
-          <HeadOptionHeadline id='selected-country-prime-panel-heading'>
+          <HeadOptionHeadline id='selected-area-prime-panel-heading'>
             <Heading size='large' variation='primary'>
-              {country || 'Select Country'}
+              {selectedArea ? selectedArea.name : 'Select Area'}
             </Heading>
-            <EditButton id='select-country-button' onClick={onCountryEdit} title='Edit Country'>
-              Edit Country Selection
+            <EditButton
+              id='select-area-button'
+              onClick={onAreaEdit}
+              title='Edit Area'
+            >
+              Edit Area Selection
             </EditButton>
           </HeadOptionHeadline>
         </HeadOption>
 
         <HeadOption>
           <HeadOptionHeadline id='selected-resource-prime-panel-heading'>
-            <Subheading>Resource:  </Subheading>
-            <Subheading variation='primary'><strong>{resource || 'Select Resource'}</strong></Subheading>
-            <EditButton onClick={onResourceEdit} title='Edit Resource'>Edit Resource Selection</EditButton>
+            <Subheading>Resource: </Subheading>
+            <Subheading variation='primary'>
+              <strong>{resource || 'Select Resource'}</strong>
+            </Subheading>
+            <EditButton onClick={onResourceEdit} title='Edit Resource'>
+              Edit Resource Selection
+            </EditButton>
           </HeadOptionHeadline>
         </HeadOption>
 
         <HeadOption>
           <HeadOptionHeadline>
-            <Subheading>Grid Size:  </Subheading>
+            <Subheading>Grid Size: </Subheading>
             <Subheading variation='primary'>
-              <strong>
-                {gridMode
-                  ? `${gridSize} km²` : 'Boundaries'}
-              </strong>
+              <strong>{gridMode ? `${gridSize} km²` : 'Boundaries'}</strong>
             </Subheading>
 
             <GridSetter
@@ -258,77 +267,89 @@ function QueryForm (props) {
               setFilters(initObjectToState(presets.filters[preset]));
             }
           }}
-
         >
           <Accordion
-            initialState={[true, ...Object.keys(filters).slice(1).map(_ => false)]}
+            initialState={[
+              true,
+              ...Object.keys(filters)
+                .slice(1)
+                .map((_) => false)
+            ]}
           >
-            {({ checkExpanded, setExpanded }) => (
-              Object.entries(filters)
-                .map(([group, list], idx) => {
-                  return (
-                    <AccordionFold
-                      key={group}
-                      forwardedAs={FormGroupWrapper}
-                      isFoldExpanded={checkExpanded(idx)}
-                      setFoldExpanded={(v) => setExpanded(idx, v)}
-                      renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                        <AccordionFoldTrigger
-                          isExpanded={isFoldExpanded}
-                          onClick={() => setFoldExpanded(!isFoldExpanded)}
-                        >
-                          <Heading size='medium' variation='primary'>
-                            {makeTitleCase(group.replace(/_/g, ' '))}
-                          </Heading>
-                        </AccordionFoldTrigger>
-                      )}
-                      renderBody={({ isFoldExpanded }) => (
-                        list.map((filter, ind) => (
-                          <PanelOption key={filter.name} hidden={!isFoldExpanded}>
-                            <OptionHeadline>
-                              <PanelOptionTitle>{filter.name}</PanelOptionTitle>
-                              {
-                                filter.info && <InfoButton info={filter.info} id={filter.name}>Info</InfoButton>
-                              }
-                              <FormSwitch
-                                hideText
-                                name={`toggle-${filter.name.replace(/ /g, '-')}`}
-                                disabled={filter.disabled}
-                                checked={filter.active}
-                                onChange={() => {
-                                  setFilters({
-                                    ...filters,
-                                    [group]: updateStateList(list, ind, { ...filter, active: !filter.active })
-                                  });
-                                }}
-                              >
-                                Toggle filter
-                              </FormSwitch>
-
-                            </OptionHeadline>
-
-                            <SliderGroup
-                              unit={filter.unit || '%'}
-                              range={filter.range || [0, 100]}
-                              id={filter.name}
-                              value={
-                                filter.value === undefined ? filter.range[0] : filter.value
-                              }
-                              disabled={!filter.active}
-                              onChange={(value) => {
-                                if (filter.active) {
-                                  setFilters({
-                                    ...filters,
-                                    [group]: updateStateList(list, ind, { ...filter, value })
-                                  });
-                                }
+            {({ checkExpanded, setExpanded }) =>
+              Object.entries(filters).map(([group, list], idx) => {
+                return (
+                  <AccordionFold
+                    key={group}
+                    forwardedAs={FormGroupWrapper}
+                    isFoldExpanded={checkExpanded(idx)}
+                    setFoldExpanded={(v) => setExpanded(idx, v)}
+                    renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                      <AccordionFoldTrigger
+                        isExpanded={isFoldExpanded}
+                        onClick={() => setFoldExpanded(!isFoldExpanded)}
+                      >
+                        <Heading size='medium' variation='primary'>
+                          {makeTitleCase(group.replace(/_/g, ' '))}
+                        </Heading>
+                      </AccordionFoldTrigger>
+                    )}
+                    renderBody={({ isFoldExpanded }) =>
+                      list.map((filter, ind) => (
+                        <PanelOption key={filter.name} hidden={!isFoldExpanded}>
+                          <OptionHeadline>
+                            <PanelOptionTitle>{filter.name}</PanelOptionTitle>
+                            {filter.info && (
+                              <InfoButton info={filter.info} id={filter.name}>
+                                Info
+                              </InfoButton>
+                            )}
+                            <FormSwitch
+                              hideText
+                              name={`toggle-${filter.name.replace(/ /g, '-')}`}
+                              disabled={filter.disabled}
+                              checked={filter.active}
+                              onChange={() => {
+                                setFilters({
+                                  ...filters,
+                                  [group]: updateStateList(list, ind, {
+                                    ...filter,
+                                    active: !filter.active
+                                  })
+                                });
                               }}
-                            />
-                          </PanelOption>
-                        )))}
-                    />);
-                })
-            )}
+                            >
+                              Toggle filter
+                            </FormSwitch>
+                          </OptionHeadline>
+
+                          <SliderGroup
+                            unit={filter.unit || '%'}
+                            range={filter.range || [0, 100]}
+                            id={filter.name}
+                            value={
+                              filter.value === undefined
+                                ? filter.range[0]
+                                : filter.value
+                            }
+                            disabled={!filter.active}
+                            onChange={(value) => {
+                              if (filter.active) {
+                                setFilters({
+                                  ...filters,
+                                  [group]: updateStateList(list, ind, {
+                                    ...filter,
+                                    value
+                                  })
+                                });
+                              }
+                            }}
+                          />
+                        </PanelOption>
+                      ))}
+                  />
+                );
+              })}
           </Accordion>
         </FormWrapper>
 
@@ -393,13 +414,12 @@ FormWrapper.propTypes = {
 };
 
 QueryForm.propTypes = {
-  country: T.string,
   resource: T.string,
   weightsList: T.array,
   filtersLists: T.object,
   lcoeList: T.array,
   onResourceEdit: T.func,
-  onCountryEdit: T.func,
+  onAreaEdit: T.func,
   presets: T.object
 };
 

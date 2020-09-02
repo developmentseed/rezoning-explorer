@@ -1,0 +1,18 @@
+[
+  {
+    "id": "mena",
+    "name": "MENA"
+  },
+  {
+    "id": "west-africa",
+    "name": "West Africa"
+  },
+  {
+    "id": "east-africa",
+    "name": "East Africa"
+  },
+  {
+    "id": "southern-africa",
+    "name": "Southern Africa"
+  }
+]
