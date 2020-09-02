@@ -1,6 +1,19 @@
 import { randomRange } from '../../utils/utils';
 
-export const resourceList = ['Solar', 'Wind', 'Off-Shore Wind'];
+export const resourceList = [
+  {
+    name: 'Solar PV',
+    iconPath: 'assets/graphics/content/resourceIcons/solar-pv.svg'
+  },
+  {
+    name: 'Wind',
+    iconPath: 'assets/graphics/content/resourceIcons/wind.svg'
+  },
+  {
+    name: 'Off-Shore Wind',
+    iconPath: 'assets/graphics/content/resourceIcons/wind-offshore.svg'
+  }
+];
 
 export const filtersLists = {
   zone_parameters: [

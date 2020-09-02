@@ -78,16 +78,19 @@ function ExpMapPrimePanel (props) {
         )}
         renderCard={(resource) => (
           <Card
-            id={`resource-${resource}-card`}
-            key={resource}
-            title={resource}
+            id={`resource-${resource.name}-card`}
+            key={resource.name}
+            title={resource.name}
             size='large'
+            borderlessMedia
+            iconPath={resource.iconPath}
             onClick={() => {
               setShowSelectResourceModal(false);
-              setSelectedResource(resource);
+              setSelectedResource(resource.name);
             }}
           />
         )}
+        nonScrolling
       />
 
       <ModalSelectArea />
