@@ -25,7 +25,7 @@
   },
   {
     "gid": "ALB",
-    "alpha2": "A",
+    "alpha2": "AL",
     "name": "Albania",
     "bounds": "19.263,39.65,21.05,42.661"
   },
@@ -151,7 +151,7 @@
   },
   {
     "gid": "BLM",
-    "alpha2": "B",
+    "alpha2": "BL",
     "name": "Saint-Barthélemy",
     "bounds": "-62.948,17.87,-62.788,17.962"
   },
@@ -241,7 +241,7 @@
   },
   {
     "gid": "CHL",
-    "alpha2": "C",
+    "alpha2": "CL",
     "name": "Chile",
     "bounds": "-109.455,-55.984,-66.415,-17.508"
   },
@@ -535,7 +535,7 @@
   },
   {
     "gid": "GRL",
-    "alpha2": "G",
+    "alpha2": "GL",
     "name": "Greenland",
     "bounds": "-101.882,54.77,-0.013,83.658"
   },
@@ -649,7 +649,7 @@
   },
   {
     "gid": "ISR",
-    "alpha2": "I",
+    "alpha2": "IL",
     "name": "Israel",
     "bounds": "34.268,29.497,35.901,33.364"
   },
@@ -859,7 +859,7 @@
   },
   {
     "gid": "MLI",
-    "alpha2": "M",
+    "alpha2": "ML",
     "name": "Mali",
     "bounds": "-12.239,10.16,4.245,25"
   },
@@ -985,7 +985,7 @@
   },
   {
     "gid": "NLD",
-    "alpha2": "N",
+    "alpha2": "NL",
     "name": "Netherlands",
     "bounds": "3.361,50.723,7.227,53.555"
   },
@@ -1063,7 +1063,7 @@
   },
   {
     "gid": "POL",
-    "alpha2": "P",
+    "alpha2": "PL",
     "name": "Poland",
     "bounds": "14.123,49.002,24.146,54.836"
   },
@@ -1183,7 +1183,7 @@
   },
   {
     "gid": "SLE",
-    "alpha2": "S",
+    "alpha2": "SL",
     "name": "Sierra Leone",
     "bounds": "-13.304,6.918,-10.266,10"
   },
@@ -1321,7 +1321,7 @@
   },
   {
     "gid": "TLS",
-    "alpha2": "T",
+    "alpha2": "TL",
     "name": "Timor-Leste",
     "bounds": "124.045,-9.505,127.342,-8.127"
   },
