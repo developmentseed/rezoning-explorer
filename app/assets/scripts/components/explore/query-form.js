@@ -227,38 +227,6 @@ function QueryForm (props) {
 
       <TabbedBlockBody>
         <FormWrapper
-          name='weights'
-          icon='sliders-horizontal'
-          presets={presets.weights}
-          setPreset={(preset) => {
-            if (preset === 'reset') {
-              setWeights(initListToState(weightsList));
-            } else {
-              setWeights(initListToState(presets.weights[preset]));
-            }
-          }}
-        >
-          {weights.map((weight, ind) => (
-            <PanelOption key={weight.name}>
-              <PanelOptionTitle>{weight.name}</PanelOptionTitle>
-              <SliderGroup
-                unit={weight.unit || '%'}
-                range={weight.range || [0, 100]}
-                id={weight.name}
-                value={
-                  weight.value === undefined ? weight.range[0] : weight.value
-                }
-                onChange={(value) => {
-                  setWeights(
-                    updateStateList(weights, ind, { ...weight, value })
-                  );
-                }}
-              />
-            </PanelOption>
-          ))}
-        </FormWrapper>
-
-        <FormWrapper
           name='filters'
           icon='filter'
           presets={presets.filters}
@@ -353,6 +321,38 @@ function QueryForm (props) {
                 );
               })}
           </Accordion>
+        </FormWrapper>
+
+        <FormWrapper
+          name='weights'
+          icon='sliders-horizontal'
+          presets={presets.weights}
+          setPreset={(preset) => {
+            if (preset === 'reset') {
+              setWeights(initListToState(weightsList));
+            } else {
+              setWeights(initListToState(presets.weights[preset]));
+            }
+          }}
+        >
+          {weights.map((weight, ind) => (
+            <PanelOption key={weight.name}>
+              <PanelOptionTitle>{weight.name}</PanelOptionTitle>
+              <SliderGroup
+                unit={weight.unit || '%'}
+                range={weight.range || [0, 100]}
+                id={weight.name}
+                value={
+                  weight.value === undefined ? weight.range[0] : weight.value
+                }
+                onChange={(value) => {
+                  setWeights(
+                    updateStateList(weights, ind, { ...weight, value })
+                  );
+                }}
+              />
+            </PanelOption>
+          ))}
         </FormWrapper>
 
         <FormWrapper
