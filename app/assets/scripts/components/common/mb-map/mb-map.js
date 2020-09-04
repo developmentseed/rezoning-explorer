@@ -67,7 +67,7 @@ const initializeMap = ({ selectedArea, setMap, mapContainer }) => {
     /**
      * Add placeholder map source and a hidden layer for the filtered layer,
      * which will be displayed on "Apply" click
-     */ 
+     */
     map.addSource(FILTERED_LAYER_SOURCE, {
       type: 'raster',
       tiles: ['https://placeholder.url/{z}/{x}/{y}.png'],
