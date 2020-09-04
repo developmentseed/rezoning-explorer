@@ -3,6 +3,8 @@ import T from 'prop-types';
 import { useHistory, useLocation } from 'react-router';
 import QsState from '../utils/qs-state';
 
+import config from '../config';
+
 import countries from '../../data/countries.json';
 import regions from '../../data/regions.json';
 
@@ -101,6 +103,13 @@ export function ExploreProvider (props) {
     initialApiRequestState
   );
 
+  const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
+  function updateFilteredLayer () {
+    setFilteredLayerUrl(
+      `${config.apiEndpoint}/filter/all/{z}/{x}/{y}.png?filters=100000,1000000|100000,1000000|100000,1000000|100000,1000000|100000,1000000`
+    );
+  }
+
   return (
     <>
       <ExploreContext.Provider
@@ -119,7 +128,9 @@ export function ExploreProvider (props) {
           inputTouched,
           setInputTouched,
           zonesGenerated,
-          setZonesGenerated
+          setZonesGenerated,
+          filteredLayerUrl,
+          updateFilteredLayer
         }}
       >
         {props.children}

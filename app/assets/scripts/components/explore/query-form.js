@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal, makeTitleCase } from '../../styles/utils/general';
@@ -19,6 +19,8 @@ import collecticon from '../../styles/collecticons';
 import { Accordion, AccordionFold } from '../../components/accordion';
 import InfoButton from '../common/info-button';
 import GridSetter from './grid-setter';
+
+import ExploreContext from '../../context/explore-context';
 
 const GRID_OPTIONS = [9, 25, 50];
 const DEFAULT_RANGE = [0, 100];
@@ -145,6 +147,8 @@ const updateStateList = (list, i, updatedValue) => {
 };
 
 function QueryForm (props) {
+  const { updateFilteredLayer } = useContext(ExploreContext);
+
   const {
     area,
     resource,
@@ -163,10 +167,6 @@ function QueryForm (props) {
   const [weights, setWeights] = useState(initListToState(weightsList));
   const [filters, setFilters] = useState(initObjectToState(filtersLists));
   const [lcoe, setLcoe] = useState(lcoeList.map((e) => ({ ...e, value: '' })));
-
-  const applyClick = () => {
-    // handle submission and search
-  };
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));
@@ -397,7 +397,7 @@ function QueryForm (props) {
         </Button>
         <Button
           type='submit'
-          onClick={applyClick}
+          onClick={updateFilteredLayer}
           variation='primary-raised-dark'
           useIcon='tick--small'
         >
