@@ -106,7 +106,7 @@ export function ExploreProvider (props) {
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
   function updateFilteredLayer () {
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/all/{z}/{x}/{y}.png?filters=100000,1000000|100000,1000000|100000,1000000|100000,1000000|100000,1000000`
+      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=0,1000000|10000,1000000|0,1000000|0,1000000|0,5000&color=45,39,88,178`
     );
   }
 
