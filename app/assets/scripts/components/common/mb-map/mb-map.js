@@ -12,6 +12,9 @@ const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
 localStorage.setItem('MapboxAccessToken', config.mbToken);
 
+const FILTERED_LAYER_SOURCE = 'FILTERED_LAYER_SOURCE';
+const FILTERED_LAYER_ID = 'FILTERED_LAYER_ID';
+
 const MapsContainer = styled.div`
   position: relative;
   overflow: hidden;
@@ -60,6 +63,27 @@ const initializeMap = ({ selectedArea, setMap, mapContainer }) => {
 
   map.on('load', () => {
     setMap(map);
+
+    /**
+     * Add placeholder map source and a hidden layer for the filtered layer,
+     * which will be displayed on "Apply" click
+     */
+    map.addSource(FILTERED_LAYER_SOURCE, {
+      type: 'raster',
+      tiles: ['https://placeholder.url/{z}/{x}/{y}.png'],
+      tileSize: 256
+    });
+    map.addLayer({
+      id: FILTERED_LAYER_ID,
+      type: 'raster',
+      source: FILTERED_LAYER_SOURCE,
+      layout: {
+        visibility: 'none'
+      },
+      minzoom: 0,
+      maxzoom: 22
+    });
+
     map.resize();
   });
 };
@@ -69,7 +93,7 @@ function MbMap (props) {
   const [map, setMap] = useState(null);
   const mapContainer = useRef(null);
 
-  const { selectedArea } = useContext(ExploreContext);
+  const { selectedArea, filteredLayerUrl } = useContext(ExploreContext);
 
   // Initialize map on mount
   useEffect(() => {
@@ -83,6 +107,7 @@ function MbMap (props) {
     }
   }, [triggerResize]);
 
+  // Update view port on area change
   useEffect(() => {
     // Map must be loaded
     if (!map) return;
@@ -91,6 +116,25 @@ function MbMap (props) {
       map.fitBounds(selectedArea.bounds, fitBoundsOptions);
     }
   }, [selectedArea]);
+
+  // If filtered layer source URL have changed, apply to the map
+  useEffect(() => {
+    if (!filteredLayerUrl) return;
+
+    const style = map.getStyle();
+    map.setStyle({
+      ...style,
+      sources: {
+        ...style.sources,
+        [FILTERED_LAYER_SOURCE]: {
+          ...style.sources[FILTERED_LAYER_SOURCE],
+          tiles: [filteredLayerUrl]
+        }
+      }
+    });
+
+    map.setLayoutProperty(FILTERED_LAYER_ID, 'visibility', 'visible');
+  }, [filteredLayerUrl]);
 
   return (
     <MapsContainer>
