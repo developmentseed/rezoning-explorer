@@ -309,6 +309,7 @@ function QueryForm (props) {
                                 ? filter.range[0]
                                 : filter.value */
                             }
+                            isRange
                             disabled={!filter.active}
                             onChange={(value) => {
                               if (filter.active) {

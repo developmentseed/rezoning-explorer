@@ -18,22 +18,37 @@ const FormSliderGroup = styled.div`
 `;
 
 function SliderGroup (props) {
-  const { range, id, value, onChange, disabled } = props;
+  const { range, id, value, onChange, disabled, isRange } = props;
   return (
-    <FormSliderGroup>
-      <InputRange minValue={range[0]} maxValue={range[1]} value={value} onChange={onChange} disabled={disabled} />
-      {value.min === undefined && <StressedFormGroupInput
+    <FormSliderGroup isRange={isRange}>
+      {isRange &&
+      <StressedFormGroupInput
         inputType='number'
         inputSize='small'
-        id={`slider-input-max-${id}`}
-        name={`slider-input-max-${id}}`}
-        label='Max value'
-        value={value.min ? `${value.min}-${value.max}` : value}
+        id={`slider-input-min-${id}`}
+        name={`slider-input-min-${id}}`}
+        label='Min value'
+        value={value.min}
         disabled={disabled}
         validate={validateRangeNum(range[0], range[1])}
         onChange={onChange}
         title={disabled ? 'Enable this input to interact' : ''}
       />}
+
+      <InputRange minValue={range[0]} maxValue={range[1]} value={value} onChange={onChange} disabled={disabled} />
+
+      <StressedFormGroupInput
+        inputType='number'
+        inputSize='small'
+        id={`slider-input-max-${id}`}
+        name={`slider-input-max-${id}}`}
+        label='Max value'
+        value={value.max || value}
+        disabled={disabled}
+        validate={validateRangeNum(range[0], range[1])}
+        onChange={onChange}
+        title={disabled ? 'Enable this input to interact' : ''}
+      />
     </FormSliderGroup>
   );
 }
@@ -42,7 +57,8 @@ SliderGroup.propTypes = {
   id: T.string,
   onChange: T.func,
   value: T.oneOfType([T.string, T.number, T.object]),
-  disabled: T.bool
+  disabled: T.bool,
+  isRange: T.bool
 };
 
 export default SliderGroup;
