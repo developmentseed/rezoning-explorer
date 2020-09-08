@@ -17,6 +17,7 @@ import SecPanel from './sec-panel';
 import MbMap from '../common/mb-map/mb-map';
 
 import { ExploreProvider } from '../../context/explore-context';
+import Tour from '../common/tour'
 
 const ExploreCanvas = styled.div`
   display: grid;
@@ -56,6 +57,7 @@ function Explore () {
       <App
         pageTitle='Explore'
       >
+        <Tour />
         <Inpage isMapCentric>
           <InpageHeader>
             <InpageHeaderInner>
