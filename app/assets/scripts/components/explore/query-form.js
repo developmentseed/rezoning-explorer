@@ -303,12 +303,7 @@ function QueryForm (props) {
                             unit={filter.unit || '%'}
                             range={filter.range || [0, 100]}
                             id={filter.name}
-                            value={
-                              filter.value
-                              /* filter.value === undefined
-                                ? filter.range[0]
-                                : filter.value */
-                            }
+                            value={filter.value}
                             isRange
                             disabled={!filter.active}
                             onChange={(value) => {
