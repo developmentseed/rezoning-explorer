@@ -127,7 +127,8 @@ const initListToState = (list) => {
     ...obj,
     range: obj.range || DEFAULT_RANGE,
     unit: obj.unit || DEFAULT_UNIT,
-    active: obj.active === undefined ? true : obj.active
+    active: obj.active === undefined ? true : obj.active,
+    value: obj.value || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
   }));
 };
 
@@ -172,6 +173,11 @@ function QueryForm (props) {
     setWeights(initListToState(weightsList));
     setFilters(initObjectToState(filtersLists));
     setLcoe(initListToState(lcoeList));
+  };
+
+  const applyClick = () => {
+    const filterValues = Object.values(filters).reduce((accum, section) => [...accum, ...section.map(filter => filter.value)], []);
+    updateFilteredLayer(filterValues);
   };
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
@@ -298,9 +304,10 @@ function QueryForm (props) {
                             range={filter.range || [0, 100]}
                             id={filter.name}
                             value={
-                              filter.value === undefined
+                              filter.value
+                              /* filter.value === undefined
                                 ? filter.range[0]
-                                : filter.value
+                                : filter.value */
                             }
                             disabled={!filter.active}
                             onChange={(value) => {
@@ -397,7 +404,7 @@ function QueryForm (props) {
         </Button>
         <Button
           type='submit'
-          onClick={updateFilteredLayer}
+          onClick={applyClick}
           variation='primary-raised-dark'
           useIcon='tick--small'
         >
