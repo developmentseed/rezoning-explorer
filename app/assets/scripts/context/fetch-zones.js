@@ -4,7 +4,7 @@ import config from '../config';
 
 const { apiEndpoint } = config;
 
-async function getZoneSummary (feature, options) {
+async function getZoneSummary (feature, filterString) {
   const zoneSummary = {
     id: feature.properties.id,
     name: feature.properties.name,
@@ -12,7 +12,7 @@ async function getZoneSummary (feature, options) {
   };
   try {
     const { body } = await fetchJSON(
-      `${apiEndpoint}/zone?filters=0,1000000|10000,1000000|0,1000000|0,1000000|0,5000`,
+      `${apiEndpoint}/zone?filters=${filterString}`,
       {
         method: 'POST',
         body: JSON.stringify({
@@ -33,7 +33,7 @@ async function getZoneSummary (feature, options) {
   return zoneSummary;
 }
 
-export default async function generateZones (areaId, options) {
+export default async function generateZones (areaId, filterString) {
   // Get area topojson
   const { body: allZonesTopoJSON } = await fetchJSON(
     `/public/zones/${areaId}.topojson`
@@ -48,10 +48,7 @@ export default async function generateZones (areaId, options) {
   // Fetch Lcoe for each sub-area
   const results = await Promise.all(
     allZones.map((z) =>
-      getZoneSummary(z, {
-        weights: {},
-        lcoe: {}
-      })
+      getZoneSummary(z, filterString)
     )
   );
 

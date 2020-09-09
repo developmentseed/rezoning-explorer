@@ -87,9 +87,9 @@ export function ExploreProvider (props) {
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
 
-  const generateZones = async () => {
+  const generateZones = async (filterString) => {
     showGlobalLoading();
-    const zones = await fetchZones(selectedAreaId);
+    const zones = await fetchZones(selectedAreaId, filterString);
     setCurrentZones(zones);
     setInputTouched(false);
     !zonesGenerated && setZonesGenerated(true);
@@ -105,7 +105,7 @@ export function ExploreProvider (props) {
     setFilteredLayerUrl(
       `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=${filterString}&color=45,39,88,178`
     );
-    generateZones();
+    generateZones(filterString);
   }
 
   return (
