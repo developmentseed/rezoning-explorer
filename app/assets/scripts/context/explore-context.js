@@ -42,6 +42,7 @@ export function ExploreProvider (props) {
   const history = useHistory();
   const location = useLocation();
 
+
   const qsState = qsStateHelper.getState(location.search.substr(1));
 
   const [selectedAreaId, setSelectedAreaId] = useState(qsState.areaId);
@@ -55,7 +56,7 @@ export function ExploreProvider (props) {
     !qsState.resourceId
   );
 
-  useEffect(() => {
+    useEffect(() => {
     const qString = qsStateHelper.getQs({
       areaId: selectedAreaId,
       resourceId: selectedResource

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import App from '../common/app';
 import {
@@ -17,6 +17,7 @@ import SecPanel from './sec-panel';
 import MbMap from '../common/mb-map/mb-map';
 
 import { ExploreProvider } from '../../context/explore-context';
+import GlobalContext from '../../context/global-context';
 import Tour from '../common/tour'
 
 const ExploreCanvas = styled.div`
@@ -51,13 +52,16 @@ const ExploreCarto = styled.section`
 
 function Explore () {
   const [triggerResize, setTriggerResize] = useState(true);
-
+  const { tourStep, setTourStep} = useContext(GlobalContext);
   return (
     <ExploreProvider>
       <App
         pageTitle='Explore'
       >
-        <Tour />
+        <Tour 
+          tourStep={tourStep}
+          setTourStep={setTourStep}
+        />
         <Inpage isMapCentric>
           <InpageHeader>
             <InpageHeaderInner>
