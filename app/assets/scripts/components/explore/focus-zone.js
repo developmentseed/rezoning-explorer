@@ -5,6 +5,8 @@ import Button from '../../styles/button/button';
 import Dl from '../../styles/type/definition-list';
 import ShadowScrollbar from '../common/shadow-scrollbar';
 import { themeVal } from '../../styles/utils/general';
+import { FormCheckable } from '../../styles/form/checkable';
+import { ExportZonesButton } from './explore-zones';
 
 const Details = styled.div`
 /* stylelint-disable */
@@ -31,9 +33,19 @@ const Wrapper = styled.div`
     width: calc(100% + 3rem);
   }
 `;
+const FocusZoneFooter = styled.div`
+  /*display: flex;
+  flex-flow: column nowrap;
+  justify-content: stretch;*/
 
-function SelectedZone (props) {
-  const { zone, resetZone } = props;
+
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 0.25rem;
+`;
+
+function FocusZone (props) {
+  const { zone, unFocus, selected, onSelect } = props;
   /* eslint-disable-next-line */
   const { id, country, energy_source, details } = zone;
   const detailsList = {
@@ -45,7 +57,7 @@ function SelectedZone (props) {
   return (
 
     <Wrapper>
-      <Button onClick={resetZone} size='small' useIcon={['chevron-left--small', 'before']}>
+      <Button onClick={unFocus} size='small' useIcon={['chevron-left--small', 'before']}>
         See All Zones
       </Button>
       <LineChart title='Supply Curve' />
@@ -58,14 +70,32 @@ function SelectedZone (props) {
             </Dl>
           ))}
         </Details>
+
+        <FocusZoneFooter>
+          <FormCheckable
+            name={id}
+            id={id}
+            type='checkbox'
+            checked={selected}
+            onChange={onSelect}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >Add zone to selection
+          </FormCheckable>
+
+          <ExportZonesButton onExport={() => {}} small />
+        </FocusZoneFooter>
       </ShadowScrollbar>
     </Wrapper>
   );
 }
 
-SelectedZone.propTypes = {
+FocusZone.propTypes = {
   zone: T.object.isRequired,
-  resetZone: T.func
+  unFocus: T.func,
+  selected: T.bool,
+  onSelect: T.func
 };
 
-export default SelectedZone;
+export default FocusZone;

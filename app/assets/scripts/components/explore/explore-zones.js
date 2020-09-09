@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import T from 'prop-types';
+import styled, { css } from 'styled-components';
 import { Subheading } from '../../styles/type/heading';
 import CardList, { CardWrapper } from '../common/card-list';
 import { themeVal } from '../../styles/utils/general';
-import SelectedZone from './selected-zone';
+import FocusZone from './focus-zone';
 import Dl from '../../styles/type/definition-list';
+import { FormCheckable } from '../../styles/form/checkable';
+import Button from '../../styles/button/button';
 
-const CARD_DATA = [
+export const CARD_DATA = [
   {
     id: 'AB',
     color: '#2c2a59',
@@ -38,10 +41,18 @@ const ZonesWrapper = styled.section`
   }
   display: grid;
   grid-template-rows: auto 5fr;
+  ${({ active }) => active && css`
+    pointer-events:none;
+    opacity: 0.4;
+  `}
 `;
 
 const ZonesHeader = styled(Subheading)`
   padding: 1rem 1.5rem;
+`;
+
+const ZoneCheckbox = styled(FormCheckable)`
+  margin-left: 1rem;
 `;
 
 const Card = styled(CardWrapper)`
@@ -98,41 +109,112 @@ const Detail = styled(Dl)`
   }
 `;
 
-function ExploreZones () {
-  const [selectedZone, setSelectedZone] = useState(null);
+function ExploreZones (props) {
+  const { zones, active } = props;
+
+  const [focusZone, setFocusZone] = useState(null);
+
+  const [selectedZones, setSelectedZones] = useState({});
+
+  const zoneData = zones.isReady() ? zones.getData() : [];
 
   return (
-    <ZonesWrapper>
+    <ZonesWrapper active={active}>
       <ZonesHeader>All Zones</ZonesHeader>
 
-      { selectedZone
-        ? <SelectedZone zone={selectedZone} resetZone={() => setSelectedZone(null)} />
-        : <CardList
-          numColumns={1}
-          data={CARD_DATA}
-          renderCard={(data) => (
-            <Card
-              size='large'
-              key={data.id}
-              onClick={() => setSelectedZone(data)}
-            >
-              <CardIcon color={data.color}>
-                <div>{data.id}</div>
-              </CardIcon>
-              <CardDetails>
-                {Object.entries(data.details).map(([label, data]) => (
-                  <Detail key={`${data.id}-${label}`}>
-                    <dt>{label.replace(/_/g, ' ')}</dt>
-                    <dd>{data}</dd>
-                  </Detail>
-                ))}
-              </CardDetails>
-            </Card>
-          )}
-          /* eslint-disable-next-line */
-          />}
+      { focusZone
+        ? <FocusZone
+          zone={focusZone}
+          unFocus={() => setFocusZone(null)}
+          selected={selectedZones[focusZone.id] || false}
+          onSelect={() => setSelectedZones({ ...selectedZones, [focusZone.id]: !selectedZones[focusZone.id] })}
 
+          /* eslint-disable-next-line */
+        />
+        : <>
+          <CardList
+            numColumns={1}
+            data={zoneData}
+            renderCard={(data) => (
+              <Card
+                size='large'
+                key={data.id}
+                onClick={() => {
+                  setFocusZone(data);
+                }}
+              >
+                <CardIcon
+                  color={data.color}
+                >
+                  <div>{data.id}</div>
+                </CardIcon>
+                <CardDetails>
+                  {Object.entries(data.details).map(([label, data]) => (
+                    <Detail key={`${data.id}-${label}`}>
+                      <dt>{label.replace(/_/g, ' ')}</dt>
+                      <dd>{data}</dd>
+                    </Detail>
+                  ))}
+                </CardDetails>
+                <ZoneCheckbox
+                  name={data.id}
+                  id={data.id}
+                  type='checkbox'
+                  hideText
+                  checked={selectedZones[data.id] || false}
+                  onChange={(e) => {
+                    setSelectedZones({ ...selectedZones, [data.id]: !selectedZones[data.id] });
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >Select {data.id}
+                </ZoneCheckbox>
+              </Card>
+            )}
+          />
+          <ExportZonesButton usePadding onExport={() => {}} />
+          {/* eslint-disable-next-line */}
+        </>}
     </ZonesWrapper>
   );
 }
+const ExportWrapper = styled.div`
+  ${({ usePadding }) => usePadding && 'padding: 0.5rem;'}
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  ${Button} {
+    width: 100%;
+  }
+`;
+
+const ExportZonesButton = ({ onExport, small, usePadding }) => {
+  return (
+    <ExportWrapper
+      usePadding={usePadding}
+    >
+      <Button
+        as='a'
+        useIcon='download'
+        variation='primary-raised-dark'
+      >
+        { small ? 'Export' : 'Export Selected Zones'}
+      </Button>
+    </ExportWrapper>
+
+  );
+};
+ExportZonesButton.propTypes = {
+  onExport: T.func,
+  small: T.bool,
+  usePadding: T.bool
+};
+export { ExportZonesButton };
+
+ExploreZones.propTypes = {
+  zones: T.object,
+  active: T.bool
+};
+
 export default ExploreZones;

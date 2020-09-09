@@ -56,6 +56,16 @@ This will generate a minified build to `dist` folder:
 
     yarn build
 
+### Zone Data
+
+The application uses [GADM](https://gadm.org) national and sub-national boundaries to perform analysis. 
+
+The geofiles are served from the website `public` folder and loaded at runtime. The files can be generated/updated by running the following script:
+
+    ./scripts/create_regions.sh
+
+This will download GADM data to `.tmp`, parse and copy the results to `app/public` folder. The files are already included in the directory, so the script should be executed only when the source files change.
+
 ## License
 
 [MIT](LICENSE)

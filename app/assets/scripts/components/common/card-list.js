@@ -41,6 +41,9 @@ const CardMedia = styled.figure`
     z-index: 3;
     content: "";
     box-shadow: inset 0 0 0 1px ${themeVal('color.baseAlphaB')};
+    ${({ borderlessMedia }) => borderlessMedia && css`
+        box-shadow: none;
+      `}
     pointer-events: none;
   }
 `;
@@ -52,10 +55,10 @@ const CardTitle = styled.h4`
   padding: 1rem;
 `;
 
-export const Card = ({ id, title, iconPath, size, onClick }) => {
+export const Card = ({ id, title, iconPath, size, onClick, borderlessMedia }) => {
   return (
     <CardWrapper id={id} size={size} onClick={onClick}>
-      <CardMedia>
+      <CardMedia borderlessMedia={borderlessMedia}>
         <CardIcon src={iconPath} />
       </CardMedia>
       <CardTitle>{title}</CardTitle>
@@ -68,7 +71,8 @@ Card.propTypes = {
   title: T.string,
   iconPath: T.string,
   size: T.oneOf(['small', 'large']),
-  onClick: T.func
+  onClick: T.func,
+  borderlessMedia: T.bool
 };
 
 const CardListContainer = styled.ol`
@@ -88,16 +92,27 @@ const CardListScroll = styled(ShadowScrollbar)`
 `;
 const CardListWrapper = styled(PanelBlockBody)`
   height: 100%;
+  ${({ nonScrolling }) => nonScrolling && css`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  `}
 `;
 
-function CardList ({ data, renderCard, filterCard = () => true, numColumns }) {
+function CardList ({ data, renderCard, filterCard = () => true, numColumns, nonScrolling }) {
   return (
-    <CardListWrapper>
-      <CardListScroll>
+    <CardListWrapper nonScrolling={nonScrolling}>
+      {nonScrolling ? (
         <CardListContainer numColumns={numColumns} className='list-container'>
           {data.filter(filterCard).map(renderCard)}
         </CardListContainer>
-      </CardListScroll>
+      ) : (
+        <CardListScroll>
+          <CardListContainer numColumns={numColumns} className='list-container'>
+            {data.filter(filterCard).map(renderCard)}
+          </CardListContainer>
+        </CardListScroll>
+      )}
     </CardListWrapper>
   );
 }
@@ -106,7 +121,8 @@ CardList.propTypes = {
   data: T.array,
   renderCard: T.func,
   filterCard: T.func,
-  numColumns: T.number
+  numColumns: T.number,
+  nonScrolling: T.bool
 };
 
 export default CardList;

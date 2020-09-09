@@ -1,0 +1,1484 @@
+[
+  {
+    "gid": "ABW",
+    "alpha2": "AW",
+    "name": "Aruba",
+    "bounds": "-70.063,12.412,-69.865,12.624"
+  },
+  {
+    "gid": "AFG",
+    "alpha2": "AF",
+    "name": "Afghanistan",
+    "bounds": "60.505,29.362,74.894,38.491"
+  },
+  {
+    "gid": "AGO",
+    "alpha2": "AO",
+    "name": "Angola",
+    "bounds": "11.668,-18.042,24.082,-4.373"
+  },
+  {
+    "gid": "AIA",
+    "alpha2": "AI",
+    "name": "Anguilla",
+    "bounds": "-63.43,18.154,-62.924,18.595"
+  },
+  {
+    "gid": "ALB",
+    "alpha2": "AL",
+    "name": "Albania",
+    "bounds": "19.263,39.65,21.05,42.661"
+  },
+  {
+    "gid": "AND",
+    "alpha2": "AD",
+    "name": "Andorra",
+    "bounds": "1.414,42.429,1.784,42.652"
+  },
+  {
+    "gid": "ARE",
+    "alpha2": "AE",
+    "name": "United Arab Emirates",
+    "bounds": "51.498,22.644,56.381,26.069"
+  },
+  {
+    "gid": "ARG",
+    "alpha2": "AR",
+    "name": "Argentina",
+    "bounds": "-73.578,-55.062,-53.592,-21.779"
+  },
+  {
+    "gid": "ARM",
+    "alpha2": "AM",
+    "name": "Armenia",
+    "bounds": "43.45,38.831,46.63,41.302"
+  },
+  {
+    "gid": "ASM",
+    "alpha2": "AS",
+    "name": "American Samoa",
+    "bounds": "-171.09,-14.549,-168.143,-11.048"
+  },
+  {
+    "gid": "ATA",
+    "alpha2": "AQ",
+    "name": "Antarctica",
+    "bounds": "-180,-90,180,-59.594"
+  },
+  {
+    "gid": "ATF",
+    "alpha2": "TF",
+    "name": "French Southern Territories",
+    "bounds": "40.328,-50.019,77.603,-11.514"
+  },
+  {
+    "gid": "ATG",
+    "alpha2": "AG",
+    "name": "Antigua and Barbuda",
+    "bounds": "-62.349,16.932,-61.657,17.73"
+  },
+  {
+    "gid": "AUS",
+    "alpha2": "AU",
+    "name": "Australia",
+    "bounds": "112.921,-55.117,159.109,-9.142"
+  },
+  {
+    "gid": "AUT",
+    "alpha2": "AT",
+    "name": "Austria",
+    "bounds": "9.534,46.375,17.162,49.017"
+  },
+  {
+    "gid": "AZE",
+    "alpha2": "AZ",
+    "name": "Azerbaijan",
+    "bounds": "44.773,38.397,50.608,41.907"
+  },
+  {
+    "gid": "BDI",
+    "alpha2": "BI",
+    "name": "Burundi",
+    "bounds": "29,-4.47,30.85,-2.31"
+  },
+  {
+    "gid": "BEL",
+    "alpha2": "BE",
+    "name": "Belgium",
+    "bounds": "2.555,49.497,6.408,51.504"
+  },
+  {
+    "gid": "BEN",
+    "alpha2": "BJ",
+    "name": "Benin",
+    "bounds": "0.775,6.235,3.852,12.418"
+  },
+  {
+    "gid": "BFA",
+    "alpha2": "BF",
+    "name": "Burkina Faso",
+    "bounds": "-5.519,9.401,2.405,15.083"
+  },
+  {
+    "gid": "BGD",
+    "alpha2": "BD",
+    "name": "Bangladesh",
+    "bounds": "88.011,20.741,92.674,26.634"
+  },
+  {
+    "gid": "BGR",
+    "alpha2": "BG",
+    "name": "Bulgaria",
+    "bounds": "22.344,41.235,28.609,44.213"
+  },
+  {
+    "gid": "BHR",
+    "alpha2": "BH",
+    "name": "Bahrain",
+    "bounds": "50.275,25.556,50.825,26.289"
+  },
+  {
+    "gid": "BHS",
+    "alpha2": "BS",
+    "name": "Bahamas",
+    "bounds": "-80.476,20.912,-72.712,27.271"
+  },
+  {
+    "gid": "BIH",
+    "alpha2": "BA",
+    "name": "Bosnia and Herzegovina",
+    "bounds": "15.727,42.565,19.615,45.275"
+  },
+  {
+    "gid": "BLM",
+    "alpha2": "BL",
+    "name": "Saint-Barthélemy",
+    "bounds": "-62.948,17.87,-62.788,17.962"
+  },
+  {
+    "gid": "BLR",
+    "alpha2": "BY",
+    "name": "Belarus",
+    "bounds": "23.178,51.27,32.795,56.168"
+  },
+  {
+    "gid": "BLZ",
+    "alpha2": "BZ",
+    "name": "Belize",
+    "bounds": "-89.224,15.893,-87.486,18.497"
+  },
+  {
+    "gid": "BMU",
+    "alpha2": "BM",
+    "name": "Bermuda",
+    "bounds": "-64.888,32.247,-64.646,32.477"
+  },
+  {
+    "gid": "BOL",
+    "alpha2": "BO",
+    "name": "Bolivia",
+    "bounds": "-69.639,-22.896,-57.454,-9.669"
+  },
+  {
+    "gid": "BRA",
+    "alpha2": "BR",
+    "name": "Brazil",
+    "bounds": "-73.99,-33.747,-28.847,5.265"
+  },
+  {
+    "gid": "BRB",
+    "alpha2": "BB",
+    "name": "Barbados",
+    "bounds": "-59.651,13.045,-59.419,13.335"
+  },
+  {
+    "gid": "BRN",
+    "alpha2": "BN",
+    "name": "Brunei",
+    "bounds": "114.128,4.022,115.376,5.046"
+  },
+  {
+    "gid": "BTN",
+    "alpha2": "BT",
+    "name": "Bhutan",
+    "bounds": "88.746,26.701,92.125,28.248"
+  },
+  {
+    "gid": "BVT",
+    "alpha2": "BV",
+    "name": "Bouvet Island",
+    "bounds": "3.284,-54.465,3.487,-54.386"
+  },
+  {
+    "gid": "BWA",
+    "alpha2": "BW",
+    "name": "Botswana",
+    "bounds": "20,-26.907,29.368,-17.781"
+  },
+  {
+    "gid": "CAF",
+    "alpha2": "CF",
+    "name": "Central African Republic",
+    "bounds": "14.418,2.221,27.463,11.008"
+  },
+  {
+    "gid": "CAN",
+    "alpha2": "CA",
+    "name": "Canada",
+    "bounds": "-141.007,41.677,-52.619,83.11"
+  },
+  {
+    "gid": "CCK",
+    "alpha2": "CC",
+    "name": "Cocos Islands",
+    "bounds": "96.817,-12.209,96.929,-11.815"
+  },
+  {
+    "gid": "CHE",
+    "alpha2": "CH",
+    "name": "Switzerland",
+    "bounds": "5.956,45.817,10.495,47.808"
+  },
+  {
+    "gid": "CHL",
+    "alpha2": "CL",
+    "name": "Chile",
+    "bounds": "-109.455,-55.984,-66.415,-17.508"
+  },
+  {
+    "gid": "CHN",
+    "alpha2": "CN",
+    "name": "China",
+    "bounds": "73.558,18.159,134.774,53.561"
+  },
+  {
+    "gid": "CIV",
+    "alpha2": "CI",
+    "name": "Côte d'Ivoire",
+    "bounds": "-8.599,4.362,-2.495,10.737"
+  },
+  {
+    "gid": "CMR",
+    "alpha2": "CM",
+    "name": "Cameroon",
+    "bounds": "8.499,1.652,16.191,13.077"
+  },
+  {
+    "gid": "COD",
+    "alpha2": "CD",
+    "name": "Democratic Republic of the Congo",
+    "bounds": "12.207,-13.456,31.306,5.386"
+  },
+  {
+    "gid": "COG",
+    "alpha2": "CG",
+    "name": "Republic of Congo",
+    "bounds": "11.201,-5.031,18.65,3.703"
+  },
+  {
+    "gid": "COK",
+    "alpha2": "CK",
+    "name": "Cook Islands",
+    "bounds": "-165.879,-21.959,-157.321,-8.915"
+  },
+  {
+    "gid": "COL",
+    "alpha2": "CO",
+    "name": "Colombia",
+    "bounds": "-81.842,-4.228,-66.87,15.912"
+  },
+  {
+    "gid": "COM",
+    "alpha2": "KM",
+    "name": "Comoros",
+    "bounds": "43.229,-12.423,44.541,-11.365"
+  },
+  {
+    "gid": "CPV",
+    "alpha2": "CV",
+    "name": "Cape Verde",
+    "bounds": "-25.362,14.802,-22.657,17.205"
+  },
+  {
+    "gid": "CRI",
+    "alpha2": "CR",
+    "name": "Costa Rica",
+    "bounds": "-87.095,5.499,-82.553,11.217"
+  },
+  {
+    "gid": "CUB",
+    "alpha2": "CU",
+    "name": "Cuba",
+    "bounds": "-84.952,19.826,-74.131,23.278"
+  },
+  {
+    "gid": "CUW",
+    "alpha2": "CW",
+    "name": "Curaçao",
+    "bounds": "-69.163,11.978,-68.639,12.393"
+  },
+  {
+    "gid": "CXR",
+    "alpha2": "CX",
+    "name": "Christmas Island",
+    "bounds": "105.533,-10.571,105.713,-10.412"
+  },
+  {
+    "gid": "CYM",
+    "alpha2": "KY",
+    "name": "Cayman Islands",
+    "bounds": "-81.42,19.263,-79.723,19.757"
+  },
+  {
+    "gid": "CYP",
+    "alpha2": "CY",
+    "name": "Cyprus",
+    "bounds": "32.269,34.625,34.088,35.199"
+  },
+  {
+    "gid": "CZE",
+    "alpha2": "CZ",
+    "name": "Czech Republic",
+    "bounds": "12.091,48.541,18.859,51.056"
+  },
+  {
+    "gid": "DEU",
+    "alpha2": "DE",
+    "name": "Germany",
+    "bounds": "5.866,47.27,15.042,55.057"
+  },
+  {
+    "gid": "DJI",
+    "alpha2": "DJ",
+    "name": "Djibouti",
+    "bounds": "41.76,10.952,43.418,12.707"
+  },
+  {
+    "gid": "DMA",
+    "alpha2": "DM",
+    "name": "Dominica",
+    "bounds": "-61.48,15.206,-61.24,15.64"
+  },
+  {
+    "gid": "DNK",
+    "alpha2": "DK",
+    "name": "Denmark",
+    "bounds": "8.076,54.559,15.193,57.752"
+  },
+  {
+    "gid": "DOM",
+    "alpha2": "DO",
+    "name": "Dominican Republic",
+    "bounds": "-72.004,17.47,-68.323,19.932"
+  },
+  {
+    "gid": "DZA",
+    "alpha2": "DZ",
+    "name": "Algeria",
+    "bounds": "-8.674,18.96,11.989,37.095"
+  },
+  {
+    "gid": "ECU",
+    "alpha2": "EC",
+    "name": "Ecuador",
+    "bounds": "-92.009,-5.016,-75.187,1.682"
+  },
+  {
+    "gid": "EGY",
+    "alpha2": "EG",
+    "name": "Egypt",
+    "bounds": "24.698,21.725,36.249,31.668"
+  },
+  {
+    "gid": "ERI",
+    "alpha2": "ER",
+    "name": "Eritrea",
+    "bounds": "36.439,12.357,43.138,18.007"
+  },
+  {
+    "gid": "ESH",
+    "alpha2": "EH",
+    "name": "Western Sahara",
+    "bounds": "-17.105,20.77,-8.67,27.683"
+  },
+  {
+    "gid": "ESP",
+    "alpha2": "ES",
+    "name": "Spain",
+    "bounds": "-18.162,27.637,4.328,43.792"
+  },
+  {
+    "gid": "EST",
+    "alpha2": "EE",
+    "name": "Estonia",
+    "bounds": "21.764,57.514,28.209,59.822"
+  },
+  {
+    "gid": "ETH",
+    "alpha2": "ET",
+    "name": "Ethiopia",
+    "bounds": "33.002,3.399,47.958,14.845"
+  },
+  {
+    "gid": "FIN",
+    "alpha2": "FI",
+    "name": "Finland",
+    "bounds": "20.551,59.721,31.583,70.091"
+  },
+  {
+    "gid": "FJI",
+    "alpha2": "FJ",
+    "name": "Fiji",
+    "bounds": "-180,-21.042,180,-12.462"
+  },
+  {
+    "gid": "FLK",
+    "alpha2": "FK",
+    "name": "Falkland Islands",
+    "bounds": "-61.46,-52.919,-57.687,-50.996"
+  },
+  {
+    "gid": "FRA",
+    "alpha2": "FR",
+    "name": "France",
+    "bounds": "-5.144,41.334,9.56,51.089"
+  },
+  {
+    "gid": "FRO",
+    "alpha2": "FO",
+    "name": "Faroe Islands",
+    "bounds": "-7.683,61.394,-6.246,62.392"
+  },
+  {
+    "gid": "FSM",
+    "alpha2": "FM",
+    "name": "Micronesia",
+    "bounds": "137.425,1.025,163.036,10.091"
+  },
+  {
+    "gid": "GAB",
+    "alpha2": "GA",
+    "name": "Gabon",
+    "bounds": "8.699,-3.991,14.502,2.316"
+  },
+  {
+    "gid": "GBR",
+    "alpha2": "GB",
+    "name": "United Kingdom",
+    "bounds": "-13.691,49.865,1.764,61.527"
+  },
+  {
+    "gid": "GEO",
+    "alpha2": "GE",
+    "name": "Georgia",
+    "bounds": "40.011,41.039,46.721,43.585"
+  },
+  {
+    "gid": "GGY",
+    "alpha2": "GG",
+    "name": "Guernsey",
+    "bounds": "-2.678,49.4,-2.156,49.736"
+  },
+  {
+    "gid": "GHA",
+    "alpha2": "GH",
+    "name": "Ghana",
+    "bounds": "-3.255,4.739,1.192,11.173"
+  },
+  {
+    "gid": "GIB",
+    "alpha2": "GI",
+    "name": "Gibraltar",
+    "bounds": "-5.368,36.108,-5.338,36.157"
+  },
+  {
+    "gid": "GIN",
+    "alpha2": "GN",
+    "name": "Guinea",
+    "bounds": "-15.076,7.194,-7.641,12.692"
+  },
+  {
+    "gid": "GLP",
+    "alpha2": "GP",
+    "name": "Guadeloupe",
+    "bounds": "-61.81,15.832,-61,16.515"
+  },
+  {
+    "gid": "GMB",
+    "alpha2": "GM",
+    "name": "Gambia",
+    "bounds": "-16.817,13.065,-13.791,13.827"
+  },
+  {
+    "gid": "GNB",
+    "alpha2": "GW",
+    "name": "Guinea-Bissau",
+    "bounds": "-16.715,10.864,-13.637,12.685"
+  },
+  {
+    "gid": "GNQ",
+    "alpha2": "GQ",
+    "name": "Equatorial Guinea",
+    "bounds": "5.616,-1.468,11.337,3.789"
+  },
+  {
+    "gid": "GRC",
+    "alpha2": "GR",
+    "name": "Greece",
+    "bounds": "19.372,34.801,29.646,41.748"
+  },
+  {
+    "gid": "GRD",
+    "alpha2": "GD",
+    "name": "Grenada",
+    "bounds": "-61.802,11.984,-61.378,12.54"
+  },
+  {
+    "gid": "GRL",
+    "alpha2": "GL",
+    "name": "Greenland",
+    "bounds": "-101.882,54.77,-0.013,83.658"
+  },
+  {
+    "gid": "GTM",
+    "alpha2": "GT",
+    "name": "Guatemala",
+    "bounds": "-92.222,13.738,-88.226,17.819"
+  },
+  {
+    "gid": "GUF",
+    "alpha2": "GF",
+    "name": "French Guiana",
+    "bounds": "-54.542,2.129,-51.606,5.752"
+  },
+  {
+    "gid": "GUM",
+    "alpha2": "GU",
+    "name": "Guam",
+    "bounds": "144.618,13.234,144.957,13.654"
+  },
+  {
+    "gid": "GUY",
+    "alpha2": "GY",
+    "name": "Guyana",
+    "bounds": "-61.387,1.177,-56.48,8.531"
+  },
+  {
+    "gid": "HKG",
+    "alpha2": "HK",
+    "name": "Hong Kong",
+    "bounds": "113.835,22.153,114.441,22.562"
+  },
+  {
+    "gid": "HMD",
+    "alpha2": "HM",
+    "name": "Heard Island and McDonald Islands",
+    "bounds": "72.583,-53.195,73.873,-52.902"
+  },
+  {
+    "gid": "HND",
+    "alpha2": "HN",
+    "name": "Honduras",
+    "bounds": "-89.351,12.985,-82.406,17.418"
+  },
+  {
+    "gid": "HRV",
+    "alpha2": "HR",
+    "name": "Croatia",
+    "bounds": "13.49,42.385,19.435,46.551"
+  },
+  {
+    "gid": "HTI",
+    "alpha2": "HT",
+    "name": "Haiti",
+    "bounds": "-74.481,18.022,-71.618,20.09"
+  },
+  {
+    "gid": "HUN",
+    "alpha2": "HU",
+    "name": "Hungary",
+    "bounds": "16.111,45.748,22.906,48.586"
+  },
+  {
+    "gid": "IDN",
+    "alpha2": "ID",
+    "name": "Indonesia",
+    "bounds": "95.01,-11.008,141.019,6.077"
+  },
+  {
+    "gid": "IMN",
+    "alpha2": "IM",
+    "name": "Isle of Man",
+    "bounds": "-4.841,54.036,-4.306,54.418"
+  },
+  {
+    "gid": "IND",
+    "alpha2": "IN",
+    "name": "India",
+    "bounds": "68.186,6.754,97.415,35.501"
+  },
+  {
+    "gid": "IOT",
+    "alpha2": "IO",
+    "name": "British Indian Ocean Territory",
+    "bounds": "71.237,-7.445,72.496,-5.236"
+  },
+  {
+    "gid": "IRL",
+    "alpha2": "IE",
+    "name": "Ireland",
+    "bounds": "-10.663,51.42,-5.994,55.45"
+  },
+  {
+    "gid": "IRN",
+    "alpha2": "IR",
+    "name": "Iran",
+    "bounds": "44.047,25.059,63.317,39.777"
+  },
+  {
+    "gid": "IRQ",
+    "alpha2": "IQ",
+    "name": "Iraq",
+    "bounds": "38.797,28.987,48.569,37.378"
+  },
+  {
+    "gid": "ISL",
+    "alpha2": "IS",
+    "name": "Iceland",
+    "bounds": "-27.981,60.002,-12.051,66.702"
+  },
+  {
+    "gid": "ISR",
+    "alpha2": "IL",
+    "name": "Israel",
+    "bounds": "34.268,29.497,35.901,33.364"
+  },
+  {
+    "gid": "ITA",
+    "alpha2": "IT",
+    "name": "Italy",
+    "bounds": "6.631,35.493,18.521,47.091"
+  },
+  {
+    "gid": "JAM",
+    "alpha2": "JM",
+    "name": "Jamaica",
+    "bounds": "-78.369,17.02,-75.97,18.525"
+  },
+  {
+    "gid": "JEY",
+    "alpha2": "JE",
+    "name": "Jersey",
+    "bounds": "-2.255,49.147,-1.925,49.293"
+  },
+  {
+    "gid": "JOR",
+    "alpha2": "JO",
+    "name": "Jordan",
+    "bounds": "34.958,29.186,39.302,33.368"
+  },
+  {
+    "gid": "JPN",
+    "alpha2": "JP",
+    "name": "Japan",
+    "bounds": "122.933,24.045,153.987,45.523"
+  },
+  {
+    "gid": "KAZ",
+    "alpha2": "KZ",
+    "name": "Kazakhstan",
+    "bounds": "46.492,40.552,87.313,55.432"
+  },
+  {
+    "gid": "KEN",
+    "alpha2": "KE",
+    "name": "Kenya",
+    "bounds": "33.91,-4.72,41.926,5.061"
+  },
+  {
+    "gid": "KGZ",
+    "alpha2": "KG",
+    "name": "Kyrgyzstan",
+    "bounds": "69.28,39.173,80.283,43.238"
+  },
+  {
+    "gid": "KHM",
+    "alpha2": "KH",
+    "name": "Cambodia",
+    "bounds": "102.336,9.914,107.63,14.688"
+  },
+  {
+    "gid": "KIR",
+    "alpha2": "KI",
+    "name": "Kiribati",
+    "bounds": "-174.543,-17.852,176.849,4.699"
+  },
+  {
+    "gid": "KNA",
+    "alpha2": "KN",
+    "name": "Saint Kitts and Nevis",
+    "bounds": "-62.864,17.093,-62.539,17.418"
+  },
+  {
+    "gid": "KOR",
+    "alpha2": "KR",
+    "name": "South Korea",
+    "bounds": "125.082,33.112,130.94,38.612"
+  },
+  {
+    "gid": "KWT",
+    "alpha2": "KW",
+    "name": "Kuwait",
+    "bounds": "46.551,28.525,48.654,30.084"
+  },
+  {
+    "gid": "LAO",
+    "alpha2": "LA",
+    "name": "Laos",
+    "bounds": "100.087,13.908,107.635,22.5"
+  },
+  {
+    "gid": "LBN",
+    "alpha2": "LB",
+    "name": "Lebanon",
+    "bounds": "35.103,33.055,36.622,34.691"
+  },
+  {
+    "gid": "LBR",
+    "alpha2": "LR",
+    "name": "Liberia",
+    "bounds": "-11.486,4.353,-7.365,8.552"
+  },
+  {
+    "gid": "LBY",
+    "alpha2": "LY",
+    "name": "Libya",
+    "bounds": "9.392,19.508,25.148,33.165"
+  },
+  {
+    "gid": "LCA",
+    "alpha2": "LC",
+    "name": "Saint Lucia",
+    "bounds": "-61.08,13.707,-60.87,14.11"
+  },
+  {
+    "gid": "LIE",
+    "alpha2": "LI",
+    "name": "Liechtenstein",
+    "bounds": "9.472,47.047,9.637,47.272"
+  },
+  {
+    "gid": "LKA",
+    "alpha2": "LK",
+    "name": "Sri Lanka",
+    "bounds": "79.522,5.918,81.879,9.836"
+  },
+  {
+    "gid": "LSO",
+    "alpha2": "LS",
+    "name": "Lesotho",
+    "bounds": "27.011,-30.676,29.456,-28.571"
+  },
+  {
+    "gid": "LTU",
+    "alpha2": "LT",
+    "name": "Lithuania",
+    "bounds": "20.951,53.89,26.847,56.447"
+  },
+  {
+    "gid": "LUX",
+    "alpha2": "LU",
+    "name": "Luxembourg",
+    "bounds": "5.744,49.448,6.531,50.182"
+  },
+  {
+    "gid": "LVA",
+    "alpha2": "LV",
+    "name": "Latvia",
+    "bounds": "20.971,55.664,28.241,58.086"
+  },
+  {
+    "gid": "MAC",
+    "alpha2": "MO",
+    "name": "Macao",
+    "bounds": "113.529,22.109,113.599,22.217"
+  },
+  {
+    "gid": "MAF",
+    "alpha2": "MF",
+    "name": "Saint-Martin",
+    "bounds": "-63.154,18.045,-62.97,18.126"
+  },
+  {
+    "gid": "MAR",
+    "alpha2": "MA",
+    "name": "Morocco",
+    "bounds": "-13.168,27.67,-0.997,35.923"
+  },
+  {
+    "gid": "MCO",
+    "alpha2": "MC",
+    "name": "Monaco",
+    "bounds": "7.41,43.723,7.44,43.751"
+  },
+  {
+    "gid": "MDA",
+    "alpha2": "MD",
+    "name": "Moldova",
+    "bounds": "26.621,45.467,30.164,48.49"
+  },
+  {
+    "gid": "MDG",
+    "alpha2": "MG",
+    "name": "Madagascar",
+    "bounds": "43.188,-25.606,50.487,-11.949"
+  },
+  {
+    "gid": "MDV",
+    "alpha2": "MV",
+    "name": "Maldives",
+    "bounds": "72.638,-0.703,73.76,7.107"
+  },
+  {
+    "gid": "MEX",
+    "alpha2": "MX",
+    "name": "Mexico",
+    "bounds": "-118.369,14.533,-86.71,32.718"
+  },
+  {
+    "gid": "MHL",
+    "alpha2": "MH",
+    "name": "Marshall Islands",
+    "bounds": "160.795,4.573,172.173,14.723"
+  },
+  {
+    "gid": "MKD",
+    "alpha2": "MK",
+    "name": "Macedonia",
+    "bounds": "20.456,40.855,23.006,42.339"
+  },
+  {
+    "gid": "MLI",
+    "alpha2": "ML",
+    "name": "Mali",
+    "bounds": "-12.239,10.16,4.245,25"
+  },
+  {
+    "gid": "MLT",
+    "alpha2": "MT",
+    "name": "Malta",
+    "bounds": "14.184,35.786,14.577,36.082"
+  },
+  {
+    "gid": "MMR",
+    "alpha2": "MM",
+    "name": "Myanmar",
+    "bounds": "92.173,8.824,101.177,28.543"
+  },
+  {
+    "gid": "MNE",
+    "alpha2": "ME",
+    "name": "Montenegro",
+    "bounds": "18.459,41.848,20.318,43.563"
+  },
+  {
+    "gid": "MNG",
+    "alpha2": "MN",
+    "name": "Mongolia",
+    "bounds": "87.75,41.568,119.924,52.154"
+  },
+  {
+    "gid": "MNP",
+    "alpha2": "MP",
+    "name": "Northern Mariana Islands",
+    "bounds": "144.885,14.11,146.066,20.555"
+  },
+  {
+    "gid": "MOZ",
+    "alpha2": "MZ",
+    "name": "Mozambique",
+    "bounds": "30.217,-26.869,40.839,-10.471"
+  },
+  {
+    "gid": "MRT",
+    "alpha2": "MR",
+    "name": "Mauritania",
+    "bounds": "-17.067,14.716,-4.828,27.298"
+  },
+  {
+    "gid": "MSR",
+    "alpha2": "MS",
+    "name": "Montserrat",
+    "bounds": "-62.242,16.675,-62.145,16.824"
+  },
+  {
+    "gid": "MTQ",
+    "alpha2": "MQ",
+    "name": "Martinique",
+    "bounds": "-61.229,14.388,-60.809,14.879"
+  },
+  {
+    "gid": "MUS",
+    "alpha2": "MU",
+    "name": "Mauritius",
+    "bounds": "56.586,-20.526,63.503,-10.337"
+  },
+  {
+    "gid": "MWI",
+    "alpha2": "MW",
+    "name": "Malawi",
+    "bounds": "32.672,-17.127,35.915,-9.364"
+  },
+  {
+    "gid": "MYS",
+    "alpha2": "MY",
+    "name": "Malaysia",
+    "bounds": "99.641,0.854,119.27,7.381"
+  },
+  {
+    "gid": "MYT",
+    "alpha2": "YT",
+    "name": "Mayotte",
+    "bounds": "45.018,-13.006,45.3,-12.636"
+  },
+  {
+    "gid": "NAM",
+    "alpha2": "NA",
+    "name": "Namibia",
+    "bounds": "11.735,-28.969,25.257,-16.96"
+  },
+  {
+    "gid": "NCL",
+    "alpha2": "NC",
+    "name": "New Caledonia",
+    "bounds": "155.869,-22.848,172.09,-17.399"
+  },
+  {
+    "gid": "NER",
+    "alpha2": "NE",
+    "name": "Niger",
+    "bounds": "0.166,11.697,15.996,23.525"
+  },
+  {
+    "gid": "NFK",
+    "alpha2": "NF",
+    "name": "Norfolk Island",
+    "bounds": "167.914,-29.133,167.998,-28.994"
+  },
+  {
+    "gid": "NGA",
+    "alpha2": "NG",
+    "name": "Nigeria",
+    "bounds": "2.668,4.27,14.676,13.892"
+  },
+  {
+    "gid": "NIC",
+    "alpha2": "NI",
+    "name": "Nicaragua",
+    "bounds": "-87.691,10.708,-82,15.026"
+  },
+  {
+    "gid": "NIU",
+    "alpha2": "NU",
+    "name": "Niue",
+    "bounds": "-169.951,-19.156,-169.774,-18.952"
+  },
+  {
+    "gid": "NLD",
+    "alpha2": "NL",
+    "name": "Netherlands",
+    "bounds": "3.361,50.723,7.227,53.555"
+  },
+  {
+    "gid": "NOR",
+    "alpha2": "NO",
+    "name": "Norway",
+    "bounds": "3.905,57.959,31.162,71.181"
+  },
+  {
+    "gid": "NPL",
+    "alpha2": "NP",
+    "name": "Nepal",
+    "bounds": "80.06,26.348,88.204,30.447"
+  },
+  {
+    "gid": "NRU",
+    "alpha2": "NR",
+    "name": "Nauru",
+    "bounds": "166.91,-0.554,166.959,-0.502"
+  },
+  {
+    "gid": "NZL",
+    "alpha2": "NZ",
+    "name": "New Zealand",
+    "bounds": "-178.827,-52.621,179.066,-29.232"
+  },
+  {
+    "gid": "OMN",
+    "alpha2": "OM",
+    "name": "Oman",
+    "bounds": "52,16.642,59.839,26.507"
+  },
+  {
+    "gid": "PAK",
+    "alpha2": "PK",
+    "name": "Pakistan",
+    "bounds": "60.899,23.703,77.843,37.097"
+  },
+  {
+    "gid": "PAN",
+    "alpha2": "PA",
+    "name": "Panama",
+    "bounds": "-83.05,7.202,-77.173,9.647"
+  },
+  {
+    "gid": "PCN",
+    "alpha2": "PN",
+    "name": "Pitcairn Islands",
+    "bounds": "-130.756,-25.08,-124.772,-23.908"
+  },
+  {
+    "gid": "PER",
+    "alpha2": "PE",
+    "name": "Peru",
+    "bounds": "-81.331,-18.352,-68.653,-0.037"
+  },
+  {
+    "gid": "PHL",
+    "alpha2": "PH",
+    "name": "Philippines",
+    "bounds": "116.928,4.587,126.605,21.07"
+  },
+  {
+    "gid": "PLW",
+    "alpha2": "PW",
+    "name": "Palau",
+    "bounds": "131.12,2.971,134.721,8.094"
+  },
+  {
+    "gid": "PNG",
+    "alpha2": "PG",
+    "name": "Papua New Guinea",
+    "bounds": "140.84,-11.655,157.038,-0.756"
+  },
+  {
+    "gid": "POL",
+    "alpha2": "PL",
+    "name": "Poland",
+    "bounds": "14.123,49.002,24.146,54.836"
+  },
+  {
+    "gid": "PRI",
+    "alpha2": "PR",
+    "name": "Puerto Rico",
+    "bounds": "-67.952,17.883,-65,18.516"
+  },
+  {
+    "gid": "PRK",
+    "alpha2": "KP",
+    "name": "North Korea",
+    "bounds": "124.182,37.603,130.674,43.006"
+  },
+  {
+    "gid": "PRT",
+    "alpha2": "PT",
+    "name": "Portugal",
+    "bounds": "-31.268,30.03,-6.189,42.154"
+  },
+  {
+    "gid": "PRY",
+    "alpha2": "PY",
+    "name": "Paraguay",
+    "bounds": "-62.647,-27.606,-54.259,-19.291"
+  },
+  {
+    "gid": "PSE",
+    "alpha2": "PS",
+    "name": "Palestine",
+    "bounds": "34.229,31.224,35.575,32.552"
+  },
+  {
+    "gid": "PYF",
+    "alpha2": "PF",
+    "name": "French Polynesia",
+    "bounds": "-154.727,-27.901,-134.451,-7.895"
+  },
+  {
+    "gid": "QAT",
+    "alpha2": "QA",
+    "name": "Qatar",
+    "bounds": "50.737,24.468,51.647,26.184"
+  },
+  {
+    "gid": "REU",
+    "alpha2": "RE",
+    "name": "Reunion",
+    "bounds": "55.216,-21.39,55.837,-20.872"
+  },
+  {
+    "gid": "ROU",
+    "alpha2": "RO",
+    "name": "Romania",
+    "bounds": "20.264,43.619,29.72,48.266"
+  },
+  {
+    "gid": "RUS",
+    "alpha2": "RU",
+    "name": "Russia",
+    "bounds": "-180,41.189,180,81.856"
+  },
+  {
+    "gid": "RWA",
+    "alpha2": "RW",
+    "name": "Rwanda",
+    "bounds": "28.862,-2.84,30.899,-1.047"
+  },
+  {
+    "gid": "SAU",
+    "alpha2": "SA",
+    "name": "Saudi Arabia",
+    "bounds": "34.494,16.094,55.667,32.271"
+  },
+  {
+    "gid": "SDN",
+    "alpha2": "SD",
+    "name": "Sudan",
+    "bounds": "21.839,8.679,38.849,23.145"
+  },
+  {
+    "gid": "SEN",
+    "alpha2": "SN",
+    "name": "Senegal",
+    "bounds": "-17.543,12.308,-11.342,16.692"
+  },
+  {
+    "gid": "SGP",
+    "alpha2": "SG",
+    "name": "Singapore",
+    "bounds": "103.609,1.166,104.086,1.471"
+  },
+  {
+    "gid": "SGS",
+    "alpha2": "GS",
+    "name": "South Georgia and the South Sandwich Islands",
+    "bounds": "-41.816,-59.484,-26.229,-53.647"
+  },
+  {
+    "gid": "SHN",
+    "alpha2": "SH",
+    "name": "Saint Helena",
+    "bounds": "-14.421,-40.371,-5.631,-7.889"
+  },
+  {
+    "gid": "SJM",
+    "alpha2": "SJ",
+    "name": "Svalbard and Jan Mayen",
+    "bounds": "-9.077,70.825,36.808,82.537"
+  },
+  {
+    "gid": "SLB",
+    "alpha2": "SB",
+    "name": "Solomon Islands",
+    "bounds": "155.393,-12.308,170.193,-4.445"
+  },
+  {
+    "gid": "SLE",
+    "alpha2": "SL",
+    "name": "Sierra Leone",
+    "bounds": "-13.304,6.918,-10.266,10"
+  },
+  {
+    "gid": "SLV",
+    "alpha2": "SV",
+    "name": "El Salvador",
+    "bounds": "-90.125,13.153,-87.684,14.451"
+  },
+  {
+    "gid": "SMR",
+    "alpha2": "SM",
+    "name": "San Marino",
+    "bounds": "12.401,43.895,12.514,43.996"
+  },
+  {
+    "gid": "SOM",
+    "alpha2": "SO",
+    "name": "Somalia",
+    "bounds": "40.979,-1.647,51.416,11.989"
+  },
+  {
+    "gid": "SPM",
+    "alpha2": "PM",
+    "name": "Saint Pierre and Miquelon",
+    "bounds": "-56.406,46.749,-56.126,47.145"
+  },
+  {
+    "gid": "SRB",
+    "alpha2": "RS",
+    "name": "Serbia",
+    "bounds": "18.809,42.228,22.979,46.189"
+  },
+  {
+    "gid": "SSD",
+    "alpha2": "SS",
+    "name": "South Sudan",
+    "bounds": "24.152,3.481,35.87,12.219"
+  },
+  {
+    "gid": "STP",
+    "alpha2": "ST",
+    "name": "São Tomé and Príncipe",
+    "bounds": "6.46,-0.014,7.463,1.702"
+  },
+  {
+    "gid": "SUR",
+    "alpha2": "SR",
+    "name": "Suriname",
+    "bounds": "-58.087,1.831,-53.977,6.015"
+  },
+  {
+    "gid": "SVK",
+    "alpha2": "SK",
+    "name": "Slovakia",
+    "bounds": "16.834,47.733,22.568,49.614"
+  },
+  {
+    "gid": "SVN",
+    "alpha2": "SI",
+    "name": "Slovenia",
+    "bounds": "13.382,45.428,16.584,46.878"
+  },
+  {
+    "gid": "SWE",
+    "alpha2": "SE",
+    "name": "Sweden",
+    "bounds": "10.961,55.336,24.172,69.059"
+  },
+  {
+    "gid": "SWZ",
+    "alpha2": "SZ",
+    "name": "Swaziland",
+    "bounds": "30.791,-27.318,32.137,-25.719"
+  },
+  {
+    "gid": "SXM",
+    "alpha2": "SX",
+    "name": "Sint Maarten",
+    "bounds": "-63.139,18,-63,18.064"
+  },
+  {
+    "gid": "SYC",
+    "alpha2": "SC",
+    "name": "Seychelles",
+    "bounds": "46.204,-10.227,56.296,-3.713"
+  },
+  {
+    "gid": "SYR",
+    "alpha2": "SY",
+    "name": "Syria",
+    "bounds": "35.716,32.311,42.385,37.319"
+  },
+  {
+    "gid": "TCA",
+    "alpha2": "TC",
+    "name": "Turks and Caicos Islands",
+    "bounds": "-72.483,21.177,-71.082,21.963"
+  },
+  {
+    "gid": "TCD",
+    "alpha2": "TD",
+    "name": "Chad",
+    "bounds": "13.473,7.441,24.003,23.45"
+  },
+  {
+    "gid": "TGO",
+    "alpha2": "TG",
+    "name": "Togo",
+    "bounds": "-0.147,6.11,1.807,11.139"
+  },
+  {
+    "gid": "THA",
+    "alpha2": "TH",
+    "name": "Thailand",
+    "bounds": "97.345,5.616,105.639,20.463"
+  },
+  {
+    "gid": "TJK",
+    "alpha2": "TJ",
+    "name": "Tajikistan",
+    "bounds": "67.387,36.672,75.137,41.042"
+  },
+  {
+    "gid": "TKL",
+    "alpha2": "TK",
+    "name": "Tokelau",
+    "bounds": "-172.521,-9.444,-171.181,-8.532"
+  },
+  {
+    "gid": "TKM",
+    "alpha2": "TM",
+    "name": "Turkmenistan",
+    "bounds": "52.441,35.13,66.684,42.796"
+  },
+  {
+    "gid": "TLS",
+    "alpha2": "TL",
+    "name": "Timor-Leste",
+    "bounds": "124.045,-9.505,127.342,-8.127"
+  },
+  {
+    "gid": "TON",
+    "alpha2": "TO",
+    "name": "Tonga",
+    "bounds": "-176.214,-22.35,-173.735,-15.566"
+  },
+  {
+    "gid": "TTO",
+    "alpha2": "TT",
+    "name": "Trinidad and Tobago",
+    "bounds": "-61.93,10.043,-60.492,11.36"
+  },
+  {
+    "gid": "TUN",
+    "alpha2": "TN",
+    "name": "Tunisia",
+    "bounds": "7.53,30.237,11.598,37.56"
+  },
+  {
+    "gid": "TUR",
+    "alpha2": "TR",
+    "name": "Turkey",
+    "bounds": "25.665,35.815,44.835,42.107"
+  },
+  {
+    "gid": "TUV",
+    "alpha2": "TV",
+    "name": "Tuvalu",
+    "bounds": "176.059,-10.792,179.871,-5.642"
+  },
+  {
+    "gid": "TWN",
+    "alpha2": "TW",
+    "name": "Taiwan",
+    "bounds": "116.71,20.698,122.108,26.385"
+  },
+  {
+    "gid": "TZA",
+    "alpha2": "TZ",
+    "name": "Tanzania",
+    "bounds": "29.327,-11.746,40.445,-0.986"
+  },
+  {
+    "gid": "UGA",
+    "alpha2": "UG",
+    "name": "Uganda",
+    "bounds": "29.571,-1.482,35,4.234"
+  },
+  {
+    "gid": "UKR",
+    "alpha2": "UA",
+    "name": "Ukraine",
+    "bounds": "22.14,44.386,40.218,52.375"
+  },
+  {
+    "gid": "UMI",
+    "alpha2": "UM",
+    "name": "United States Minor Outlying Islands",
+    "bounds": "-178.304,-0.389,166.658,28.402"
+  },
+  {
+    "gid": "URY",
+    "alpha2": "UY",
+    "name": "Uruguay",
+    "bounds": "-58.443,-34.974,-53.094,-30.08"
+  },
+  {
+    "gid": "USA",
+    "alpha2": "US",
+    "name": "United States",
+    "bounds": "-179.151,18.91,179.773,72.688"
+  },
+  {
+    "gid": "UZB",
+    "alpha2": "UZ",
+    "name": "Uzbekistan",
+    "bounds": "55.998,37.177,73.135,45.571"
+  },
+  {
+    "gid": "VAT",
+    "alpha2": "VA",
+    "name": "Vatican City",
+    "bounds": "12.446,41.9,12.458,41.908"
+  },
+  {
+    "gid": "VCT",
+    "alpha2": "VC",
+    "name": "Saint Vincent and the Grenadines",
+    "bounds": "-61.461,12.579,-61.114,13.383"
+  },
+  {
+    "gid": "VEN",
+    "alpha2": "VE",
+    "name": "Venezuela",
+    "bounds": "-73.387,0.649,-59.807,15.673"
+  },
+  {
+    "gid": "VGB",
+    "alpha2": "VG",
+    "name": "British Virgin Islands",
+    "bounds": "-64.85,18.306,-64.27,18.75"
+  },
+  {
+    "gid": "VIR",
+    "alpha2": "VI",
+    "name": "Virgin Islands, U.S.",
+    "bounds": "-65.087,17.673,-64.565,18.416"
+  },
+  {
+    "gid": "VNM",
+    "alpha2": "VN",
+    "name": "Vietnam",
+    "bounds": "102.145,8.381,109.469,23.393"
+  },
+  {
+    "gid": "VUT",
+    "alpha2": "VU",
+    "name": "Vanuatu",
+    "bounds": "166.541,-20.253,170.24,-13.072"
+  },
+  {
+    "gid": "WLF",
+    "alpha2": "WF",
+    "name": "Wallis and Futuna",
+    "bounds": "-178.182,-14.369,-176.124,-13.183"
+  },
+  {
+    "gid": "WSM",
+    "alpha2": "WS",
+    "name": "Samoa",
+    "bounds": "-172.804,-14.077,-171.398,-13.44"
+  },
+  {
+    "gid": "YEM",
+    "alpha2": "YE",
+    "name": "Yemen",
+    "bounds": "41.815,12.108,54.535,19"
+  },
+  {
+    "gid": "ZAF",
+    "alpha2": "ZA",
+    "name": "South Africa",
+    "bounds": "16.452,-34.835,32.891,-22.125"
+  },
+  {
+    "gid": "ZMB",
+    "alpha2": "ZM",
+    "name": "Zambia",
+    "bounds": "21.999,-18.079,33.706,-8.271"
+  },
+  {
+    "gid": "ZWE",
+    "alpha2": "ZW",
+    "name": "Zimbabwe",
+    "bounds": "25.237,-22.42,33.056,-15.609"
+  }
+]
