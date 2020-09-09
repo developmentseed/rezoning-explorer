@@ -207,10 +207,11 @@ function QueryForm (props) {
             <Subheading variation='primary'>
               <strong>{resource || 'Select Resource'}</strong>
             </Subheading>
-            <EditButton 
+            <EditButton
               id='select-resource-button'
-              onClick={onResourceEdit} 
-              title='Edit Resource'>
+              onClick={onResourceEdit}
+              title='Edit Resource'
+            >
               Edit Resource Selection
             </EditButton>
           </HeadOptionHeadline>

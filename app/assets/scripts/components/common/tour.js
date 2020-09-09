@@ -1,53 +1,126 @@
-import React, { useState } from 'react';
+import React from 'react';
+import T from 'prop-types';
 import Joyride, { ACTIONS, EVENTS, STATUS } from 'react-joyride';
-// jjimport { themeVal } from '../../styles/utils/general';
+import styled from 'styled-components';
+import Button from '../../styles/button/button';
+import Heading, { Subheading } from '../../styles/type/heading';
+import Prose from '../../styles/type/prose';
+import { themeVal } from '../../styles/utils/general';
 
 const steps = [
   {
-    target: '#select-area-button',
-    content: 'This is my text 1',
+    title: 'Apply Filters',
+    target: '#filters-tab',
+    content: 'First, set filters to exclude undesired areas. Filters allow you to specify lower and upper thresholds for natural, infrastructure, environmental',
     disableBeacon: true,
-    // disableOverlayClose: false,
-    // hideFooter: true,
-    placement: 'bottom',
-    spotlightClicks: true,
-    styles: {
-      options: {
-        zIndex: 10000
-      }
-    },
-    title: 'Menu'
+    placement: 'right',
+    spotlightClicks: true
   },
   {
-    target: '#select-resource-button',
-    content: 'This is my texti 2',
+    title: 'Set Weights',
+    target: '#weights-tab',
+    content: 'Next, set weights to score zones accordingly. Adjusting the weights of parameters will change the calculated aggregated zone scores',
     disableBeacon: true,
-    // disableOverlayClose: false,
-    placement: 'bottom',
-    spotlightClicks: true,
-    styles: {
-      options: {
-        zIndex: 10000
-      }
-    },
-    title: 'Menu'
+    placement: 'right',
+    spotlightClicks: true
   },
   {
-    target: '#select-area-button',
-    content: 'This is my text 3',
+    title: 'Adjust LCOE Inputs',
+    target: '#lcoe-tab',
+    content: 'Adjust LCOE input as needed to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology',
     disableBeacon: true,
-    // disableOverlayClose: false,
-    placement: 'bottom',
-    spotlightClicks: true,
-    styles: {
-      options: {
-        zIndex: 10000
-      }
-    },
-    title: 'Menu'
+    placement: 'right',
+    spotlightClicks: true
   }
 
 ];
+
+const Inner = styled.div`
+  background:  ${themeVal('color.baseLight')};
+  width: 20rem;
+  padding: 0.5rem;
+  display: grid;
+  grid-template-rows: 1fr 3fr 1fr;
+`;
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+`;
+
+const Controls = styled.div`
+  display: grid;
+  grid-template-columns:repeat(${({ columns }) => columns}, 1fr);
+  gap: 0.5rem;
+`;
+
+const TourTooltip = ({
+  index,
+  size,
+  step,
+  backProps,
+  closeProps,
+  primaryProps,
+  tooltipProps
+}) => {
+  return (
+    <Inner {...tooltipProps}>
+      <Header>
+        <Heading>{step.title}</Heading>
+        <Subheading>{index + 1} / {size}</Subheading>
+      </Header>
+      <Prose>
+        {step.content}
+      </Prose>
+      <Footer>
+        <Button
+          {...closeProps}
+          size='small'
+          useIcon={['xmark', 'after']}
+        >
+          Close
+        </Button>
+        <Controls columns={index > 0 ? 2 : 1}>
+          {index > 0 &&
+            <Button
+              {...backProps}
+              size='small'
+              variation='primary-raised-dark'
+              useIcon={['arrow-left', 'after']}
+            >Back
+            </Button>}
+          <Button
+            {...primaryProps}
+            size='small'
+            variation='primary-raised-dark'
+            useIcon={['arrow-right', 'after']}
+          >
+            { index === size - 1 ? 'Finish' : 'Next'}
+          </Button>
+        </Controls>
+      </Footer>
+    </Inner>
+  );
+};
+
+TourTooltip.propTypes = {
+  index: T.number,
+  size: T.number,
+  step: T.object,
+  backProps: T.object,
+  closeProps: T.object,
+  primaryProps: T.object,
+  tooltipProps: T.object
+};
+
 function Tour (props) {
   const { tourStep, setTourStep } = props;
   return (
@@ -58,6 +131,7 @@ function Tour (props) {
         steps={steps}
         stepIndex={tourStep}
         showProgress={true}
+        tooltipComponent={TourTooltip}
         callback={(state) => {
           const { action, index, type, status } = state;
           if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
@@ -71,5 +145,10 @@ function Tour (props) {
     </>
   );
 }
+
+Tour.propTypes = {
+  tourStep: T.number,
+  setTourStep: T.func
+};
 
 export default Tour;

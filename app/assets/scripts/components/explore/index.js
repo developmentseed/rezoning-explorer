@@ -18,7 +18,7 @@ import MbMap from '../common/mb-map/mb-map';
 
 import { ExploreProvider } from '../../context/explore-context';
 import GlobalContext from '../../context/global-context';
-import Tour from '../common/tour'
+import Tour from '../common/tour';
 
 const ExploreCanvas = styled.div`
   display: grid;
@@ -52,13 +52,13 @@ const ExploreCarto = styled.section`
 
 function Explore () {
   const [triggerResize, setTriggerResize] = useState(true);
-  const { tourStep, setTourStep} = useContext(GlobalContext);
+  const { tourStep, setTourStep } = useContext(GlobalContext);
   return (
     <ExploreProvider>
       <App
         pageTitle='Explore'
       >
-        <Tour 
+        <Tour
           tourStep={tourStep}
           setTourStep={setTourStep}
         />

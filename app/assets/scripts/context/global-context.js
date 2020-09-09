@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useReducer } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import T from 'prop-types';
 
 const GlobalContext = createContext({});
