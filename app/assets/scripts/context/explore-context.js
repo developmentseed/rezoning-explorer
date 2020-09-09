@@ -110,6 +110,8 @@ export function ExploreProvider (props) {
     setFilteredLayerUrl(
       `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=${filterString}&color=45,39,88,178`
     );
+
+    console.log(`${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=${filterString}&color=45,39,88,178`);
   }
 
   return (
