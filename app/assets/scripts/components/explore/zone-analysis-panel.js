@@ -8,7 +8,7 @@ const PanelInner = styled.div`
   padding: 1rem 0;
   flex: 1;
   display: grid;
-  grid-template-rows: auto 1fr auto 1fr;
+  grid-template-rows: 1fr 1fr auto;
 `;
 
 function ZoneAnalysisPanel (props) {
