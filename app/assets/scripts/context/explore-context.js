@@ -91,7 +91,6 @@ export function ExploreProvider (props) {
     showGlobalLoading();
     const zones = await fetchZones(selectedAreaId);
     setCurrentZones(zones);
-    // await fetchGenerateZones()(dispatchCurrentZones);
     setInputTouched(false);
     !zonesGenerated && setZonesGenerated(true);
     hideGlobalLoading();
