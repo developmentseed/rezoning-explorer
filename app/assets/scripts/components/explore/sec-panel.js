@@ -27,7 +27,7 @@ const SecPanel = styled(Panel)`
 
 function ExpMapSecPanel (props) {
   const { onPanelChange } = props;
-  const { currentZones, generateZones, inputTouched, zonesGenerated } = useContext(ExploreContext);
+  const { currentZones, inputTouched, zonesGenerated } = useContext(ExploreContext);
 
   return (
     <SecPanel
@@ -46,7 +46,6 @@ function ExpMapSecPanel (props) {
             <PanelBlockBody>
               <ZoneAnalysisPanel
                 currentZones={currentZones}
-                generateZones={generateZones}
                 inputTouched={inputTouched}
                 zonesGenerated={zonesGenerated}
               />

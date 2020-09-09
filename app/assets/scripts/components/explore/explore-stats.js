@@ -18,27 +18,29 @@ const StatsWrapper = styled.section`
   dt {
     font-size: 0.875rem;
   }
-  ${({ active }) => active && css`
-    pointer-events:none;
-    opacity: 0.4;
-  `}
-
+  ${({ active }) =>
+    active &&
+    css`
+      pointer-events: none;
+      opacity: 0.4;
+    `}
 `;
 
-const parseZones = (zones) => {
-  const stats = zones.reduce((stats, zone) => (
+const zonesSummary = (zones) => {
+  const stats = zones.reduce(
+    (stats, zone) => ({
+      zoneCount: stats.zoneCount + 1
+      // kwhm2_year: stats.kwhm2_year + zone.details['kWh-m2/year'],
+      // gwh_year: stats.gwh_year + zone.details['GWh/year'],
+      // kw_day: stats.kw_day + zone.details['kw/day']
+    }),
     {
-      zoneCount: stats.zoneCount + 1,
-      kwhm2_year: stats.kwhm2_year + zone.details['kWh-m2/year'],
-      gwh_year: stats.gwh_year + zone.details['GWh/year'],
-      kw_day: stats.kw_day + zone.details['kw/day']
+      zoneCount: 0,
+      kwhm2_year: 0,
+      gwh_year: 0,
+      kw_day: 0
     }
-  ), {
-    zoneCount: 0,
-    kwhm2_year: 0,
-    gwh_year: 0,
-    kw_day: 0
-  });
+  );
 
   return [
     { label: 'Matching Zones', data: stats.zoneCount },
@@ -50,23 +52,18 @@ const parseZones = (zones) => {
 
 function ExploreStats (props) {
   const { zones, active } = props;
-  const statData = parseZones(zones.isReady() ? zones.getData() : []);
+  const statData = zonesSummary(zones || []);
   return (
     <StatsWrapper active={active}>
-      {
-        zones.isReady() &&
-          <BarChart
-            title='Calculated Zone Scores'
-          />
-      }
+      {zones && <BarChart title='Calculated Zone Scores' />}
       <StatSummary
         title='Total Output'
         data={statData}
         dimension={[2, 2]}
         gap={1}
-        renderCell={datum => (
+        renderCell={(datum) => (
           <dl>
-            <dd>{Math.floor(datum.data) === datum.data ? Math.floor(datum.data) : datum.data.toFixed(2)}</dd>
+            <dd>{datum.data || '--'}</dd>
             <dt>{datum.label}</dt>
           </dl>
         )}
@@ -76,7 +73,7 @@ function ExploreStats (props) {
 }
 
 ExploreStats.propTypes = {
-  zones: T.object,
+  zones: T.array,
   active: T.bool
 };
 export default ExploreStats;
