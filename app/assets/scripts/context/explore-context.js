@@ -104,9 +104,11 @@ export function ExploreProvider (props) {
   );
 
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
-  function updateFilteredLayer () {
+
+  function updateFilteredLayer (filterValues) {
+    const filterString = filterValues.map(({ min, max }) => `${min},${max}`).join('|');
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=0,1000000|10000,1000000|0,1000000|0,1000000|0,5000&color=45,39,88,178`
+      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=${filterString}&color=45,39,88,178`
     );
   }
 
