@@ -73,7 +73,7 @@ function ExploreStats (props) {
 }
 
 ExploreStats.propTypes = {
-  zones: T.object,
+  zones: T.array,
   active: T.bool
 };
 export default ExploreStats;

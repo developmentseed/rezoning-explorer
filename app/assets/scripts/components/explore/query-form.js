@@ -419,7 +419,7 @@ FormWrapper.propTypes = {
 };
 
 QueryForm.propTypes = {
-  area: T.string,
+  area: T.object,
   resource: T.string,
   weightsList: T.array,
   filtersLists: T.object,

@@ -61,7 +61,7 @@ function ZoneAnalysisPanel (props) {
   );
 }
 ZoneAnalysisPanel.propTypes = {
-  currentZones: T.object,
+  currentZones: T.array,
   // generateZones: T.func,
   inputTouched: T.bool
   // zonesGenerated: T.bool
