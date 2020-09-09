@@ -100,7 +100,6 @@
     "stylelint-config-styled-components": "^0.1.1",
     "surge": "^0.21.3",
     "through2": "^3.0.1",
-    "topojson-client": "^3.1.0",
     "topojson-server": "^3.0.1",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0",
@@ -138,6 +137,7 @@
     "react-transition-group": "^4.4.1",
     "redux": "^4.0.5",
     "styled-components": "5.0.0",
-    "stylelint-processor-styled-components": "^1.10.0"
+    "stylelint-processor-styled-components": "^1.10.0",
+    "topojson-client": "^3.1.0"
   }
 }
