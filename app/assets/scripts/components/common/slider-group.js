@@ -30,8 +30,10 @@ function SliderGroup (props) {
         label='Min value'
         value={value.min}
         disabled={disabled}
-        validate={validateRangeNum(range[0], range[1])}
-        onChange={onChange}
+        validate={validateRangeNum(range[0], value.max)}
+        onChange={(val) => {
+          onChange({ ...value, min: val });
+        }}
         title={disabled ? 'Enable this input to interact' : ''}
       />}
 
@@ -45,8 +47,11 @@ function SliderGroup (props) {
         label='Max value'
         value={value.max || value}
         disabled={disabled}
-        validate={validateRangeNum(range[0], range[1])}
-        onChange={onChange}
+        validate={validateRangeNum(value.min || range[0], range[1])}
+        onChange={(val) => {
+          const update = isRange ? { ...value, max: val } : val;
+          onChange(update);
+        }}
         title={disabled ? 'Enable this input to interact' : ''}
       />
     </FormSliderGroup>
