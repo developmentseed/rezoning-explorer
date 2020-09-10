@@ -122,22 +122,24 @@ TourTooltip.propTypes = {
 };
 
 function Tour (props) {
-  const { tourStep, setTourStep } = props;
+  const { tourStep, setTourStep, ready } = props;
   return (
     <>
       <Joyride
         continuous={true}
-        run={tourStep >= 0}
+        run={ready && tourStep >= 0}
         steps={steps}
         stepIndex={tourStep}
         showProgress={true}
         tooltipComponent={TourTooltip}
         callback={(state) => {
           const { action, index, type, status } = state;
-          if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
-            setTourStep(index + (action === ACTIONS.PREV ? -1 : 1));
-          } else if (action === ACTIONS.CLOSE || status === STATUS.FINISHED) {
-            setTourStep(-1);
+          if (tourStep >= 0) {
+            if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
+              setTourStep(index + (action === ACTIONS.PREV ? -1 : 1));
+            } else if (action === ACTIONS.CLOSE || status === STATUS.FINISHED) {
+              setTourStep(-1);
+            }
           }
         }}
       />
@@ -148,7 +150,8 @@ function Tour (props) {
 
 Tour.propTypes = {
   tourStep: T.number,
-  setTourStep: T.func
+  setTourStep: T.func,
+  ready: T.bool
 };
 
 export default Tour;
