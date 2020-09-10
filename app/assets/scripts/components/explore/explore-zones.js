@@ -28,10 +28,6 @@ const ZonesHeader = styled(Subheading)`
   padding: 1rem 1.5rem;
 `;
 
-// const ZoneCheckbox = styled(FormCheckable)`
-//   margin-left: 1rem;
-// `;
-
 const Card = styled(CardWrapper)`
   display: flex;
   height: auto;
@@ -131,9 +127,6 @@ function ExploreZones (props) {
               <Card
                 size='large'
                 key={data.id}
-                // onClick={() => {
-                //   setFocusZone(data);
-                // }}
               >
                 <CardIcon color={data.color}>
                   <div>{data.id}</div>
@@ -148,24 +141,6 @@ function ExploreZones (props) {
                     ))
                     : 'UNAVAILABLE'}
                 </CardDetails>
-                {/* <ZoneCheckbox
-                  name={data.id}
-                  id={data.id}
-                  type='checkbox'
-                  hideText
-                  checked={selectedZones[data.id] || false}
-                  onChange={(e) => {
-                    setSelectedZones({
-                      ...selectedZones,
-                      [data.id]: !selectedZones[data.id]
-                    });
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  Select {data.id}
-                </ZoneCheckbox> */}
               </Card>
             )}
           />
