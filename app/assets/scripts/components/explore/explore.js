@@ -52,8 +52,7 @@ const ExploreCarto = styled.section`
 
 function Explore () {
   const [triggerResize, setTriggerResize] = useState(true);
-  const { tourStep, setTourStep } = useContext(GlobalContext);
-  const { selectedArea, selectedResource } = useContext(ExploreContext);
+  const { selectedArea, selectedResource, tourStep, setTourStep } = useContext(ExploreContext);
   return (
     <App
       pageTitle='Explore'
