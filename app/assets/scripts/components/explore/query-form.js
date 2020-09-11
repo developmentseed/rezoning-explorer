@@ -327,12 +327,10 @@ function QueryForm (props) {
                             }}
                           />
                         </PanelOption>
-                      ))
-                    }
+                      ))}
                   />
                 );
-              })
-            }
+              })}
           </Accordion>
         </FormWrapper>
 
