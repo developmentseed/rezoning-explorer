@@ -16,20 +16,12 @@ export const resourceList = [
 ];
 
 export const filtersLists = {
-  zone_parameters: [
-    { name: 'Zone Score', range: [0, 1], info: 'This filter has info.' },
-    { name: 'Mean Capacity Factor', range: [0, 1] },
-    { name: 'Electricity Demand', range: [0, 100], unit: 'k' }
-  ],
-  infrastructure_layers: [
-    { name: 'Layer score', range: [0, 1] },
-    { name: 'Prop 2', range: [0, 1] },
-    { name: 'Prop 3', range: [0, 100], unit: 'k' }
-  ],
-  environmental_layers: [
-    { name: 'Env Prop 1', range: [0, 1] },
-    { name: 'Env Prop 2', range: [0, 1] },
-    { name: 'Env Prop 3', range: [0, 100], unit: 'k' }
+  distance_filters: [
+    { name: 'Distance to Airports', range: [0, 1000000], info: 'This filter has info.', isRange: true },
+    { name: 'Distance to Ports', range: [0, 1000000], info: 'This filter has info.', isRange: true },
+    { name: 'Distance to Anchorages', range: [0, 1000000], info: 'This filter has info.', isRange: true },
+    { name: 'Distance to Grids', range: [0, 1000000], info: 'This filter has info.', isRange: true },
+    { name: 'Distance to Roads', range: [0, 10000], info: 'This filter has info.', isRange: true }
   ]
 };
 

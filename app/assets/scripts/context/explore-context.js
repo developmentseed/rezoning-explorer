@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useReducer, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import T from 'prop-types';
 import { useHistory, useLocation } from 'react-router';
 import QsState from '../utils/qs-state';
@@ -8,11 +8,8 @@ import config from '../config';
 import countries from '../../data/countries.json';
 import regions from '../../data/regions.json';
 
-import {
-  generateZonesReducer,
-  fetchGenerateZones
-} from '../context/explore-data';
-import { initialApiRequestState } from '../context/contexeed';
+import fetchZones from './fetch-zones';
+
 import {
   showGlobalLoading,
   hideGlobalLoading
@@ -90,24 +87,25 @@ export function ExploreProvider (props) {
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
 
-  const generateZones = async () => {
+  const generateZones = async (filterString) => {
     showGlobalLoading();
-    await fetchGenerateZones()(dispatchCurrentZones);
+    const zones = await fetchZones(selectedAreaId, filterString);
+    setCurrentZones(zones);
     setInputTouched(false);
     !zonesGenerated && setZonesGenerated(true);
     hideGlobalLoading();
   };
 
-  const [currentZones, dispatchCurrentZones] = useReducer(
-    generateZonesReducer,
-    initialApiRequestState
-  );
+  const [currentZones, setCurrentZones] = useState(null);
 
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
-  function updateFilteredLayer () {
+
+  function updateFilteredLayer (filterValues) {
+    const filterString = filterValues.map(({ min, max }) => `${min},${max}`).join('|');
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=0,1000000|10000,1000000|0,1000000|0,1000000|0,5000&color=45,39,88,178`
+      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=${filterString}&color=45,39,88,178`
     );
+    generateZones(filterString);
   }
 
   return (
