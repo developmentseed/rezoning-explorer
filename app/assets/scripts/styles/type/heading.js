@@ -20,14 +20,6 @@ const lineHeightMapping = {
   xlarge: '2rem'
 };
 
-const getHeadingColor = ({ variation, theme }) => {
-  if (variation === 'base') return theme.type.base.color;
-  if (variation === 'primary') return theme.color.primary;
-  if (variation === 'secondary') return theme.color.secondary;
-
-  return 'inherit';
-};
-
 const Heading = styled.h1`
   font-family: ${themeVal('type.base.family')};
   font-weight: ${themeVal('type.heading.weight')};
@@ -38,10 +30,6 @@ const Heading = styled.h1`
     font-size: ${sizeMapping[size]};
     line-height: ${lineHeightMapping[size]};
   `}
-
-  /* Colors */
-  color:
-    ${getHeadingColor};
 `;
 
 Heading.defaultProps = {
@@ -58,9 +46,6 @@ export const Subheading = styled.h2`
   font-family: ${themeVal('type.base.family')};
   font-weight: ${themeVal('type.heading.regular')};
   text-transform: uppercase;
-  ${({ variation }) => variation && css`
-    color: ${getHeadingColor};
-  `}
 `;
 
 export const headingAlt = () => css`
