@@ -95,7 +95,7 @@ const TourTooltip = ({
               {...backProps}
               size='small'
               variation='base-plain'
-              useIcon={['arrow-left', 'after']  }
+              useIcon={['arrow-left', 'after']}
               id='tour-back-btn'
             >Back
             </Button>}

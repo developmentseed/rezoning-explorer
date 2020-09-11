@@ -17,7 +17,6 @@ import SecPanel from './sec-panel';
 import MbMap from '../common/mb-map/mb-map';
 
 import ExploreContext from '../../context/explore-context';
-import GlobalContext from '../../context/global-context';
 import Tour from '../common/tour';
 
 const ExploreCanvas = styled.div`
