@@ -75,7 +75,7 @@ const TourTooltip = ({
     <Inner {...tooltipProps}>
       <Header>
         <Heading>{step.title}</Heading>
-        <Subheading>{index + 1} / {size}</Subheading>
+        <Subheading id='tour-progress'>{index + 1} / {size}</Subheading>
       </Header>
       <Prose>
         {step.content}
@@ -95,7 +95,8 @@ const TourTooltip = ({
               {...backProps}
               size='small'
               variation='base-plain'
-              useIcon={['arrow-left', 'after']}
+              useIcon={['arrow-left', 'after']  }
+              id='tour-back-btn'
             >Back
             </Button>}
           <Button
@@ -103,6 +104,7 @@ const TourTooltip = ({
             size='small'
             variation='primary-raised-dark'
             useIcon={['arrow-right', 'after']}
+            id='tour-next-btn'
           >
             { index === size - 1 ? 'Finish' : 'Next'}
           </Button>
