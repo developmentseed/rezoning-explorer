@@ -38,7 +38,7 @@ const steps = [
 const Inner = styled.div`
   background:  ${themeVal('color.baseLight')};
   width: 20rem;
-  padding: 0.5rem;
+  padding: 1rem;
   display: grid;
   grid-template-rows: 1fr 3fr 1fr;
 `;
@@ -53,7 +53,7 @@ const Footer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 0.5rem 0;
+  padding-top: 0.5rem;
 `;
 
 const Controls = styled.div`
@@ -83,6 +83,7 @@ const TourTooltip = ({
       <Footer>
         <Button
           {...closeProps}
+          visuallyDisabled
           size='small'
           useIcon={['xmark', 'after']}
         >
@@ -93,7 +94,7 @@ const TourTooltip = ({
             <Button
               {...backProps}
               size='small'
-              variation='primary-raised-dark'
+              variation='base-plain'
               useIcon={['arrow-left', 'after']}
             >Back
             </Button>}
@@ -132,6 +133,8 @@ function Tour (props) {
         stepIndex={tourStep}
         showProgress={true}
         tooltipComponent={TourTooltip}
+        floaterProps={{ disableAnimation: true }}
+        disableOverlay
         callback={(state) => {
           const { action, index, type, status } = state;
           if (tourStep >= 0) {
