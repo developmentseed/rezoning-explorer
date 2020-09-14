@@ -46,7 +46,7 @@ const zonesSummary = (zones) => {
     { label: 'Matching Zones', data: stats.zonesCount },
     {
       label: 'Total Area',
-      unit: 'km2',
+      unit: 'km²',
       data:
         stats.zonesArea > 0
           ? formatThousands(stats.zonesArea / 10, { decimals: 0 })
