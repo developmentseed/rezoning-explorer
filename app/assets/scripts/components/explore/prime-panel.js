@@ -41,13 +41,23 @@ function ExpMapPrimePanel (props) {
     showSelectResourceModal,
     setShowSelectResourceModal,
     setInputTouched,
-    setZonesGenerated
+    setZonesGenerated,
+    setTourStep
   } = useContext(ExploreContext);
 
   return (
     <>
       <PrimePanel
         collapsible
+        additionalControls={
+          [
+            {
+              title: 'Show tour',
+              icon: 'circle-question',
+              onClick: () => setTourStep(0)
+            }
+          ]
+        }
         direction='left'
         onPanelChange={onPanelChange}
         initialState={isLargeViewport()}

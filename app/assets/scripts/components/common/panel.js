@@ -146,7 +146,8 @@ class Panel extends React.Component {
       collapsible,
       direction,
       className,
-      overrideControl
+      overrideControl,
+      additionalControls
     } = this.props;
     const revealed = overrideControl
       ? this.props.revealed
@@ -184,6 +185,20 @@ class Panel extends React.Component {
             >
               <span>Prime panel</span>
             </Button>
+            {
+              additionalControls && additionalControls.map(ctrl => (
+                <Button
+                  key={ctrl.title}
+                  variation='base-plain'
+                  useIcon={ctrl.icon}
+                  title={ctrl.title}
+                  hideText
+                  onClick={ctrl.onClick}
+                >
+                  <span>{ctrl.title}</span>
+                </Button>
+              ))
+            }
           </PanelOffsetActions>
         )}
       </PanelSelf>
