@@ -19,7 +19,7 @@ describe('Explore view', () => {
 
     // Tour should be step 2
     cy.get('#tour-progress').should(($prog) => {
-      expect($prog).to.contain('2 / 3');
+      expect($prog).to.contain('2 / 4');
     });
   });
 });
