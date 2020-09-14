@@ -55,6 +55,10 @@ const HeadOptionHeadline = styled.div`
   }
 `;
 
+const Subheadingstrong = styled.strong`
+  color: ${themeVal('color.base')};
+`;
+
 const OptionHeadline = styled(HeadOptionHeadline)`
   display: grid;
   grid-template-columns: 1fr;
@@ -205,7 +209,9 @@ function QueryForm (props) {
           <HeadOptionHeadline id='selected-resource-prime-panel-heading'>
             <Subheading>Resource: </Subheading>
             <Subheading variation='primary'>
-              <strong>{resource || 'Select Resource'}</strong>
+              <Subheadingstrong>
+                {resource || 'Select Resource'}
+              </Subheadingstrong>
             </Subheading>
             <EditButton
               id='select-resource-button'
@@ -221,7 +227,9 @@ function QueryForm (props) {
           <HeadOptionHeadline>
             <Subheading>Grid Size: </Subheading>
             <Subheading variation='primary'>
-              <strong>{gridMode ? `${gridSize} km²` : 'Boundaries'}</strong>
+              <Subheadingstrong>
+                {gridMode ? `${gridSize} km²` : 'Boundaries'}
+              </Subheadingstrong>
             </Subheading>
 
             <GridSetter
