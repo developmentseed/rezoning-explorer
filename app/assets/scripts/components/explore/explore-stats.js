@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 import StatSummary from '../common/table';
 import BarChart from '../common/bar-chart';
 import { themeVal } from '../../styles/utils/general';
+import { formatThousands } from '../../utils/format';
 
 const StatsWrapper = styled.section`
   display: grid;
@@ -28,25 +29,47 @@ const StatsWrapper = styled.section`
 
 const zonesSummary = (zones) => {
   const stats = zones.reduce(
-    (stats, zone) => ({
-      zoneCount: stats.zoneCount + 1
-      // kwhm2_year: stats.kwhm2_year + zone.details['kWh-m2/year'],
-      // gwh_year: stats.gwh_year + zone.details['GWh/year'],
-      // kw_day: stats.kw_day + zone.details['kw/day']
+    (stats, { analysis }) => ({
+      zonesCount: stats.zonesCount + 1,
+      zonesOutput: stats.zonesOutput + analysis.zone_output,
+      zonesArea:
+        stats.zonesArea + analysis.zone_output / analysis.zone_output_density
     }),
     {
-      zoneCount: 0,
-      kwhm2_year: 0,
-      gwh_year: 0,
-      kw_day: 0
+      zonesCount: 0,
+      zonesOutput: 0,
+      zonesArea: 0
     }
   );
 
   return [
-    { label: 'Matching Zones', data: stats.zoneCount },
-    { label: 'kWh/m2 per year', data: stats.kwhm2_year },
-    { label: 'GWh per year', data: stats.gwh_year },
-    { label: 'kWh/m2 per year', data: stats.kw_day }
+    { label: 'Matching Zones', data: stats.zonesCount },
+    {
+      label: 'Total Area',
+      unit: 'km2',
+      data:
+        stats.zonesArea > 0
+          ? formatThousands(stats.zonesArea / 10, { decimals: 0 })
+          : '--'
+    },
+    {
+      label: 'Output by Year',
+      unit: 'GWh',
+      data:
+        stats.zonesOutput > 0
+          ? formatThousands(stats.zonesOutput / 1000, { decimals: 0 })
+          : '--'
+    },
+    {
+      label: 'Output Density',
+      unit: 'MWh/km²',
+      data:
+        stats.zonesOutput > 0
+          ? formatThousands(stats.zonesOutput / stats.zonesArea, {
+            decimals: 2
+          })
+          : '--'
+    }
   ];
 };
 
@@ -57,7 +80,7 @@ function ExploreStats (props) {
     <StatsWrapper active={active}>
       {zones && <BarChart title='Calculated Zone Scores' />}
       <StatSummary
-        title='Total Output'
+        title='Summary'
         data={statData}
         dimension={[2, 2]}
         gap={1}
@@ -65,6 +88,7 @@ function ExploreStats (props) {
           <dl>
             <dd>{datum.data || '--'}</dd>
             <dt>{datum.label}</dt>
+            <dt>{datum.unit}</dt>
           </dl>
         )}
       />
