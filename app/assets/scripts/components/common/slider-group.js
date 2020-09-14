@@ -37,7 +37,9 @@ function SliderGroup (props) {
         title={disabled ? 'Enable this input to interact' : ''}
       />}
 
-      <InputRange minValue={range[0]} maxValue={range[1]} value={value} onChange={onChange} disabled={disabled} />
+      <InputRange minValue={range[0]} maxValue={range[1]}
+        step={range[1] > 1 ? 1 : 0.1}
+      value={value} onChange={onChange} disabled={disabled} />
 
       <StressedFormGroupInput
         inputType='number'
