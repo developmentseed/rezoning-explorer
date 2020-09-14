@@ -31,8 +31,15 @@ const steps = [
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
+  },
+  {
+    title: 'Open Tour',
+    target: '#open-tour-trigger',
+    content: 'Click here to open this tour at any time',
+    disableBeacon: true,
+    placement: 'right',
+    spotlightClicks: true
   }
-
 ];
 
 const Inner = styled.div`
