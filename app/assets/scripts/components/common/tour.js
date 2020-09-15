@@ -11,7 +11,7 @@ const steps = [
   {
     title: 'Apply Filters',
     target: '#filters-tab',
-    content: 'First, set filters to exclude undesired areas. Filters allow you to specify lower and upper thresholds for natural, infrastructure, environmental',
+    content: 'First, set filters to exclude undesired areas. Filters allow you to specify lower and upper thresholds for natural, infrastructure, environmental.',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
@@ -19,7 +19,7 @@ const steps = [
   {
     title: 'Set Weights',
     target: '#weights-tab',
-    content: 'Next, set weights to score zones accordingly. Adjusting the weights of parameters will change the calculated aggregated zone scores',
+    content: 'Next, set weights to score zones accordingly. Adjusting the weights of parameters will change the calculated aggregated zone scores.',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
@@ -27,15 +27,15 @@ const steps = [
   {
     title: 'Adjust LCOE Inputs',
     target: '#lcoe-tab',
-    content: 'Adjust LCOE input as needed to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology',
+    content: 'Adjust LCOE input as needed to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
   },
   {
-    title: 'Open Tour',
+    title: 'Guided Tour',
     target: '#open-tour-trigger',
-    content: 'Click here to open this tour at any time',
+    content: 'Click here to reopen this guided tour at any time.',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
