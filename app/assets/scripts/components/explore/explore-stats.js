@@ -29,7 +29,7 @@ const StatsWrapper = styled.section`
 
 const zonesSummary = (zones) => {
   const stats = zones.reduce(
-    (stats, { properties: {summary} }) => {
+    (stats, { properties: { summary } }) => {
       if (!summary) return stats;
       return {
         zonesCount: stats.zonesCount + 1,
