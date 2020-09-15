@@ -29,13 +29,13 @@ const StatsWrapper = styled.section`
 
 const zonesSummary = (zones) => {
   const stats = zones.reduce(
-    (stats, { analysis }) => {
-      if (!analysis) return stats;
+    (stats, { properties: {summary} }) => {
+      if (!summary) return stats;
       return {
         zonesCount: stats.zonesCount + 1,
-        zonesOutput: stats.zonesOutput + analysis.zone_output,
+        zonesOutput: stats.zonesOutput + summary.zone_output,
         zonesArea:
-          stats.zonesArea + analysis.zone_output / analysis.zone_output_density
+          stats.zonesArea + summary.zone_output / summary.zone_output_density
       };
     },
     {
@@ -69,14 +69,14 @@ const zonesSummary = (zones) => {
       data:
         stats.zonesOutput > 0
           ? formatThousands(stats.zonesOutput / stats.zonesArea, {
-              decimals: 2
-            })
+            decimals: 2
+          })
           : '--'
     }
   ];
 };
 
-function ExploreStats(props) {
+function ExploreStats (props) {
   const { zones, active } = props;
   const statData = zonesSummary(zones || []);
   return (

@@ -21,7 +21,10 @@ export const filtersLists = {
     { name: 'Distance to Ports', range: [0, 1000000], info: 'This filter has info.', isRange: true },
     { name: 'Distance to Anchorages', range: [0, 1000000], info: 'This filter has info.', isRange: true },
     { name: 'Distance to Grids', range: [0, 1000000], info: 'This filter has info.', isRange: true },
-    { name: 'Distance to Roads', range: [0, 10000], info: 'This filter has info.', isRange: true }
+    { name: 'Distance to Roads', range: [0, 10000], info: 'This filter has info.', isRange: true },
+    { name: 'Placeholder filter A', range: [0, 1000000], info: 'This filter has info.', isRange: true },
+    { name: 'Placeholder filter B', range: [0, 10000], info: 'This filter has info.', isRange: true },
+    { name: 'Placeholder filter X', range: [0, 10000], info: 'This filter has info.', isRange: true }
   ]
 };
 

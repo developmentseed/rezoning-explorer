@@ -8,6 +8,7 @@ import FocusZone from './focus-zone';
 import Dl from '../../styles/type/definition-list';
 import Button from '../../styles/button/button';
 import { formatThousands } from '../../utils/format';
+import get from 'lodash.get';
 
 const ZonesWrapper = styled.section`
   ol.list-container {
@@ -124,21 +125,20 @@ function ExploreZones (props) {
             numColumns={1}
             data={zoneData}
             renderCard={(data) => (
-              <Card
-                size='large'
-                key={data.id}
-              >
-                <CardIcon color={data.color}>
+              <Card size='large' key={data.id}>
+                <CardIcon color={get(data, 'properties.color')}>
                   <div>{data.id}</div>
                 </CardIcon>
                 <CardDetails>
-                  {data.analysis
-                    ? Object.entries(data.analysis).map(([label, data]) => (
-                      <Detail key={`${data.id}-${label}`}>
-                        <dt>{label.replace(/_/g, ' ')}</dt>
-                        <dd>{formatIndicator(label, data)}</dd>
-                      </Detail>
-                    ))
+                  {data.properties && data.properties.summary
+                    ? Object.entries(data.properties.summary).map(
+                      ([label, value]) => (
+                        <Detail key={`${data.id}-${label}`}>
+                          <dt>{label.replace(/_/g, ' ')}</dt>
+                          <dd>{formatIndicator(label, value)}</dd>
+                        </Detail>
+                      )
+                    )
                     : 'UNAVAILABLE'}
                 </CardDetails>
               </Card>

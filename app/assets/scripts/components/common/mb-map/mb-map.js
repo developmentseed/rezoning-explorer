@@ -14,6 +14,8 @@ localStorage.setItem('MapboxAccessToken', config.mbToken);
 
 const FILTERED_LAYER_SOURCE = 'FILTERED_LAYER_SOURCE';
 const FILTERED_LAYER_ID = 'FILTERED_LAYER_ID';
+const ZONES_BOUNDARIES_SOURCE_ID = 'ZONES_BOUNDARIES_SOURCE_ID';
+const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
 
 const MapsContainer = styled.div`
   position: relative;
@@ -84,6 +86,27 @@ const initializeMap = ({ selectedArea, setMap, mapContainer }) => {
       maxzoom: 22
     });
 
+    // Zone boundaries source
+    map.addSource(ZONES_BOUNDARIES_SOURCE_ID, {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: []
+      }
+    });
+
+    // Zone boundaries source
+    map.addLayer({
+      id: ZONES_BOUNDARIES_LAYER_ID,
+      type: 'fill',
+      source: ZONES_BOUNDARIES_SOURCE_ID,
+      layout: {},
+      paint: {
+        'fill-color': ['get', 'color'],
+        'fill-opacity': 0.8
+      }
+    });
+
     map.resize();
   });
 };
@@ -93,7 +116,9 @@ function MbMap (props) {
   const [map, setMap] = useState(null);
   const mapContainer = useRef(null);
 
-  const { selectedArea, filteredLayerUrl } = useContext(ExploreContext);
+  const { selectedArea, filteredLayerUrl, currentZones } = useContext(
+    ExploreContext
+  );
 
   // Initialize map on mount
   useEffect(() => {
@@ -135,6 +160,15 @@ function MbMap (props) {
 
     map.setLayoutProperty(FILTERED_LAYER_ID, 'visibility', 'visible');
   }, [filteredLayerUrl]);
+
+  // Update zone boundaries on change
+  useEffect(() => {
+    if (!map) return;
+    map.getSource(ZONES_BOUNDARIES_SOURCE_ID).setData({
+      type: 'FeatureCollection',
+      features: currentZones
+    });
+  }, [currentZones]);
 
   return (
     <MapsContainer>
