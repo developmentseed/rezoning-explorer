@@ -133,7 +133,7 @@ const initListToState = (list) => {
     range: obj.range || DEFAULT_RANGE,
     unit: obj.unit || DEFAULT_UNIT,
     active: obj.active === undefined ? true : obj.active,
-    value: obj.value || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
+    value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
   }));
 };
 
