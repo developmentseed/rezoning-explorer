@@ -26,21 +26,32 @@ export const filtersLists = {
 };
 
 export const lcoeList = [
-  { name: 'Generation - capital [USD/kW] (Cg)' },
-  { name: 'Generation - fixed O&M [USED/MWh]' }
+  { name: 'turbine_type', range: [0, 100] },
+  { name: 'crf' },
+  { name: 'cg' },
+  { name: 'omfg' },
+  { name: 'omvg' },
+  { name: 'ct' },
+  { name: 'omft' },
+  { name: 'cs' },
+  { name: 'cr' },
+  { name: 'omfr' },
+  { name: 'decom' },
+  { name: 'i', range: [1, 100] },
+  { name: 'n', range: [1, 100] }
 ];
 
 export const weightsList = [
-  { name: 'LCOE Generation' },
-  { name: 'LOCOE Transmission' },
-  { name: 'LCOE Road' },
-  { name: 'Distance to Load Centers' },
-  { name: 'Technology Co-Location' },
-  { name: 'Human Footprint' },
-  { name: 'Population Density' },
-  { name: 'Slope' },
-  { name: 'Land Use Score' },
-  { name: 'Capacity Value (Wind Only)' }
+  { name: 'LCOE Generation', id: 'lcoe_gen', range: [0.1, 1] },
+  { name: 'LOCOE Transmission', id: 'lcoe_transmission', range: [0.1, 1] },
+  { name: 'LCOE Road', id: 'lcoe_road', range: [0.1, 1] },
+  { name: 'Distance to Load Centers', id: 'distance_load', range: [0.1, 1] },
+  { name: 'Technology Co-Location', id: 'technology_colocation', range: [0.1, 1] },
+  { name: 'Human Footprint', id: 'human_footprint', range: [0.1, 1] },
+  { name: 'Population Density', id: 'pop_density', range: [0.1, 1] },
+  { name: 'Slope', id: 'slope', range: [0.1, 1] },
+  { name: 'Land Use Score', id: 'land_use', range: [0.1, 1] },
+  { name: 'Capacity Value (Wind Only)', id: 'capacity_value', range: [0.1, 1] }
 ];
 
 export const presets = {

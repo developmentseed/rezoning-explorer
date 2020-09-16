@@ -4,7 +4,7 @@ import config from '../config';
 
 const { apiEndpoint } = config;
 
-async function getZoneSummary (feature, filterString) {
+async function getZoneSummary (feature, filterString, weights, lcoe) {
   const zoneSummary = {
     id: feature.properties.id,
     name: feature.properties.name,
@@ -17,8 +17,8 @@ async function getZoneSummary (feature, filterString) {
         method: 'POST',
         body: JSON.stringify({
           aoi: feature.geometry,
-          weights: {},
-          lcoe: {}
+          weights,
+          lcoe
         })
       }
     );
@@ -33,7 +33,7 @@ async function getZoneSummary (feature, filterString) {
   return zoneSummary;
 }
 
-export default async function generateZones (areaId, filterString) {
+export default async function generateZones (areaId, filterString, weights, lcoe) {
   // Get area topojson
   const { body: allZonesTopoJSON } = await fetchJSON(
     `/public/zones/${areaId}.topojson`
@@ -48,7 +48,7 @@ export default async function generateZones (areaId, filterString) {
   // Fetch Lcoe for each sub-area
   const results = await Promise.all(
     allZones.map((z) =>
-      getZoneSummary(z, filterString)
+      getZoneSummary(z, filterString, weights, lcoe)
     )
   );
 
