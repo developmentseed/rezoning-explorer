@@ -398,18 +398,18 @@ function QueryForm (props) {
             }
           }}
         >
-          {lcoe.map((lcoe, ind) => (
-            <PanelOption key={lcoe.name}>
+          {lcoe.map((cost, ind) => (
+            <PanelOption key={cost.name}>
               <StressedFormGroupInput
                 inputType='number'
                 inputSize='small'
-                id={`${lcoe.name}`}
-                name={`${lcoe.name}`}
-                label={lcoe.name}
-                value={lcoe.value || lcoe.range[0]}
-                validate={lcoe.range ? validateRangeNum(lcoe.range[0], lcoe.range[1]) : () => true}
+                id={`${cost.name}`}
+                name={`${cost.name}`}
+                label={cost.name}
+                value={cost.value || cost.range[0]}
+                validate={cost.range ? validateRangeNum(cost.range[0], cost.range[1]) : () => true}
                 onChange={(v) => {
-                  setLcoe(updateStateList(lcoe, ind, { ...lcoe, value: v }));
+                  setLcoe(updateStateList(lcoe, ind, { ...cost, value: v }));
                 }}
               />
             </PanelOption>
