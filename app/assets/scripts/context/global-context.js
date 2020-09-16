@@ -14,6 +14,7 @@ export function GlobalProvider (props) {
       setWindowHeight(window.innerHeight);
     });
   }, []);
+
   return (
     <>
       <GlobalContext.Provider

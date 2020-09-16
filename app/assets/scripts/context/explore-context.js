@@ -55,6 +55,18 @@ export function ExploreProvider (props) {
     !qsState.resourceId
   );
 
+  const [tourStep, setTourStep] = useState(0);
+
+  useEffect(() => {
+    const visited = localStorage.getItem('site-tour');
+    if (visited !== null) {
+      setTourStep(Number(visited));
+    }
+  }, []);
+  useEffect(() => {
+    localStorage.setItem('site-tour', tourStep);
+  }, [tourStep]);
+
   useEffect(() => {
     const qString = qsStateHelper.getQs({
       areaId: selectedAreaId,
@@ -128,7 +140,9 @@ export function ExploreProvider (props) {
           zonesGenerated,
           setZonesGenerated,
           filteredLayerUrl,
-          updateFilteredLayer
+          updateFilteredLayer,
+          tourStep,
+          setTourStep
         }}
       >
         {props.children}
