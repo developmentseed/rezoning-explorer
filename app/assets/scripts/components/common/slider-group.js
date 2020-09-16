@@ -43,7 +43,7 @@ function SliderGroup (props) {
         minValue={range[0]}
         maxValue={range[1]}
         step={range[1] > 1 ? 1 : 0.1}
-        value={round(value)}
+        value={Number(value) ? round(value) : value}
         onChange={onChange}
         disabled={disabled}
       />
