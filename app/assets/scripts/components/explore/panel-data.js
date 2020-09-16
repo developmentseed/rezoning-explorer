@@ -22,9 +22,9 @@ export const filtersLists = {
     { name: 'Distance to Anchorages', range: [0, 1000000], info: 'This filter has info.', isRange: true },
     { name: 'Distance to Grids', range: [0, 1000000], info: 'This filter has info.', isRange: true },
     { name: 'Distance to Roads', range: [0, 10000], info: 'This filter has info.', isRange: true },
-    // { name: 'Population', range: [0, 1000000], info: 'This filter has info.', isRange: true },
-    // { name: 'Slope', range: [0, 10000], info: 'This filter has info.', isRange: true },
-    // { name: 'Land Cover', range: [0, 10000], info: 'This filter has info.', isRange: true }
+    { name: 'Population', range: [0, 1000000], info: 'This filter has info.', isRange: true },
+    { name: 'Slope', range: [0, 10000], info: 'This filter has info.', isRange: true },
+    { name: 'Land Cover', range: [0, 10000], info: 'This filter has info.', isRange: true }
   ]
 };
 
