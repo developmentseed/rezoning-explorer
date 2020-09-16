@@ -57,6 +57,24 @@ export const weightsList = [
   { name: 'Capacity Value (Wind Only)', id: 'capacity_value', range: [0, 1] }
 ];
 
+const LCOE_PRESETS = {
+  greatest_savings: {
+    turbine_type: 0,
+    crf: 1,
+    cg: 2000,
+    omfg: 50000,
+    omvg: 4,
+    ct: 990,
+    omft: 0,
+    cs: 71000,
+    cr: 407000,
+    omfr: 0,
+    decom: 0,
+    i: 0.2,
+    n: 25
+  }
+};
+
 export const presets = {
   weights: {
     'Power Output': weightsList.map(weight => ({
@@ -77,7 +95,7 @@ export const presets = {
   lcoe: {
     'Greatest Savings': lcoeList.map(lcoe => ({
       ...lcoe,
-      value: lcoe.range ? randomRange(lcoe.range[0], lcoe.range[1]) : randomRange(0, 100)
+      value: LCOE_PRESETS.greatest_savings[lcoe.id]
     }))
   }
 };
