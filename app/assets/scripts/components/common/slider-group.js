@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import T from 'prop-types';
 import { visuallyHidden } from '../../styles/helpers';
 import { validateRangeNum } from '../../utils/utils';
+import { round } from '../../utils/format';
 import StressedFormGroupInput from './stressed-form-group-input';
 
 const FormSliderGroup = styled.div`
@@ -19,6 +20,7 @@ const FormSliderGroup = styled.div`
 
 function SliderGroup (props) {
   const { range, id, value, onChange, disabled, isRange } = props;
+
   return (
     <FormSliderGroup isRange={isRange}>
       {isRange &&
@@ -28,7 +30,7 @@ function SliderGroup (props) {
         id={`slider-input-min-${id}`}
         name={`slider-input-min-${id}}`}
         label='Min value'
-        value={value.min}
+        value={round(value.min)}
         disabled={disabled}
         validate={validateRangeNum(range[0], value.max)}
         onChange={(val) => {
@@ -45,7 +47,7 @@ function SliderGroup (props) {
         id={`slider-input-max-${id}`}
         name={`slider-input-max-${id}}`}
         label='Max value'
-        value={value.max || value}
+        value={round(value.max || value)}
         disabled={disabled}
         validate={validateRangeNum(value.min || range[0], range[1])}
         onChange={(val) => {
