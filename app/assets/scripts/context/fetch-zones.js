@@ -3,6 +3,7 @@ import { fetchJSON } from '../context/reduxeed';
 import config from '../config';
 import get from 'lodash.get';
 import zoneScoreColor from '../styles/zoneScoreColors';
+import theme from '../styles/theme/theme';
 
 const { apiEndpoint } = config;
 
@@ -29,6 +30,7 @@ async function getZoneSummary (feature, filterString, weights, lcoe) {
     ...feature,
     id: feature.properties.id,
     properties: {
+      color: theme.main.color.base,
       ...feature.properties,
       summary
     }
@@ -57,7 +59,7 @@ export default async function fetchZones (areaId, filterString, weights, lcoe) {
   );
 
   return zones.map((z) => {
-    if (!z.properties.summary) return z;
+    if (!get(z, 'properties.summary.zone_score')) return z;
 
     const zoneScore = z.properties.summary.zone_score / maxScore;
     const color = zoneScoreColor(zoneScore);
