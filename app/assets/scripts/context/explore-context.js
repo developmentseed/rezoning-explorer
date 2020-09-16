@@ -65,7 +65,7 @@ export function ExploreProvider (props) {
       setTourStep(Number(visited));
     }
   }, []);
-  
+
   useEffect(() => {
     localStorage.setItem('site-tour', tourStep);
   }, [tourStep]);
