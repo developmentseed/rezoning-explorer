@@ -26,19 +26,19 @@ export const filtersLists = {
 };
 
 export const lcoeList = [
-  { name: 'turbine_type', range: [0, 100] },
-  { name: 'crf' },
-  { name: 'cg' },
-  { name: 'omfg' },
-  { name: 'omvg' },
-  { name: 'ct' },
-  { name: 'omft' },
-  { name: 'cs' },
-  { name: 'cr' },
-  { name: 'omfr' },
-  { name: 'decom' },
-  { name: 'i', range: [1, 100] },
-  { name: 'n', range: [1, 100] }
+  { name: 'Turbine / Solar Unit Type', id: 'turbine_type', range: [0, 100] },
+  { name: 'Capital Recovery Factor', id: 'crf' },
+  { name: 'Generation - capital [USD/kW]', id: 'cg' },
+  { name: 'Generation - fixed O&M [USD/MW/y]', id: 'omfg' },
+  { name: 'Generation - variable O&M [USD/MWh]', id: 'omvg' },
+  { name: 'Transmission (land cabling) - capital [USD/MW/km]', id: 'ct' },
+  { name: 'Transmission - fixed O&M [USD/km]', id: 'omft' },
+  { name: 'Substation - capital [USD / two substations (per new transmission connection) ]', id: 'cs' },
+  { name: 'Road - capital [USD/km]', id: 'cr' },
+  { name: 'Road - fixed O&M [USD/km]', id: 'omfr' },
+  { name: 'Decomssion % rate', id: 'decom' },
+  { name: 'Economic discount rate', id: 'i', range: [1, 100] },
+  { name: 'Lifetime [years]', id: 'n', range: [1, 100] }
 ];
 
 export const weightsList = [
