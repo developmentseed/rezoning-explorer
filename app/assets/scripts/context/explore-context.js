@@ -55,6 +55,8 @@ export function ExploreProvider (props) {
     !qsState.resourceId
   );
 
+  const [hoveredFeatures, setHoveredFeatures] = useState([]);
+
   const [tourStep, setTourStep] = useState(0);
 
   useEffect(() => {
@@ -63,6 +65,7 @@ export function ExploreProvider (props) {
       setTourStep(Number(visited));
     }
   }, []);
+
   useEffect(() => {
     localStorage.setItem('site-tour', tourStep);
   }, [tourStep]);
@@ -98,6 +101,7 @@ export function ExploreProvider (props) {
 
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
+  const [currentZones, setCurrentZones] = useState(null);
 
   const generateZones = async (filterString, weights, lcoe) => {
     showGlobalLoading();
@@ -108,14 +112,14 @@ export function ExploreProvider (props) {
     hideGlobalLoading();
   };
 
-  const [currentZones, setCurrentZones] = useState(null);
-
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
 
   function updateFilteredLayer (filterValues, weights, lcoe) {
-    const filterString = filterValues.map(({ min, max }) => `${min},${max}`).join('|');
+    const filterString = filterValues
+      .map(({ min, max }) => `${min},${max}`)
+      .join('|');
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=${filterString}&color=45,39,88,178`
+      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=${filterString}&color=54,166,244,80`
     );
     generateZones(filterString, weights, lcoe);
   }
@@ -141,6 +145,8 @@ export function ExploreProvider (props) {
           setZonesGenerated,
           filteredLayerUrl,
           updateFilteredLayer,
+          hoveredFeatures,
+          setHoveredFeatures,
           tourStep,
           setTourStep
         }}

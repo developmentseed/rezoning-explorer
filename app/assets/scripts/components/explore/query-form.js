@@ -15,7 +15,6 @@ import Heading, { Subheading } from '../../styles/type/heading';
 import { FormSwitch } from '../../styles/form/switch';
 import { glsp } from '../../styles/utils/theme-values';
 import collecticon from '../../styles/collecticons';
-import { validateRangeNum } from '../../utils/utils';
 
 import { Accordion, AccordionFold } from '../../components/accordion';
 import InfoButton from '../common/info-button';
@@ -172,7 +171,7 @@ function QueryForm (props) {
 
   const [weights, setWeights] = useState(initListToState(weightsList));
   const [filters, setFilters] = useState(initObjectToState(filtersLists));
-  const [lcoe, setLcoe] = useState(initListToState(lcoeList));
+  const [lcoe, setLcoe] = useState(lcoeList.map((e) => ({ ...e, value: '' })));
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));
@@ -181,23 +180,8 @@ function QueryForm (props) {
   };
 
   const applyClick = () => {
-    const filterValues = Object.values(filters)
-      .reduce((accum, section) => [...accum,
-        ...section.map(filter => filter.value)], []);
-    const weightsValues = Object.values(weights)
-      .reduce((accum, weight) => (
-        {
-          ...accum,
-          [weight.id || weight.name]: Number(weight.value)
-        }), {});
-
-    const lcoeValues = Object.values(lcoe)
-      .reduce((accum, weight) => (
-        {
-          ...accum,
-          [weight.id || weight.name]: Number(weight.value)
-        }), {});
-    updateFilteredLayer(filterValues, weightsValues, lcoeValues);
+    const filterValues = Object.values(filters).reduce((accum, section) => [...accum, ...section.map(filter => filter.value)], []);
+    updateFilteredLayer(filterValues);
   };
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
@@ -398,18 +382,18 @@ function QueryForm (props) {
             }
           }}
         >
-          {lcoe.map((lcoe, ind) => (
-            <PanelOption key={lcoe.name}>
+          {lcoe.map((filter, ind) => (
+            <PanelOption key={filter.name}>
               <StressedFormGroupInput
                 inputType='number'
                 inputSize='small'
-                id={`${lcoe.name}`}
-                name={`${lcoe.name}`}
-                label={lcoe.name}
-                value={lcoe.value || lcoe.range[0]}
-                validate={lcoe.range ? validateRangeNum(lcoe.range[0], lcoe.range[1]) : () => true}
+                id={`${filter.name}`}
+                name={`${filter.name}`}
+                label={filter.name}
+                value={filter.value || ''}
+                validate={() => true}
                 onChange={(v) => {
-                  setLcoe(updateStateList(lcoe, ind, { ...lcoe, value: v }));
+                  setLcoe(updateStateList(lcoe, ind, { ...filter, value: v }));
                 }}
               />
             </PanelOption>

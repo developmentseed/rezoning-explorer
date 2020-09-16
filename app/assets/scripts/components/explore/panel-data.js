@@ -21,7 +21,10 @@ export const filtersLists = {
     { name: 'Distance to Ports', range: [0, 1000000], info: 'This filter has info.', isRange: true },
     { name: 'Distance to Anchorages', range: [0, 1000000], info: 'This filter has info.', isRange: true },
     { name: 'Distance to Grids', range: [0, 1000000], info: 'This filter has info.', isRange: true },
-    { name: 'Distance to Roads', range: [0, 10000], info: 'This filter has info.', isRange: true }
+    { name: 'Distance to Roads', range: [0, 10000], info: 'This filter has info.', isRange: true },
+    { name: 'Population', range: [0, 1000000], info: 'This filter has info.', isRange: true },
+    { name: 'Slope', range: [0, 10000], info: 'This filter has info.', isRange: true },
+    { name: 'Land Cover', range: [0, 10000], info: 'This filter has info.', isRange: true }
   ]
 };
 
@@ -42,16 +45,16 @@ export const lcoeList = [
 ];
 
 export const weightsList = [
-  { name: 'LCOE Generation', id: 'lcoe_gen', range: [0.1, 1] },
-  { name: 'LOCOE Transmission', id: 'lcoe_transmission', range: [0.1, 1] },
-  { name: 'LCOE Road', id: 'lcoe_road', range: [0.1, 1] },
-  { name: 'Distance to Load Centers', id: 'distance_load', range: [0.1, 1] },
-  { name: 'Technology Co-Location', id: 'technology_colocation', range: [0.1, 1] },
-  { name: 'Human Footprint', id: 'human_footprint', range: [0.1, 1] },
-  { name: 'Population Density', id: 'pop_density', range: [0.1, 1] },
-  { name: 'Slope', id: 'slope', range: [0.1, 1] },
-  { name: 'Land Use Score', id: 'land_use', range: [0.1, 1] },
-  { name: 'Capacity Value (Wind Only)', id: 'capacity_value', range: [0.1, 1] }
+  { name: 'LCOE Generation' },
+  { name: 'LOCOE Transmission' },
+  { name: 'LCOE Road' },
+  { name: 'Distance to Load Centers' },
+  { name: 'Technology Co-Location' },
+  { name: 'Human Footprint' },
+  { name: 'Population Density' },
+  { name: 'Slope' },
+  { name: 'Land Use Score' },
+  { name: 'Capacity Value (Wind Only)' }
 ];
 
 export const presets = {

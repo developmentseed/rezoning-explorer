@@ -29,12 +29,15 @@ const StatsWrapper = styled.section`
 
 const zonesSummary = (zones) => {
   const stats = zones.reduce(
-    (stats, { analysis }) => ({
-      zonesCount: stats.zonesCount + 1,
-      zonesOutput: stats.zonesOutput + analysis.zone_output,
-      zonesArea:
-        stats.zonesArea + analysis.zone_output / analysis.zone_output_density
-    }),
+    (stats, { properties: { summary } }) => {
+      if (!summary || !summary.zone_score) return stats;
+      return {
+        zonesCount: stats.zonesCount + 1,
+        zonesOutput: stats.zonesOutput + summary.zone_output,
+        zonesArea:
+          stats.zonesArea + summary.zone_output / summary.zone_output_density
+      };
+    },
     {
       zonesCount: 0,
       zonesOutput: 0,
