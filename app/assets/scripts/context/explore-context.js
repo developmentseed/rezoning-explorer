@@ -55,6 +55,8 @@ export function ExploreProvider (props) {
     !qsState.resourceId
   );
 
+  const [hoveredFeatures, setHoveredFeatures] = useState([]);
+
   useEffect(() => {
     const qString = qsStateHelper.getQs({
       areaId: selectedAreaId,
@@ -129,7 +131,9 @@ export function ExploreProvider (props) {
           zonesGenerated,
           setZonesGenerated,
           filteredLayerUrl,
-          updateFilteredLayer
+          updateFilteredLayer,
+          hoveredFeatures,
+          setHoveredFeatures
         }}
       >
         {props.children}
