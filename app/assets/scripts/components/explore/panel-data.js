@@ -39,23 +39,41 @@ export const lcoeList = [
   { name: 'Substation - capital [USD / two substations (per new transmission connection) ]', id: 'cs' },
   { name: 'Road - capital [USD/km]', id: 'cr' },
   { name: 'Road - fixed O&M [USD/km]', id: 'omfr' },
-  { name: 'Decomssion % rate', id: 'decom' },
+  { name: 'Decommission % rate', id: 'decom' },
   { name: 'Economic discount rate', id: 'i', range: [1, 100] },
   { name: 'Lifetime [years]', id: 'n', range: [1, 100] }
 ];
 
 export const weightsList = [
-  { name: 'LCOE Generation' },
-  { name: 'LOCOE Transmission' },
-  { name: 'LCOE Road' },
-  { name: 'Distance to Load Centers' },
-  { name: 'Technology Co-Location' },
-  { name: 'Human Footprint' },
-  { name: 'Population Density' },
-  { name: 'Slope' },
-  { name: 'Land Use Score' },
-  { name: 'Capacity Value (Wind Only)' }
+  { name: 'LCOE Generation', id: 'lcoe_gen', range: [0, 1], default: 1 },
+  { name: 'LCOE Transmission', id: 'lcoe_transmission', range: [0, 1], default: 1 },
+  { name: 'LCOE Road', id: 'lcoe_road', range: [0, 1], default: 1 },
+  { name: 'Distance to Load Centers', id: 'distance_load', range: [0, 1], default: 1 },
+  { name: 'Technology Co-Location', id: 'technology_colocation', range: [0, 1], default: 1 },
+  { name: 'Human Footprint', id: 'human_footprint', range: [0, 1], default: 1 },
+  { name: 'Population Density', id: 'pop_density', range: [0, 1], default: 1 },
+  { name: 'Slope', id: 'slope', range: [0, 1], default: 1 },
+  { name: 'Land Use Score', id: 'land_use', range: [0, 1], default: 1 },
+  { name: 'Capacity Value (Wind Only)', id: 'capacity_value', range: [0, 1], default: 1 }
 ];
+
+const LCOE_PRESETS = {
+  greatest_savings: {
+    turbine_type: 0,
+    crf: 1,
+    cg: 2000,
+    omfg: 50000,
+    omvg: 4,
+    ct: 990,
+    omft: 0,
+    cs: 71000,
+    cr: 407000,
+    omfr: 0,
+    decom: 0,
+    i: 0.2,
+    n: 25
+  }
+};
 
 export const presets = {
   weights: {
@@ -77,7 +95,7 @@ export const presets = {
   lcoe: {
     'Greatest Savings': lcoeList.map(lcoe => ({
       ...lcoe,
-      value: lcoe.range ? randomRange(lcoe.range[0], lcoe.range[1]) : randomRange(0, 100)
+      value: LCOE_PRESETS.greatest_savings[lcoe.id]
     }))
   }
 };

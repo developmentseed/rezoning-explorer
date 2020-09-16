@@ -15,6 +15,7 @@ import Heading, { Subheading } from '../../styles/type/heading';
 import { FormSwitch } from '../../styles/form/switch';
 import { glsp } from '../../styles/utils/theme-values';
 import collecticon from '../../styles/collecticons';
+import { validateRangeNum } from '../../utils/utils';
 
 import { Accordion, AccordionFold } from '../../components/accordion';
 import InfoButton from '../common/info-button';
@@ -132,7 +133,7 @@ const initListToState = (list) => {
     range: obj.range || DEFAULT_RANGE,
     unit: obj.unit || DEFAULT_UNIT,
     active: obj.active === undefined ? true : obj.active,
-    value: obj.value || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
+    value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
   }));
 };
 
@@ -171,7 +172,7 @@ function QueryForm (props) {
 
   const [weights, setWeights] = useState(initListToState(weightsList));
   const [filters, setFilters] = useState(initObjectToState(filtersLists));
-  const [lcoe, setLcoe] = useState(lcoeList.map((e) => ({ ...e, value: '' })));
+  const [lcoe, setLcoe] = useState(initListToState(lcoeList));
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));
@@ -180,8 +181,23 @@ function QueryForm (props) {
   };
 
   const applyClick = () => {
-    const filterValues = Object.values(filters).reduce((accum, section) => [...accum, ...section.map(filter => filter.value)], []);
-    updateFilteredLayer(filterValues);
+    const filterValues = Object.values(filters)
+      .reduce((accum, section) => [...accum,
+        ...section.map(filter => filter.value)], []);
+    const weightsValues = Object.values(weights)
+      .reduce((accum, weight) => (
+        {
+          ...accum,
+          [weight.id || weight.name]: Number(weight.value)
+        }), {});
+
+    const lcoeValues = Object.values(lcoe)
+      .reduce((accum, weight) => (
+        {
+          ...accum,
+          [weight.id || weight.name]: Number(weight.value)
+        }), {});
+    updateFilteredLayer(filterValues, weightsValues, lcoeValues);
   };
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
@@ -382,18 +398,18 @@ function QueryForm (props) {
             }
           }}
         >
-          {lcoe.map((filter, ind) => (
-            <PanelOption key={filter.name}>
+          {lcoe.map((cost, ind) => (
+            <PanelOption key={cost.name}>
               <StressedFormGroupInput
                 inputType='number'
                 inputSize='small'
-                id={`${filter.name}`}
-                name={`${filter.name}`}
-                label={filter.name}
-                value={filter.value || ''}
-                validate={() => true}
+                id={`${cost.name}`}
+                name={`${cost.name}`}
+                label={cost.name}
+                value={cost.value || cost.range[0]}
+                validate={cost.range ? validateRangeNum(cost.range[0], cost.range[1]) : () => true}
                 onChange={(v) => {
-                  setLcoe(updateStateList(lcoe, ind, { ...filter, value: v }));
+                  setLcoe(updateStateList(lcoe, ind, { ...cost, value: v }));
                 }}
               />
             </PanelOption>
