@@ -119,7 +119,7 @@ export function ExploreProvider (props) {
       .map(({ min, max }) => `${min},${max}`)
       .join('|');
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=${filterString}&color=45,39,88,178`
+      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=${filterString}&color=54,166,244,80`
     );
     generateZones(filterString, weights, lcoe);
   }
