@@ -60,6 +60,7 @@ const CardDetails = styled.ul`
   display: flex;
   flex-flow: column nowrap;
   flex: 1;
+  font-size: 0.875rem;
 `;
 const Detail = styled(Dl)`
   display: flex;
@@ -73,9 +74,6 @@ const Detail = styled(Dl)`
   dt,
   dd {
     margin: 0;
-  }
-  dt {
-    font-size: 0.875rem;
   }
   dd {
     text-align: right;
@@ -126,11 +124,16 @@ function ExploreZones (props) {
             data={zoneData}
             renderCard={(data) => (
               <Card size='large' key={data.id}>
-                <CardIcon color={get(data, 'properties.color')}>
+                <CardIcon
+                  color={get(
+                    data,
+                    'properties.color'
+                  )}
+                >
                   <div>{data.id}</div>
                 </CardIcon>
                 <CardDetails>
-                  {data.properties && data.properties.summary
+                  {get(data, 'properties.summary.zone_score')
                     ? Object.entries(data.properties.summary).map(
                       ([label, value]) => (
                         <Detail key={`${data.id}-${label}`}>
