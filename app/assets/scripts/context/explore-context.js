@@ -57,6 +57,19 @@ export function ExploreProvider (props) {
 
   const [hoveredFeatures, setHoveredFeatures] = useState([]);
 
+  const [tourStep, setTourStep] = useState(0);
+
+  useEffect(() => {
+    const visited = localStorage.getItem('site-tour');
+    if (visited !== null) {
+      setTourStep(Number(visited));
+    }
+  }, []);
+  
+  useEffect(() => {
+    localStorage.setItem('site-tour', tourStep);
+  }, [tourStep]);
+
   useEffect(() => {
     const qString = qsStateHelper.getQs({
       areaId: selectedAreaId,
@@ -133,7 +146,9 @@ export function ExploreProvider (props) {
           filteredLayerUrl,
           updateFilteredLayer,
           hoveredFeatures,
-          setHoveredFeatures
+          setHoveredFeatures,
+          tourStep,
+          setTourStep
         }}
       >
         {props.children}

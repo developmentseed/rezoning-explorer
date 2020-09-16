@@ -8,6 +8,8 @@ import ModalSelect from './modal-select';
 import { ModalHeader } from '../common/modal';
 import ModalSelectArea from './modal-select-area';
 
+import Button from '../../styles/button/button';
+
 import { Card } from '../common/card-list';
 
 import QueryForm from './query-form';
@@ -41,13 +43,32 @@ function ExpMapPrimePanel (props) {
     showSelectResourceModal,
     setShowSelectResourceModal,
     setInputTouched,
-    setZonesGenerated
+    setZonesGenerated,
+    tourStep,
+    setTourStep
   } = useContext(ExploreContext);
 
   return (
     <>
       <PrimePanel
         collapsible
+        additionalControls={
+          [
+            <Button
+              key='open-tour-trigger'
+              id='open-tour-trigger'
+              variation='base-plain'
+              useIcon='circle-question'
+              title='Open tour'
+              hideText
+              onClick={() => setTourStep(0)}
+              disabled={tourStep >= 0}
+            >
+              <span>Open Tour</span>
+            </Button>
+
+          ]
+        }
         direction='left'
         onPanelChange={onPanelChange}
         initialState={isLargeViewport()}

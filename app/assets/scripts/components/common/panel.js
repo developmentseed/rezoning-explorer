@@ -88,9 +88,15 @@ const PanelBody = styled.div`
 
 const PanelOffsetActions = styled.div`
   ${panelSkin()}
+  border-radius: ${themeVal('shape.rounded')};
+`;
+
+const PanelControls = styled.div`
+  display: grid;
+  grid-gap: 0.5rem;
+
   position: absolute;
   top: ${glsp(0.5)};
-  border-radius: ${themeVal('shape.rounded')};
   transform: translate(0, 0);
   z-index: 120;
 
@@ -114,6 +120,7 @@ const PanelOffsetActions = styled.div`
       `}
     `}
   `}
+
 `;
 
 class Panel extends React.Component {
@@ -146,7 +153,8 @@ class Panel extends React.Component {
       collapsible,
       direction,
       className,
-      overrideControl
+      overrideControl,
+      additionalControls
     } = this.props;
     const revealed = overrideControl
       ? this.props.revealed
@@ -173,19 +181,30 @@ class Panel extends React.Component {
       <PanelSelf revealed={revealed} className={className}>
         {header}
         <PanelBody revealed={revealed}>{bodyContent}</PanelBody>
-        {collapsible && (
-          <PanelOffsetActions revealed={revealed} direction={direction}>
-            <Button
-              variation='base-plain'
-              useIcon={icon}
-              title='Show/hide prime panel'
-              hideText
-              onClick={this.onCollapseClick}
-            >
-              <span>Prime panel</span>
-            </Button>
-          </PanelOffsetActions>
-        )}
+
+        <PanelControls revealed={revealed} direction={direction}>
+          {collapsible && (
+            <PanelOffsetActions>
+              <Button
+                variation='base-plain'
+                useIcon={icon}
+                title='Show/hide prime panel'
+                hideText
+                onClick={this.onCollapseClick}
+              >
+                <span>Prime panel</span>
+              </Button>
+            </PanelOffsetActions>
+          )}
+          {
+            additionalControls && additionalControls.map(ctrl => (
+              <PanelOffsetActions key={ctrl.props.id}>
+                {ctrl}
+              </PanelOffsetActions>
+            ))
+          }
+        </PanelControls>
+
       </PanelSelf>
     );
   }
@@ -199,6 +218,7 @@ Panel.propTypes = {
   onPanelChange: T.func,
   className: T.string,
   collapsible: T.bool,
+  additionalControls: T.array,
   headerContent: T.node,
   renderHeader: T.func,
   bodyContent: T.node
