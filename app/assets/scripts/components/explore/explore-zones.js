@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import { Subheading } from '../../styles/type/heading';
@@ -9,6 +9,7 @@ import Dl from '../../styles/type/definition-list';
 import Button from '../../styles/button/button';
 import { formatThousands } from '../../utils/format';
 import get from 'lodash.get';
+import ExploreContext from '../../context/explore-context';
 
 const ZonesWrapper = styled.section`
   ol.list-container {
@@ -36,6 +37,8 @@ const Card = styled(CardWrapper)`
   border: none;
   border-bottom: 1px solid ${themeVal('color.baseAlphaC')};
   padding: 0.5rem 1.5rem;
+
+  ${({ isHovered }) => isHovered && '&,'}
   &:hover {
     box-shadow: none;
     transform: none;
@@ -83,13 +86,15 @@ const Detail = styled(Dl)`
 `;
 
 function ExploreZones (props) {
-  const { zones, active } = props;
+  const { active } = props;
+
+  const { currentZones, hoveredFeatures, setHoveredFeatures } = useContext(ExploreContext);
 
   const [focusZone, setFocusZone] = useState(null);
 
   const [selectedZones, setSelectedZones] = useState({});
 
-  const zoneData = zones || [];
+  const zoneData = currentZones || [];
 
   const formatIndicator = function (id, value) {
     switch (id) {
@@ -100,6 +105,10 @@ function ExploreZones (props) {
       default:
         return formatThousands(value);
     }
+  };
+
+  const onRowHoverEvent = (event, row) => {
+    setHoveredFeatures(event === 'enter' ? [row] : []);
   };
 
   return (
@@ -123,13 +132,14 @@ function ExploreZones (props) {
             numColumns={1}
             data={zoneData}
             renderCard={(data) => (
-              <Card size='large' key={data.id}>
-                <CardIcon
-                  color={get(
-                    data,
-                    'properties.color'
-                  )}
-                >
+              <Card
+                size='large'
+                key={data.id}
+                isHovered={hoveredFeatures.includes(data.id)}
+                onMouseEnter={onRowHoverEvent.bind(null, 'enter', data.id)}
+                onMouseLeave={onRowHoverEvent.bind(null, 'leave', data.id)}
+              >
+                <CardIcon color={get(data, 'properties.color')}>
                   <div>{data.id}</div>
                 </CardIcon>
                 <CardDetails>
@@ -179,7 +189,6 @@ ExportZonesButton.propTypes = {
 export { ExportZonesButton };
 
 ExploreZones.propTypes = {
-  zones: T.array,
   active: T.bool
 };
 
