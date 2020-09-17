@@ -10,6 +10,7 @@ import Button from '../../styles/button/button';
 import { formatThousands } from '../../utils/format';
 import get from 'lodash.get';
 import ExploreContext from '../../context/explore-context';
+import ColorScale from '../common/color-scale';
 
 const ZonesWrapper = styled.section`
   ol.list-container {
@@ -17,7 +18,7 @@ const ZonesWrapper = styled.section`
     gap: 0;
   }
   display: grid;
-  grid-template-rows: auto 5fr;
+  grid-template-rows: auto auto 5fr;
   ${({ active }) =>
     active &&
     css`
@@ -113,6 +114,7 @@ function ExploreZones (props) {
 
   return (
     <ZonesWrapper active={active}>
+      <ColorScale steps={12} />
       <ZonesHeader>All Zones</ZonesHeader>
 
       {focusZone ? (
