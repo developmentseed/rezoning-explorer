@@ -113,7 +113,6 @@
     "@devseed-ui/form": "^0.11.2",
     "@devseed-ui/modal": "^1.0.3",
     "clipboard": "^2.0.6",
-    "d3-interpolate": "^2.0.1",
     "date-fns": "^2.14.0",
     "element-resize-event": "^3.0.3",
     "history": "^4.10.0",
