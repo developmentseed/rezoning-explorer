@@ -28,7 +28,7 @@ const ZonesWrapper = styled.section`
 `;
 
 const ZonesHeader = styled(Subheading)`
-  padding: 1rem 1.5rem;
+  padding: 1rem 0rem;
 `;
 
 const Card = styled(CardWrapper)`
@@ -37,7 +37,7 @@ const Card = styled(CardWrapper)`
   box-shadow: none;
   border: none;
   border-bottom: 1px solid ${themeVal('color.baseAlphaC')};
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 0rem;
 
   ${({ isHovered }) => isHovered && '&,'}
   &:hover {
@@ -114,7 +114,7 @@ function ExploreZones (props) {
 
   return (
     <ZonesWrapper active={active}>
-      <ColorScale steps={12} />
+      <ColorScale steps={12} heading='Weighted Zone Score' min={0} max={1} />
       <ZonesHeader>All Zones</ZonesHeader>
 
       {focusZone ? (
