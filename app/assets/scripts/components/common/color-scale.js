@@ -1,10 +1,7 @@
 import React from 'react';
-import { interpolate } from 'd3-interpolate';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { Subheading } from '../../styles/type/heading';
-
-const COLOR = interpolate('#2d195e', '#5d0863');
 
 const Scale = styled.div`
   display:grid;
@@ -26,12 +23,12 @@ const Labels = styled.div`
 
 const Wrapper = styled.div`
   display:grid;
-  grid-template-rows: 1fr 1.5fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-gap: 0.25rem;
   padding: 0.5rem 0;
-
 `;
 
-function ColorScale ({ min, max, steps, heading }) {
+function ColorScale ({ min, max, steps, heading, colorFunction }) {
   return (
     <Wrapper>
       <Subheading size='small'>{heading}</Subheading>
@@ -44,7 +41,7 @@ function ColorScale ({ min, max, steps, heading }) {
               key={`${i}-step`}
                 column={i}
                 steps={steps}
-                color={COLOR(i / steps)}
+                color={colorFunction((i + 1) / steps)}
               />
             );
           })
@@ -62,7 +59,8 @@ ColorScale.propTypes = {
   min: T.oneOfType([T.number, T.string]),
   max: T.oneOfType([T.number, T.string]),
   steps: T.number,
-  heading: T.string
+  heading: T.string,
+  colorFunction: T.func
 };
 
 export default ColorScale;

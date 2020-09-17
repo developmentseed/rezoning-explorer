@@ -11,6 +11,7 @@ import { formatThousands } from '../../utils/format';
 import get from 'lodash.get';
 import ExploreContext from '../../context/explore-context';
 import ColorScale from '../common/color-scale';
+import zoneScoreColor from '../../styles/zoneScoreColors';
 
 const ZonesWrapper = styled.section`
   ol.list-container {
@@ -114,7 +115,7 @@ function ExploreZones (props) {
 
   return (
     <ZonesWrapper active={active}>
-      <ColorScale steps={12} heading='Weighted Zone Score' min={0} max={1} />
+      <ColorScale steps={10} heading='Weighted Zone Score' min={0} max={1} colorFunction={zoneScoreColor} />
       <ZonesHeader>All Zones</ZonesHeader>
 
       {focusZone ? (
