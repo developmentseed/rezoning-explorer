@@ -150,7 +150,7 @@ const initByType = obj => {
         ...obj,
         range: obj.range || DEFAULT_RANGE,
         unit: obj.unit || DEFAULT_UNIT,
-        value: obj.value || obj.default || (obj.range || DEFAULT_RANGE[0])[0]
+        value: obj.value || obj.default || (obj.range || DEFAULT_RANGE)[0]
       };
     case BOOL:
     case MULTI:
@@ -207,6 +207,7 @@ function QueryForm (props) {
   const [weights, setWeights] = useState(initListToState(weightsList));
   const [filters, setFilters] = useState(initObjectToState(filtersLists));
   const [lcoe, setLcoe] = useState(initListToState(lcoeList));
+  console.log(lcoe)
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));

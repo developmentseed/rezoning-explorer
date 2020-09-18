@@ -214,9 +214,9 @@ export const lcoeList = [
   {
     name: 'Economic discount rate',
     id: 'i',
-    range: [1, 100],
     input: {
-      type: TEXT
+      type: TEXT,
+      range: [0.1, 100]
     }
   },
   {
