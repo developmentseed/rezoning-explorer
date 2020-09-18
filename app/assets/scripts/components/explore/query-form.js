@@ -124,17 +124,6 @@ const SubmissionSection = styled(PanelBlockFooter)`
   grid-template-columns: 1fr 1fr;
   gap: 0rem 1rem;
 `;
-/*
-
-const initListToState = (list) => {
-  return list.map((obj) => ({
-    ...obj,
-    range: obj.range || DEFAULT_RANGE,
-    unit: obj.unit || DEFAULT_UNIT,
-    active: obj.active === undefined ? true : obj.active,
-    value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
-  }));
-}; */
 
 const initByType = obj => {
   switch (obj.type) {
@@ -207,7 +196,40 @@ function QueryForm (props) {
   const [weights, setWeights] = useState(initListToState(weightsList));
   const [filters, setFilters] = useState(initObjectToState(filtersLists));
   const [lcoe, setLcoe] = useState(initListToState(lcoeList));
-  console.log(lcoe)
+
+  const inputOfType = (option, onChange) => {
+    switch (option.input.type) {
+      case SLIDER:
+        return (
+          <SliderGroup
+            unit={option.input.unit || '%'}
+            range={option.input.range || [0, 100]}
+            id={option.name}
+            value={option.input.value}
+            isRange={option.input.isRange}
+            disabled={!option.active}
+            onChange={onChange}
+          />
+        );
+      case TEXT:
+        return (
+          <StressedFormGroupInput
+            inputType='number'
+            inputSize='small'
+            id={`${option.name}`}
+            name={`${option.name}`}
+            label={option.name}
+            value={option.input.value}
+            validate={option.input.range ? validateRangeNum(option.input.range[0], option.input.range[1]) : () => true}
+            onChange={onChange}
+          />
+        );
+      case BOOL:
+      case MULTI:
+      default:
+        return {};
+    }
+  };
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));
@@ -361,15 +383,8 @@ function QueryForm (props) {
                               Toggle filter
                             </FormSwitch>
                           </OptionHeadline>
-
-                          <SliderGroup
-                            unit={filter.input.unit || '%'}
-                            range={filter.input.range || [0, 100]}
-                            id={filter.name}
-                            value={filter.input.value}
-                            isRange
-                            disabled={!filter.active}
-                            onChange={(value) => {
+                          {
+                            inputOfType(filter, (value) => {
                               if (filter.active) {
                                 setFilters({
                                   ...filters,
@@ -382,8 +397,9 @@ function QueryForm (props) {
                                   })
                                 });
                               }
-                            }}
-                          />
+                            })
+                          }
+
                         </PanelOption>
                       ))}
                   />
@@ -407,14 +423,8 @@ function QueryForm (props) {
           {weights.map((weight, ind) => (
             <PanelOption key={weight.name}>
               <PanelOptionTitle>{weight.name}</PanelOptionTitle>
-              <SliderGroup
-                unit={weight.input.unit || '%'}
-                range={weight.input.range || [0, 100]}
-                id={weight.name}
-                value={
-                  weight.input.value === undefined ? weight.input.range[0] : weight.input.value
-                }
-                onChange={(value) => {
+              {
+                inputOfType(weight, (value) => {
                   setWeights(
                     updateStateList(weights, ind, {
                       ...weight,
@@ -424,8 +434,8 @@ function QueryForm (props) {
                       }
                     })
                   );
-                }}
-              />
+                })
+              }
             </PanelOption>
           ))}
         </FormWrapper>
@@ -444,15 +454,8 @@ function QueryForm (props) {
         >
           {lcoe.map((cost, ind) => (
             <PanelOption key={cost.name}>
-              <StressedFormGroupInput
-                inputType='number'
-                inputSize='small'
-                id={`${cost.name}`}
-                name={`${cost.name}`}
-                label={cost.name}
-                value={cost.input.value}
-                validate={cost.input.range ? validateRangeNum(cost.input.range[0], cost.input.range[1]) : () => true}
-                onChange={(v) => {
+              {
+                inputOfType(cost, (v) => {
                   setLcoe(updateStateList(lcoe, ind, {
                     ...cost,
                     input: {
@@ -460,8 +463,8 @@ function QueryForm (props) {
                       value: v
                     }
                   }));
-                }}
-              />
+                })
+              }
             </PanelOption>
           ))}
         </FormWrapper>
