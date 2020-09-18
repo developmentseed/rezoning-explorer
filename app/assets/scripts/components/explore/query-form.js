@@ -22,11 +22,9 @@ import InfoButton from '../common/info-button';
 import GridSetter from './grid-setter';
 
 import ExploreContext from '../../context/explore-context';
+import { INPUT_CONSTANTS } from './panel-data';
 
-const GRID_OPTIONS = [9, 25, 50];
-const DEFAULT_RANGE = [0, 100];
-const DEFAULT_UNIT = '%';
-
+const { SLIDER, BOOL, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
 const PanelOption = styled.div`
   ${({ hidden }) => hidden && 'display: none;'}
   margin-bottom: 1.5rem;
@@ -126,6 +124,7 @@ const SubmissionSection = styled(PanelBlockFooter)`
   grid-template-columns: 1fr 1fr;
   gap: 0rem 1rem;
 `;
+/*
 
 const initListToState = (list) => {
   return list.map((obj) => ({
@@ -134,6 +133,41 @@ const initListToState = (list) => {
     unit: obj.unit || DEFAULT_UNIT,
     active: obj.active === undefined ? true : obj.active,
     value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
+  }));
+}; */
+
+const initByType = obj => {
+  switch (obj.type) {
+    case SLIDER:
+      return {
+        ...obj,
+        range: obj.range || DEFAULT_RANGE,
+        unit: obj.unit || DEFAULT_UNIT,
+        value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
+      };
+    case TEXT:
+      return {
+        ...obj,
+        range: obj.range || DEFAULT_RANGE,
+        unit: obj.unit || DEFAULT_UNIT,
+        value: obj.value || obj.default || (obj.range || DEFAULT_RANGE[0])[0]
+      };
+    case BOOL:
+    case MULTI:
+    default:
+      return {};
+  }
+};
+
+const initListToState = (list) => {
+  return list.map((obj) => ({
+    ...obj,
+    input: initByType(obj.input),
+
+    // range: obj.range || DEFAULT_RANGE,
+    // unit: obj.unit || DEFAULT_UNIT,
+    active: obj.active === undefined ? true : obj.active
+    // value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
   }));
 };
 
