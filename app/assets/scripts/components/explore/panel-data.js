@@ -19,6 +19,19 @@ const SLIDER = 'slider';
 const BOOL = 'bool';
 const MULTI = 'multi-select';
 const TEXT = 'text';
+const GRID_OPTIONS = [9, 25, 50];
+const DEFAULT_RANGE = [0, 100];
+const DEFAULT_UNIT = '%';
+
+export const INPUT_CONSTANTS = {
+  SLIDER,
+  BOOL,
+  MULTI,
+  TEXT,
+  GRID_OPTIONS,
+  DEFAULT_UNIT,
+  DEFAULT_RANGE
+};
 
 export const filtersLists = {
   distance_filters: [

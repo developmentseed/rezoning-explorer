@@ -217,19 +217,19 @@ function QueryForm (props) {
   const applyClick = () => {
     const filterValues = Object.values(filters)
       .reduce((accum, section) => [...accum,
-        ...section.map(filter => filter.value)], []);
+        ...section.map(filter => filter.input.value)], []);
     const weightsValues = Object.values(weights)
       .reduce((accum, weight) => (
         {
           ...accum,
-          [weight.id || weight.name]: Number(weight.value)
+          [weight.id || weight.name]: Number(weight.input.value)
         }), {});
 
     const lcoeValues = Object.values(lcoe)
       .reduce((accum, weight) => (
         {
           ...accum,
-          [weight.id || weight.name]: Number(weight.value)
+          [weight.id || weight.name]: Number(weight.input.value)
         }), {});
     updateFilteredLayer(filterValues, weightsValues, lcoeValues);
   };
@@ -362,10 +362,10 @@ function QueryForm (props) {
                           </OptionHeadline>
 
                           <SliderGroup
-                            unit={filter.unit || '%'}
-                            range={filter.range || [0, 100]}
+                            unit={filter.input.unit || '%'}
+                            range={filter.input.range || [0, 100]}
                             id={filter.name}
-                            value={filter.value}
+                            value={filter.input.value}
                             isRange
                             disabled={!filter.active}
                             onChange={(value) => {
@@ -374,7 +374,10 @@ function QueryForm (props) {
                                   ...filters,
                                   [group]: updateStateList(list, ind, {
                                     ...filter,
-                                    value
+                                    input: {
+                                      ...filter.input,
+                                      value
+                                    }
                                   })
                                 });
                               }
@@ -404,15 +407,21 @@ function QueryForm (props) {
             <PanelOption key={weight.name}>
               <PanelOptionTitle>{weight.name}</PanelOptionTitle>
               <SliderGroup
-                unit={weight.unit || '%'}
-                range={weight.range || [0, 100]}
+                unit={weight.input.unit || '%'}
+                range={weight.input.range || [0, 100]}
                 id={weight.name}
                 value={
-                  weight.value === undefined ? weight.range[0] : weight.value
+                  weight.input.value === undefined ? weight.input.range[0] : weight.input.value
                 }
                 onChange={(value) => {
                   setWeights(
-                    updateStateList(weights, ind, { ...weight, value })
+                    updateStateList(weights, ind, {
+                      ...weight,
+                      input: {
+                        ...weight.input,
+                        value
+                      }
+                    })
                   );
                 }}
               />
@@ -440,10 +449,16 @@ function QueryForm (props) {
                 id={`${cost.name}`}
                 name={`${cost.name}`}
                 label={cost.name}
-                value={cost.value || cost.range[0]}
-                validate={cost.range ? validateRangeNum(cost.range[0], cost.range[1]) : () => true}
+                value={cost.input.value}
+                validate={cost.input.range ? validateRangeNum(cost.input.range[0], cost.input.range[1]) : () => true}
                 onChange={(v) => {
-                  setLcoe(updateStateList(lcoe, ind, { ...cost, value: v }));
+                  setLcoe(updateStateList(lcoe, ind, {
+                    ...cost,
+                    input: {
+                      ...cost.input,
+                      value: v
+                    }
+                  }));
                 }}
               />
             </PanelOption>
