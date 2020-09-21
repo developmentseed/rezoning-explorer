@@ -8,15 +8,13 @@ import config from '../config';
 import countries from '../../data/countries.json';
 import regions from '../../data/regions.json';
 
-import fetchZones, { fetchZonesReducer, fetchZonesTest } from './fetch-zones';
+import { fetchZonesReducer, fetchZones } from './fetch-zones';
 
 import {
   showGlobalLoading,
   hideGlobalLoading
 } from '../components/common/global-loading';
 import { initialApiRequestState } from './contexeed';
-
-const LOADING = 'loading';
 
 // Parse region and country files into area list
 const areas = regions
@@ -104,27 +102,19 @@ export function ExploreProvider (props) {
 
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
-  //const [currentZones, setCurrentZones] = useState(null);
 
   const [currentZones, dispatchCurrentZones] = useReducer(fetchZonesReducer, initialApiRequestState);
 
   const generateZones = async (filterString, weights, lcoe) => {
     showGlobalLoading();
-    fetchZonesTest(selectedAreaId, filterString, weights, lcoe, dispatchCurrentZones);
-
-    // const zones = await fetchZones(selectedAreaId, filterString, weights, lcoe);
-
-    // setCurrentZones(zones);
-    // setInputTouched(false);
-    //! zonesGenerated && setZonesGenerated(true);
-    // hideGlobalLoading();
+    fetchZones(selectedAreaId, filterString, weights, lcoe, dispatchCurrentZones);
   };
+
   useEffect(() => {
     if (currentZones.fetched) {
       hideGlobalLoading();
       !zonesGenerated && setZonesGenerated(true);
-       setInputTouched(false);
-
+      setInputTouched(false);
     }
   }, [currentZones]);
 

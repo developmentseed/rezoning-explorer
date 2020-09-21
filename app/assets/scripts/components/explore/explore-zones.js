@@ -96,8 +96,6 @@ function ExploreZones (props) {
 
   const [selectedZones, setSelectedZones] = useState({});
 
-  //const zoneData = currentZones.isReady() ? currentZones.getData() : [];
-
   const formatIndicator = function (id, value) {
     switch (id) {
       case 'zone_score':
@@ -192,7 +190,8 @@ ExportZonesButton.propTypes = {
 export { ExportZonesButton };
 
 ExploreZones.propTypes = {
-  active: T.bool
+  active: T.bool,
+  currentZones: T.array
 };
 
 export default ExploreZones;
