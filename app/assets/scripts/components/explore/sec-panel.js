@@ -12,6 +12,7 @@ import {
 import Heading from '../../styles/type/heading';
 
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
+import Prose from '../../styles/type/prose';
 
 import ExploreContext from '../../context/explore-context';
 import ZoneAnalysisPanel from './zone-analysis-panel';
@@ -23,6 +24,8 @@ const SecPanel = styled(Panel)`
   ${media.xlargeUp`
     width: 20rem;
   `}
+`;
+const PreAnalysisMessage = styled(Prose)`
 `;
 
 function ExpMapSecPanel (props) {
@@ -45,7 +48,7 @@ function ExpMapSecPanel (props) {
             </PanelBlockHeader>
             <PanelBlockBody>
               <ZoneAnalysisPanel
-                currentZones={currentZones}
+                currentZones={currentZones.isReady() ? currentZones.getData() : []}
                 inputTouched={inputTouched}
                 zonesGenerated={zonesGenerated}
               />
