@@ -13,6 +13,10 @@ import ExploreContext from '../../context/explore-context';
 import ColorScale from '../common/color-scale';
 import zoneScoreColor from '../../styles/zoneScoreColors';
 
+const FILTERED_PROPERTIES = {
+  lcoe: true,
+  zone_score: true
+};
 const ZonesWrapper = styled.section`
   ol.list-container {
     padding: 0;
@@ -147,14 +151,15 @@ function ExploreZones (props) {
                 </CardIcon>
                 <CardDetails>
                   {get(data, 'properties.summary.zone_score')
-                    ? Object.entries(data.properties.summary).map(
-                      ([label, value]) => (
+                    ? Object.entries(data.properties.summary)
+                      .filter(([label, value]) => FILTERED_PROPERTIES[label])
+                      .map(([label, value]) => (
                         <Detail key={`${data.id}-${label}`}>
                           <dt>{label.replace(/_/g, ' ')}</dt>
                           <dd>{formatIndicator(label, value)}</dd>
                         </Detail>
                       )
-                    )
+                      )
                     : 'UNAVAILABLE'}
                 </CardDetails>
               </Card>
