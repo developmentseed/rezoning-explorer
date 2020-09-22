@@ -43,19 +43,24 @@ export function ExploreProvider (props) {
   const location = useLocation();
 
   const qsState = qsStateHelper.getState(location.search.substr(1));
-
+  const [selectedArea, setSelectedArea] = useState(null)
   const [selectedAreaId, setSelectedAreaId] = useState(qsState.areaId);
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
     !qsState.areaId
   );
-  const selectedArea = areas.find((a) => a.id === selectedAreaId);
+  useEffect(() => {
+    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
+  }, [selectedAreaId])
 
   const [selectedResource, setSelectedResource] = useState(qsState.resourceId);
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
     !qsState.resourceId
   );
 
+  const [gridMode, setGridMode] = useState(false)
+
   const [hoveredFeatures, setHoveredFeatures] = useState([]);
+
 
   const [tourStep, setTourStep] = useState(0);
 
@@ -137,6 +142,8 @@ export function ExploreProvider (props) {
           setShowSelectAreaModal,
           showSelectResourceModal,
           setShowSelectResourceModal,
+          gridMode,
+          setGridMode,
           currentZones,
           generateZones,
           inputTouched,

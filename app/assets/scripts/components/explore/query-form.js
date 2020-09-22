@@ -165,10 +165,11 @@ function QueryForm (props) {
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
-    onSelectionChange
+    onSelectionChange,
+    gridMode, setGridMode
   } = props;
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
-  const [gridMode, setGridMode] = useState(true);
+  // const [gridMode, setGridMode] = useState(true);
 
   const [weights, setWeights] = useState(initListToState(weightsList));
   const [filters, setFilters] = useState(initObjectToState(filtersLists));

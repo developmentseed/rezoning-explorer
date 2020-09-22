@@ -152,7 +152,14 @@ function MbMap (props) {
 
   // Initialize map on mount
   useEffect(() => {
-    if (!map) { initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeatures }); }
+    if (!map) { 
+      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeatures }); 
+      return
+    }
+
+    if (selectedArea && selectedArea.bounds) {
+      map.fitBounds(selectedArea.bounds, fitBoundsOptions);
+    }
   }, [map]);
 
   // Watch window size changes
