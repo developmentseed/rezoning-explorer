@@ -4,7 +4,9 @@ import config from '../config';
 import get from 'lodash.get';
 import zoneScoreColor from '../styles/zoneScoreColors';
 import theme from '../styles/theme/theme';
-
+import squareGrid from '@turf/square-grid';
+import pLimit from 'p-limit';
+const limit = pLimit(50);
 const { apiEndpoint } = config;
 
 async function getZoneSummary (feature, filterString, weights, lcoe) {
@@ -37,21 +39,30 @@ async function getZoneSummary (feature, filterString, weights, lcoe) {
   };
 }
 
-export default async function fetchZones (areaId, filterString, weights, lcoe) {
+export default async function fetchZones (grid, selectedArea, filterString, weights, lcoe) {
   // Get area topojson
-  const { body: zonesTopoJSON } = await fetchJSON(
-    `/public/zones/${areaId}.topojson`
-  );
+  const { id: areaId } = selectedArea;
 
-  // Parse topojson
-  const { features } = topojson.feature(
-    zonesTopoJSON,
-    zonesTopoJSON.objects[areaId]
-  );
+  let features;
+
+  if (grid) {
+    features = squareGrid(selectedArea.bounds, grid, { units: 'kilometers' }).features
+      .map((ft, i) => ({ ...ft, properties: { id: i } }));
+  } else {
+    const { body: zonesTopoJSON } = await fetchJSON(
+    `/public/zones/${areaId}.topojson`
+    );
+
+    // Parse topojson
+    features = topojson.feature(
+      zonesTopoJSON,
+      zonesTopoJSON.objects[areaId]
+    ).features;
+  }
 
   // Fetch Lcoe for each sub-area
   const zones = await Promise.all(
-    features.map((z) => getZoneSummary(z, filterString, weights, lcoe))
+    features.map((z) => limit(() => getZoneSummary(z, filterString, weights, lcoe)))
   );
 
   const maxScore = Math.max(

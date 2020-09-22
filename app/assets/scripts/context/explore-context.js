@@ -14,6 +14,7 @@ import {
   showGlobalLoading,
   hideGlobalLoading
 } from '../components/common/global-loading';
+import {GRID_OPTIONS} from '../components/explore/query-form';
 
 // Parse region and country files into area list
 const areas = regions
@@ -43,24 +44,24 @@ export function ExploreProvider (props) {
   const location = useLocation();
 
   const qsState = qsStateHelper.getState(location.search.substr(1));
-  const [selectedArea, setSelectedArea] = useState(null)
+  const [selectedArea, setSelectedArea] = useState(null);
   const [selectedAreaId, setSelectedAreaId] = useState(qsState.areaId);
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
     !qsState.areaId
   );
   useEffect(() => {
     setSelectedArea(areas.find((a) => a.id === selectedAreaId));
-  }, [selectedAreaId])
+  }, [selectedAreaId]);
 
   const [selectedResource, setSelectedResource] = useState(qsState.resourceId);
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
     !qsState.resourceId
   );
 
-  const [gridMode, setGridMode] = useState(false)
+  const [gridMode, setGridMode] = useState(false);
+  const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
 
   const [hoveredFeatures, setHoveredFeatures] = useState([]);
-
 
   const [tourStep, setTourStep] = useState(0);
 
@@ -110,7 +111,7 @@ export function ExploreProvider (props) {
 
   const generateZones = async (filterString, weights, lcoe) => {
     showGlobalLoading();
-    const zones = await fetchZones(selectedAreaId, filterString, weights, lcoe);
+    const zones = await fetchZones(gridMode && gridSize, selectedArea, filterString, weights, lcoe);
     setCurrentZones(zones);
     setInputTouched(false);
     !zonesGenerated && setZonesGenerated(true);
@@ -144,6 +145,8 @@ export function ExploreProvider (props) {
           setShowSelectResourceModal,
           gridMode,
           setGridMode,
+          gridSize,
+          setGridSize,
           currentZones,
           generateZones,
           inputTouched,

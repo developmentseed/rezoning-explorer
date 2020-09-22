@@ -152,9 +152,9 @@ function MbMap (props) {
 
   // Initialize map on mount
   useEffect(() => {
-    if (!map) { 
-      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeatures }); 
-      return
+    if (!map) {
+      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeatures });
+      return;
     }
 
     if (selectedArea && selectedArea.bounds) {
@@ -204,13 +204,14 @@ function MbMap (props) {
     // Update GeoJSON source, applying hover effect if any
     map.getSource(ZONES_BOUNDARIES_SOURCE_ID).setData({
       type: 'FeatureCollection',
+      features: currentZones/*
       features: currentZones.map((z) => ({
         ...z,
         properties: {
           ...z.properties,
           hover: hoveredFeatures.includes(z.id)
         }
-      }))
+      }))*/
     });
   }, [currentZones, hoveredFeatures]);
 

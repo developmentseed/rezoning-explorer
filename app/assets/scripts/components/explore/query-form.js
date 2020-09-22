@@ -23,7 +23,7 @@ import GridSetter from './grid-setter';
 
 import ExploreContext from '../../context/explore-context';
 
-const GRID_OPTIONS = [9, 25, 50];
+export const GRID_OPTIONS = [9, 25, 50];
 const DEFAULT_RANGE = [0, 100];
 const DEFAULT_UNIT = '%';
 
@@ -166,10 +166,12 @@ function QueryForm (props) {
     onResourceEdit,
     onInputTouched,
     onSelectionChange,
-    gridMode, setGridMode
+    gridMode,
+    setGridMode,
+    gridSize, setGridSize
   } = props;
-  const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
-  // const [gridMode, setGridMode] = useState(true);
+//  const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
+//  const [gridMode, setGridMode] = useState(true);
 
   const [weights, setWeights] = useState(initListToState(weightsList));
   const [filters, setFilters] = useState(initObjectToState(filtersLists));
