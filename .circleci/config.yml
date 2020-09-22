@@ -32,6 +32,7 @@ jobs:
       - save_cache:
           paths:
             - node_modules
+            - app/assets/scripts/config/local.js
           key: v1-dependencies-{{ checksum "package.json" }}
   lint:
     <<: *base_def
@@ -47,7 +48,25 @@ jobs:
       - checkout
       - restore_cache:
           <<: *restore_cache_def
+      - run: yarn gulp collecticons
       - run: yarn test
+  ci:
+    docker:
+      - image: cypress/base:12
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - cypress-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - cypress-deps-{{ .Branch }}-
+            - cypress-deps-
+      - run: yarn install
+      - save_cache:
+          key: cypress-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+      - run: yarn cy:test
   build:
     <<: *base_def
     steps:
@@ -59,6 +78,20 @@ jobs:
           root: ~/repo
           paths:
               - dist/*
+  deploy-surge-dev:
+    <<: *base_def
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *restore_cache_def
+      - attach_workspace:
+          at: /workspace
+      - run:
+          name: Deploy to surge
+          command: |
+            cp /workspace/dist/index.html /workspace/dist/200.html
+            ./node_modules/surge/lib/cli.js --project /workspace/dist --domain https://rezoning-dev.surge.sh
+
   deploy-surge:
     <<: *base_def
     steps:
@@ -71,7 +104,7 @@ jobs:
           name: Deploy to surge
           command: |
             cp /workspace/dist/index.html /workspace/dist/200.html
-            ./node_modules/surge/lib/cli.js --project /workspace/dist --domain rezoning-web.surge.sh
+            ./node_modules/surge/lib/cli.js --project /workspace/dist --domain https://rezoning.surge.sh
 
 workflows:
   version: 2
@@ -84,10 +117,19 @@ workflows:
       - test:
           requires:
             - prepare
+      - ci
       - build:
           requires:
             - prepare
-      - deploy-surge:
+      - deploy-surge-dev:
+          requires:
+            - lint
+            - test
+            - build
+          filters:
+            branches:
+              only: develop
+      - deploy-surge-dev:
           requires:
             - lint
             - test

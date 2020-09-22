@@ -19,16 +19,18 @@ import defaultsDeep from 'lodash.defaultsdeep';
  *      polluting the repo.
  */
 
-var configurations = require('./config/*.js', { mode: 'hash' });
-var config = configurations.production || {};
+import production from './config/production';
+import staging from './config/staging';
+import local from './config/local';
+
+let config = production || {};
 
 if (process.env.NODE_ENV === 'staging') {
-  config = defaultsDeep(configurations.staging, config);
-}
-if (process.env.NODE_ENV === 'development') {
-  config = defaultsDeep(configurations.local || {}, config);
+  config = defaultsDeep(staging, config);
 }
 
-// The require doesn't play super well with es6 imports. It creates an internal
-// 'default' property. Export that.
-export default config.default;
+if (process.env.NODE_ENV === 'development') {
+  config = defaultsDeep(local || {}, config);
+}
+
+export default config;

@@ -68,13 +68,17 @@ function serve () {
     [
       'app/*.html',
       'app/assets/graphics/**/*',
-      '!app/assets/icons/collecticons/**/*'
+      '!app/assets/icons/collecticons/**/*',
+      'app/public/*'
     ],
     bs.reload
   );
 
   gulp.watch('app/assets/icons/collecticons/**', collecticons);
-  gulp.watch('package.json', vendorScripts);
+  // Changing this line so that gulp will watch build files from
+  // linked libraries, like ui-library-seed
+  // gulp.watch('package.json', vendorScripts);
+  gulp.watch(['package.json', 'node_modules/**/*.js'], vendorScripts);
 }
 
 module.exports.clean = clean;
@@ -88,8 +92,11 @@ module.exports.default = gulp.series(
   collecticons,
   gulp.parallel(vendorScripts, javascript),
   gulp.parallel(html, imagesImagemin),
+  publicFiles,
   finish
 );
+
+module.exports.collecticons = collecticons;
 
 // /////////////////////////////////////////////////////////////////////////////
 // ------------------------- Browserify tasks --------------------------------//
@@ -236,6 +243,15 @@ function imagesImagemin () {
       ])
     )
     .pipe(gulp.dest('dist/assets/graphics'));
+}
+
+// //////////////////////////////////////////////////////////////////////////////
+// --------------------------- Public Files -----------------------------------//
+// ----------------------------------------------------------------------------//
+function publicFiles () {
+  return gulp.src(
+    ['app/public/**/*'])
+    .pipe(gulp.dest('dist/public'));
 }
 
 /**
