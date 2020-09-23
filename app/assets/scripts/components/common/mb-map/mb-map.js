@@ -181,7 +181,7 @@ function MbMap (props) {
 
   // If filtered layer source URL have changed, apply to the map
   useEffect(() => {
-    if (!filteredLayerUrl) return;
+    if (!filteredLayerUrl || !map) return;
 
     const style = map.getStyle();
     map.setStyle({
