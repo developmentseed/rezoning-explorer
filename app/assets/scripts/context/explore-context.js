@@ -14,7 +14,7 @@ import {
   showGlobalLoading,
   hideGlobalLoading
 } from '../components/common/global-loading';
-import {GRID_OPTIONS} from '../components/explore/query-form';
+import { GRID_OPTIONS } from '../components/explore/query-form';
 
 // Parse region and country files into area list
 const areas = regions

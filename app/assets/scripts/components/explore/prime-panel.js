@@ -86,7 +86,7 @@ function ExpMapPrimePanel (props) {
               presets={presets}
               gridMode={gridMode}
               setGridMode={setGridMode}
-              gridSize = {gridSize}
+              gridSize={gridSize}
               setGridSize={setGridSize}
               onAreaEdit={() => setShowSelectAreaModal(true)}
               onResourceEdit={() => setShowSelectResourceModal(true)}

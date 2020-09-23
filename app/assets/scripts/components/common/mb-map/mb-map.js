@@ -204,16 +204,21 @@ function MbMap (props) {
     // Update GeoJSON source, applying hover effect if any
     map.getSource(ZONES_BOUNDARIES_SOURCE_ID).setData({
       type: 'FeatureCollection',
-      features: currentZones/*
-      features: currentZones.map((z) => ({
-        ...z,
-        properties: {
-          ...z.properties,
-          hover: hoveredFeatures.includes(z.id)
-        }
-      }))*/
+      features: currentZones
     });
-  }, [currentZones, hoveredFeatures]);
+  }, [currentZones]);
+
+  useEffect(() => {
+    const [hovered] = hoveredFeatures;
+    if (!map) return;
+    map.setPaintProperty(ZONES_BOUNDARIES_LAYER_ID, 'fill-opacity',
+      [
+        'case',
+        ['==', ['get', 'id'], hovered || null],
+        0.5,
+        0.2
+      ]);
+  }, [hoveredFeatures]);
 
   return (
     <MapsContainer>
