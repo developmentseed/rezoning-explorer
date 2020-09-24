@@ -58,7 +58,8 @@ const initializeMap = ({
   selectedArea,
   setMap,
   mapContainer,
-  setHoveredFeatures
+  setHoveredFeatures,
+  setHovFt
 }) => {
   const map = new mapboxgl.Map({
     container: mapContainer.current,
@@ -120,18 +121,26 @@ const initializeMap = ({
 
     const highlighFeature = throttle(
       (e) => {
-        const features = map.queryRenderedFeatures(e.point, {
+        if (e.features) { setHoveredFeatures(e.features ? [e.features[0].properties.id] : []); }
+
+        // e.features[0].properties.hover = true
+
+      /*  const features = map.queryRenderedFeatures(e.point, {
           layers: [ZONES_BOUNDARIES_LAYER_ID]
         });
         const nextHoveredFeatures = features.map((f) => f.properties.id);
-        setHoveredFeatures(nextHoveredFeatures);
+        setHoveredFeatures(nextHoveredFeatures); */
       },
       100,
       {
         leading: true
       }
     );
-    map.on('mousemove', highlighFeature);
+    map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, highlighFeature);
+
+    /* map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
+      setHoveredFeatures(e.features[0]? [e.features[0].properties.id] : [])
+    }) */
 
     map.resize();
   });
