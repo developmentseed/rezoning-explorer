@@ -67,7 +67,7 @@ const initializeMap = ({
   setMap,
   mapContainer,
   setHoveredFeatures,
-  //updateHoveredFeature
+  updateHoveredFeature
 }) => {
   const map = new mapboxgl.Map({
     container: mapContainer.current,
@@ -108,8 +108,8 @@ const initializeMap = ({
         type: 'FeatureCollection',
         features: []
       },
-      // promoteId: 'id'
-      generateId: true
+       promoteId: 'id'
+      //generateId: true
     });
 
     // Zone boundaries source
@@ -122,15 +122,15 @@ const initializeMap = ({
         'fill-color': ['get', 'color'],
         'fill-opacity': [
           'case',
-          ['boolean', ['get', 'hover'], false],
-          // ['boolean', ['feature-state', 'hover'], false],
+          // ['boolean', ['get', 'hover'], false],
+          ['boolean', ['feature-state', 'hover'], false],
           0.5,
           0.2
         ]
       }
     });
 
-    const highlighFeature = throttle(
+    /* const highlighFeature = throttle(
       (e) => {
         if (e.features) { setHoveredFeatures(e.features ? [e.features[0].properties.id] : []); }
       },
@@ -138,8 +138,12 @@ const initializeMap = ({
       {
         leading: true
       }
-    );
-    map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, highlighFeature);
+    ); */
+    map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
+      if (e.features) {
+        setHoveredFeatures(e.features ? [e.features[0].properties.id] : []);
+      }
+    });
 
     map.resize();
   });
@@ -158,7 +162,7 @@ function MbMap (props) {
     setHoveredFeatures
   } = useContext(ExploreContext);
 
-  const lastHovered = usePrevious(hoveredFeatures);
+  const [lastHovered, setLastHovered] = useState(hoveredFeatures);
 
   const updateHoveredFeature = (next) => {
     setHoveredFeatures([next]);
@@ -167,7 +171,7 @@ function MbMap (props) {
   // Initialize map on mount
   useEffect(() => {
     if (!map) {
-      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeatures});
+      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeatures });
       return;
     }
 
@@ -224,6 +228,14 @@ function MbMap (props) {
 
   useEffect(() => {
     if (!map) return;
+
+    map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeatures[0] || null }, { hover: true });
+
+    if (hoveredFeatures[0] !== lastHovered[0]) {
+      map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: lastHovered[0] || null }, { hover: false });
+      setLastHovered(hoveredFeatures);
+    }
+    /*
     map.getSource(ZONES_BOUNDARIES_SOURCE_ID).setData({
       type: 'FeatureCollection',
       features: currentZones.map((z) => ({
@@ -233,8 +245,8 @@ function MbMap (props) {
           hover: hoveredFeatures.includes(z.id)
         }
       }))
-    });
-  }, [hoveredFeatures]);
+    }); */
+  }, [hoveredFeatures, lastHovered]);
 
   return (
     <MapsContainer>
