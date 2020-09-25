@@ -13,6 +13,7 @@ const PanelInner = styled.div`
 
 function ZoneAnalysisPanel (props) {
   const { currentZones, inputTouched } = props;
+  console.log('zone anal panel render')
 
   return (
     <PanelInner>

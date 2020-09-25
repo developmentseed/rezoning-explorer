@@ -10,6 +10,8 @@ import Button from '../../styles/button/button';
 import { formatThousands } from '../../utils/format';
 import get from 'lodash.get';
 import ExploreContext from '../../context/explore-context';
+import MapContext from '../../context/map-context';
+
 import ColorScale from '../common/color-scale';
 import zoneScoreColor from '../../styles/zoneScoreColors';
 
@@ -94,7 +96,8 @@ const Detail = styled(Dl)`
 function ExploreZones (props) {
   const { active } = props;
 
-  const { currentZones, hoveredFeature, setHoveredFeature } = useContext(ExploreContext);
+  const { currentZones /* hoveredFeature, setHoveredFeature */ } = useContext(ExploreContext);
+  const { hoveredFeature, setHoveredFeature} = useContext(MapContext);
 
   const [focusZone, setFocusZone] = useState(null);
 
@@ -114,8 +117,10 @@ function ExploreZones (props) {
   };
 
   const onRowHoverEvent = (event, row) => {
-    setHoveredFeature(event === 'enter' ? row : null);
+     setHoveredFeature(event === 'enter' ? row : null);
   };
+
+  console.log('consumer explore zones render');
 
   return (
     <ZonesWrapper active={active}>

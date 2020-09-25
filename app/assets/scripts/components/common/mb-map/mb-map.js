@@ -8,7 +8,7 @@ import { resizeMap } from './mb-map-utils';
 import throttle from 'lodash.throttle';
 
 import ExploreContext from '../../../context/explore-context';
-
+import MapContext from '../../../context/map-context';
 
 const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
@@ -59,8 +59,7 @@ const initializeMap = ({
   selectedArea,
   setMap,
   mapContainer,
-  setHoveredFeatures,
-  setHovFt
+  setHoveredFeature
 }) => {
   const map = new mapboxgl.Map({
     container: mapContainer.current,
@@ -123,7 +122,8 @@ const initializeMap = ({
     });
     map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features) {
-        setHovFt(e.features ? e.features[0].properties.id : null);
+        setHoveredFeature(e.features ? e.features[0].properties.id : null);
+        // setHoveredFeature(e.features ? e.features[0].properties.id : null);
       }
     });
 
@@ -139,17 +139,19 @@ function MbMap (props) {
   const {
     selectedArea,
     filteredLayerUrl,
-    currentZones,
-    hoveredFeature,
-    setHoveredFeature
+    currentZones
+    // hoveredFeature,
+    // setHoveredFeature
   } = useContext(ExploreContext);
+
+  const { hoveredFeature, setHoveredFeature } = useContext(MapContext);
 
   const [hovFt, setHovFt] = useState('');
 
   // Initialize map on mount
   useEffect(() => {
     if (!map) {
-      initializeMap({ setMap, mapContainer, selectedArea, setHovFt });
+      initializeMap({ setMap, mapContainer, selectedArea, setHovFt, setHoveredFeature });
       return;
     }
 
@@ -207,13 +209,14 @@ function MbMap (props) {
   useEffect(() => {
     if (!map) return;
 
-    map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hovFt || null }, { hover: true });
+    map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeature || null }, { hover: true });
+    //setHoveredFeature(hoveredFeature);
 
     return () => {
-      map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hovFt || null }, { hover: false });
+      map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeature || null }, { hover: false });
+      //setHoveredFeature(null);
     };
-
-  }, [hovFt]);
+  }, [hoveredFeature]);
 
   return (
     <MapsContainer>

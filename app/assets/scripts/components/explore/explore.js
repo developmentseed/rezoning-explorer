@@ -18,6 +18,7 @@ import MbMap from '../common/mb-map/mb-map';
 
 import ExploreContext from '../../context/explore-context';
 import Tour from '../common/tour';
+import { MapProvider } from '../../context/map-context';
 
 const ExploreCanvas = styled.div`
   display: grid;
@@ -71,23 +72,25 @@ function Explore () {
         </InpageHeader>
         <InpageBody>
           <ExploreCanvas>
-            <PrimePanel
-              onPanelChange={() => {
-                setTriggerResize(!triggerResize);
-              }}
-            />
-
-            <ExploreCarto>
-              <MbMap
-                triggerResize={triggerResize}
+            <MapProvider>
+              <PrimePanel
+                onPanelChange={() => {
+                  setTriggerResize(!triggerResize);
+                }}
               />
-            </ExploreCarto>
 
-            <SecPanel
-              onPanelChange={() => {
-                setTriggerResize(!triggerResize);
-              }}
-            />
+              <ExploreCarto>
+                <MbMap
+                  triggerResize={triggerResize}
+                />
+              </ExploreCarto>
+
+              <SecPanel
+                onPanelChange={() => {
+                  setTriggerResize(!triggerResize);
+                }}
+              />
+            </MapProvider>
           </ExploreCanvas>
         </InpageBody>
       </Inpage>
