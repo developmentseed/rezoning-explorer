@@ -9,13 +9,6 @@ import throttle from 'lodash.throttle';
 
 import ExploreContext from '../../../context/explore-context';
 
-const usePrevious = (value) => {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  }, [value]);
-  return ref.current;
-};
 
 const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
@@ -67,7 +60,7 @@ const initializeMap = ({
   setMap,
   mapContainer,
   setHoveredFeatures,
-  updateHoveredFeature
+  setHovFt
 }) => {
   const map = new mapboxgl.Map({
     container: mapContainer.current,
@@ -108,8 +101,8 @@ const initializeMap = ({
         type: 'FeatureCollection',
         features: []
       },
-       promoteId: 'id'
-      //generateId: true
+      promoteId: 'id'
+      // generateId: true
     });
 
     // Zone boundaries source
@@ -122,26 +115,15 @@ const initializeMap = ({
         'fill-color': ['get', 'color'],
         'fill-opacity': [
           'case',
-          // ['boolean', ['get', 'hover'], false],
           ['boolean', ['feature-state', 'hover'], false],
           0.5,
           0.2
         ]
       }
     });
-
-    /* const highlighFeature = throttle(
-      (e) => {
-        if (e.features) { setHoveredFeatures(e.features ? [e.features[0].properties.id] : []); }
-      },
-      100,
-      {
-        leading: true
-      }
-    ); */
     map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features) {
-        setHoveredFeatures(e.features ? [e.features[0].properties.id] : []);
+        setHovFt(e.features ? e.features[0].properties.id : null);
       }
     });
 
@@ -158,20 +140,16 @@ function MbMap (props) {
     selectedArea,
     filteredLayerUrl,
     currentZones,
-    hoveredFeatures,
-    setHoveredFeatures
+    hoveredFeature,
+    setHoveredFeature
   } = useContext(ExploreContext);
 
-  const [lastHovered, setLastHovered] = useState(hoveredFeatures);
-
-  const updateHoveredFeature = (next) => {
-    setHoveredFeatures([next]);
-  };
+  const [hovFt, setHovFt] = useState('');
 
   // Initialize map on mount
   useEffect(() => {
     if (!map) {
-      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeatures });
+      initializeMap({ setMap, mapContainer, selectedArea, setHovFt });
       return;
     }
 
@@ -229,24 +207,13 @@ function MbMap (props) {
   useEffect(() => {
     if (!map) return;
 
-    map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeatures[0] || null }, { hover: true });
+    map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hovFt || null }, { hover: true });
 
-    if (hoveredFeatures[0] !== lastHovered[0]) {
-      map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: lastHovered[0] || null }, { hover: false });
-      setLastHovered(hoveredFeatures);
-    }
-    /*
-    map.getSource(ZONES_BOUNDARIES_SOURCE_ID).setData({
-      type: 'FeatureCollection',
-      features: currentZones.map((z) => ({
-        ...z,
-        properties: {
-          ...z.properties,
-          hover: hoveredFeatures.includes(z.id)
-        }
-      }))
-    }); */
-  }, [hoveredFeatures, lastHovered]);
+    return () => {
+      map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hovFt || null }, { hover: false });
+    };
+
+  }, [hovFt]);
 
   return (
     <MapsContainer>

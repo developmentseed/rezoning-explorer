@@ -94,7 +94,7 @@ const Detail = styled(Dl)`
 function ExploreZones (props) {
   const { active } = props;
 
-  const { currentZones, hoveredFeatures, setHoveredFeatures } = useContext(ExploreContext);
+  const { currentZones, hoveredFeature, setHoveredFeature } = useContext(ExploreContext);
 
   const [focusZone, setFocusZone] = useState(null);
 
@@ -114,7 +114,7 @@ function ExploreZones (props) {
   };
 
   const onRowHoverEvent = (event, row) => {
-    setHoveredFeatures(event === 'enter' ? [row] : []);
+    setHoveredFeature(event === 'enter' ? row : null);
   };
 
   return (
@@ -142,7 +142,7 @@ function ExploreZones (props) {
               <Card
                 size='large'
                 key={data.id}
-                //isHovered={hoveredFeatures.includes(data.id)}
+                isHovered={hoveredFeature === data.id}
                 onMouseEnter={onRowHoverEvent.bind(null, 'enter', data.id)}
                 onMouseLeave={onRowHoverEvent.bind(null, 'leave', data.id)}
               >

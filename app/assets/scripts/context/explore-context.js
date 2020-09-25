@@ -61,7 +61,7 @@ export function ExploreProvider (props) {
   const [gridMode, setGridMode] = useState(false);
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
 
-  const [hoveredFeatures, setHoveredFeatures] = useState([]);
+  const [hoveredFeature, setHoveredFeature] = useState(null);
 
   const [tourStep, setTourStep] = useState(0);
 
@@ -155,8 +155,8 @@ export function ExploreProvider (props) {
           setZonesGenerated,
           filteredLayerUrl,
           updateFilteredLayer,
-          hoveredFeatures,
-          setHoveredFeatures,
+          hoveredFeature,
+          setHoveredFeature,
           tourStep,
           setTourStep
         }}
