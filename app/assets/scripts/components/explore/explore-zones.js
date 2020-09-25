@@ -142,7 +142,7 @@ function ExploreZones (props) {
               <Card
                 size='large'
                 key={data.id}
-                isHovered={hoveredFeatures.includes(data.id)}
+                //isHovered={hoveredFeatures.includes(data.id)}
                 onMouseEnter={onRowHoverEvent.bind(null, 'enter', data.id)}
                 onMouseLeave={onRowHoverEvent.bind(null, 'leave', data.id)}
               >
