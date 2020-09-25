@@ -61,8 +61,6 @@ export function ExploreProvider (props) {
   const [gridMode, setGridMode] = useState(false);
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
 
-  //const [hoveredFeature, setHoveredFeature] = useState(null);
-
   const [tourStep, setTourStep] = useState(0);
 
   useEffect(() => {
@@ -130,8 +128,6 @@ export function ExploreProvider (props) {
     generateZones(filterString, weights, lcoe);
   }
 
-  console.log('provider render')
-
   return (
     <>
       <ExploreContext.Provider
@@ -157,8 +153,6 @@ export function ExploreProvider (props) {
           setZonesGenerated,
           filteredLayerUrl,
           updateFilteredLayer,
-          // hoveredFeature,
-          // setHoveredFeature,
           tourStep,
           setTourStep
         }}

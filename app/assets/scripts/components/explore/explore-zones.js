@@ -96,8 +96,8 @@ const Detail = styled(Dl)`
 function ExploreZones (props) {
   const { active } = props;
 
-  const { currentZones /* hoveredFeature, setHoveredFeature */ } = useContext(ExploreContext);
-  const { hoveredFeature, setHoveredFeature} = useContext(MapContext);
+  const { currentZones } = useContext(ExploreContext);
+  const { hoveredFeature, setHoveredFeature } = useContext(MapContext);
 
   const [focusZone, setFocusZone] = useState(null);
 
@@ -117,10 +117,8 @@ function ExploreZones (props) {
   };
 
   const onRowHoverEvent = (event, row) => {
-     setHoveredFeature(event === 'enter' ? row : null);
+    setHoveredFeature(event === 'enter' ? row : null);
   };
-
-  console.log('consumer explore zones render');
 
   return (
     <ZonesWrapper active={active}>
