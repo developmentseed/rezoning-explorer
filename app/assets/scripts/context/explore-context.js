@@ -86,8 +86,20 @@ export function ExploreProvider (props) {
   }, [tourStep]);
 
   useEffect(() => {
+    let overrideId;
+
+    const nextFilter = energyAreaTypeMap[selectedResource];
+
+    if (nextFilter) {
+      setAreaTypeFilter(nextFilter);
+
+      if (selectedArea && !nextFilter.includes(selectedArea.type)) {
+        overrideId = null;
+      }
+    }
+
     const qString = qsStateHelper.getQs({
-      areaId: selectedAreaId,
+      areaId: overrideId === undefined ? selectedAreaId : overrideId,
       resourceId: selectedResource
     });
 
@@ -95,22 +107,18 @@ export function ExploreProvider (props) {
     if (qString !== location.search.substr(1)) {
       history.push({ search: qString });
     }
-    console.log(selectedAreaId);
   }, [selectedAreaId, selectedResource]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     const nextFilter = energyAreaTypeMap[selectedResource];
     if (nextFilter) {
       setAreaTypeFilter(nextFilter);
+
       if (selectedArea && !nextFilter.includes(selectedArea.type)) {
-        const qString = qsStateHelper.getQs({
-          areaId: null,
-          resourceId: selectedResource
-        });
-        history.push({ search: qString });
+        setSelectedAreaId('AFG');
       }
     }
-  }, [selectedResource, selectedArea]);
+  }, [selectedResource, selectedArea]); */
 
   // Update context on URL change
   useEffect(() => {
