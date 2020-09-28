@@ -17,7 +17,11 @@ import {
 
 // Parse region and country files into area list
 const areas = regions
-  .map((r) => ({ ...r, type: 'region' })) // add area type
+  .map((r) => ({
+    ...r,
+    type: 'region',
+    bounds: r.bounds ? r.bounds.split(',').map((x) => parseFloat(x)) : null
+  })) // add area type
   .concat(
     countries.map((c) => ({
       ...c,
