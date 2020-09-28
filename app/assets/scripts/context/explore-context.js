@@ -15,6 +15,8 @@ import {
   hideGlobalLoading
 } from '../components/common/global-loading';
 
+const OFFSHORE = 'Off-Shore Wind';
+
 // Parse region and country files into area list
 const areas = regions
   .map((r) => ({
@@ -30,7 +32,15 @@ const areas = regions
       alpha2: c.alpha2, // set id from alpha-2
       bounds: c.bounds ? c.bounds.split(',').map((x) => parseFloat(x)) : null
     }))
+    // add in the eez
   );
+
+const energyAreaTypeMap = {
+  'Off-Shore Wind': ['eez'],
+  'Solar PV': ['country', 'region'],
+  Wind: ['country', 'region'],
+  default: ['country', 'region']
+};
 const ExploreContext = createContext({});
 
 const qsStateHelper = new QsState({
@@ -58,6 +68,7 @@ export function ExploreProvider (props) {
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
     !qsState.resourceId
   );
+  const [areaTypeFilter, setAreaTypeFilter] = useState(energyAreaTypeMap[selectedResource] || energyAreaTypeMap.default);
 
   const [hoveredFeatures, setHoveredFeatures] = useState([]);
 
@@ -84,7 +95,22 @@ export function ExploreProvider (props) {
     if (qString !== location.search.substr(1)) {
       history.push({ search: qString });
     }
+    console.log(selectedAreaId);
   }, [selectedAreaId, selectedResource]);
+
+  useEffect(() => {
+    const nextFilter = energyAreaTypeMap[selectedResource];
+    if (nextFilter) {
+      setAreaTypeFilter(nextFilter);
+      if (selectedArea && !nextFilter.includes(selectedArea.type)) {
+        const qString = qsStateHelper.getQs({
+          areaId: null,
+          resourceId: selectedResource
+        });
+        history.push({ search: qString });
+      }
+    }
+  }, [selectedResource, selectedArea]);
 
   // Update context on URL change
   useEffect(() => {
@@ -93,6 +119,7 @@ export function ExploreProvider (props) {
     );
 
     if (areaId !== selectedAreaId) {
+      console.log(areaId);
       setSelectedAreaId(areaId);
       setShowSelectAreaModal(!areaId);
     }
@@ -133,6 +160,7 @@ export function ExploreProvider (props) {
       <ExploreContext.Provider
         value={{
           areas,
+          areaTypeFilter,
           selectedArea,
           setSelectedAreaId,
           selectedResource,

@@ -45,6 +45,7 @@ export const lcoeList = [
 ];
 
 export const weightsList = [
+
   { name: 'LCOE Generation', id: 'lcoe_gen', range: [0, 1], default: 1 },
   { name: 'LCOE Transmission', id: 'lcoe_transmission', range: [0, 1], default: 1 },
   { name: 'LCOE Road', id: 'lcoe_road', range: [0, 1], default: 1 },

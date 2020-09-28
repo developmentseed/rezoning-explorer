@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import ExploreContext from '../../context/explore-context';
@@ -34,18 +34,19 @@ const HeadlineTabs = styled.div`
 `;
 
 function ModalSelectArea () {
-  const [areaType, setAreaType] = useState('country');
-  const [searchValue, setSearchValue] = useState('');
-
   const {
     areas,
     selectedResource,
     showSelectAreaModal,
     setShowSelectAreaModal,
-    setSelectedAreaId
+    setSelectedAreaId,
+    areaTypeFilter
   } = useContext(ExploreContext);
+  console.log(areaTypeFilter)
+  const [areaType, setAreaType] = useState(areaTypeFilter[0]);
+  const [searchValue, setSearchValue] = useState('');
 
-  const areaList = areas.filter((a) => a.type === areaType);
+  useEffect(() => setAreaType(areaTypeFilter[0]), [areaTypeFilter]);
 
   return (
     <ModalSelect
@@ -55,22 +56,21 @@ function ModalSelectArea () {
           setShowSelectAreaModal(false);
         }
       }}
-      data={areaList}
+      data={areas.filter((a) => a.type === areaType)}
       renderHeader={() => (
         <HeaderWrapper id='select-area-modal-header'>
-          <HeadlineTabs>
-            <Headline
-              disabled={areaType !== 'country'}
-              onClick={() => setAreaType('country')}
-            >
-              Select Country
-            </Headline>
-            <Headline
-              disabled={areaType !== 'region'}
-              onClick={() => setAreaType('region')}
-            >
-              Select Region
-            </Headline>
+          <HeadlineTabs>{
+            areaTypeFilter.map(t => (
+              <Headline
+                key={t}
+                disabled={areaType !== t}
+                onClick={() => setAreaType(t)}
+              >
+              Select {t[0].toUpperCase() + t.slice(1)}
+              </Headline>
+
+            ))
+          }
           </HeadlineTabs>
           <SearchBar
             type='text'
