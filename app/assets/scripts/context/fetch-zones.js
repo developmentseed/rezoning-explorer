@@ -42,7 +42,7 @@ export default async function fetchZones (area, resource, filterString, weights,
   let features;
 
   if (resource === 'Off-Shore Wind') {
-    features = area.eez || []
+    features = area.eez || [];
   } else {
     const { body: zonesTopoJSON } = await fetchJSON(
       `/public/zones/${areaId}.topojson`

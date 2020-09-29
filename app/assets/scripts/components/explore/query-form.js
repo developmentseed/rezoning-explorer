@@ -28,10 +28,9 @@ const DEFAULT_RANGE = [0, 100];
 const DEFAULT_UNIT = '%';
 const turbineTypeMap = {
   'Off-Shore Wind': 2,
-  'Wind': 1,
+  Wind: 1,
   'Solar PV': 0
-}
-
+};
 
 const PanelOption = styled.div`
   ${({ hidden }) => hidden && 'display: none;'}
@@ -209,7 +208,7 @@ function QueryForm (props) {
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
   useEffect(() => {
-    lcoe.find(cost => cost.id === 'turbine_type').value =  turbineTypeMap[resource]
+    lcoe.find(cost => cost.id === 'turbine_type').value = turbineTypeMap[resource];
   }, [resource]);
 
   return (
