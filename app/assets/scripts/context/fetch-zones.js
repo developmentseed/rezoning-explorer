@@ -37,17 +37,24 @@ async function getZoneSummary (feature, filterString, weights, lcoe) {
   };
 }
 
-export default async function fetchZones (areaId, filterString, weights, lcoe) {
-  // Get area topojson
-  const { body: zonesTopoJSON } = await fetchJSON(
-    `/public/zones/${areaId}.topojson`
-  );
+export default async function fetchZones (area, filterString, weights, lcoe) {
+  const { id: areaId } = area;
+  let features;
 
-  // Parse topojson
-  const { features } = topojson.feature(
-    zonesTopoJSON,
-    zonesTopoJSON.objects[areaId]
-  );
+  if (area.type === 'eez') {
+    features = [area.feature];
+  } else {
+    const { body: zonesTopoJSON } = await fetchJSON(
+      `/public/zones/${areaId}.topojson`
+    );
+
+    // Parse topojson
+    features = topojson.feature(
+      zonesTopoJSON,
+      zonesTopoJSON.objects[areaId]
+    ).features;
+  }
+  // Get area topojson
 
   // Fetch Lcoe for each sub-area
   const zones = await Promise.all(

@@ -42,7 +42,6 @@ function ModalSelectArea () {
     setSelectedAreaId,
     areaTypeFilter
   } = useContext(ExploreContext);
-  console.log(areaTypeFilter)
   const [areaType, setAreaType] = useState(areaTypeFilter[0]);
   const [searchValue, setSearchValue] = useState('');
 

@@ -112,6 +112,7 @@
     "@devseed-ui/collecticons": "^0.13.0",
     "@devseed-ui/form": "^0.11.2",
     "@devseed-ui/modal": "^1.0.3",
+    "@turf/bbox": "^6.0.1",
     "clipboard": "^2.0.6",
     "date-fns": "^2.14.0",
     "element-resize-event": "^3.0.3",

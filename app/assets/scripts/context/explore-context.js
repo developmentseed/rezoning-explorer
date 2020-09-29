@@ -1,6 +1,8 @@
 import React, { createContext, useEffect, useState } from 'react';
 import T from 'prop-types';
 import { useHistory, useLocation } from 'react-router';
+import * as topojson from 'topojson-client';
+import bbox from '@turf/bbox';
 import QsState from '../utils/qs-state';
 
 import config from '../config';
@@ -14,26 +16,6 @@ import {
   showGlobalLoading,
   hideGlobalLoading
 } from '../components/common/global-loading';
-
-const OFFSHORE = 'Off-Shore Wind';
-
-// Parse region and country files into area list
-const areas = regions
-  .map((r) => ({
-    ...r,
-    type: 'region',
-    bounds: r.bounds ? r.bounds.split(',').map((x) => parseFloat(x)) : null
-  })) // add area type
-  .concat(
-    countries.map((c) => ({
-      ...c,
-      id: c.gid, // set id from GADM GID
-      type: 'country', // add area type
-      alpha2: c.alpha2, // set id from alpha-2
-      bounds: c.bounds ? c.bounds.split(',').map((x) => parseFloat(x)) : null
-    }))
-    // add in the eez
-  );
 
 const energyAreaTypeMap = {
   'Off-Shore Wind': ['eez'],
@@ -62,7 +44,9 @@ export function ExploreProvider (props) {
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
     !qsState.areaId
   );
-  const selectedArea = areas.find((a) => a.id === selectedAreaId);
+  const [areas, setAreas] = useState([]);
+
+  const [selectedArea, setSelectedArea] = useState(areas.find((a) => a.id === selectedAreaId));
 
   const [selectedResource, setSelectedResource] = useState(qsState.resourceId);
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
@@ -74,11 +58,57 @@ export function ExploreProvider (props) {
 
   const [tourStep, setTourStep] = useState(0);
 
+  const loadAreas = async () => {
+    showGlobalLoading();
+    // Parse region and country files into area list
+
+    const eez = await fetch('public/zones/eez_v11.topojson').then(e => e.json());
+    const { features: eezFeatures } = topojson.feature(
+      eez,
+      eez.objects.eez_v11
+    );
+
+    const areas = regions
+      .map((r) => ({
+        ...r,
+        type: 'region',
+        bounds: r.bounds ? r.bounds.split(',').map((x) => parseFloat(x)) : null
+      })) // add area type
+      .concat(
+        countries.map((c) => ({
+          ...c,
+          id: c.gid, // set id from GADM GID
+          type: 'country', // add area type
+          alpha2: c.alpha2, // set id from alpha-2
+          bounds: c.bounds ? c.bounds.split(',').map((x) => parseFloat(x)) : null
+        }))
+
+        // add in the eez
+      )
+      .concat(
+        eezFeatures.map(z => ({
+          feature: z,
+          id: z.properties.MRGID,
+          name: `${z.properties.MRGID}`,
+          type: 'eez',
+          bounds: bbox(z)
+        }))
+      );
+    setAreas(areas);
+    hideGlobalLoading();
+  };
+
+  useEffect(() => {
+    setSelectedArea(areas.find((a) => `${a.id}` === `${selectedAreaId}`));
+  }, [areas, selectedAreaId]);
+
   useEffect(() => {
     const visited = localStorage.getItem('site-tour');
     if (visited !== null) {
       setTourStep(Number(visited));
     }
+
+    loadAreas();
   }, []);
 
   useEffect(() => {
@@ -109,17 +139,6 @@ export function ExploreProvider (props) {
     }
   }, [selectedAreaId, selectedResource]);
 
-  /* useEffect(() => {
-    const nextFilter = energyAreaTypeMap[selectedResource];
-    if (nextFilter) {
-      setAreaTypeFilter(nextFilter);
-
-      if (selectedArea && !nextFilter.includes(selectedArea.type)) {
-        setSelectedAreaId('AFG');
-      }
-    }
-  }, [selectedResource, selectedArea]); */
-
   // Update context on URL change
   useEffect(() => {
     const { areaId, resourceId } = qsStateHelper.getState(
@@ -127,7 +146,6 @@ export function ExploreProvider (props) {
     );
 
     if (areaId !== selectedAreaId) {
-      console.log(areaId);
       setSelectedAreaId(areaId);
       setShowSelectAreaModal(!areaId);
     }
@@ -144,7 +162,7 @@ export function ExploreProvider (props) {
 
   const generateZones = async (filterString, weights, lcoe) => {
     showGlobalLoading();
-    const zones = await fetchZones(selectedAreaId, filterString, weights, lcoe);
+    const zones = await fetchZones(selectedArea, filterString, weights, lcoe);
     setCurrentZones(zones);
     setInputTouched(false);
     !zonesGenerated && setZonesGenerated(true);

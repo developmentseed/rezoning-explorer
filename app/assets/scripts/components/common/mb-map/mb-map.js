@@ -170,7 +170,7 @@ function MbMap (props) {
     if (selectedArea && selectedArea.bounds) {
       map.fitBounds(selectedArea.bounds, fitBoundsOptions);
     }
-  }, [selectedArea]);
+  }, [selectedArea, map]);
 
   // If filtered layer source URL have changed, apply to the map
   useEffect(() => {
