@@ -26,6 +26,12 @@ import ExploreContext from '../../context/explore-context';
 const GRID_OPTIONS = [9, 25, 50];
 const DEFAULT_RANGE = [0, 100];
 const DEFAULT_UNIT = '%';
+const turbineTypeMap = {
+  'Off-Shore Wind': 2,
+  'Wind': 1,
+  'Solar PV': 0
+}
+
 
 const PanelOption = styled.div`
   ${({ hidden }) => hidden && 'display: none;'}
@@ -202,6 +208,9 @@ function QueryForm (props) {
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
+  useEffect(() => {
+    lcoe.find(cost => cost.id === 'turbine_type').value =  turbineTypeMap[resource]
+  }, [resource]);
 
   return (
     <PanelBlock>
@@ -406,6 +415,7 @@ function QueryForm (props) {
                 id={`${cost.name}`}
                 name={`${cost.name}`}
                 label={cost.name}
+                disabled={cost.readOnly}
                 value={cost.value || cost.range[0]}
                 validate={cost.range ? validateRangeNum(cost.range[0], cost.range[1]) : () => true}
                 onChange={(v) => {

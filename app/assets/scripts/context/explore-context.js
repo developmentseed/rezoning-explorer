@@ -96,17 +96,15 @@ export function ExploreProvider (props) {
     let nextArea = areas.find((a) => `${a.id}` === `${selectedAreaId}`);
 
     if (selectedResource === 'Off-Shore Wind' && nextArea) {
-      const initBounds = bboxPolygon([-10,10,0,10]);
+      const initBounds = bboxPolygon(nextArea.bounds);
       const eezs = nextArea.eez ? nextArea.eez : [];
       const fc = featureCollection([initBounds, ...eezs]);
       const newBounds = bbox(fc);
       nextArea = {
         ...nextArea,
         bounds: newBounds
-      }
+      };
     }
-
-    nextArea && console.log(nextArea.bounds)
 
     setSelectedArea(nextArea);
   }, [areas, selectedAreaId, selectedResource]);
@@ -150,8 +148,6 @@ export function ExploreProvider (props) {
     }
   }, [selectedAreaId, selectedResource]);
 
- 
-
   // Update context on URL change
   useEffect(() => {
     const { areaId, resourceId } = qsStateHelper.getState(
@@ -175,7 +171,7 @@ export function ExploreProvider (props) {
 
   const generateZones = async (filterString, weights, lcoe) => {
     showGlobalLoading();
-    const zones = await fetchZones(selectedArea, filterString, weights, lcoe);
+    const zones = await fetchZones(selectedArea, selectedResource, filterString, weights, lcoe);
     setCurrentZones(zones);
     setInputTouched(false);
     !zonesGenerated && setZonesGenerated(true);

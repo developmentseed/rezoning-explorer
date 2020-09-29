@@ -42,11 +42,11 @@ function ModalSelectArea () {
     setSelectedAreaId
   //  areaTypeFilter
   } = useContext(ExploreContext);
-  //const [areaType, setAreaType] = useState(areaTypeFilter[0]);
+  // const [areaType, setAreaType] = useState(areaTypeFilter[0]);
   const [areaType, setAreaType] = useState('country');
   const [searchValue, setSearchValue] = useState('');
 
-  //useEffect(() => setAreaType(areaTypeFilter[0]), [areaTypeFilter]);
+  // useEffect(() => setAreaType(areaTypeFilter[0]), [areaTypeFilter]);
 
   return (
     <ModalSelect

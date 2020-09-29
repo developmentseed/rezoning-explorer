@@ -37,12 +37,12 @@ async function getZoneSummary (feature, filterString, weights, lcoe) {
   };
 }
 
-export default async function fetchZones (area, filterString, weights, lcoe) {
+export default async function fetchZones (area, resource, filterString, weights, lcoe) {
   const { id: areaId } = area;
   let features;
 
-  if (area.type === 'eez') {
-    features = [area.feature];
+  if (resource === 'Off-Shore Wind') {
+    features = area.eez || []
   } else {
     const { body: zonesTopoJSON } = await fetchJSON(
       `/public/zones/${areaId}.topojson`
@@ -54,6 +54,7 @@ export default async function fetchZones (area, filterString, weights, lcoe) {
       zonesTopoJSON.objects[areaId]
     ).features;
   }
+
   // Get area topojson
 
   // Fetch Lcoe for each sub-area

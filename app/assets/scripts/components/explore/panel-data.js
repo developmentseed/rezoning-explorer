@@ -29,7 +29,7 @@ export const filtersLists = {
 };
 
 export const lcoeList = [
-  { name: 'Turbine / Solar Unit Type', id: 'turbine_type', range: [0, 100] },
+  { name: 'Turbine / Solar Unit Type', id: 'turbine_type', range: [0, 2], readOnly: true},
   { name: 'Capital Recovery Factor', id: 'crf' },
   { name: 'Generation - capital [USD/kW]', id: 'cg' },
   { name: 'Generation - fixed O&M [USD/MW/y]', id: 'omfg' },
