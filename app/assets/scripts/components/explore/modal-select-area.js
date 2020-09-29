@@ -39,13 +39,14 @@ function ModalSelectArea () {
     selectedResource,
     showSelectAreaModal,
     setShowSelectAreaModal,
-    setSelectedAreaId,
-    areaTypeFilter
+    setSelectedAreaId
+  //  areaTypeFilter
   } = useContext(ExploreContext);
-  const [areaType, setAreaType] = useState(areaTypeFilter[0]);
+  //const [areaType, setAreaType] = useState(areaTypeFilter[0]);
+  const [areaType, setAreaType] = useState('country');
   const [searchValue, setSearchValue] = useState('');
 
-  useEffect(() => setAreaType(areaTypeFilter[0]), [areaTypeFilter]);
+  //useEffect(() => setAreaType(areaTypeFilter[0]), [areaTypeFilter]);
 
   return (
     <ModalSelect
@@ -59,7 +60,8 @@ function ModalSelectArea () {
       renderHeader={() => (
         <HeaderWrapper id='select-area-modal-header'>
           <HeadlineTabs>{
-            areaTypeFilter.map(t => (
+            // areaTypeFilter.map(t => (
+            ['country', 'region'].map(t => (
               <Headline
                 key={t}
                 disabled={areaType !== t}

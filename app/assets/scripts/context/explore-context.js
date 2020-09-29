@@ -52,7 +52,7 @@ export function ExploreProvider (props) {
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
     !qsState.resourceId
   );
-  const [areaTypeFilter, setAreaTypeFilter] = useState(energyAreaTypeMap[selectedResource] || energyAreaTypeMap.default);
+  //const [areaTypeFilter, setAreaTypeFilter] = useState(energyAreaTypeMap[selectedResource] || energyAreaTypeMap.default);
 
   const [hoveredFeatures, setHoveredFeatures] = useState([]);
 
@@ -67,6 +67,13 @@ export function ExploreProvider (props) {
       eez,
       eez.objects.eez_v11
     );
+    const eezCountries = eezFeatures.reduce((accum, z) => {
+      const id = z.properties.ISO_SOV1;
+      accum.set(id,
+        [...(accum.has(id) ? accum.get(id) : []), z]
+      );
+      return accum;
+    }, new Map());
 
     const areas = regions
       .map((r) => ({
@@ -80,18 +87,8 @@ export function ExploreProvider (props) {
           id: c.gid, // set id from GADM GID
           type: 'country', // add area type
           alpha2: c.alpha2, // set id from alpha-2
-          bounds: c.bounds ? c.bounds.split(',').map((x) => parseFloat(x)) : null
-        }))
-
-        // add in the eez
-      )
-      .concat(
-        eezFeatures.map(z => ({
-          feature: z,
-          id: z.properties.MRGID,
-          name: `${z.properties.MRGID}`,
-          type: 'eez',
-          bounds: bbox(z)
+          bounds: c.bounds ? c.bounds.split(',').map((x) => parseFloat(x)) : null,
+          eez: eezCountries.get(c.gid)
         }))
       );
     setAreas(areas);
@@ -118,6 +115,7 @@ export function ExploreProvider (props) {
   useEffect(() => {
     let overrideId;
 
+    /*
     const nextFilter = energyAreaTypeMap[selectedResource];
 
     if (nextFilter) {
@@ -127,6 +125,7 @@ export function ExploreProvider (props) {
         overrideId = null;
       }
     }
+      */
 
     const qString = qsStateHelper.getQs({
       areaId: overrideId === undefined ? selectedAreaId : overrideId,
@@ -186,7 +185,7 @@ export function ExploreProvider (props) {
       <ExploreContext.Provider
         value={{
           areas,
-          areaTypeFilter,
+          //areaTypeFilter,
           selectedArea,
           setSelectedAreaId,
           selectedResource,

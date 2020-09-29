@@ -14,10 +14,5 @@
   {
     "id": "southern-africa",
     "name": "Southern Africa"
-  },
-  {
-    "id": "eez_v11",
-    "name": "Exclusive Economic Zones",
-    "bounds": "-180.0000, -90.0000, 180.0000, 90.0000"
   }
 ]
