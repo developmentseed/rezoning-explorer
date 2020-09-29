@@ -147,7 +147,8 @@ function MbMap (props) {
     filteredLayerUrl,
     currentZones,
     hoveredFeatures,
-    setHoveredFeatures
+    setHoveredFeatures,
+    selectedResource
   } = useContext(ExploreContext);
 
   // Initialize map on mount

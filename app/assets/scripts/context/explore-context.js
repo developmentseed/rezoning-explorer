@@ -3,6 +3,9 @@ import T from 'prop-types';
 import { useHistory, useLocation } from 'react-router';
 import * as topojson from 'topojson-client';
 import bbox from '@turf/bbox';
+import bboxPolygon from '@turf/bbox-polygon';
+
+import { featureCollection } from '@turf/helpers';
 import QsState from '../utils/qs-state';
 
 import config from '../config';
@@ -17,12 +20,6 @@ import {
   hideGlobalLoading
 } from '../components/common/global-loading';
 
-const energyAreaTypeMap = {
-  'Off-Shore Wind': ['eez'],
-  'Solar PV': ['country', 'region'],
-  Wind: ['country', 'region'],
-  default: ['country', 'region']
-};
 const ExploreContext = createContext({});
 
 const qsStateHelper = new QsState({
@@ -52,7 +49,7 @@ export function ExploreProvider (props) {
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
     !qsState.resourceId
   );
-  //const [areaTypeFilter, setAreaTypeFilter] = useState(energyAreaTypeMap[selectedResource] || energyAreaTypeMap.default);
+  // const [areaTypeFilter, setAreaTypeFilter] = useState(energyAreaTypeMap[selectedResource] || energyAreaTypeMap.default);
 
   const [hoveredFeatures, setHoveredFeatures] = useState([]);
 
@@ -68,7 +65,7 @@ export function ExploreProvider (props) {
       eez.objects.eez_v11
     );
     const eezCountries = eezFeatures.reduce((accum, z) => {
-      const id = z.properties.ISO_SOV1;
+      const id = z.properties.ISO_TER1;
       accum.set(id,
         [...(accum.has(id) ? accum.get(id) : []), z]
       );
@@ -96,8 +93,23 @@ export function ExploreProvider (props) {
   };
 
   useEffect(() => {
-    setSelectedArea(areas.find((a) => `${a.id}` === `${selectedAreaId}`));
-  }, [areas, selectedAreaId]);
+    let nextArea = areas.find((a) => `${a.id}` === `${selectedAreaId}`);
+
+    if (selectedResource === 'Off-Shore Wind' && nextArea) {
+      const initBounds = bboxPolygon([-10,10,0,10]);
+      const eezs = nextArea.eez ? nextArea.eez : [];
+      const fc = featureCollection([initBounds, ...eezs]);
+      const newBounds = bbox(fc);
+      nextArea = {
+        ...nextArea,
+        bounds: newBounds
+      }
+    }
+
+    nextArea && console.log(nextArea.bounds)
+
+    setSelectedArea(nextArea);
+  }, [areas, selectedAreaId, selectedResource]);
 
   useEffect(() => {
     const visited = localStorage.getItem('site-tour');
@@ -137,6 +149,8 @@ export function ExploreProvider (props) {
       history.push({ search: qString });
     }
   }, [selectedAreaId, selectedResource]);
+
+ 
 
   // Update context on URL change
   useEffect(() => {
@@ -185,7 +199,7 @@ export function ExploreProvider (props) {
       <ExploreContext.Provider
         value={{
           areas,
-          //areaTypeFilter,
+          // areaTypeFilter,
           selectedArea,
           setSelectedAreaId,
           selectedResource,
