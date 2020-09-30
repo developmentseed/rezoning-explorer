@@ -88,7 +88,7 @@ export const filtersLists = {
       isRange: true,
       input: {
         type: SLIDER,
-        range: [0, 1000000],
+        range: [0, 10000],
         isRange: true
       }
 
@@ -111,7 +111,7 @@ export const filtersLists = {
       isRange: true,
       input: {
         type: SLIDER,
-        range: [0, 1000000],
+        range: [0, 10000],
         isRange: true
       }
     },
@@ -122,7 +122,7 @@ export const filtersLists = {
       isRange: true,
       input: {
         type: SLIDER,
-        range: [0, 1000000],
+        range: [0, 10000],
         isRange: true
       }
 
