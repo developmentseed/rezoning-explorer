@@ -1,9 +1,10 @@
 import * as topojson from 'topojson-client';
-import { fetchJSON } from '../context/reduxeed';
+import { fetchJSON, makeAPIReducer } from '../context/reduxeed';
 import config from '../config';
 import get from 'lodash.get';
 import zoneScoreColor from '../styles/zoneScoreColors';
 import theme from '../styles/theme/theme';
+import { wrapLogReducer } from './contexeed';
 
 const { apiEndpoint } = config;
 
@@ -37,43 +38,54 @@ async function getZoneSummary (feature, filterString, weights, lcoe) {
   };
 }
 
-export default async function fetchZones (areaId, filterString, weights, lcoe) {
+export const fetchZonesReducer = wrapLogReducer(makeAPIReducer('FETCH_ZONES'));
+/*
+ * Make all asynchronous requests to load zone score from REZoning API
+ * dispatch updates to some context using 'dispatch' function
+*/
+export async function fetchZones (areaId, filterString, weights, lcoe, dispatch) {
+  dispatch({ type: 'REQUEST_FETCH_ZONES' });
+  try {
   // Get area topojson
-  const { body: zonesTopoJSON } = await fetchJSON(
+    const { body: zonesTopoJSON } = await fetchJSON(
     `/public/zones/${areaId}.topojson`
-  );
+    );
 
-  // Parse topojson
-  const { features } = topojson.feature(
-    zonesTopoJSON,
-    zonesTopoJSON.objects[areaId]
-  );
+    // Parse topojson
+    const { features } = topojson.feature(
+      zonesTopoJSON,
+      zonesTopoJSON.objects[areaId]
+    );
 
-  // Fetch Lcoe for each sub-area
-  const zones = await Promise.all(
-    features.map((z) => getZoneSummary(z, filterString, weights, lcoe))
-  );
+    // Fetch Lcoe for each sub-area
+    const zones = await Promise.all(
+      features.map((z) => getZoneSummary(z, filterString, weights, lcoe))
+    );
 
-  const maxScore = Math.max(
-    ...zones.map((z) => get(z, 'properties.summary.zone_score', 0))
-  );
+    const maxScore = Math.max(
+      ...zones.map((z) => get(z, 'properties.summary.zone_score', 0))
+    );
 
-  return zones.map((z) => {
-    if (!get(z, 'properties.summary.zone_score')) return z;
+    const data = zones.map((z) => {
+      if (!get(z, 'properties.summary.zone_score')) return z;
 
-    const zoneScore = z.properties.summary.zone_score / maxScore;
-    const color = zoneScoreColor(zoneScore);
+      const zoneScore = z.properties.summary.zone_score / maxScore;
+      const color = zoneScoreColor(zoneScore);
 
-    return {
-      ...z,
-      properties: {
-        ...z.properties,
-        color,
-        summary: {
-          ...z.properties.summary,
-          zone_score: zoneScore
+      return {
+        ...z,
+        properties: {
+          ...z.properties,
+          color,
+          summary: {
+            ...z.properties.summary,
+            zone_score: zoneScore
+          }
         }
-      }
-    };
-  });
+      };
+    });
+    dispatch({ type: 'RECEIVE_FETCH_ZONES', data: data });
+  } catch (err) {
+    dispatch({ type: 'ERROR', error: err });
+  }
 }

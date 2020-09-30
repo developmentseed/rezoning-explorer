@@ -92,15 +92,13 @@ const Detail = styled(Dl)`
 `;
 
 function ExploreZones (props) {
-  const { active } = props;
+  const { active, currentZones } = props;
 
-  const { currentZones, hoveredFeatures, setHoveredFeatures } = useContext(ExploreContext);
+  const { hoveredFeatures, setHoveredFeatures } = useContext(ExploreContext);
 
   const [focusZone, setFocusZone] = useState(null);
 
   const [selectedZones, setSelectedZones] = useState({});
-
-  const zoneData = currentZones || [];
 
   const formatIndicator = function (id, value) {
     switch (id) {
@@ -137,7 +135,7 @@ function ExploreZones (props) {
         <>
           <CardList
             numColumns={1}
-            data={zoneData}
+            data={currentZones}
             renderCard={(data) => (
               <Card
                 size='large'
@@ -197,7 +195,8 @@ ExportZonesButton.propTypes = {
 export { ExportZonesButton };
 
 ExploreZones.propTypes = {
-  active: T.bool
+  active: T.bool,
+  currentZones: T.array
 };
 
 export default ExploreZones;

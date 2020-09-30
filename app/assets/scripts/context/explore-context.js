@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState, useReducer } from 'react';
 import T from 'prop-types';
 import { useHistory, useLocation } from 'react-router';
 import QsState from '../utils/qs-state';
@@ -8,12 +8,13 @@ import config from '../config';
 import countries from '../../data/countries.json';
 import regions from '../../data/regions.json';
 
-import fetchZones from './fetch-zones';
+import { fetchZonesReducer, fetchZones } from './fetch-zones';
 
 import {
   showGlobalLoading,
   hideGlobalLoading
 } from '../components/common/global-loading';
+import { initialApiRequestState } from './contexeed';
 
 // Parse region and country files into area list
 const areas = regions
@@ -82,6 +83,10 @@ export function ExploreProvider (props) {
     }
   }, [selectedAreaId, selectedResource]);
 
+  useEffect(() => {
+    dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
+  }, [selectedAreaId]);
+
   // Update context on URL change
   useEffect(() => {
     const { areaId, resourceId } = qsStateHelper.getState(
@@ -101,16 +106,21 @@ export function ExploreProvider (props) {
 
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
-  const [currentZones, setCurrentZones] = useState(null);
+
+  const [currentZones, dispatchCurrentZones] = useReducer(fetchZonesReducer, initialApiRequestState);
 
   const generateZones = async (filterString, weights, lcoe) => {
     showGlobalLoading();
-    const zones = await fetchZones(selectedAreaId, filterString, weights, lcoe);
-    setCurrentZones(zones);
-    setInputTouched(false);
-    !zonesGenerated && setZonesGenerated(true);
-    hideGlobalLoading();
+    fetchZones(selectedAreaId, filterString, weights, lcoe, dispatchCurrentZones);
   };
+
+  useEffect(() => {
+    if (currentZones.fetched) {
+      hideGlobalLoading();
+      !zonesGenerated && setZonesGenerated(true);
+      setInputTouched(false);
+    }
+  }, [currentZones]);
 
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
 
