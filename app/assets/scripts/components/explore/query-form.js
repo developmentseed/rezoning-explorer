@@ -24,6 +24,12 @@ import GridSetter from './grid-setter';
 import ExploreContext from '../../context/explore-context';
 import { INPUT_CONSTANTS } from './panel-data';
 
+const turbineTypeMap = {
+  'Off-Shore Wind': 2,
+  Wind: 1,
+  'Solar PV': 0
+};
+
 const { SLIDER, BOOL, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
 const PanelOption = styled.div`
   ${({ hidden }) => hidden && 'display: none;'}
@@ -217,6 +223,7 @@ function QueryForm (props) {
           <StressedFormGroupInput
             inputType='number'
             inputSize='small'
+            disabled={option.readOnly}
             id={`${option.name}`}
             name={`${option.name}`}
             label={option.name}
@@ -260,6 +267,9 @@ function QueryForm (props) {
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
+  useEffect(() => {
+    lcoe.find(cost => cost.id === 'turbine_type').input.value = turbineTypeMap[resource];
+  }, [resource]);
 
   return (
     <PanelBlock>
@@ -312,6 +322,7 @@ function QueryForm (props) {
               setGridSize={setGridSize}
               gridMode={gridMode}
               setGridMode={setGridMode}
+              disableBoundaries={resource === 'Off-Shore Wind'}
             />
           </HeadOptionHeadline>
         </HeadOption>

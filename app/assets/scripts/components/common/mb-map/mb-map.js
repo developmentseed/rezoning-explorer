@@ -5,6 +5,7 @@ import mapboxgl from 'mapbox-gl';
 import config from '../../../config';
 import { glsp } from '../../../styles/utils/theme-values';
 import { resizeMap } from './mb-map-utils';
+import { featureCollection } from '@turf/helpers';
 
 import ExploreContext from '../../../context/explore-context';
 import MapContext from '../../../context/map-context';
@@ -17,6 +18,8 @@ const FILTERED_LAYER_SOURCE = 'FILTERED_LAYER_SOURCE';
 const FILTERED_LAYER_ID = 'FILTERED_LAYER_ID';
 const ZONES_BOUNDARIES_SOURCE_ID = 'ZONES_BOUNDARIES_SOURCE_ID';
 const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
+const EEZ_BOUNDARIES_SOURCE_ID = 'EEZ_BOUNDARIES_SOURCE_ID';
+const EEZ_BOUNDARIES_LAYER_ID = 'EEZ_BOUNDARIES_LAYER_ID';
 
 const MapsContainer = styled.div`
   position: relative;
@@ -118,6 +121,28 @@ const initializeMap = ({
         ]
       }
     });
+
+    map.addSource(EEZ_BOUNDARIES_SOURCE_ID, {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: []
+      }
+    });
+
+    // Zone boundaries source
+    map.addLayer({
+      id: EEZ_BOUNDARIES_LAYER_ID,
+      type: 'fill',
+      source: EEZ_BOUNDARIES_SOURCE_ID,
+      layout: {},
+      paint: {
+        'fill-color': '#efefef',
+        'fill-opacity': 0.4,
+        'fill-outline-color': '#232323'
+      }
+    });
+
     map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features) {
         setHoveredFeature(e.features ? e.features[0].properties.id : null);
@@ -135,6 +160,7 @@ function MbMap (props) {
 
   const {
     selectedArea,
+    selectedResource,
     filteredLayerUrl,
     currentZones
   } = useContext(ExploreContext);
@@ -168,7 +194,17 @@ function MbMap (props) {
     if (selectedArea && selectedArea.bounds) {
       map.fitBounds(selectedArea.bounds, fitBoundsOptions);
     }
-  }, [selectedArea]);
+  }, [selectedArea, map]);
+
+  useEffect(() => {
+    // Map must be loaded
+    if (!map) return;
+    if (selectedArea && selectedArea.eez && selectedResource === 'Off-Shore Wind') {
+      map.getSource(EEZ_BOUNDARIES_SOURCE_ID).setData(featureCollection(selectedArea.eez));
+    } else {
+      map.getSource(EEZ_BOUNDARIES_SOURCE_ID).setData(featureCollection([]));
+    }
+  }, [selectedArea, selectedResource, map]);
 
   // If filtered layer source URL have changed, apply to the map
   useEffect(() => {

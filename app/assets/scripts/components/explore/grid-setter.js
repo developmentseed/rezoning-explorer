@@ -93,7 +93,9 @@ function GridSetter (props) {
     setGridSize,
     gridSize,
     setGridMode,
-    gridMode
+    gridMode,
+    disableBoundaries,
+    disableGrid
   } = props;
   return (
     <DropdownWide
@@ -109,6 +111,8 @@ function GridSetter (props) {
             onClick={() => setGridMode(true)}
             active={gridMode}
             size='small'
+            disabled={disableGrid}
+
           > Use Grid
           </GridSetButton>
           <GridSetButton
@@ -117,6 +121,7 @@ function GridSetter (props) {
             onClick={() => setGridMode(false)}
             active={!gridMode}
             size='small'
+            disabled={disableBoundaries}
 
           > Use Boundaries
           </GridSetButton>
@@ -133,7 +138,9 @@ GridSetter.propTypes = {
   setGridSize: T.func,
   gridSize: T.number,
   setGridMode: T.func,
-  gridMode: T.bool
+  gridMode: T.bool,
+  disableBoundaries: T.bool,
+  disableGrid: T.bool
 };
 
 GridSlider.propTypes = {

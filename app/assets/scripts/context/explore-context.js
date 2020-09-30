@@ -1,6 +1,11 @@
 import React, { createContext, useEffect, useState, useReducer } from 'react';
 import T from 'prop-types';
 import { useHistory, useLocation } from 'react-router';
+import * as topojson from 'topojson-client';
+import bbox from '@turf/bbox';
+import bboxPolygon from '@turf/bbox-polygon';
+
+import { featureCollection } from '@turf/helpers';
 import QsState from '../utils/qs-state';
 
 import config from '../config';
@@ -19,18 +24,6 @@ import { INPUT_CONSTANTS } from '../components/explore/panel-data';
 import { initialApiRequestState } from './contexeed';
 const { GRID_OPTIONS } = INPUT_CONSTANTS;
 
-// Parse region and country files into area list
-const areas = regions
-  .map((r) => ({ ...r, type: 'region' })) // add area type
-  .concat(
-    countries.map((c) => ({
-      ...c,
-      id: c.gid, // set id from GADM GID
-      type: 'country', // add area type
-      alpha2: c.alpha2, // set id from alpha-2
-      bounds: c.bounds ? c.bounds.split(',').map((x) => parseFloat(x)) : null
-    }))
-  );
 const ExploreContext = createContext({});
 
 const qsStateHelper = new QsState({
@@ -52,6 +45,7 @@ export function ExploreProvider (props) {
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
     !qsState.areaId
   );
+  const [areas, setAreas] = useState([]);
   useEffect(() => {
     setSelectedArea(areas.find((a) => a.id === selectedAreaId));
   }, [selectedAreaId]);
@@ -60,17 +54,75 @@ export function ExploreProvider (props) {
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
     !qsState.resourceId
   );
+  // const [areaTypeFilter, setAreaTypeFilter] = useState(energyAreaTypeMap[selectedResource] || energyAreaTypeMap.default);
 
   const [gridMode, setGridMode] = useState(false);
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
 
   const [tourStep, setTourStep] = useState(0);
 
+  const loadAreas = async () => {
+    showGlobalLoading();
+    // Parse region and country files into area list
+
+    const eez = await fetch('public/zones/eez_v11.topojson').then(e => e.json());
+    const { features: eezFeatures } = topojson.feature(
+      eez,
+      eez.objects.eez_v11
+    );
+    const eezCountries = eezFeatures.reduce((accum, z) => {
+      const id = z.properties.ISO_TER1;
+      accum.set(id,
+        [...(accum.has(id) ? accum.get(id) : []), z]
+      );
+      return accum;
+    }, new Map());
+
+    const areas = regions
+      .map((r) => ({
+        ...r,
+        type: 'region',
+        bounds: r.bounds ? r.bounds.split(',').map((x) => parseFloat(x)) : null
+      })) // add area type
+      .concat(
+        countries.map((c) => ({
+          ...c,
+          id: c.gid, // set id from GADM GID
+          type: 'country', // add area type
+          alpha2: c.alpha2, // set id from alpha-2
+          bounds: c.bounds ? c.bounds.split(',').map((x) => parseFloat(x)) : null,
+          eez: eezCountries.get(c.gid)
+        }))
+      );
+    setAreas(areas);
+    hideGlobalLoading();
+  };
+
+  useEffect(() => {
+    let nextArea = areas.find((a) => `${a.id}` === `${selectedAreaId}`);
+
+    if (selectedResource === 'Off-Shore Wind' && nextArea) {
+      const initBounds = bboxPolygon(nextArea.bounds);
+      const eezs = nextArea.eez ? nextArea.eez : [];
+      const fc = featureCollection([initBounds, ...eezs]);
+      const newBounds = bbox(fc);
+      nextArea = {
+        ...nextArea,
+        bounds: newBounds
+      };
+      setGridMode(true);
+    }
+
+    setSelectedArea(nextArea);
+  }, [areas, selectedAreaId, selectedResource]);
+
   useEffect(() => {
     const visited = localStorage.getItem('site-tour');
     if (visited !== null) {
       setTourStep(Number(visited));
     }
+
+    loadAreas();
   }, []);
 
   useEffect(() => {
@@ -78,8 +130,22 @@ export function ExploreProvider (props) {
   }, [tourStep]);
 
   useEffect(() => {
+    let overrideId;
+
+    /*
+    const nextFilter = energyAreaTypeMap[selectedResource];
+
+    if (nextFilter) {
+      setAreaTypeFilter(nextFilter);
+
+      if (selectedArea && !nextFilter.includes(selectedArea.type)) {
+        overrideId = null;
+      }
+    }
+      */
+
     const qString = qsStateHelper.getQs({
-      areaId: selectedAreaId,
+      areaId: overrideId === undefined ? selectedAreaId : overrideId,
       resourceId: selectedResource
     });
 
@@ -145,6 +211,7 @@ export function ExploreProvider (props) {
       <ExploreContext.Provider
         value={{
           areas,
+          // areaTypeFilter,
           selectedArea,
           setSelectedAreaId,
           selectedResource,

@@ -54,6 +54,7 @@ export async function fetchZones (grid, selectedArea, filterString, weights, lco
     let features;
 
     if (grid) {
+      // if offshore wind, we are already in grid and bounds are eez bounds
       features = squareGrid(selectedArea.bounds, grid, { units: 'kilometers' }).features
         .map((ft, i) => ({ ...ft, properties: { id: i } }));
     } else {

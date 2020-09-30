@@ -34,18 +34,19 @@ const HeadlineTabs = styled.div`
 `;
 
 function ModalSelectArea () {
-  const [areaType, setAreaType] = useState('country');
-  const [searchValue, setSearchValue] = useState('');
-
   const {
     areas,
     selectedResource,
     showSelectAreaModal,
     setShowSelectAreaModal,
     setSelectedAreaId
+  //  areaTypeFilter
   } = useContext(ExploreContext);
+  // const [areaType, setAreaType] = useState(areaTypeFilter[0]);
+  const [areaType, setAreaType] = useState('country');
+  const [searchValue, setSearchValue] = useState('');
 
-  const areaList = areas.filter((a) => a.type === areaType);
+  // useEffect(() => setAreaType(areaTypeFilter[0]), [areaTypeFilter]);
 
   return (
     <ModalSelect
@@ -55,22 +56,22 @@ function ModalSelectArea () {
           setShowSelectAreaModal(false);
         }
       }}
-      data={areaList}
+      data={areas.filter((a) => a.type === areaType)}
       renderHeader={() => (
         <HeaderWrapper id='select-area-modal-header'>
-          <HeadlineTabs>
-            <Headline
-              disabled={areaType !== 'country'}
-              onClick={() => setAreaType('country')}
-            >
-              Select Country
-            </Headline>
-            <Headline
-              disabled={areaType !== 'region'}
-              onClick={() => setAreaType('region')}
-            >
-              Select Region
-            </Headline>
+          <HeadlineTabs>{
+            // areaTypeFilter.map(t => (
+            ['country', 'region'].map(t => (
+              <Headline
+                key={t}
+                disabled={areaType !== t}
+                onClick={() => setAreaType(t)}
+              >
+              Select {t[0].toUpperCase() + t.slice(1)}
+              </Headline>
+
+            ))
+          }
           </HeadlineTabs>
           <SearchBar
             type='text'
