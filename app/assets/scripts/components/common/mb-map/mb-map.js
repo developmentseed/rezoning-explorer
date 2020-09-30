@@ -5,9 +5,9 @@ import mapboxgl from 'mapbox-gl';
 import config from '../../../config';
 import { glsp } from '../../../styles/utils/theme-values';
 import { resizeMap } from './mb-map-utils';
-import throttle from 'lodash.throttle';
 
 import ExploreContext from '../../../context/explore-context';
+import MapContext from '../../../context/map-context';
 
 const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
@@ -58,7 +58,7 @@ const initializeMap = ({
   selectedArea,
   setMap,
   mapContainer,
-  setHoveredFeatures
+  setHoveredFeature
 }) => {
   const map = new mapboxgl.Map({
     container: mapContainer.current,
@@ -98,7 +98,8 @@ const initializeMap = ({
       data: {
         type: 'FeatureCollection',
         features: []
-      }
+      },
+      promoteId: 'id'
     });
 
     // Zone boundaries source
@@ -111,27 +112,17 @@ const initializeMap = ({
         'fill-color': ['get', 'color'],
         'fill-opacity': [
           'case',
-          ['boolean', ['get', 'hover'], false],
+          ['boolean', ['feature-state', 'hover'], false],
           0.5,
           0.2
         ]
       }
     });
-
-    const highlighFeature = throttle(
-      (e) => {
-        const features = map.queryRenderedFeatures(e.point, {
-          layers: [ZONES_BOUNDARIES_LAYER_ID]
-        });
-        const nextHoveredFeatures = features.map((f) => f.properties.id);
-        setHoveredFeatures(nextHoveredFeatures);
-      },
-      100,
-      {
-        leading: true
+    map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
+      if (e.features) {
+        setHoveredFeature(e.features ? e.features[0].properties.id : null);
       }
-    );
-    map.on('mousemove', highlighFeature);
+    });
 
     map.resize();
   });
@@ -145,14 +136,21 @@ function MbMap (props) {
   const {
     selectedArea,
     filteredLayerUrl,
-    currentZones,
-    hoveredFeatures,
-    setHoveredFeatures
+    currentZones
   } = useContext(ExploreContext);
+
+  const { hoveredFeature, setHoveredFeature } = useContext(MapContext);
 
   // Initialize map on mount
   useEffect(() => {
-    if (!map) { initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeatures }); }
+    if (!map) {
+      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeature });
+      return;
+    }
+
+    if (selectedArea && selectedArea.bounds) {
+      map.fitBounds(selectedArea.bounds, fitBoundsOptions);
+    }
   }, [map]);
 
   // Watch window size changes
@@ -174,7 +172,7 @@ function MbMap (props) {
 
   // If filtered layer source URL have changed, apply to the map
   useEffect(() => {
-    if (!filteredLayerUrl) return;
+    if (!filteredLayerUrl || !map) return;
 
     const style = map.getStyle();
     map.setStyle({
@@ -197,15 +195,21 @@ function MbMap (props) {
     // Update GeoJSON source, applying hover effect if any
     map.getSource(ZONES_BOUNDARIES_SOURCE_ID).setData({
       type: 'FeatureCollection',
-      features: currentZones.getData().map((z) => ({
-        ...z,
-        properties: {
-          ...z.properties,
-          hover: hoveredFeatures.includes(z.id)
-        }
-      }))
+      features: currentZones.getData()
     });
-  }, [currentZones, hoveredFeatures]);
+  }, [currentZones]);
+
+  useEffect(() => {
+    if (!map) return;
+
+    map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeature || null }, { hover: true });
+    // setHoveredFeature(hoveredFeature);
+
+    return () => {
+      map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeature || null }, { hover: false });
+      // setHoveredFeature(null);
+    };
+  }, [hoveredFeature]);
 
   return (
     <MapsContainer>

@@ -9,7 +9,8 @@ import Dl from '../../styles/type/definition-list';
 import Button from '../../styles/button/button';
 import { formatThousands } from '../../utils/format';
 import get from 'lodash.get';
-import ExploreContext from '../../context/explore-context';
+import MapContext from '../../context/map-context';
+
 import ColorScale from '../common/color-scale';
 import zoneScoreColor from '../../styles/zoneScoreColors';
 
@@ -94,7 +95,8 @@ const Detail = styled(Dl)`
 function ExploreZones (props) {
   const { active, currentZones } = props;
 
-  const { hoveredFeatures, setHoveredFeatures } = useContext(ExploreContext);
+  // const { currentZones } = useContext(ExploreContext);
+  const { hoveredFeature, setHoveredFeature } = useContext(MapContext);
 
   const [focusZone, setFocusZone] = useState(null);
 
@@ -112,7 +114,7 @@ function ExploreZones (props) {
   };
 
   const onRowHoverEvent = (event, row) => {
-    setHoveredFeatures(event === 'enter' ? [row] : []);
+    setHoveredFeature(event === 'enter' ? row : null);
   };
 
   return (
@@ -140,7 +142,7 @@ function ExploreZones (props) {
               <Card
                 size='large'
                 key={data.id}
-                isHovered={hoveredFeatures.includes(data.id)}
+                isHovered={hoveredFeature === data.id}
                 onMouseEnter={onRowHoverEvent.bind(null, 'enter', data.id)}
                 onMouseLeave={onRowHoverEvent.bind(null, 'leave', data.id)}
               >
