@@ -83,6 +83,10 @@ export function ExploreProvider (props) {
     }
   }, [selectedAreaId, selectedResource]);
 
+  useEffect(() => {
+    dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
+  }, [selectedAreaId]);
+
   // Update context on URL change
   useEffect(() => {
     const { areaId, resourceId } = qsStateHelper.getState(
