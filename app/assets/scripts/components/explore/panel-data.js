@@ -135,6 +135,7 @@ export const lcoeList = [
     name: 'Turbine / Solar Unit Type',
     id: 'turbine_type',
     range: [0, 3],
+    readOnly: true,
     input: {
       type: TEXT,
       range: [0, 3]

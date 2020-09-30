@@ -223,6 +223,7 @@ function QueryForm (props) {
           <StressedFormGroupInput
             inputType='number'
             inputSize='small'
+            disabled={option.readOnly}
             id={`${option.name}`}
             name={`${option.name}`}
             label={option.name}
@@ -267,7 +268,7 @@ function QueryForm (props) {
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
   useEffect(() => {
-    lcoe.find(cost => cost.id === 'turbine_type').value = turbineTypeMap[resource];
+    lcoe.find(cost => cost.id === 'turbine_type').input.value = turbineTypeMap[resource];
   }, [resource]);
 
   return (

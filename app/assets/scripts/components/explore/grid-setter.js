@@ -138,7 +138,9 @@ GridSetter.propTypes = {
   setGridSize: T.func,
   gridSize: T.number,
   setGridMode: T.func,
-  gridMode: T.bool
+  gridMode: T.bool,
+  disableBoundaries: T.bool,
+  disableGrid: T.bool
 };
 
 GridSlider.propTypes = {
