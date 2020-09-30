@@ -5,10 +5,10 @@ import ExploreStats from './explore-stats';
 import ExploreZones from './explore-zones';
 
 const PanelInner = styled.div`
-  padding: 1rem 0;
   flex: 1;
   display: grid;
   grid-template-rows: auto 1fr;
+  padding: 1rem 1.5rem;
 `;
 
 function ZoneAnalysisPanel (props) {

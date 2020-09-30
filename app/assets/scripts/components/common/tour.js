@@ -47,7 +47,7 @@ const Inner = styled.div`
   width: 20rem;
   padding: 1rem;
   display: grid;
-  grid-template-rows: 1fr 3fr 1fr;
+  grid-template-rows: 1fr 3fr auto;
 `;
 
 const Header = styled.div`
@@ -110,7 +110,7 @@ const TourTooltip = ({
             {...primaryProps}
             size='small'
             variation='primary-raised-dark'
-            useIcon={['arrow-right', 'after']}
+            useIcon={index < size - 1 && ['arrow-right', 'after']}
             id='tour-next-btn'
           >
             { index === size - 1 ? 'Finish' : 'Next'}

@@ -10,14 +10,20 @@ import Button from '../../styles/button/button';
 import { formatThousands } from '../../utils/format';
 import get from 'lodash.get';
 import ExploreContext from '../../context/explore-context';
+import ColorScale from '../common/color-scale';
+import zoneScoreColor from '../../styles/zoneScoreColors';
 
+const FILTERED_PROPERTIES = {
+  lcoe: true,
+  zone_score: true
+};
 const ZonesWrapper = styled.section`
   ol.list-container {
     padding: 0;
     gap: 0;
   }
   display: grid;
-  grid-template-rows: auto 5fr;
+  grid-template-rows: auto auto 5fr;
   ${({ active }) =>
     active &&
     css`
@@ -27,7 +33,7 @@ const ZonesWrapper = styled.section`
 `;
 
 const ZonesHeader = styled(Subheading)`
-  padding: 1rem 1.5rem;
+  padding: 1rem 0rem;
 `;
 
 const Card = styled(CardWrapper)`
@@ -36,7 +42,7 @@ const Card = styled(CardWrapper)`
   box-shadow: none;
   border: none;
   border-bottom: 1px solid ${themeVal('color.baseAlphaC')};
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 0rem;
 
   ${({ isHovered }) => isHovered && '&,'}
   &:hover {
@@ -113,6 +119,7 @@ function ExploreZones (props) {
 
   return (
     <ZonesWrapper active={active}>
+      <ColorScale steps={10} heading='Weighted Zone Score' min={0} max={1} colorFunction={zoneScoreColor} />
       <ZonesHeader>All Zones</ZonesHeader>
 
       {focusZone ? (
@@ -144,14 +151,15 @@ function ExploreZones (props) {
                 </CardIcon>
                 <CardDetails>
                   {get(data, 'properties.summary.zone_score')
-                    ? Object.entries(data.properties.summary).map(
-                      ([label, value]) => (
+                    ? Object.entries(data.properties.summary)
+                      .filter(([label, value]) => FILTERED_PROPERTIES[label])
+                      .map(([label, value]) => (
                         <Detail key={`${data.id}-${label}`}>
                           <dt>{label.replace(/_/g, ' ')}</dt>
                           <dd>{formatIndicator(label, value)}</dd>
                         </Detail>
                       )
-                    )
+                      )
                     : 'UNAVAILABLE'}
                 </CardDetails>
               </Card>

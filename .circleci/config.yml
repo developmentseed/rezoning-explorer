@@ -78,6 +78,20 @@ jobs:
           root: ~/repo
           paths:
               - dist/*
+  deploy-surge-dev:
+    <<: *base_def
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *restore_cache_def
+      - attach_workspace:
+          at: /workspace
+      - run:
+          name: Deploy to surge
+          command: |
+            cp /workspace/dist/index.html /workspace/dist/200.html
+            ./node_modules/surge/lib/cli.js --project /workspace/dist --domain https://rezoning-dev.surge.sh
+
   deploy-surge:
     <<: *base_def
     steps:
@@ -107,7 +121,7 @@ workflows:
       - build:
           requires:
             - prepare
-      - deploy-surge:
+      - deploy-surge-dev:
           requires:
             - lint
             - test
@@ -115,3 +129,11 @@ workflows:
           filters:
             branches:
               only: develop
+      - deploy-surge:
+          requires:
+            - lint
+            - test
+            - build
+          filters:
+            branches:
+              only: master
