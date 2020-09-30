@@ -9,7 +9,6 @@ import Dl from '../../styles/type/definition-list';
 import Button from '../../styles/button/button';
 import { formatThousands } from '../../utils/format';
 import get from 'lodash.get';
-import ExploreContext from '../../context/explore-context';
 import MapContext from '../../context/map-context';
 
 import ColorScale from '../common/color-scale';
@@ -94,16 +93,14 @@ const Detail = styled(Dl)`
 `;
 
 function ExploreZones (props) {
-  const { active } = props;
+  const { active, currentZones } = props;
 
-  const { currentZones } = useContext(ExploreContext);
+  // const { currentZones } = useContext(ExploreContext);
   const { hoveredFeature, setHoveredFeature } = useContext(MapContext);
 
   const [focusZone, setFocusZone] = useState(null);
 
   const [selectedZones, setSelectedZones] = useState({});
-
-  const zoneData = currentZones || [];
 
   const formatIndicator = function (id, value) {
     switch (id) {
@@ -140,7 +137,7 @@ function ExploreZones (props) {
         <>
           <CardList
             numColumns={1}
-            data={zoneData}
+            data={currentZones}
             renderCard={(data) => (
               <Card
                 size='large'
@@ -200,7 +197,8 @@ ExportZonesButton.propTypes = {
 export { ExportZonesButton };
 
 ExploreZones.propTypes = {
-  active: T.bool
+  active: T.bool,
+  currentZones: T.array
 };
 
 export default ExploreZones;

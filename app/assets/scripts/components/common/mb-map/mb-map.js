@@ -191,11 +191,11 @@ function MbMap (props) {
 
   // Update zone boundaries on change
   useEffect(() => {
-    if (!map || !currentZones) return;
+    if (!map || !currentZones.isReady()) return;
     // Update GeoJSON source, applying hover effect if any
     map.getSource(ZONES_BOUNDARIES_SOURCE_ID).setData({
       type: 'FeatureCollection',
-      features: currentZones
+      features: currentZones.getData()
     });
   }, [currentZones]);
 
