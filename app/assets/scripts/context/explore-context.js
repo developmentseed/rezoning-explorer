@@ -110,6 +110,7 @@ export function ExploreProvider (props) {
         ...nextArea,
         bounds: newBounds
       };
+      setGridMode(true)
     }
 
     setSelectedArea(nextArea);

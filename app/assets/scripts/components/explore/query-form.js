@@ -321,6 +321,7 @@ function QueryForm (props) {
               setGridSize={setGridSize}
               gridMode={gridMode}
               setGridMode={setGridMode}
+              disableBoundaries={resource === 'Off-Shore Wind'}
             />
           </HeadOptionHeadline>
         </HeadOption>
