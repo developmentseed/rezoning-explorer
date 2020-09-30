@@ -22,16 +22,15 @@ import InfoButton from '../common/info-button';
 import GridSetter from './grid-setter';
 
 import ExploreContext from '../../context/explore-context';
+import { INPUT_CONSTANTS } from './panel-data';
 
-const GRID_OPTIONS = [9, 25, 50];
-const DEFAULT_RANGE = [0, 100];
-const DEFAULT_UNIT = '%';
 const turbineTypeMap = {
   'Off-Shore Wind': 2,
   Wind: 1,
   'Solar PV': 0
 };
 
+const { SLIDER, BOOL, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
 const PanelOption = styled.div`
   ${({ hidden }) => hidden && 'display: none;'}
   margin-bottom: 1.5rem;
@@ -132,13 +131,38 @@ const SubmissionSection = styled(PanelBlockFooter)`
   gap: 0rem 1rem;
 `;
 
+const initByType = obj => {
+  switch (obj.type) {
+    case SLIDER:
+      return {
+        ...obj,
+        range: obj.range || DEFAULT_RANGE,
+        unit: obj.unit || DEFAULT_UNIT,
+        value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
+      };
+    case TEXT:
+      return {
+        ...obj,
+        range: obj.range || DEFAULT_RANGE,
+        unit: obj.unit || DEFAULT_UNIT,
+        value: obj.value || obj.default || (obj.range || DEFAULT_RANGE)[0]
+      };
+    case BOOL:
+    case MULTI:
+    default:
+      return {};
+  }
+};
+
 const initListToState = (list) => {
   return list.map((obj) => ({
     ...obj,
-    range: obj.range || DEFAULT_RANGE,
-    unit: obj.unit || DEFAULT_UNIT,
-    active: obj.active === undefined ? true : obj.active,
-    value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
+    input: initByType(obj.input),
+
+    // range: obj.range || DEFAULT_RANGE,
+    // unit: obj.unit || DEFAULT_UNIT,
+    active: obj.active === undefined ? true : obj.active
+    // value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
   }));
 };
 
@@ -170,14 +194,49 @@ function QueryForm (props) {
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
-    onSelectionChange
+    onSelectionChange,
+    gridMode,
+    setGridMode,
+    gridSize, setGridSize
   } = props;
-  const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
-  const [gridMode, setGridMode] = useState(true);
 
   const [weights, setWeights] = useState(initListToState(weightsList));
   const [filters, setFilters] = useState(initObjectToState(filtersLists));
   const [lcoe, setLcoe] = useState(initListToState(lcoeList));
+
+  const inputOfType = (option, onChange) => {
+    switch (option.input.type) {
+      case SLIDER:
+        return (
+          <SliderGroup
+            unit={option.input.unit || '%'}
+            range={option.input.range || [0, 100]}
+            id={option.name}
+            value={option.input.value}
+            isRange={option.input.isRange}
+            disabled={!option.active}
+            onChange={onChange}
+          />
+        );
+      case TEXT:
+        return (
+          <StressedFormGroupInput
+            inputType='number'
+            inputSize='small'
+            id={`${option.name}`}
+            name={`${option.name}`}
+            label={option.name}
+            value={option.input.value}
+            validate={option.input.range ? validateRangeNum(option.input.range[0], option.input.range[1]) : () => true}
+            onChange={onChange}
+          />
+        );
+      case BOOL:
+      case MULTI:
+      default:
+        return {};
+    }
+  };
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));
@@ -188,19 +247,19 @@ function QueryForm (props) {
   const applyClick = () => {
     const filterValues = Object.values(filters)
       .reduce((accum, section) => [...accum,
-        ...section.map(filter => filter.value)], []);
+        ...section.map(filter => filter.input.value)], []);
     const weightsValues = Object.values(weights)
       .reduce((accum, weight) => (
         {
           ...accum,
-          [weight.id || weight.name]: Number(weight.value)
+          [weight.id || weight.name]: Number(weight.input.value)
         }), {});
 
     const lcoeValues = Object.values(lcoe)
       .reduce((accum, weight) => (
         {
           ...accum,
-          [weight.id || weight.name]: Number(weight.value)
+          [weight.id || weight.name]: Number(weight.input.value)
         }), {});
     updateFilteredLayer(filterValues, weightsValues, lcoeValues);
   };
@@ -334,26 +393,23 @@ function QueryForm (props) {
                               Toggle filter
                             </FormSwitch>
                           </OptionHeadline>
-
-                          <SliderGroup
-                            unit={filter.unit || '%'}
-                            range={filter.range || [0, 100]}
-                            id={filter.name}
-                            value={filter.value}
-                            isRange
-                            disabled={!filter.active}
-                            onChange={(value) => {
+                          {
+                            inputOfType(filter, (value) => {
                               if (filter.active) {
                                 setFilters({
                                   ...filters,
                                   [group]: updateStateList(list, ind, {
                                     ...filter,
-                                    value
+                                    input: {
+                                      ...filter.input,
+                                      value
+                                    }
                                   })
                                 });
                               }
-                            }}
-                          />
+                            })
+                          }
+
                         </PanelOption>
                       ))}
                   />
@@ -377,19 +433,19 @@ function QueryForm (props) {
           {weights.map((weight, ind) => (
             <PanelOption key={weight.name}>
               <PanelOptionTitle>{weight.name}</PanelOptionTitle>
-              <SliderGroup
-                unit={weight.unit || '%'}
-                range={weight.range || [0, 100]}
-                id={weight.name}
-                value={
-                  weight.value === undefined ? weight.range[0] : weight.value
-                }
-                onChange={(value) => {
+              {
+                inputOfType(weight, (value) => {
                   setWeights(
-                    updateStateList(weights, ind, { ...weight, value })
+                    updateStateList(weights, ind, {
+                      ...weight,
+                      input: {
+                        ...weight.input,
+                        value
+                      }
+                    })
                   );
-                }}
-              />
+                })
+              }
             </PanelOption>
           ))}
         </FormWrapper>
@@ -408,19 +464,17 @@ function QueryForm (props) {
         >
           {lcoe.map((cost, ind) => (
             <PanelOption key={cost.name}>
-              <StressedFormGroupInput
-                inputType='number'
-                inputSize='small'
-                id={`${cost.name}`}
-                name={`${cost.name}`}
-                label={cost.name}
-                disabled={cost.readOnly}
-                value={cost.value || cost.range[0]}
-                validate={cost.range ? validateRangeNum(cost.range[0], cost.range[1]) : () => true}
-                onChange={(v) => {
-                  setLcoe(updateStateList(lcoe, ind, { ...cost, value: v }));
-                }}
-              />
+              {
+                inputOfType(cost, (v) => {
+                  setLcoe(updateStateList(lcoe, ind, {
+                    ...cost,
+                    input: {
+                      ...cost.input,
+                      value: v
+                    }
+                  }));
+                })
+              }
             </PanelOption>
           ))}
         </FormWrapper>
@@ -465,7 +519,11 @@ QueryForm.propTypes = {
   onAreaEdit: T.func,
   presets: T.object,
   onInputTouched: T.func,
-  onSelectionChange: T.func
+  onSelectionChange: T.func,
+  gridMode: T.bool,
+  setGridMode: T.func,
+  gridSize: T.number,
+  setGridSize: T.func
 };
 
 export default QueryForm;

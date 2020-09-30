@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState, useReducer } from 'react';
 import T from 'prop-types';
 import { useHistory, useLocation } from 'react-router';
 import * as topojson from 'topojson-client';
@@ -13,12 +13,16 @@ import config from '../config';
 import countries from '../../data/countries.json';
 import regions from '../../data/regions.json';
 
-import fetchZones from './fetch-zones';
+import { fetchZonesReducer, fetchZones } from './fetch-zones';
 
 import {
   showGlobalLoading,
   hideGlobalLoading
 } from '../components/common/global-loading';
+import { INPUT_CONSTANTS } from '../components/explore/panel-data';
+
+import { initialApiRequestState } from './contexeed';
+const { GRID_OPTIONS } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
@@ -36,14 +40,15 @@ export function ExploreProvider (props) {
   const location = useLocation();
 
   const qsState = qsStateHelper.getState(location.search.substr(1));
-
+  const [selectedArea, setSelectedArea] = useState(null);
   const [selectedAreaId, setSelectedAreaId] = useState(qsState.areaId);
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
     !qsState.areaId
   );
   const [areas, setAreas] = useState([]);
-
-  const [selectedArea, setSelectedArea] = useState(areas.find((a) => a.id === selectedAreaId));
+  useEffect(() => {
+    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
+  }, [selectedAreaId]);
 
   const [selectedResource, setSelectedResource] = useState(qsState.resourceId);
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
@@ -51,7 +56,8 @@ export function ExploreProvider (props) {
   );
   // const [areaTypeFilter, setAreaTypeFilter] = useState(energyAreaTypeMap[selectedResource] || energyAreaTypeMap.default);
 
-  const [hoveredFeatures, setHoveredFeatures] = useState([]);
+  const [gridMode, setGridMode] = useState(false);
+  const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
 
   const [tourStep, setTourStep] = useState(0);
 
@@ -148,6 +154,10 @@ export function ExploreProvider (props) {
     }
   }, [selectedAreaId, selectedResource]);
 
+  useEffect(() => {
+    dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
+  }, [selectedAreaId]);
+
   // Update context on URL change
   useEffect(() => {
     const { areaId, resourceId } = qsStateHelper.getState(
@@ -167,16 +177,21 @@ export function ExploreProvider (props) {
 
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
-  const [currentZones, setCurrentZones] = useState(null);
+
+  const [currentZones, dispatchCurrentZones] = useReducer(fetchZonesReducer, initialApiRequestState);
 
   const generateZones = async (filterString, weights, lcoe) => {
     showGlobalLoading();
-    const zones = await fetchZones(selectedArea, selectedResource, filterString, weights, lcoe);
-    setCurrentZones(zones);
-    setInputTouched(false);
-    !zonesGenerated && setZonesGenerated(true);
-    hideGlobalLoading();
+    fetchZones(gridMode && gridSize, selectedArea, filterString, weights, lcoe, dispatchCurrentZones);
   };
+
+  useEffect(() => {
+    if (currentZones.fetched) {
+      hideGlobalLoading();
+      !zonesGenerated && setZonesGenerated(true);
+      setInputTouched(false);
+    }
+  }, [currentZones]);
 
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
 
@@ -204,6 +219,10 @@ export function ExploreProvider (props) {
           setShowSelectAreaModal,
           showSelectResourceModal,
           setShowSelectResourceModal,
+          gridMode,
+          setGridMode,
+          gridSize,
+          setGridSize,
           currentZones,
           generateZones,
           inputTouched,
@@ -212,8 +231,6 @@ export function ExploreProvider (props) {
           setZonesGenerated,
           filteredLayerUrl,
           updateFilteredLayer,
-          hoveredFeatures,
-          setHoveredFeatures,
           tourStep,
           setTourStep
         }}

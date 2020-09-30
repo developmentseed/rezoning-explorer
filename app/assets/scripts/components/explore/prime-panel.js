@@ -45,7 +45,10 @@ function ExpMapPrimePanel (props) {
     setInputTouched,
     setZonesGenerated,
     tourStep,
-    setTourStep
+    setTourStep,
+    gridMode,
+    setGridMode,
+    gridSize, setGridSize
   } = useContext(ExploreContext);
 
   return (
@@ -81,6 +84,10 @@ function ExpMapPrimePanel (props) {
               filtersLists={filtersLists}
               lcoeList={lcoeList}
               presets={presets}
+              gridMode={gridMode}
+              setGridMode={setGridMode}
+              gridSize={gridSize}
+              setGridSize={setGridSize}
               onAreaEdit={() => setShowSelectAreaModal(true)}
               onResourceEdit={() => setShowSelectResourceModal(true)}
               onInputTouched={() => {

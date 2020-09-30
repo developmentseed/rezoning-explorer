@@ -18,7 +18,7 @@ function ZoneAnalysisPanel (props) {
     <PanelInner>
       <ExploreStats zones={currentZones} active={inputTouched} />
       {currentZones && (
-        <ExploreZones active={inputTouched} />
+        <ExploreZones active={inputTouched} currentZones={currentZones} />
       )}
     </PanelInner>
   );
