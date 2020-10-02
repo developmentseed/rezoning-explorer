@@ -25,9 +25,9 @@ import ExploreContext from '../../context/explore-context';
 import { INPUT_CONSTANTS } from './panel-data';
 
 const turbineTypeMap = {
-  'Off-Shore Wind': 2,
-  Wind: 1,
-  'Solar PV': 0
+  'Off-Shore Wind': [1, 3],
+  Wind: [1, 3],
+  'Solar PV': [0, 0]
 };
 
 const { SLIDER, BOOL, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
@@ -267,8 +267,11 @@ function QueryForm (props) {
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
+
   useEffect(() => {
-    lcoe.find(cost => cost.id === 'turbine_type').input.value = turbineTypeMap[resource];
+    const turbineType = lcoe.find(cost => cost.id === 'turbine_type');
+    turbineType.input.range = turbineTypeMap[resource];
+    turbineType.input.value = turbineType.input.range[0];
   }, [resource]);
 
   return (
