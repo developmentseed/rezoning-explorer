@@ -375,7 +375,18 @@ export const presets = {
       return (
         {
           ...accum,
-          [name]: group.map(filter => ({ ...filter, value: filter.range ? randomRange(filter.range[0], filter.range[1]) : randomRange(0, 100) }))
+          [name]: group.map(filter => (
+            {
+              ...filter,
+              input: {
+                ...filter.input,
+                value: {
+                  max: filter.range ? randomRange(filter.range[0], filter.range[1]) : randomRange(0, 100),
+                  min: filter.range ? filter.range[0] : 0
+                }
+              }
+            }
+          ))
         }
       );
     }, {})
