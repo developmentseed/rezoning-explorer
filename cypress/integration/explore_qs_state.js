@@ -47,6 +47,8 @@ describe('Explore view', () => {
       'eq',
       'http://localhost:9000/explore?areaId=BFA'
     );
+    console.log(56)
+
 
     // And redisplay resource modal
     cy.get('#select-resource-modal-header').should('exist');
@@ -54,6 +56,7 @@ describe('Explore view', () => {
     // Hitting "Back" again should update the URL
     cy.go('back');
     cy.url().should('eq', 'http://localhost:9000/explore');
+    console.log(65)
 
     // And redisplay resource modal
     cy.get('#select-area-modal-header').should('exist');
