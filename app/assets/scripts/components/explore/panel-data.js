@@ -367,7 +367,10 @@ export const presets = {
   weights: {
     'Power Output': weightsList.map(weight => ({
       ...weight,
-      value: weight.range ? randomRange(weight.range[0], weight.range[1]) : randomRange(0, 100)
+      input: {
+        ...weight.input,
+        value: weight.range ? randomRange(weight.range[0], weight.range[1]) : randomRange(0, 100)
+      }
     }))
   },
   filters: {
@@ -394,7 +397,10 @@ export const presets = {
   lcoe: {
     'Greatest Savings': lcoeList.map(lcoe => ({
       ...lcoe,
-      value: LCOE_PRESETS.greatest_savings[lcoe.id]
+      input: {
+        ...lcoe.input,
+        value: LCOE_PRESETS.greatest_savings[lcoe.id]
+      }
     }))
   }
 };
