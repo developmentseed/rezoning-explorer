@@ -37,6 +37,9 @@ const GridSetButton = styled(Button)`
     background-color: transparent;
   }
 
+  &:not(:last-child) {
+    margin-right: 4rem;
+  }
 
   ${({ active }) => active && css`
       /* stylelint-disable-next-line */
@@ -54,10 +57,15 @@ const GridSelectorWrapper = styled.div`
   display:flex;
   flex-direction: row;
   justify-content: space-between;
+
+  ${FormCheckable} + * {
+    margin-left: 0.5rem
+  }
 `;
 
 const DropdownWide = styled(Dropdown)`
-  max-width: 18rem;
+  max-width: 22rem;
+  max-width: max-content;
 `;
 
 const GridSelector = ({ gridOptions, gridSize, setGridSize }) => {
