@@ -130,12 +130,13 @@ export const FormCheckable = styled(FormCheckableElement)`
         type === 'checkbox'
           ? css`
               ${collecticon('tick--small')}
+              color: ${themeVal('color.primary')};
             `
           : css`
               content: '';
               height: 0.5rem;
               width: 0.5rem;
-              background: ${themeVal('color.base')};
+              background: ${themeVal('color.primary')};
               border-radius: ${themeVal('shape.ellipsoid')};
             `}
     }

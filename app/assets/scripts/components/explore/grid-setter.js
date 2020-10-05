@@ -68,7 +68,7 @@ const GridSelector = ({ gridOptions, gridSize, setGridSize }) => {
           key={opt}
           name={`grid-select-${opt}`}
           id={`grid-select-${opt}`}
-          type='checkbox'
+          type='radio'
           checked={gridSize === opt}
           onChange={() => {
             setGridSize(opt);
