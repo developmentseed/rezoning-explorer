@@ -1,12 +1,11 @@
 import React from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
-import InputRange from 'react-input-range';
 import Dropdown from '../common/dropdown';
 import { EditButton } from './query-form';
 import Button from '../../styles/button/button';
 import { themeVal } from '../../styles/utils/general';
-import { Subheading } from '../../styles/type/heading';
+import { FormCheckable } from '../../styles/form/checkable';
 
 const GridSetInner = styled.div`
 /* stylelint-disable-next-line */
@@ -16,16 +15,6 @@ const GridSetHeader = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-`;
-
-const Labels = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding-bottom: 1rem;
-`;
-const Label = styled(Subheading)`
-/* stylelint-disable-next-line */
 `;
 
 const GridSetButton = styled(Button)`
@@ -48,6 +37,9 @@ const GridSetButton = styled(Button)`
     background-color: transparent;
   }
 
+  &:not(:last-child) {
+    margin-right: 4rem;
+  }
 
   ${({ active }) => active && css`
       /* stylelint-disable-next-line */
@@ -61,30 +53,39 @@ const GridSetButton = styled(Button)`
       }
     `}
 `;
+const GridSelectorWrapper = styled.div`
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
 
-const DropdownWide = styled(Dropdown)`
-  max-width: 18rem;
+  ${FormCheckable} + * {
+    margin-left: 0.5rem
+  }
 `;
 
-const GridSlider = ({ gridOptions, gridSize, setGridSize }) => {
+const DropdownWide = styled(Dropdown)`
+  max-width: 22rem;
+  max-width: max-content;
+`;
+
+const GridSelector = ({ gridOptions, gridSize, setGridSize }) => {
   return (
-    <>
-      <InputRange
-        formatLabel={value => ''}
-        minValue={0}
-        maxValue={gridOptions.length - 1}
-        step={1}
-        value={gridOptions.indexOf(gridSize)}
-        onChange={(v) => {
-          if (v > 0) {
-            setGridSize(gridOptions[v]);
-          }
-        }}
-      />
-      <Labels>
-        {gridOptions.map(opt => <Label key={opt}>{`${opt} km`}<sup>2</sup></Label>)}
-      </Labels>
-    </>);
+    <GridSelectorWrapper>
+      {gridOptions.map(opt => (
+        <FormCheckable
+          key={opt}
+          name={`grid-select-${opt}`}
+          id={`grid-select-${opt}`}
+          type='radio'
+          checked={gridSize === opt}
+          onChange={() => {
+            setGridSize(opt);
+          }}
+        >{opt} km<sup>2</sup>
+        </FormCheckable>
+      ))}
+    </GridSelectorWrapper>
+  );
 };
 
 function GridSetter (props) {
@@ -126,7 +127,8 @@ function GridSetter (props) {
           > Use Boundaries
           </GridSetButton>
         </GridSetHeader>
-        {gridMode && <GridSlider setGridSize={setGridSize} gridOptions={[0, ...gridOptions]} gridSize={gridSize} />}
+        {gridMode && <GridSelector setGridSize={setGridSize} gridOptions={gridOptions} gridSize={gridSize} />}
+
       </GridSetInner>
     </DropdownWide>
 
@@ -143,7 +145,7 @@ GridSetter.propTypes = {
   disableGrid: T.bool
 };
 
-GridSlider.propTypes = {
+GridSelector.propTypes = {
   gridOptions: T.array.isRequired,
   setGridSize: T.func,
   gridSize: T.number
