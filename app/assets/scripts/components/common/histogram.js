@@ -11,6 +11,7 @@ const HistogramWrapper = styled.div`
   display: grid;
   grid-template-rows: 1fr 4fr;
   min-width: 0;
+  padding: 0.5rem;
 
   svg {
     display: block;
@@ -33,7 +34,7 @@ function Histogram (props) {
   const container = useRef();
   const initChart = () => {
     if (!container.current) return;
-    const margin = { top: 10, right: 10, bottom: 2, left: 25 };
+    const margin = { top: 0, right: 15, bottom: 0, left: 15 };
     const width = container.current.offsetWidth - margin.left - margin.right;
     const height = 60 - margin.top - margin.bottom;
     const svg = d3.select(container.current)
@@ -69,13 +70,7 @@ function Histogram (props) {
       .attr('x', function (d) { return x(d.zone_output); })
       .attr('width', 2)
       .attr('y', function (d) { return y(d.lcoe); })
-      .attr("height", function(d) { return height - y(d.lcoe); })
-    /*  .attr("height", function(d) { return height - y(d.value); });
-      .attr('x', 1)
-      .attr('transform', function (d) { return 'translate(' + x(d.x0) + ',' + y(d.length || 0) + ')'; })
-      .attr('width', function (d) { return x(d.x1) - x(d.x0) - 1; })
-      .attr('height', function (d) { return height - y(d.length); })
-      */
+      .attr('height', function (d) { return height - y(d.lcoe); })
       .attr('fill', d => {
         return d.color;
       });
@@ -95,7 +90,7 @@ function Histogram (props) {
               variation='base-plain'
               size='small'
             >
-              {p.replace(/-/g, ' ')}
+              {p.replace(/_/g, ' ')}
             </Button>
           ))}
         </SortToggle>
