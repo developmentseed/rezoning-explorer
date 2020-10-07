@@ -25,9 +25,11 @@ const HistogramHeader = styled.div`
   grid-template-columns: 1fr auto;
 `;
 const SortToggle = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto auto;
 `;
 function Histogram (props) {
-  const { data } = props;
+  const { data, xProp, sortingProps } = props;
   const container = useRef();
   const initChart = () => {
     if (!container.current) return;
@@ -43,36 +45,39 @@ function Histogram (props) {
         'translate(' + margin.left + ',' + margin.top + ')');
 
     const x = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.zone_output)])
+      .domain([0, d3.max(data, d => d[xProp])])
       .range([0, width]);
     svg.append('g')
       .attr('transform', 'translate(0,' + height + ')')
       .call(d3.axisBottom(x)
+        .tickValues(x.domain())
+        .tickFormat(d3.format('~s'))
       );
 
-    const histogram = d3.histogram()
-      .value(function (d) { return d.zone_output; })
-      .domain(x.domain())
-      .thresholds(x.ticks(70));
-
-    const bins = histogram(data);
-
     const y = d3.scaleLinear()
-      .range([height, 0]);
-    y.domain([0, d3.max(bins, function (d) { return d.length; })]);
+      .range([height, 0])
+      .domain([0, d3.max(data, d => d.lcoe)]);
+
     svg.append('g')
-      .call(d3.axisLeft(y).tickArguments([1, '']));
+      .call(d3.axisLeft(y).tickValues(y.domain()));
 
     svg.selectAll('rect')
-      .data(bins)
+      .data(data)
       .enter()
       .append('rect')
+
+      .attr('x', function (d) { return x(d.zone_output); })
+      .attr('width', 2)
+      .attr('y', function (d) { return y(d.lcoe); })
+      .attr("height", function(d) { return height - y(d.lcoe); })
+    /*  .attr("height", function(d) { return height - y(d.value); });
       .attr('x', 1)
       .attr('transform', function (d) { return 'translate(' + x(d.x0) + ',' + y(d.length || 0) + ')'; })
       .attr('width', function (d) { return x(d.x1) - x(d.x0) - 1; })
       .attr('height', function (d) { return height - y(d.length); })
+      */
       .attr('fill', d => {
-        return d[0] ? d[0].color : '#000000';
+        return d.color;
       });
   };
 
@@ -83,18 +88,16 @@ function Histogram (props) {
       <HistogramHeader>
         <Heading>Zone Histogram</Heading>
         <SortToggle>
-        Sort By:
-          <Button
-            variation='base-plain'
-            size='small'
-          >Zone Score
-          </Button>
-          <Button
-            variation='base-plain'
-            size='small'
-
-          >LCOE
-          </Button>
+          <Heading>Sort by:</Heading>
+          {sortingProps.map(p => (
+            <Button
+              key={p}
+              variation='base-plain'
+              size='small'
+            >
+              {p.replace(/-/g, ' ')}
+            </Button>
+          ))}
         </SortToggle>
 
       </HistogramHeader>
