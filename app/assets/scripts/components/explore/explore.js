@@ -19,6 +19,7 @@ import MbMap from '../common/mb-map/mb-map';
 import ExploreContext from '../../context/explore-context';
 import Tour from '../common/tour';
 import { MapProvider } from '../../context/map-context';
+import Histogram from '../common/histogram';
 
 const ExploreCanvas = styled.div`
   display: grid;
@@ -52,7 +53,8 @@ const ExploreCarto = styled.section`
 
 function Explore () {
   const [triggerResize, setTriggerResize] = useState(true);
-  const { selectedArea, selectedResource, tourStep, setTourStep } = useContext(ExploreContext);
+  const { selectedArea, selectedResource, tourStep, setTourStep, currentZones } = useContext(ExploreContext);
+  const zoneData = currentZones.isReady() ? currentZones.getData() : null;
   return (
     <App
       pageTitle='Explore'
@@ -83,6 +85,8 @@ function Explore () {
                 <MbMap
                   triggerResize={triggerResize}
                 />
+              { zoneData && <Histogram />}
+
               </ExploreCarto>
 
               <SecPanel
