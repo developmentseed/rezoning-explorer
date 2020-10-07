@@ -85,7 +85,9 @@ function Explore () {
                 <MbMap
                   triggerResize={triggerResize}
                 />
-              { zoneData && <Histogram />}
+              { zoneData && <Histogram 
+                data={zoneData.map( datum => ({...datum.properties.summary, color: datum.properties.color}))}
+                />}
 
               </ExploreCarto>
 
