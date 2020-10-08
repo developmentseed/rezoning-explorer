@@ -3,10 +3,11 @@ import styled from 'styled-components';
 import { panelSkin } from '../../styles/skins';
 import Button from '../../styles/button/button';
 import Heading, { Subheading, headingAlt } from '../../styles/type/heading';
+import SizeAwareElement from '../../components/common/size-aware-element';
 import * as d3 from 'd3';
-import {themeVal} from '../../styles/utils/general';
+import { themeVal } from '../../styles/utils/general';
 
-const HistogramWrapper = styled.div`
+const HistogramWrapper = styled(SizeAwareElement)`
   ${panelSkin()};
   position: relative;
   display: grid;
@@ -51,26 +52,30 @@ const HistogramHeader = styled.div`
   display: grid;
   grid-template-columns: 1fr auto;
   text-transform: uppercase;
-
+  > ${Heading} > {
+    padding: 0.125rem 0;
+  }
 `;
 const SortToggle = styled.div`
   display: grid;
   grid-template-columns: 1fr auto auto;
   > ${Heading} {
     ${headingAlt()}
+    padding: 0.125rem 0;
   }
 `;
 function Histogram (props) {
   const { data, yProp, sortingProps } = props;
   const container = useRef();
-  const [xProp, setXProp] = useState(sortingProps[0])
+
+  const [xProp, setXProp] = useState(sortingProps[0]);
   const initChart = () => {
     if (!container.current) return;
     const margin = { top: 5, right: 15, bottom: 20, left: 35 };
-    const width = container.current.offsetWidth - margin.left - margin.right;
+    const width = container.current.clientWidth - margin.left - margin.right;
     const height = container.current.clientHeight - margin.top - margin.bottom;
 
-    d3.selectAll('svg').remove()
+    d3.selectAll('svg').remove();
     const svg = d3.select(container.current)
       .append('svg')
       .attr('width', width + margin.left + margin.right)
@@ -98,7 +103,6 @@ function Histogram (props) {
       .call(d3.axisTop(x).tickValues([]).tickSize(0)
       );
 
-
     const y = d3.scaleLinear()
       .range([height, 0])
       .domain([0, d3.max(data, d => d[yProp])]);
@@ -116,7 +120,7 @@ function Histogram (props) {
       .attr('x', function (d) { return x(d[xProp]); })
       .attr('width', 10)
       .attr('y', function (d) { return y(d[yProp]); })
-      .attr('transform',  'translate(-5, 0)')
+      .attr('transform', 'translate(-5, 0)')
       .attr('height', function (d) { return height - y(d.lcoe); })
       .attr('fill', d => {
         return d.color;
@@ -152,7 +156,9 @@ function Histogram (props) {
   useEffect(initChart, [container, xProp]);
 
   return (
-    <HistogramWrapper>
+    <HistogramWrapper
+      onChange={initChart}
+    >
       <HistogramHeader>
         <Heading size='small'>Zone Histogram</Heading>
         <SortToggle>
