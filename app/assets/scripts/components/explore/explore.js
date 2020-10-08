@@ -87,6 +87,7 @@ function Explore () {
                 />
                 { zoneData && <Histogram
                   xProp='zone_output'
+                  yProp='lcoe'
                   sortingProps={['lcoe', 'zone_output']}
                   data={zoneData.map(datum => ({ ...datum.properties.summary, color: datum.properties.color }))}
                               />}
