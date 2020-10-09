@@ -52,6 +52,7 @@ const HistogramHeader = styled.div`
   display: grid;
   grid-template-columns: 1fr auto;
   text-transform: uppercase;
+  align-items: baseline;
   > ${Heading} > {
     padding: 0.125rem 0;
   }
