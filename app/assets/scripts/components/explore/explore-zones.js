@@ -152,6 +152,22 @@ function ExploreZones (props) {
                 onClick={() => setFocusZone(data)}
               >
 
+                <CardIcon color={get(data, 'properties.color')}>
+                  <div>{data.id}</div>
+                </CardIcon>
+                <CardDetails>
+                  {get(data, 'properties.summary.zone_score')
+                    ? Object.entries(data.properties.summary)
+                      .filter(([label, value]) => FILTERED_PROPERTIES[label])
+                      .map(([label, value]) => (
+                        <Detail key={`${data.id}-${label}`}>
+                          <dt>{label.replace(/_/g, ' ')}</dt>
+                          <dd>{formatIndicator(label, value)}</dd>
+                        </Detail>
+                      )
+                      )
+                    : 'UNAVAILABLE'}
+                </CardDetails>
                 <FormCheckable
                   name={data.id}
                   id={data.id}
@@ -169,27 +185,16 @@ function ExploreZones (props) {
                   hideText
                 >Add zone to selection
                 </FormCheckable>
-                <CardIcon color={get(data, 'properties.color')}>
-                  <div>{data.id}</div>
-                </CardIcon>
-                <CardDetails>
-                  {get(data, 'properties.summary.zone_score')
-                    ? Object.entries(data.properties.summary)
-                      .filter(([label, value]) => FILTERED_PROPERTIES[label])
-                      .map(([label, value]) => (
-                        <Detail key={`${data.id}-${label}`}>
-                          <dt>{label.replace(/_/g, ' ')}</dt>
-                          <dd>{formatIndicator(label, value)}</dd>
-                        </Detail>
-                      )
-                      )
-                    : 'UNAVAILABLE'}
-                </CardDetails>
+
               </Card>
             )}
           />
         </>
       )}
+
+      <ExportZonesButton
+        onExport={() => {}}
+      />
     </ZonesWrapper>
   );
 }
@@ -206,7 +211,7 @@ const ExportWrapper = styled.div`
 const ExportZonesButton = ({ onExport, small, usePadding }) => {
   return (
     <ExportWrapper usePadding={usePadding}>
-      <Button as='a' useIcon='download' variation='primary-raised-dark'>
+      <Button as='a' useIcon='download' variation='primary-raised-dark' size='small'>
         {small ? 'Export' : 'Export Selected Zones'}
       </Button>
     </ExportWrapper>
