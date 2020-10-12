@@ -11,6 +11,8 @@ import { formatThousands } from '../../utils/format';
 import get from 'lodash.get';
 import MapContext from '../../context/map-context';
 
+import { FormCheckable } from '../../styles/form/checkable';
+
 import ColorScale from '../common/color-scale';
 import zoneScoreColor from '../../styles/zoneScoreColors';
 
@@ -100,7 +102,7 @@ function ExploreZones (props) {
 
   const [focusZone, setFocusZone] = useState(null);
 
-  const [selectedZones, setSelectedZones] = useState({});
+  const [selectedZones, setSelectedZones] = useState(currentZones.reduce((accum, zone) => ({ ...accum, [zone.id]: false }), {}));
 
   const formatIndicator = function (id, value) {
     switch (id) {
@@ -145,7 +147,26 @@ function ExploreZones (props) {
                 isHovered={hoveredFeature === data.id}
                 onMouseEnter={onRowHoverEvent.bind(null, 'enter', data.id)}
                 onMouseLeave={onRowHoverEvent.bind(null, 'leave', data.id)}
+                onClick={() => setFocusZone(data)}
               >
+
+                <FormCheckable
+                  name={data.id}
+                  id={data.id}
+                  type='checkbox'
+                  checked={selectedZones[data.id]}
+                  onChange={() => {
+                    setSelectedZones({
+                      ...selectedZones,
+                      [data.id]: !selectedZones[data.id]
+                    });
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  hideText
+                >Add zone to selection
+                </FormCheckable>
                 <CardIcon color={get(data, 'properties.color')}>
                   <div>{data.id}</div>
                 </CardIcon>
