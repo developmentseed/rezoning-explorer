@@ -85,13 +85,13 @@ function Explore () {
                 <MbMap
                   triggerResize={triggerResize}
                 />
-                { zoneData && <Histogram
-                  xProp='zone_output'
-                  yProp='lcoe'
-                  sortingProps={['lcoe', 'zone_output']}
-                  data={zoneData.map(datum => ({ ...datum.properties.summary, color: datum.properties.color }))}
-                              />}
-
+                { zoneData && (
+                  <Histogram
+                    yProp='lcoe'
+                    xProp={['zone_output', 'lcoe']}
+                    data={zoneData.map(datum => ({ ...datum.properties.summary, color: datum.properties.color }))}
+                  />
+                )}
               </ExploreCarto>
 
               <SecPanel

@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
+import T from 'prop-types';
 import { panelSkin } from '../../styles/skins';
 import Button from '../../styles/button/button';
-import Heading, { Subheading, headingAlt } from '../../styles/type/heading';
+import Heading, { headingAlt } from '../../styles/type/heading';
 import SizeAwareElement from '../../components/common/size-aware-element';
 import * as d3 from 'd3';
 import { themeVal } from '../../styles/utils/general';
@@ -65,10 +66,12 @@ const SortToggle = styled.div`
   }
 `;
 function Histogram (props) {
-  const { data, yProp, sortingProps } = props;
+  const { data, yProp } = props;
   const container = useRef();
 
-  const [xProp, setXProp] = useState(sortingProps[0]);
+  const xPropOptions = Array.isArray(props.xProp) ? props.xProp : [props.xProp];
+
+  const [xProp, setXProp] = useState(xPropOptions[0]);
   const initChart = () => {
     if (!container.current) return;
     const margin = { top: 5, right: 15, bottom: 20, left: 35 };
@@ -163,7 +166,7 @@ function Histogram (props) {
         <Heading size='small'>Zone Histogram</Heading>
         <SortToggle>
           <Heading size='small'>Sort by:</Heading>
-          {sortingProps.map(p => (
+          {xPropOptions.map(p => (
             <Button
               key={p}
               variation='base-plain'
@@ -182,5 +185,11 @@ function Histogram (props) {
     </HistogramWrapper>
   );
 }
+
+Histogram.propTypes = {
+  xProp: T.oneOfType([T.string, T.array]).isRequired,
+  data: T.array.isRequired,
+  yProp: T.string.isRequired
+};
 
 export default Histogram;
