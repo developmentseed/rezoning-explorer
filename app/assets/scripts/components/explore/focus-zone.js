@@ -63,7 +63,7 @@ function FocusZone (props) {
         <Details>
           {Object.entries(detailsList).map(([label, data]) => (
             <Dl key={`${id}-${label}`}>
-              <dt>{label}</dt>
+              <dt>{label.replace(/_/g, ' ')}</dt>
               <dd>{data}</dd>
             </Dl>
           ))}

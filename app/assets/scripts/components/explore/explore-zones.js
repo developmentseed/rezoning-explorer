@@ -40,7 +40,9 @@ const ZonesHeader = styled(Subheading)`
 `;
 
 const Card = styled(CardWrapper)`
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: space-between;
   height: auto;
   box-shadow: none;
   border: none;
