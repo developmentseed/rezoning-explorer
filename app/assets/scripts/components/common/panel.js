@@ -89,6 +89,7 @@ const PanelBody = styled.div`
 const PanelOffsetActions = styled.div`
   ${panelSkin()}
   border-radius: ${themeVal('shape.rounded')};
+  max-width: fit-content;
 `;
 
 const PanelControls = styled.div`
