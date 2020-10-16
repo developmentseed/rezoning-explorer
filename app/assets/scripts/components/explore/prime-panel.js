@@ -9,6 +9,7 @@ import { ModalHeader } from '../common/modal';
 import ModalSelectArea from './modal-select-area';
 
 import Button from '../../styles/button/button';
+import InfoButton from '../common/info-button';
 
 import { Card } from '../common/card-list';
 
@@ -52,6 +53,7 @@ function ExpMapPrimePanel (props) {
     gridMode,
     setGridMode,
     gridSize, setGridSize,
+    filteredLayerUrl,
     map
   } = useContext(ExploreContext);
 
@@ -77,24 +79,30 @@ function ExpMapPrimePanel (props) {
             </Button>,
 
             <>
-              <Button
+              <InfoButton
                 key='toggle-raster-tray'
                 id='toggle-raster-tray'
                 variation='base-plain'
                 useIcon='iso-stack'
                 title='Toggle Raster Tray'
+                info='info'
                 hideText
-                onClick={() => setShowRasterPanel(!showRasterPanel)}
+                visuallyDisabled={!filteredLayerUrl}
+                onClick={() => {
+                  if (filteredLayerUrl)
+                    setShowRasterPanel(!showRasterPanel)}
+                }
               >
                 <span>Toggle Raster Tray</span>
-              </Button>
+              </InfoButton>
+
               <RasterTray
                 show={showRasterPanel}
                 size='large'
                 layers={
                   mapLayers.map(l => ({
                     id: l.id,
-                    name: l.id,
+                    name: l.name,
                     min: l.min || 0,
                     max: l.max || 1,
                     type: l.type,
@@ -108,6 +116,9 @@ function ExpMapPrimePanel (props) {
                   map.setPaintProperty(layer.id,
                     layer.type === 'vector' ? 'fill-opacity' : 'raster-opacity',
                     knob.value / 100);
+                }}
+                onVisibilityToggle={(layer, visible) => {
+                  map.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none')
                 }}
               />
             </>

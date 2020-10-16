@@ -4,15 +4,16 @@ import ReactTooltip from 'react-tooltip';
 import Button from '../../styles/button/button';
 
 function InfoButton (props) {
-  const { info, id } = props;
+  const { info, id, useIcon } = props;
   return (
     <>
       <Button
         hideText
-        useIcon='circle-information'
+        useIcon={useIcon || 'circle-information'}
         data-tip
         data-for={id}
         className='info-button'
+        {...props}
       >
         {props.children}
       </Button>

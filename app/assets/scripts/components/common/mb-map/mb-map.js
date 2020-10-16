@@ -22,8 +22,16 @@ const EEZ_BOUNDARIES_SOURCE_ID = 'EEZ_BOUNDARIES_SOURCE_ID';
 const EEZ_BOUNDARIES_LAYER_ID = 'EEZ_BOUNDARIES_LAYER_ID';
 
 export const mapLayers = [
-  { id: FILTERED_LAYER_ID, type: 'raster' },
-  { id: ZONES_BOUNDARIES_LAYER_ID, type: 'vector' }
+  {
+    id: FILTERED_LAYER_ID,
+    name: 'LCOE',
+    type: 'raster'
+  },
+  {
+    id: ZONES_BOUNDARIES_LAYER_ID,
+    name: 'Zone Boundaries',
+    type: 'vector'
+  }
 ];
 
 const MapsContainer = styled.div`

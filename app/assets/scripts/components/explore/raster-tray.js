@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 import Button from '../../styles/button/button';
+import InfoButton from '../common/info-button';
 import Prose from '../../styles/type/prose';
 
 import Tray from '../common/tray';
@@ -15,6 +16,7 @@ const ControlHeadline = styled.div`
 display: flex;
 flex-direction: row;
 justify-content: space-between;
+align-items: baseline;
 `;
 const ControlTools = styled.div`
 display: grid;
@@ -46,30 +48,33 @@ const defaultStops = [
 ];
 
 function LayerControl (props) {
-  const { name, min, max, stops, onLayerKnobChange } = props;
+  const { id, name, min, max, stops, onLayerKnobChange, onVisibilityToggle } = props;
   const [knobPos, setKnobPos] = useState(50);
+  const [visibility, setLayerVisibility] = useState(true);
+
   return (
     <ControlWrapper>
       <ControlHeadline>
         <Prose>{name}</Prose>
         <ControlTools>
-          <Button
+            <InfoButton
             id='layer-info'
-            variation='base-plain'
-            useIcon='circle-information'
-            title='Open tour'
-            hideText
-          >
+            info={props.info || null}
+            >
             <span>Open Tour</span>
-          </Button>
+          </InfoButton>
           <Button
             id='layer-visibility'
             variation='base-plain'
-            useIcon='eye'
-            title='Open tour'
+            useIcon={visibility ? 'eye' : 'eye-disabled'}
+            title='toggle-layer-visibility'
             hideText
+            onClick={() => {
+              setLayerVisibility(!visibility);
+              onVisibilityToggle(props, !visibility);
+            }}
           >
-            <span>Open Tour</span>
+            <span>Toggle Layer Visibility</span>
           </Button>
         </ControlTools>
       </ControlHeadline>
@@ -77,7 +82,7 @@ function LayerControl (props) {
         <GradientChart
           stops={stops || defaultStops}
           knobPos={knobPos}
-          id={name}
+          id={id}
           onAction={(a, p) => {
             onLayerKnobChange(props, p);
             setKnobPos(p.value);
@@ -92,6 +97,7 @@ function LayerControl (props) {
 }
 
 LayerControl.propTypes = {
+  id: T.string,
   name: T.string,
   min: T.number,
   max: T.number,
@@ -100,7 +106,7 @@ LayerControl.propTypes = {
 };
 
 function RasterTray (props) {
-  const { size, show, layers, onLayerKnobChange } = props;
+  const { size, show, layers, onLayerKnobChange, onVisibilityToggle } = props;
   return (
     <Tray
       size={size}
@@ -114,6 +120,7 @@ function RasterTray (props) {
             key={l.name}
             {...l}
             onLayerKnobChange={onLayerKnobChange}
+            onVisibilityToggle={onVisibilityToggle}
           />
         )
         )}
