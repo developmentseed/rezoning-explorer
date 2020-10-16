@@ -28,23 +28,6 @@ const PrimePanel = styled(Panel)`
     width: 20rem;
   `}
 `;
-/*
-const RasterTogglePanel = styled.div`
-  ${({show}) => show ? css`
-    max-width: 10rem;
-    max-height: fit-content;
-  ` : css`
-    max-width: 0;
-    max-height: 0;
-  `};
-  transition: max-width 1s ease 0s, max-height 0.16s ease 0s;
-`;
-
-const Test = styled.div`
-  width: 10rem;
-  height: 10rem;
-`*/
-
 function ExpMapPrimePanel (props) {
   const { onPanelChange } = props;
 
@@ -103,7 +86,7 @@ function ExpMapPrimePanel (props) {
             </Button>
               <RasterTray
                 show={showRasterPanel}
-                size={'small'}
+                size={'large'}
               >
               </RasterTray>
             </>

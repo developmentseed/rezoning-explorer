@@ -10,15 +10,14 @@ const TrayWrapper = styled.div`
     max-width: 0;
     max-height: 0;
   `};
-
-  transition: max-width 0.16s ease 0s, max-height 0.16s ease 0s;
+  transition: max-width .16s ease 0s, max-height 0.16s ease 0s;
 `;
 
 const SIZE = {
-  small: ['3rem', '5rem'],
-  medium: ['5rem', '7rem'],
-  large: ['10rem', '15rem'],
-  xlarge: ['15rem', '20rem']
+  small: ['15rem', '20rem'],
+  medium: ['25rem', '50rem'],
+  large: ['35rem', '65rem'],
+  xlarge: ['55rem', '75rem']
 };
 
 function Tray (props) {
