@@ -47,7 +47,7 @@ export default {
     const { width, height } = ctx.getSize();
 
     const dragEvent = (end) => {
-      const newPos = Math.max(0, Math.min(d3.event.x, width));
+      const newPos = Math.max(0, Math.min(end.x, width));
       ctx.props.onAction('knob.set', {
         value: Math.round(xScale.invert(newPos)),
         end
@@ -55,8 +55,8 @@ export default {
     };
 
     const dragger = d3.drag()
-      .on('drag', () => dragEvent())
-      .on('end', () => dragEvent(true));
+      .on('drag', (end) => dragEvent(end))
+      .on('end', (evt) => dragEvent(evt));
 
     dataCanvas.select('.knob')
       .attr('transform', `translate(${xScale(props.knobPos) - knobSize / 2}, ${height - trackSize / 2 - knobTip})`)

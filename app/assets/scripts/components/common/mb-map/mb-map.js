@@ -21,6 +21,11 @@ const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
 const EEZ_BOUNDARIES_SOURCE_ID = 'EEZ_BOUNDARIES_SOURCE_ID';
 const EEZ_BOUNDARIES_LAYER_ID = 'EEZ_BOUNDARIES_LAYER_ID';
 
+export const mapLayers = [
+  {id: FILTERED_LAYER_ID, type: 'raster'},
+  {id: ZONES_BOUNDARIES_LAYER_ID, type: 'vector'}
+]
+
 const MapsContainer = styled.div`
   position: relative;
   overflow: hidden;
@@ -155,14 +160,14 @@ const initializeMap = ({
 
 function MbMap (props) {
   const { triggerResize } = props;
-  const [map, setMap] = useState(null);
   const mapContainer = useRef(null);
 
   const {
     selectedArea,
     selectedResource,
     filteredLayerUrl,
-    currentZones
+    currentZones,
+    map, setMap
   } = useContext(ExploreContext);
 
   const { hoveredFeature, setHoveredFeature } = useContext(MapContext);

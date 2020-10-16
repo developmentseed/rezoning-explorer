@@ -28,7 +28,8 @@ export default {
     const { width, height } = ctx.getSize();
 
     // The change of the midpoint (from base) changes all the stops.
-    const midPointDiff = (props.knobPos - 50) / 100;
+    const knobPos = props.disableGradientScaling ? 50 : props.knobPos;
+    const midPointDiff = (knobPos - 50) / 100;
     // Create a scale for the stops. The input value will be a position from
     // 0 - 1, which correspond to the original position of the color stop.
     // As the midpoint changes the position of the color stops will change

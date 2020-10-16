@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from '../../styles/button/button';
 import Prose from '../../styles/type/prose';
@@ -45,7 +45,8 @@ const defaultStops = [
 ];
 
 function LayerControl (props) {
-  const { name, min, max, stops } = props;
+  const { name, min, max, stops, onLayerKnobChange} = props;
+  const [knobPos, setKnobPos] = useState(50);
   return (
     <ControlWrapper>
       <ControlHeadline>
@@ -74,11 +75,13 @@ function LayerControl (props) {
       <Legend>
         <GradientChart
           stops={stops || defaultStops}
-          knobPos={50}
+          knobPos={knobPos}
           id={name}
-          onAction={(a, p) => {
-            console.log(a);
-          }}
+          onAction={(a, p) => {onLayerKnobChange(props, p)
+            setKnobPos(p.value)
+          }
+          }
+          disableGradientScaling
         />
         <Prose className='grad-min'>{min || 0}</Prose>
         <Prose className='grad-max'>{max || 1}</Prose>
@@ -86,14 +89,9 @@ function LayerControl (props) {
     </ControlWrapper>
   );
 }
-const layers = [
-  { id: 'layer1', name: 'layer1' },
-  { id: 'layer2', name: 'layer2' }
-
-];
 
 function RasterTray (props) {
-  const { size, show } = props;
+  const { size, show, layers, onLayerKnobChange } = props;
   return (
     <Tray
       size={size}
@@ -105,8 +103,8 @@ function RasterTray (props) {
         {layers.map(l =>
           (<LayerControl
             key={l.name}
-            name={l.name}
-            id={l.id}
+            {...l}
+            onLayerKnobChange={onLayerKnobChange}
           />)
         )}
       </LayersWrapper>

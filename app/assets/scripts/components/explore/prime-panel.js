@@ -1,6 +1,6 @@
-import React, { useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import T from 'prop-types';
-import styled, {css}from 'styled-components';
+import styled, { css } from 'styled-components';
 import Panel from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import ExploreContext from '../../context/explore-context';
@@ -14,6 +14,7 @@ import { Card } from '../common/card-list';
 
 import QueryForm from './query-form';
 import RasterTray from './raster-tray';
+import { mapLayers } from '../common/mb-map/mb-map';
 
 import {
   resourceList,
@@ -48,10 +49,11 @@ function ExpMapPrimePanel (props) {
     setTourStep,
     gridMode,
     setGridMode,
-    gridSize, setGridSize
+    gridSize, setGridSize,
+    map
   } = useContext(ExploreContext);
 
-  const [showRasterPanel, setShowRasterPanel] = useState(false)
+  const [showRasterPanel, setShowRasterPanel] = useState(false);
 
   return (
     <>
@@ -74,21 +76,38 @@ function ExpMapPrimePanel (props) {
 
             <>
               <Button
-              key='toggle-raster-tray'
-              id='toggle-raster-tray'
-              variation='base-plain'
-              useIcon='iso-stack'
-              title='Toggle Raster Tray'
-              hideText
-              onClick={() => setShowRasterPanel(!showRasterPanel)}
-            >
-              <span>Toggle Raster Tray</span>
-            </Button>
+                key='toggle-raster-tray'
+                id='toggle-raster-tray'
+                variation='base-plain'
+                useIcon='iso-stack'
+                title='Toggle Raster Tray'
+                hideText
+                onClick={() => setShowRasterPanel(!showRasterPanel)}
+              >
+                <span>Toggle Raster Tray</span>
+              </Button>
               <RasterTray
                 show={showRasterPanel}
-                size={'large'}
-              >
-              </RasterTray>
+                size='large'
+                layers={
+                  mapLayers.map(l => ({
+                    id: l.id,
+                    name: l.id,
+                    min: l.min || 0,
+                    max: l.max || 1,
+                    type: l.type,
+                    stops: l.stops || [
+                      'rgba(0, 0, 255, 0)',
+                      'rgba(0, 0, 255, 1)'
+                    ]
+                  }))
+                }
+                onLayerKnobChange={(layer, knob) => {
+                  map.setPaintProperty(layer.id,
+                    layer.type === 'vector' ? 'fill-opacity' : 'raster-opacity',
+                    knob.value / 100);
+                }}
+              />
             </>
 
           ]
