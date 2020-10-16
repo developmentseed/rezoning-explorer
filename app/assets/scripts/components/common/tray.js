@@ -1,4 +1,5 @@
 import React from 'react';
+import T from 'prop-types';
 import styled, { css } from 'styled-components';
 
 const TrayWrapper = styled.div`
@@ -26,9 +27,9 @@ function Tray (props) {
     show,
     children
   } = props;
- 
+
   const [maxWidth, maxHeight] = Array.isArray(size) ? size : SIZE[size || 'small'];
- return (
+  return (
     <TrayWrapper
       maxWidth={maxWidth}
       maxHeight={maxHeight}
@@ -38,5 +39,11 @@ function Tray (props) {
     </TrayWrapper>
   );
 }
+
+Tray.propTypes = {
+  size: T.oneOf(['small', 'medium', 'large', 'xlarge']),
+  show: T.bool,
+  children: T.node
+};
 
 export default Tray;

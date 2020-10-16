@@ -199,7 +199,7 @@ class Panel extends React.Component {
           )}
           {
             additionalControls && additionalControls.map(ctrl => (
-              <PanelOffsetActions key={ctrl.props.id}>
+              <PanelOffsetActions key={`${ctrl.props.id}-wrapper`}>
                 {ctrl}
               </PanelOffsetActions>
             ))

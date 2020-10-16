@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import T from 'prop-types';
 import styled from 'styled-components';
 import Button from '../../styles/button/button';
 import Prose from '../../styles/type/prose';
@@ -45,7 +46,7 @@ const defaultStops = [
 ];
 
 function LayerControl (props) {
-  const { name, min, max, stops, onLayerKnobChange} = props;
+  const { name, min, max, stops, onLayerKnobChange } = props;
   const [knobPos, setKnobPos] = useState(50);
   return (
     <ControlWrapper>
@@ -77,10 +78,10 @@ function LayerControl (props) {
           stops={stops || defaultStops}
           knobPos={knobPos}
           id={name}
-          onAction={(a, p) => {onLayerKnobChange(props, p)
-            setKnobPos(p.value)
-          }
-          }
+          onAction={(a, p) => {
+            onLayerKnobChange(props, p);
+            setKnobPos(p.value);
+          }}
           disableGradientScaling
         />
         <Prose className='grad-min'>{min || 0}</Prose>
@@ -89,6 +90,14 @@ function LayerControl (props) {
     </ControlWrapper>
   );
 }
+
+LayerControl.propTypes = {
+  name: T.string,
+  min: T.number,
+  max: T.number,
+  stops: T.array,
+  onLayerKnobChange: T.func
+};
 
 function RasterTray (props) {
   const { size, show, layers, onLayerKnobChange } = props;
@@ -100,16 +109,24 @@ function RasterTray (props) {
       <LayersWrapper
         show={show}
       >
-        {layers.map(l =>
-          (<LayerControl
+        {layers.map(l => (
+          <LayerControl
             key={l.name}
             {...l}
             onLayerKnobChange={onLayerKnobChange}
-          />)
+          />
+        )
         )}
       </LayersWrapper>
     </Tray>
   );
 }
+
+RasterTray.propTypes = {
+  size: T.oneOf(['small', 'medium', 'large', 'xlarge']),
+  show: T.bool,
+  layers: T.array,
+  onLayerKnobChange: T.func
+};
 
 export default RasterTray;

@@ -47,7 +47,7 @@ export function ExploreProvider (props) {
   );
   const [areas, setAreas] = useState([]);
 
-  const [map, setMap] = useState(null)
+  const [map, setMap] = useState(null);
   useEffect(() => {
     setSelectedArea(areas.find((a) => a.id === selectedAreaId));
   }, [selectedAreaId]);
@@ -212,7 +212,8 @@ export function ExploreProvider (props) {
     <>
       <ExploreContext.Provider
         value={{
-          map, setMap,
+          map,
+          setMap,
           areas,
           selectedArea,
           setSelectedAreaId,

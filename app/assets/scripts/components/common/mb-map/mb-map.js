@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import T from 'prop-types';
 import styled, { withTheme } from 'styled-components';
 import mapboxgl from 'mapbox-gl';
@@ -22,9 +22,9 @@ const EEZ_BOUNDARIES_SOURCE_ID = 'EEZ_BOUNDARIES_SOURCE_ID';
 const EEZ_BOUNDARIES_LAYER_ID = 'EEZ_BOUNDARIES_LAYER_ID';
 
 export const mapLayers = [
-  {id: FILTERED_LAYER_ID, type: 'raster'},
-  {id: ZONES_BOUNDARIES_LAYER_ID, type: 'vector'}
-]
+  { id: FILTERED_LAYER_ID, type: 'raster' },
+  { id: ZONES_BOUNDARIES_LAYER_ID, type: 'vector' }
+];
 
 const MapsContainer = styled.div`
   position: relative;

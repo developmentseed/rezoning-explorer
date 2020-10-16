@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import T from 'prop-types';
 import * as d3 from 'd3';
 
-import SizeAwareElement from '../../common/size-aware-element';
+import SizeAwareElement from '../size-aware-element';
 
 import trackLayer from './track.layer';
 import knobLayer from './knob.layer';

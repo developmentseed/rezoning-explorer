@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import T from 'prop-types';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Panel from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import ExploreContext from '../../context/explore-context';
@@ -15,6 +15,8 @@ import { Card } from '../common/card-list';
 import QueryForm from './query-form';
 import RasterTray from './raster-tray';
 import { mapLayers } from '../common/mb-map/mb-map';
+import theme from '../../styles/theme/theme';
+import { rgba } from 'polished';
 
 import {
   resourceList,
@@ -97,8 +99,8 @@ function ExpMapPrimePanel (props) {
                     max: l.max || 1,
                     type: l.type,
                     stops: l.stops || [
-                      'rgba(0, 0, 255, 0)',
-                      'rgba(0, 0, 255, 1)'
+                      rgba(theme.main.color.primary, 0),
+                      rgba(theme.main.color.primary, 1)
                     ]
                   }))
                 }
