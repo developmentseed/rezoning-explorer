@@ -19,6 +19,8 @@ import { mapLayers } from '../common/mb-map/mb-map';
 import theme from '../../styles/theme/theme';
 import { rgba } from 'polished';
 
+import Heading from '../../styles/type/heading';
+
 import {
   resourceList,
   weightsList,
@@ -31,6 +33,28 @@ const PrimePanel = styled(Panel)`
   ${media.largeUp`
     width: 20rem;
   `}
+`;
+
+const RasterTrayWrapper = styled.div`
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  align-items: baseline;
+  ${({ show }) => show && 'width: 20rem;'}
+
+  > .info-button {
+    grid-column: 1;
+  }
+  > ${Heading} {
+    grid-column: 2;
+    ${({ show }) => !show && 'display: none;'}
+
+  }
+
+  > .raster-tray {
+    grid-column: 1 /span 2;
+    ${({ show }) => !show && 'display: none;'}
+
+  }
 `;
 function ExpMapPrimePanel (props) {
   const { onPanelChange } = props;
@@ -78,27 +102,31 @@ function ExpMapPrimePanel (props) {
               <span>Open Tour</span>
             </Button>,
 
-            <>
+            <RasterTrayWrapper
+              key='toggle-raster-tray'
+              show={showRasterPanel}
+            >
               <InfoButton
-                key='toggle-raster-tray'
                 id='toggle-raster-tray'
+                className='info-button'
                 variation='base-plain'
                 useIcon='iso-stack'
                 title='Toggle Raster Tray'
-                info='info'
+                info={filteredLayerUrl ? null : 'Apply search to load raster layers'}
+                width='20rem'
                 hideText
                 visuallyDisabled={!filteredLayerUrl}
                 onClick={() => {
-                  if (filteredLayerUrl)
-                    setShowRasterPanel(!showRasterPanel)}
-                }
+                  if (filteredLayerUrl) { setShowRasterPanel(!showRasterPanel); }
+                }}
               >
-                <span>Toggle Raster Tray</span>
+                <span>Contextual Layers</span>
               </InfoButton>
+              <Heading>Contextual Layers</Heading>
 
               <RasterTray
                 show={showRasterPanel}
-                size='large'
+                className='raster-tray'
                 layers={
                   mapLayers.map(l => ({
                     id: l.id,
@@ -118,10 +146,10 @@ function ExpMapPrimePanel (props) {
                     knob.value / 100);
                 }}
                 onVisibilityToggle={(layer, visible) => {
-                  map.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none')
+                  map.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none');
                 }}
               />
-            </>
+            </RasterTrayWrapper>
 
           ]
         }

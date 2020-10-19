@@ -4,13 +4,14 @@ import styled from 'styled-components';
 import Button from '../../styles/button/button';
 import InfoButton from '../common/info-button';
 import Prose from '../../styles/type/prose';
-
-import Tray from '../common/tray';
 import GradientChart from '../common/gradient-legend-chart/chart';
 
+const TrayWrapper = styled.div`
+  padding: 0.25rem;
+`;
 const ControlWrapper = styled.div`
 padding: 0.5rem;
-width: 20rem;
+width: 100%;
 `;
 const ControlHeadline = styled.div`
 display: flex;
@@ -57,10 +58,11 @@ function LayerControl (props) {
       <ControlHeadline>
         <Prose>{name}</Prose>
         <ControlTools>
-            <InfoButton
+          <InfoButton
             id='layer-info'
             info={props.info || null}
-            >
+            disabled={!props.info}
+          >
             <span>Open Tour</span>
           </InfoButton>
           <Button
@@ -89,8 +91,8 @@ function LayerControl (props) {
           }}
           disableGradientScaling
         />
-        <Prose className='grad-min'>{min || 0}</Prose>
-        <Prose className='grad-max'>{max || 1}</Prose>
+        <Prose size='small' className='grad-min'>{min || 0}</Prose>
+        <Prose size='small' className='grad-max'>{max || 1}</Prose>
       </Legend>
     </ControlWrapper>
   );
@@ -102,15 +104,16 @@ LayerControl.propTypes = {
   min: T.number,
   max: T.number,
   stops: T.array,
-  onLayerKnobChange: T.func
+  onLayerKnobChange: T.func,
+  onVisibilityToggle: T.func,
+  info: T.string
 };
 
 function RasterTray (props) {
-  const { size, show, layers, onLayerKnobChange, onVisibilityToggle } = props;
+  const { show, layers, onLayerKnobChange, onVisibilityToggle, className } = props;
   return (
-    <Tray
-      size={size}
-      show={show}
+    <TrayWrapper
+      className={className}
     >
       <LayersWrapper
         show={show}
@@ -125,7 +128,7 @@ function RasterTray (props) {
         )
         )}
       </LayersWrapper>
-    </Tray>
+    </TrayWrapper>
   );
 }
 
@@ -133,7 +136,9 @@ RasterTray.propTypes = {
   size: T.oneOf(['small', 'medium', 'large', 'xlarge']),
   show: T.bool,
   layers: T.array,
-  onLayerKnobChange: T.func
+  onLayerKnobChange: T.func,
+  onVisibilityToggle: T.func,
+  className: T.string
 };
 
 export default RasterTray;
