@@ -19,7 +19,7 @@ import { mapLayers } from '../common/mb-map/mb-map';
 import theme from '../../styles/theme/theme';
 import { rgba } from 'polished';
 
-import Heading from '../../styles/type/heading';
+import { Subheading } from '../../styles/type/heading';
 
 import {
   resourceList,
@@ -44,7 +44,7 @@ const RasterTrayWrapper = styled.div`
   > .info-button {
     grid-column: 1;
   }
-  > ${Heading} {
+  > ${Subheading} {
     grid-column: 2;
     ${({ show }) => !show && 'display: none;'}
 
@@ -122,7 +122,7 @@ function ExpMapPrimePanel (props) {
               >
                 <span>Contextual Layers</span>
               </InfoButton>
-              <Heading>Contextual Layers</Heading>
+              <Subheading>Contextual Layers</Subheading>
 
               <RasterTray
                 show={showRasterPanel}
