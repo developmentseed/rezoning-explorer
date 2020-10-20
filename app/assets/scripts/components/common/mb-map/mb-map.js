@@ -9,6 +9,8 @@ import { featureCollection } from '@turf/helpers';
 
 import ExploreContext from '../../../context/explore-context';
 import MapContext from '../../../context/map-context';
+import theme from '../../../styles/theme/theme';
+import { rgba } from 'polished';
 
 const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
@@ -30,7 +32,12 @@ export const mapLayers = [
   {
     id: ZONES_BOUNDARIES_LAYER_ID,
     name: 'Zone Boundaries',
-    type: 'vector'
+    type: 'vector',
+    stops: [
+      rgba(theme.main.color.tertiary, 0),
+      rgba(theme.main.color.tertiary, 1)
+    ]
+
   }
 ];
 

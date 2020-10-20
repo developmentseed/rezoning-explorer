@@ -14,8 +14,8 @@ padding: 0.5rem;
 width: 100%;
 `;
 const ControlHeadline = styled.div`
-display: flex;
-flex-direction: row;
+display: grid;
+grid-template-columns: 3fr 1fr;
 justify-content: space-between;
 align-items: baseline;
 `;
