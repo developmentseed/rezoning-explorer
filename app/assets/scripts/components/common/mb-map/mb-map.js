@@ -24,7 +24,7 @@ const EEZ_BOUNDARIES_LAYER_ID = 'EEZ_BOUNDARIES_LAYER_ID';
 export const mapLayers = [
   {
     id: FILTERED_LAYER_ID,
-    name: 'LCOE',
+    name: 'Selected Area',
     type: 'raster'
   },
   {
