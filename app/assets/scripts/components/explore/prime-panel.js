@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import T from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Panel from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import ExploreContext from '../../context/explore-context';
@@ -39,7 +39,9 @@ const RasterTrayWrapper = styled.div`
   display: grid;
   grid-template-columns: min-content 1fr;
   align-items: baseline;
-  ${({ show }) => show && 'width: 20rem;'}
+  ${({ show }) => show && css`
+    width: 20rem;
+  `}
 
   > .info-button {
     grid-column: 1;

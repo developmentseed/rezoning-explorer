@@ -10,19 +10,19 @@ const TrayWrapper = styled.div`
   padding: 0.25rem;
 `;
 const ControlWrapper = styled.div`
-padding: 0.5rem;
-width: 100%;
+  padding: 0.5rem;
+  width: 100%;
 `;
 const ControlHeadline = styled.div`
-display: grid;
-grid-template-columns: 3fr 1fr;
-justify-content: space-between;
-align-items: baseline;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  justify-content: space-between;
+  align-items: baseline;
 `;
 const ControlTools = styled.div`
-display: grid;
-grid-template-columns: 1fr 1fr;
-grid-gap: 0.75rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 0.75rem;
 `;
 const Legend = styled.div`
   display: grid;
