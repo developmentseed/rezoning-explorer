@@ -22,7 +22,7 @@ const propsToFilter = ['variation', 'size', 'hideText', 'useIcon', 'active'];
 const StyledLink = filterComponentProps(Link, propsToFilter);
 
 const HomeInpage = styled(Inpage)`
-  background: rgb(2, 0, 36);
+  background: radial-gradient(farthest-corner, rgb(27, 40, 136), rgb(2, 0, 36));
   color: ${themeVal('color.background')};
   padding-top: 12rem;
   ${Button} {
