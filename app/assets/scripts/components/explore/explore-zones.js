@@ -11,6 +11,8 @@ import { formatThousands } from '../../utils/format';
 import get from 'lodash.get';
 import MapContext from '../../context/map-context';
 
+import { FormCheckable } from '../../styles/form/checkable';
+
 import ColorScale from '../common/color-scale';
 import zoneScoreColor from '../../styles/zoneScoreColors';
 
@@ -38,7 +40,9 @@ const ZonesHeader = styled(Subheading)`
 `;
 
 const Card = styled(CardWrapper)`
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: space-between;
   height: auto;
   box-shadow: none;
   border: none;
@@ -100,7 +104,7 @@ function ExploreZones (props) {
 
   const [focusZone, setFocusZone] = useState(null);
 
-  const [selectedZones, setSelectedZones] = useState({});
+  const [selectedZones, setSelectedZones] = useState(currentZones.reduce((accum, zone) => ({ ...accum, [zone.id]: false }), {}));
 
   const formatIndicator = function (id, value) {
     switch (id) {
@@ -145,7 +149,9 @@ function ExploreZones (props) {
                 isHovered={hoveredFeature === data.id}
                 onMouseEnter={onRowHoverEvent.bind(null, 'enter', data.id)}
                 onMouseLeave={onRowHoverEvent.bind(null, 'leave', data.id)}
+                onClick={() => setFocusZone(data)}
               >
+
                 <CardIcon color={get(data, 'properties.color')}>
                   <div>{data.id}</div>
                 </CardIcon>
@@ -162,11 +168,33 @@ function ExploreZones (props) {
                       )
                     : 'UNAVAILABLE'}
                 </CardDetails>
+                <FormCheckable
+                  name={data.id}
+                  id={data.id}
+                  type='checkbox'
+                  checked={selectedZones[data.id]}
+                  onChange={() => {
+                    setSelectedZones({
+                      ...selectedZones,
+                      [data.id]: !selectedZones[data.id]
+                    });
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  hideText
+                >Add zone to selection
+                </FormCheckable>
+
               </Card>
             )}
           />
         </>
       )}
+
+      <ExportZonesButton
+        onExport={() => {}}
+      />
     </ZonesWrapper>
   );
 }
@@ -183,7 +211,7 @@ const ExportWrapper = styled.div`
 const ExportZonesButton = ({ onExport, small, usePadding }) => {
   return (
     <ExportWrapper usePadding={usePadding}>
-      <Button as='a' useIcon='download' variation='primary-raised-dark'>
+      <Button as='a' useIcon='download' variation='primary-raised-dark' size='small'>
         {small ? 'Export' : 'Export Selected Zones'}
       </Button>
     </ExportWrapper>
