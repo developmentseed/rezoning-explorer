@@ -234,7 +234,7 @@ function QueryForm (props) {
             validate={option.input.range ? validateRangeNum(option.input.range[0], option.input.range[1]) : () => true}
             errorMessage={errorMessage}
             onChange={onChange}
-            validationTimeout={750}
+            validationTimeout={1500}
           />
         );
       case BOOL:
