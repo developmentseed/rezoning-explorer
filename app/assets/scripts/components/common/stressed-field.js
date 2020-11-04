@@ -53,7 +53,7 @@ export default class StressedField extends React.PureComponent {
 
   validateField () {
     const { value, originalVal } = this.state;
-    const { onChange, validate } = this.props;
+    const { onChange, validate, validationTimeout } = this.props;
 
     if (!validate(value)) {
       this.setState({ errored: true });
@@ -64,7 +64,7 @@ export default class StressedField extends React.PureComponent {
           value: originalVal,
           errored: false
         });
-      }, 550);
+      }, validationTimeout || 550);
     } else {
       // all good.
       this.setState({ errored: false, originalVal: value });
@@ -112,5 +112,6 @@ StressedField.propTypes = {
   value: T.oneOfType([T.string, T.number]),
   onChange: T.func,
   validate: T.func,
-  render: T.func.isRequired
+  render: T.func.isRequired,
+  validationTimeout: T.number
 };

@@ -205,6 +205,9 @@ function QueryForm (props) {
   const [lcoe, setLcoe] = useState(initListToState(lcoeList));
 
   const inputOfType = (option, onChange) => {
+    const { range } = option.input;
+    const errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${range[0]} - ${range[1]}`;
+
     switch (option.input.type) {
       case SLIDER:
         return (
@@ -229,7 +232,9 @@ function QueryForm (props) {
             label={option.name}
             value={option.input.value}
             validate={option.input.range ? validateRangeNum(option.input.range[0], option.input.range[1]) : () => true}
+            errorMessage={errorMessage}
             onChange={onChange}
+            validationTimeout={1500}
           />
         );
       case BOOL:
