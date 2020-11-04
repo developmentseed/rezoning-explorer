@@ -7,6 +7,7 @@ import bboxPolygon from '@turf/bbox-polygon';
 
 import { featureCollection } from '@turf/helpers';
 import QsState from '../utils/qs-state';
+import useQsState from '../utils/qs-state-hook';
 
 import config from '../config';
 
@@ -40,8 +41,22 @@ export function ExploreProvider (props) {
   const location = useLocation();
 
   const qsState = qsStateHelper.getState(location.search.substr(1));
+  const initQsState = qsStateHelper.getState(location.search.substr(1));
+
+  /*
+  const [selectedView, setSelectedView] = useQsState({
+    key: 'view',
+    default: 'imagery',
+    validator: ['imagery', 'scenes']
+  });*/
+
   const [selectedArea, setSelectedArea] = useState(null);
-  const [selectedAreaId, setSelectedAreaId] = useState(qsState.areaId);
+  //const [selectedAreaId, setSelectedAreaId] = useState(qsState.areaId);
+
+  const [selectedAreaId, setSelectedAreaId] = useQsState({
+    key: 'areaId',
+    default: undefined
+  })
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
     !qsState.areaId
   );
@@ -52,7 +67,11 @@ export function ExploreProvider (props) {
     setSelectedArea(areas.find((a) => a.id === selectedAreaId));
   }, [selectedAreaId]);
 
-  const [selectedResource, setSelectedResource] = useState(qsState.resourceId);
+  //const [selectedResource, setSelectedResource] = useState(qsState.resourceId);
+  const [selectedResource, setSelectedResource] = useQsState({
+    key: 'resourceId',
+    default: undefined
+  })
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
     !qsState.resourceId
   );
@@ -147,13 +166,13 @@ export function ExploreProvider (props) {
       */
 
     const qString = qsStateHelper.getQs({
-      areaId: overrideId === undefined ? selectedAreaId : overrideId,
+      //areaId: overrideId === undefined ? selectedAreaId : overrideId,
       resourceId: selectedResource
     });
 
     // Push params as new URL, if different from current URL
     if (qString !== location.search.substr(1)) {
-      history.push({ search: qString });
+      //history.push({ search: qString });
     }
   }, [selectedAreaId, selectedResource]);
 
@@ -168,13 +187,13 @@ export function ExploreProvider (props) {
     );
 
     if (areaId !== selectedAreaId) {
-      setSelectedAreaId(areaId);
-      setShowSelectAreaModal(!areaId);
+      //setSelectedAreaId(areaId);
+      //setShowSelectAreaModal(!areaId);
     }
 
     if (resourceId !== selectedResource) {
-      setSelectedResource(resourceId);
-      setShowSelectResourceModal(!resourceId);
+      //setSelectedResource(resourceId);
+      //setShowSelectResourceModal(!resourceId);
     }
   }, [location.search]);
 

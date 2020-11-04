@@ -123,6 +123,7 @@
     "element-resize-event": "^3.0.3",
     "history": "^4.10.0",
     "jest-styled-components": "^7.0.2",
+    "lodash.debounce": "^4.0.8",
     "lodash.defaultsdeep": "^4.6.1",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
