@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal, makeTitleCase } from '../../styles/utils/general';
+import useQsState from '../../utils/qs-state-hook';
+
 import {
   PanelBlock,
   PanelBlockHeader,
@@ -201,7 +203,46 @@ function QueryForm (props) {
   } = props;
 
   const [weights, setWeights] = useState(initListToState(weightsList));
+
   const [filters, setFilters] = useState(initObjectToState(filtersLists));
+
+  const [qsFilters, setQsFilters] = useQsState({
+    key: 'filters',
+    hydrator: v => {
+      return v && v.split('|').map(r => {
+        const range = r.split(',');
+        return { min: Number(range[0]), max: Number(range[1]) };
+      });
+    },
+    dehydrator: v => {
+      // Hard coded as distance filters
+      // TODO evaluate, are there other types of filtrs?
+      return v && v.map( r => `${r.min}, ${r.max}`).join('|')
+    },
+    default: undefined
+  });
+  useEffect(() => {
+    setQsFilters(filters.distance_filters.map(f => f.input.value));
+  }, [filters]);
+  useEffect(() => {
+    if (!qsFilters) return;
+    const updated = filters.distance_filters.map( (filt, i) => {
+      return (
+        {
+          ...filt,
+          input: {
+            ...filt.input,
+            value: qsFilters[i]
+          }
+        }
+      )
+    })
+    /*setFilters({
+      ...filters,
+      distance_filters: updated
+    })*/
+  }, [qsFilters]);
+
   const [lcoe, setLcoe] = useState(initListToState(lcoeList));
 
   const inputOfType = (option, onChange) => {
