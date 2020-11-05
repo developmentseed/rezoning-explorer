@@ -39,7 +39,7 @@ const qsStateHelper = new QsState({
 export function ExploreProvider (props) {
   const location = useLocation();
 
-  const initQsState = qsStateHelper.getState(location.search.substr(1));
+  const qsState = qsStateHelper.getState(location.search.substr(1));
 
   const [selectedArea, setSelectedArea] = useState(null);
 
@@ -49,12 +49,16 @@ export function ExploreProvider (props) {
   });
 
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
-    !initQsState.areaId
+    !qsState.areaId
   );
 
   const [areas, setAreas] = useState([]);
 
   const [map, setMap] = useState(null);
+
+  useEffect(() => {
+    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
+  }, [selectedAreaId]);
 
   const [selectedResource, setSelectedResource] = useQsState({
     key: 'resourceId',
@@ -62,7 +66,7 @@ export function ExploreProvider (props) {
   });
 
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
-    !initQsState.resourceId
+    !qsState.resourceId
   );
 
   const [gridMode, setGridMode] = useState(false);
