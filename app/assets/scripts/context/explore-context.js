@@ -37,45 +37,33 @@ const qsStateHelper = new QsState({
 });
 
 export function ExploreProvider (props) {
-  const history = useHistory();
   const location = useLocation();
 
-  const qsState = qsStateHelper.getState(location.search.substr(1));
   const initQsState = qsStateHelper.getState(location.search.substr(1));
 
-  /*
-  const [selectedView, setSelectedView] = useQsState({
-    key: 'view',
-    default: 'imagery',
-    validator: ['imagery', 'scenes']
-  });*/
-
   const [selectedArea, setSelectedArea] = useState(null);
-  //const [selectedAreaId, setSelectedAreaId] = useState(qsState.areaId);
 
   const [selectedAreaId, setSelectedAreaId] = useQsState({
     key: 'areaId',
     default: undefined
-  })
+  });
+
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
-    !qsState.areaId
+    !initQsState.areaId
   );
+
   const [areas, setAreas] = useState([]);
 
   const [map, setMap] = useState(null);
-  useEffect(() => {
-    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
-  }, [selectedAreaId]);
 
-  //const [selectedResource, setSelectedResource] = useState(qsState.resourceId);
   const [selectedResource, setSelectedResource] = useQsState({
     key: 'resourceId',
     default: undefined
-  })
+  });
+
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
-    !qsState.resourceId
+    !initQsState.resourceId
   );
-  // const [areaTypeFilter, setAreaTypeFilter] = useState(energyAreaTypeMap[selectedResource] || energyAreaTypeMap.default);
 
   const [gridMode, setGridMode] = useState(false);
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
@@ -120,6 +108,10 @@ export function ExploreProvider (props) {
   };
 
   useEffect(() => {
+    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
+  }, [selectedAreaId]);
+
+  useEffect(() => {
     let nextArea = areas.find((a) => `${a.id}` === `${selectedAreaId}`);
 
     if (selectedResource === 'Off-Shore Wind' && nextArea) {
@@ -151,51 +143,8 @@ export function ExploreProvider (props) {
   }, [tourStep]);
 
   useEffect(() => {
-    let overrideId;
-
-    /*
-    const nextFilter = energyAreaTypeMap[selectedResource];
-
-    if (nextFilter) {
-      setAreaTypeFilter(nextFilter);
-
-      if (selectedArea && !nextFilter.includes(selectedArea.type)) {
-        overrideId = null;
-      }
-    }
-      */
-
-    const qString = qsStateHelper.getQs({
-      //areaId: overrideId === undefined ? selectedAreaId : overrideId,
-      resourceId: selectedResource
-    });
-
-    // Push params as new URL, if different from current URL
-    if (qString !== location.search.substr(1)) {
-      //history.push({ search: qString });
-    }
-  }, [selectedAreaId, selectedResource]);
-
-  useEffect(() => {
     dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
   }, [selectedAreaId]);
-
-  // Update context on URL change
-  useEffect(() => {
-    const { areaId, resourceId } = qsStateHelper.getState(
-      location.search.substr(1)
-    );
-
-    if (areaId !== selectedAreaId) {
-      //setSelectedAreaId(areaId);
-      //setShowSelectAreaModal(!areaId);
-    }
-
-    if (resourceId !== selectedResource) {
-      //setSelectedResource(resourceId);
-      //setShowSelectResourceModal(!resourceId);
-    }
-  }, [location.search]);
 
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
