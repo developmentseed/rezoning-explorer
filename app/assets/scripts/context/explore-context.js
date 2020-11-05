@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState, useReducer } from 'react';
 import T from 'prop-types';
-import { useHistory, useLocation } from 'react-router';
+import { useLocation } from 'react-router';
 import * as topojson from 'topojson-client';
 import bbox from '@turf/bbox';
 import bboxPolygon from '@turf/bbox-polygon';

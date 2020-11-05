@@ -135,7 +135,6 @@ export default function useQsState (def) {
     return () => {
       unlisten();
     };
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, []);
 
   return [valueState, setValue];
