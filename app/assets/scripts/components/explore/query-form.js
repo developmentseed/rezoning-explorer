@@ -237,7 +237,7 @@ function QueryForm (props) {
         return shard;
       }).join('|');
     },
-    default: 'x'
+    default: undefined
   });
 
   // const [filters, setFilters] = useState(initObjectToState(filtersLists));
@@ -281,7 +281,45 @@ function QueryForm (props) {
     default: undefined
   });
 
-  const [lcoe, setLcoe] = useState(initListToState(lcoeList));
+//  const [lcoe, setLcoe] = useState(initListToState(lcoeList));
+
+  const [lcoe, setLcoe] = useQsState({
+    key: 'lcoe',
+    hydrator: v => {
+      let base = initListToState(lcoeList);
+      if (v) {
+        const qsValues = v.split('|').map(vals => {
+          const [value, active] = vals.split(',');
+          return {
+            value: Number(value),
+            active: active === undefined
+          };
+        });
+        base = base.map((cost, i) => (
+          {
+            ...cost,
+            active: qsValues[i].active,
+            input: {
+              ...cost.input,
+              value: qsValues[i].value || cost.input.value
+            }
+          }
+        ));
+      }
+      return base;
+    },
+    dehydrator: v => {
+      return v && v.map(w => {
+        const { value } = w.input;
+        let shard = `${value}`;
+        shard = w.active ? shard : `${shard},${false}`;
+        return shard;
+      }).join('|');
+    },
+    default: undefined
+  });
+
+
 
   const inputOfType = (option, onChange) => {
     const { range } = option.input;
