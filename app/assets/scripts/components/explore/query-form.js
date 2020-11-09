@@ -204,44 +204,42 @@ function QueryForm (props) {
 
   const [weights, setWeights] = useState(initListToState(weightsList));
 
-  const [filters, setFilters] = useState(initObjectToState(filtersLists));
+  // const [filters, setFilters] = useState(initObjectToState(filtersLists));
 
-  const [qsFilters, setQsFilters] = useQsState({
+  const [filters, setFilters] = useQsState({
     key: 'filters',
     hydrator: v => {
-      return v && v.split('|').map(r => {
-        const range = r.split(',');
-        return { min: Number(range[0]), max: Number(range[1]) };
+      const qsValues = v.split('|').map(vals => {
+        const [min, max, active] = vals.split(',');
+        return {
+          min: Number(min),
+          max: Number(max),
+          active: !(active === undefined)
+        };
       });
+      const baseFilts = initObjectToState(filtersLists);
+      baseFilts.distance_filters = baseFilts.distance_filters.map((filt, i) => (
+        {
+          ...filt,
+          active: qsValues[i].active,
+          input: {
+            ...filt.input,
+            value: qsValues[i].value || filt.input.value
+          }
+        }
+      ));
+      return baseFilts;
     },
     dehydrator: v => {
-      // Hard coded as distance filters
-      // TODO evaluate, are there other types of filtrs?
-      return v && v.map( r => `${r.min}, ${r.max}`).join('|')
+      return v && v.distance_filters.map(f => {
+        const { value } = f.input;
+        let shard = `${value.min}, ${value.max}`;
+        shard = f.active ? shard : `${shard},${false}`;
+        return shard;
+      }).join('|');
     },
     default: undefined
   });
-  useEffect(() => {
-    setQsFilters(filters.distance_filters.map(f => f.input.value));
-  }, [filters]);
-  useEffect(() => {
-    if (!qsFilters) return;
-    const updated = filters.distance_filters.map( (filt, i) => {
-      return (
-        {
-          ...filt,
-          input: {
-            ...filt.input,
-            value: qsFilters[i]
-          }
-        }
-      )
-    })
-    /*setFilters({
-      ...filters,
-      distance_filters: updated
-    })*/
-  }, [qsFilters]);
 
   const [lcoe, setLcoe] = useState(initListToState(lcoeList));
 
@@ -310,6 +308,10 @@ function QueryForm (props) {
         }), {});
     updateFilteredLayer(filterValues, weightsValues, lcoeValues);
   };
+
+  useEffect(() => {
+    setFilters(initObjectToState(filtersLists));
+  }, []);
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
