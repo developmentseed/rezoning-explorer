@@ -209,25 +209,27 @@ function QueryForm (props) {
   const [filters, setFilters] = useQsState({
     key: 'filters',
     hydrator: v => {
-      const qsValues = v.split('|').map(vals => {
-        const [min, max, active] = vals.split(',');
-        return {
-          min: Number(min),
-          max: Number(max),
-          active: !(active === undefined)
-        };
-      });
       const baseFilts = initObjectToState(filtersLists);
-      baseFilts.distance_filters = baseFilts.distance_filters.map((filt, i) => (
-        {
-          ...filt,
-          active: qsValues[i].active,
-          input: {
-            ...filt.input,
-            value: qsValues[i].value || filt.input.value
+      if (v) {
+        const qsValues = v.split('|').map(vals => {
+          const [min, max, active] = vals.split(',');
+          return {
+            min: Number(min),
+            max: Number(max),
+            active: !(active === undefined)
+          };
+        });
+        baseFilts.distance_filters = baseFilts.distance_filters.map((filt, i) => (
+          {
+            ...filt,
+            active: qsValues[i].active,
+            input: {
+              ...filt.input,
+              value: qsValues[i].value || filt.input.value
+            }
           }
-        }
-      ));
+        ));
+      }
       return baseFilts;
     },
     dehydrator: v => {
