@@ -202,7 +202,43 @@ function QueryForm (props) {
     gridSize, setGridSize
   } = props;
 
-  const [weights, setWeights] = useState(initListToState(weightsList));
+  // const [weights, setWeights] = useState(initListToState(weightsList));
+
+  const [weights, setWeights] = useQsState({
+    key: 'weights',
+    hydrator: v => {
+      let base = initListToState(weightsList);
+      if (v) {
+        const qsValues = v.split('|').map(vals => {
+          const [value, active] = vals.split(',');
+          return {
+            value: Number(value),
+            active: active === undefined
+          };
+        });
+        base = base.map((weight, i) => (
+          {
+            ...weight,
+            active: qsValues[i].active,
+            input: {
+              ...weight.input,
+              value: qsValues[i].value || weight.input.value
+            }
+          }
+        ));
+      }
+      return base;
+    },
+    dehydrator: v => {
+      return v && v.map(w => {
+        const { value } = w.input;
+        let shard = `${value}`;
+        shard = w.active ? shard : `${shard},${false}`;
+        return shard;
+      }).join('|');
+    },
+    default: 'x'
+  });
 
   // const [filters, setFilters] = useState(initObjectToState(filtersLists));
 
@@ -214,9 +250,11 @@ function QueryForm (props) {
         const qsValues = v.split('|').map(vals => {
           const [min, max, active] = vals.split(',');
           return {
-            min: Number(min),
-            max: Number(max),
-            active: !(active === undefined)
+            value: {
+              min: Number(min),
+              max: Number(max)
+            },
+            active: active === undefined
           };
         });
         baseFilts.distance_filters = baseFilts.distance_filters.map((filt, i) => (
@@ -312,7 +350,9 @@ function QueryForm (props) {
   };
 
   useEffect(() => {
-    setFilters(initObjectToState(filtersLists));
+    console.log('init set');
+    // setFilters(initObjectToState(filtersLists));
+    // setWeightsQ(initListToState(weightsList));
   }, []);
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
