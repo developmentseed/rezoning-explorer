@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal, makeTitleCase } from '../../styles/utils/general';
@@ -202,8 +202,6 @@ function QueryForm (props) {
     gridSize, setGridSize
   } = props;
 
-  // const [weights, setWeights] = useState(initListToState(weightsList));
-
   const [weights, setWeights] = useQsState({
     key: 'weights',
     hydrator: v => {
@@ -239,8 +237,6 @@ function QueryForm (props) {
     },
     default: undefined
   });
-
-  // const [filters, setFilters] = useState(initObjectToState(filtersLists));
 
   const [filters, setFilters] = useQsState({
     key: 'filters',
@@ -281,8 +277,6 @@ function QueryForm (props) {
     default: undefined
   });
 
-//  const [lcoe, setLcoe] = useState(initListToState(lcoeList));
-
   const [lcoe, setLcoe] = useQsState({
     key: 'lcoe',
     hydrator: v => {
@@ -318,8 +312,6 @@ function QueryForm (props) {
     },
     default: undefined
   });
-
-
 
   const inputOfType = (option, onChange) => {
     const { range } = option.input;
@@ -386,12 +378,6 @@ function QueryForm (props) {
         }), {});
     updateFilteredLayer(filterValues, weightsValues, lcoeValues);
   };
-
-  useEffect(() => {
-    console.log('init set');
-    // setFilters(initObjectToState(filtersLists));
-    // setWeightsQ(initListToState(weightsList));
-  }, []);
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
