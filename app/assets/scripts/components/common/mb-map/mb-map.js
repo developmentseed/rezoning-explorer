@@ -34,6 +34,12 @@ export const mapLayers = [
     type: 'raster'
   },
   {
+    id: LCOE_LAYER_LAYER_ID,
+    name: 'LCOE Tiles',
+    type: 'raster'
+  },
+
+  {
     id: ZONES_BOUNDARIES_LAYER_ID,
     name: 'Zone Boundaries',
     type: 'vector',
@@ -130,6 +136,9 @@ const initializeMap = ({
       source: LCOE_LAYER_SOURCE_ID,
       layout: {
         visibility: 'none'
+      },
+      paint: {
+        'raster-opacity': 0.7
       },
       minzoom: 0,
       maxzoom: 22
