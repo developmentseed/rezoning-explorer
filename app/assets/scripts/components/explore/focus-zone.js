@@ -25,7 +25,6 @@ const Wrapper = styled.div`
   display: grid;
   grid-template-rows: 2rem auto 1fr;
   gap: 0.5rem;
-  padding: 0 1.5rem;
   > ${Button} {
     text-align: left;
     margin-left: -1.5rem;
@@ -46,13 +45,12 @@ const FocusZoneFooter = styled.div`
 
 function FocusZone (props) {
   const { zone, unFocus, selected, onSelect } = props;
+  const { id } = zone.properties;
   /* eslint-disable-next-line */
-  const { id, country, energy_source, details } = zone;
   const detailsList = {
-    id,
-    country,
-    energy_source,
-    ...details
+    id: id,
+    name: zone.properties.id,
+    ...zone.properties.summary
   };
   return (
 
@@ -65,7 +63,7 @@ function FocusZone (props) {
         <Details>
           {Object.entries(detailsList).map(([label, data]) => (
             <Dl key={`${id}-${label}`}>
-              <dt>{label}</dt>
+              <dt>{label.replace(/_/g, ' ')}</dt>
               <dd>{data}</dd>
             </Dl>
           ))}

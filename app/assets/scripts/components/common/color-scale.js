@@ -13,7 +13,7 @@ const Step = styled.div`
   height: 1rem;
   /* stylelint-disable-next-line */
   grid-column: ${({ column, steps }) => `${column + 1} / ${column + 2 > steps ? -1 : column + 2}`};
-  background-color: ${({ color }) => color}
+  background-color: ${({ color }) => color};
 `;
 
 const Labels = styled.div`
