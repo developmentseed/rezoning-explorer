@@ -49,7 +49,7 @@ export function ExploreProvider (props) {
   });
 
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
-    !qsState.areaId
+    !selectedAreaId
   );
 
   const [areas, setAreas] = useState([]);
@@ -66,8 +66,13 @@ export function ExploreProvider (props) {
   });
 
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
-    !qsState.resourceId
+    !selectedResource
   );
+
+  useEffect(() => {
+    setShowSelectAreaModal(!selectedAreaId)
+    setShowSelectResourceModal(!selectedResource)
+  }, [selectedAreaId, selectedResource])
 
   const [gridMode, setGridMode] = useState(false);
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
