@@ -1,12 +1,10 @@
 import React, { createContext, useEffect, useState, useReducer } from 'react';
 import T from 'prop-types';
-import { useLocation } from 'react-router';
 import * as topojson from 'topojson-client';
 import bbox from '@turf/bbox';
 import bboxPolygon from '@turf/bbox-polygon';
 
 import { featureCollection } from '@turf/helpers';
-import QsState from '../utils/qs-state';
 import useQsState from '../utils/qs-state-hook';
 
 import config from '../config';
@@ -27,20 +25,7 @@ const { GRID_OPTIONS } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
-const qsStateHelper = new QsState({
-  areaId: {
-    accessor: 'areaId'
-  },
-  resourceId: {
-    accessor: 'resourceId'
-  }
-});
-
 export function ExploreProvider (props) {
-  const location = useLocation();
-
-  const qsState = qsStateHelper.getState(location.search.substr(1));
-
   const [selectedArea, setSelectedArea] = useState(null);
 
   const [selectedAreaId, setSelectedAreaId] = useQsState({
@@ -70,9 +55,9 @@ export function ExploreProvider (props) {
   );
 
   useEffect(() => {
-    setShowSelectAreaModal(!selectedAreaId)
-    setShowSelectResourceModal(!selectedResource)
-  }, [selectedAreaId, selectedResource])
+    setShowSelectAreaModal(!selectedAreaId);
+    setShowSelectResourceModal(!selectedResource);
+  }, [selectedAreaId, selectedResource]);
 
   const [gridMode, setGridMode] = useState(false);
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
