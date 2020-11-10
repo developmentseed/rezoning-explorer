@@ -248,7 +248,7 @@ export const lcoeList = [
 
   {
     name: 'Technical Loss Factor',
-    //TODO add correct id
+    // TODO add correct id
     id: 'tlf',
     input: {
       range: [0, 1],
@@ -257,7 +257,7 @@ export const lcoeList = [
   },
   {
     name: 'Unavailability Factor',
-    //TODO add correct id
+    // TODO add correct id
     id: 'uf',
     input: {
       range: [0, 1],
