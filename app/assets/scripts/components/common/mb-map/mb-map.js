@@ -100,7 +100,7 @@ const initializeMap = ({
      * which will be displayed on "Apply" click
      */
 
-    map.setPaintProprty('land', 'background-opacity', 0.7);
+    map.setPaintProperty('land', 'background-opacity', 0.7);
     map.addLayer({
       id: 'satellite',
       source: { type: 'raster', url: 'mapbox://mapbox.satellite', tileSize: 256 },
