@@ -94,6 +94,11 @@ const initializeMap = ({
 
   map.on('load', () => {
     setMap(map);
+    
+    /*
+     * Resize map on window size change
+     */
+    window.addEventListener('resize', resizeMap.bind(null, map));
 
     /**
      * Add placeholder map source and a hidden layer for the filtered layer,
