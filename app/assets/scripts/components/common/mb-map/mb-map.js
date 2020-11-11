@@ -94,7 +94,7 @@ const initializeMap = ({
 
   map.on('load', () => {
     setMap(map);
-    
+
     /*
      * Resize map on window size change
      */
