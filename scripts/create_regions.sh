@@ -55,7 +55,7 @@ for region in $REGIONS_PATH/*.geojson; do
 ./node_modules/.bin/shp2json --newline-delimited $GADM_UNZIPPED_PATH/gadm36_1.shp > $GADM_UNZIPPED_PATH/gadm36_1.geojson
 
 # # Explode into countries
-node ./scripts/split-gadm36_1.js $GADM_UNZIPPED_PATH/base.geojson $COUNTRIES_PATH
+node ./scripts/split-gadm36_1.js $GADM_UNZIPPED_PATH/gadm36_1.geojson $COUNTRIES_PATH
 
 # For each country, generate optimized TopoJSON
 for country in $COUNTRIES_PATH/*.geojson; do
