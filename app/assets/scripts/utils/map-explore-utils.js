@@ -154,7 +154,7 @@ export function getLayersWithState (layers) {
 /**
  * Invokes the map (and comparing map - if enabled) resize method.
  */
-export function resizeMap () {
+export function resizeMap (timeout) {
   const component = this.mbMapRef.current;
   if (component) {
     // Delay execution to give the panel animation time to finish.
@@ -164,7 +164,7 @@ export function resizeMap () {
       if (component.mbMapComparing) {
         component.mbMapComparing.resize();
       }
-    }, 200);
+    }, timeout || 200);
   }
 }
 
