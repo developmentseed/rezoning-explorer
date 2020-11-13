@@ -9,7 +9,6 @@ REGIONS_PATH=$TMP_PATH/regions
 PUBLIC_ZONES_PATH=app/public/zones
 
 # Create diretories
-# mkdir -p $TMP_PATH/regions
 
 mkdir -p $COUNTRIES_PATH/simplified
 mkdir -p $COUNTRIES_PATH/quantized
