@@ -1,12 +1,11 @@
 import React, { createContext, useEffect, useState, useReducer } from 'react';
 import T from 'prop-types';
-import { useHistory, useLocation } from 'react-router';
 import * as topojson from 'topojson-client';
 import bbox from '@turf/bbox';
 import bboxPolygon from '@turf/bbox-polygon';
 
 import { featureCollection } from '@turf/helpers';
-import QsState from '../utils/qs-state';
+import useQsState from '../utils/qs-state-hook';
 
 import config from '../config';
 
@@ -25,36 +24,39 @@ const { GRID_OPTIONS } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
-const qsStateHelper = new QsState({
-  areaId: {
-    accessor: 'areaId'
-  },
-  resourceId: {
-    accessor: 'resourceId'
-  }
-});
-
-export function ExploreProvider(props) {
-  const history = useHistory();
-  const location = useLocation();
-
-  const qsState = qsStateHelper.getState(location.search.substr(1));
+export function ExploreProvider (props) {
   const [selectedArea, setSelectedArea] = useState(null);
-  const [selectedAreaId, setSelectedAreaId] = useState(qsState.areaId);
+
+  const [selectedAreaId, setSelectedAreaId] = useQsState({
+    key: 'areaId',
+    default: undefined
+  });
+
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
-    !qsState.areaId
+    !selectedAreaId
   );
+
   const [areas, setAreas] = useState([]);
 
   const [map, setMap] = useState(null);
+
   useEffect(() => {
     setSelectedArea(areas.find((a) => a.id === selectedAreaId));
   }, [selectedAreaId]);
 
-  const [selectedResource, setSelectedResource] = useState(qsState.resourceId);
+  const [selectedResource, setSelectedResource] = useQsState({
+    key: 'resourceId',
+    default: undefined
+  });
+
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
-    !qsState.resourceId
+    !selectedResource
   );
+
+  useEffect(() => {
+    setShowSelectAreaModal(!selectedAreaId);
+    setShowSelectResourceModal(!selectedResource);
+  }, [selectedAreaId, selectedResource]);
 
   const [gridMode, setGridMode] = useState(false);
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
@@ -94,6 +96,10 @@ export function ExploreProvider(props) {
   };
 
   useEffect(() => {
+    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
+  }, [selectedAreaId]);
+
+  useEffect(() => {
     let nextArea = areas.find((a) => `${a.id}` === `${selectedAreaId}`);
 
     if (selectedResource === 'Off-Shore Wind' && nextArea) {
@@ -125,39 +131,8 @@ export function ExploreProvider(props) {
   }, [tourStep]);
 
   useEffect(() => {
-    let overrideId;
-
-    const qString = qsStateHelper.getQs({
-      areaId: overrideId === undefined ? selectedAreaId : overrideId,
-      resourceId: selectedResource
-    });
-
-    // Push params as new URL, if different from current URL
-    if (qString !== location.search.substr(1)) {
-      history.push({ search: qString });
-    }
-  }, [selectedAreaId, selectedResource]);
-
-  useEffect(() => {
     dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
   }, [selectedAreaId]);
-
-  // Update context on URL change
-  useEffect(() => {
-    const { areaId, resourceId } = qsStateHelper.getState(
-      location.search.substr(1)
-    );
-
-    if (areaId !== selectedAreaId) {
-      setSelectedAreaId(areaId);
-      setShowSelectAreaModal(!areaId);
-    }
-
-    if (resourceId !== selectedResource) {
-      setSelectedResource(resourceId);
-      setShowSelectResourceModal(!resourceId);
-    }
-  }, [location.search]);
 
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
