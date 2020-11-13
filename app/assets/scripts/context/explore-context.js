@@ -34,7 +34,7 @@ const qsStateHelper = new QsState({
   }
 });
 
-export function ExploreProvider (props) {
+export function ExploreProvider(props) {
   const history = useHistory();
   const location = useLocation();
 
@@ -55,7 +55,6 @@ export function ExploreProvider (props) {
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
     !qsState.resourceId
   );
-  // const [areaTypeFilter, setAreaTypeFilter] = useState(energyAreaTypeMap[selectedResource] || energyAreaTypeMap.default);
 
   const [gridMode, setGridMode] = useState(false);
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
@@ -66,16 +65,16 @@ export function ExploreProvider (props) {
     showGlobalLoading();
     // Parse region and country files into area list
 
-    const eez = await fetch('public/zones/eez_v11.topojson').then(e => e.json());
+    const eez = await fetch('public/zones/eez_v11.topojson').then((e) =>
+      e.json()
+    );
     const { features: eezFeatures } = topojson.feature(
       eez,
       eez.objects.eez_v11
     );
     const eezCountries = eezFeatures.reduce((accum, z) => {
       const id = z.properties.ISO_TER1;
-      accum.set(id,
-        [...(accum.has(id) ? accum.get(id) : []), z]
-      );
+      accum.set(id, [...(accum.has(id) ? accum.get(id) : []), z]);
       return accum;
     }, new Map());
 
@@ -128,18 +127,6 @@ export function ExploreProvider (props) {
   useEffect(() => {
     let overrideId;
 
-    /*
-    const nextFilter = energyAreaTypeMap[selectedResource];
-
-    if (nextFilter) {
-      setAreaTypeFilter(nextFilter);
-
-      if (selectedArea && !nextFilter.includes(selectedArea.type)) {
-        overrideId = null;
-      }
-    }
-      */
-
     const qString = qsStateHelper.getQs({
       areaId: overrideId === undefined ? selectedAreaId : overrideId,
       resourceId: selectedResource
@@ -175,11 +162,21 @@ export function ExploreProvider (props) {
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
 
-  const [currentZones, dispatchCurrentZones] = useReducer(fetchZonesReducer, initialApiRequestState);
+  const [currentZones, dispatchCurrentZones] = useReducer(
+    fetchZonesReducer,
+    initialApiRequestState
+  );
 
   const generateZones = async (filterString, weights, lcoe) => {
     showGlobalLoading();
-    fetchZones(gridMode && gridSize, selectedArea, filterString, weights, lcoe, dispatchCurrentZones);
+    fetchZones(
+      gridMode && gridSize,
+      selectedArea,
+      filterString,
+      weights,
+      lcoe,
+      dispatchCurrentZones
+    );
   };
 
   useEffect(() => {
@@ -192,7 +189,7 @@ export function ExploreProvider (props) {
 
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
 
-  function updateFilteredLayer (filterValues, weights, lcoe) {
+  function updateFilteredLayer(filterValues, weights, lcoe) {
     const filterString = filterValues
       .map(({ min, max }) => `${min},${max}`)
       .join('|');
