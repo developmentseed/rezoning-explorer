@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal, makeTitleCase } from '../../styles/utils/general';
+import useQsState from '../../utils/qs-state-hook';
+
 import {
   PanelBlock,
   PanelBlockHeader,
@@ -200,9 +202,116 @@ function QueryForm (props) {
     gridSize, setGridSize
   } = props;
 
-  const [weights, setWeights] = useState(initListToState(weightsList));
-  const [filters, setFilters] = useState(initObjectToState(filtersLists));
-  const [lcoe, setLcoe] = useState(initListToState(lcoeList));
+  const [weights, setWeights] = useQsState({
+    key: 'weights',
+    hydrator: v => {
+      let base = initListToState(weightsList);
+      if (v) {
+        const qsValues = v.split('|').map(vals => {
+          const [value, active] = vals.split(',');
+          return {
+            value: Number(value),
+            active: active === undefined
+          };
+        });
+        base = base.map((weight, i) => (
+          {
+            ...weight,
+            active: qsValues[i].active,
+            input: {
+              ...weight.input,
+              value: qsValues[i].value || weight.input.value
+            }
+          }
+        ));
+      }
+      return base;
+    },
+    dehydrator: v => {
+      return v && v.map(w => {
+        const { value } = w.input;
+        let shard = `${value}`;
+        shard = w.active ? shard : `${shard},${false}`;
+        return shard;
+      }).join('|');
+    },
+    default: undefined
+  });
+
+  const [filters, setFilters] = useQsState({
+    key: 'filters',
+    hydrator: v => {
+      const baseFilts = initObjectToState(filtersLists);
+      if (v) {
+        const qsValues = v.split('|').map(vals => {
+          const [min, max, active] = vals.split(',');
+          return {
+            value: {
+              min: Number(min),
+              max: Number(max)
+            },
+            active: active === undefined
+          };
+        });
+        baseFilts.distance_filters = baseFilts.distance_filters.map((filt, i) => (
+          {
+            ...filt,
+            active: qsValues[i].active,
+            input: {
+              ...filt.input,
+              value: qsValues[i].value || filt.input.value
+            }
+          }
+        ));
+      }
+      return baseFilts;
+    },
+    dehydrator: v => {
+      return v && v.distance_filters.map(f => {
+        const { value } = f.input;
+        let shard = `${value.min}, ${value.max}`;
+        shard = f.active ? shard : `${shard},${false}`;
+        return shard;
+      }).join('|');
+    },
+    default: undefined
+  });
+
+  const [lcoe, setLcoe] = useQsState({
+    key: 'lcoe',
+    hydrator: v => {
+      let base = initListToState(lcoeList);
+      if (v) {
+        const qsValues = v.split('|').map(vals => {
+          const [value, active] = vals.split(',');
+          return {
+            value: Number(value),
+            active: active === undefined
+          };
+        });
+        base = base.map((cost, i) => (
+          {
+            ...cost,
+            active: qsValues[i].active,
+            input: {
+              ...cost.input,
+              value: qsValues[i].value || cost.input.value
+            }
+          }
+        ));
+      }
+      return base;
+    },
+    dehydrator: v => {
+      return v && v.map(w => {
+        const { value } = w.input;
+        let shard = `${value}`;
+        shard = w.active ? shard : `${shard},${false}`;
+        return shard;
+      }).join('|');
+    },
+    default: undefined
+  });
 
   const inputOfType = (option, onChange) => {
     const { range } = option.input;
