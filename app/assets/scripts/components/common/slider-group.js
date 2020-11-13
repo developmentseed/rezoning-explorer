@@ -12,7 +12,7 @@ const FormSliderGroup = styled.div`
   align-items: center;
   grid-gap: 1rem;
   grid-template-columns: ${({ isRange }) => isRange ? '3rem 1fr 3rem' : '1fr 3rem'};
-
+  font-size: 0.875rem;
   label {
     ${visuallyHidden()}
   }

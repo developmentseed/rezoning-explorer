@@ -38,6 +38,7 @@ const PanelOption = styled.div`
 
 const PanelOptionTitle = styled.div`
   font-weight: ${themeVal('type.base.weight')};
+  font-size: 0.875rem;
 `;
 const HeadOption = styled.div`
   & ~ & {
@@ -372,7 +373,7 @@ function QueryForm (props) {
                         isExpanded={isFoldExpanded}
                         onClick={() => setFoldExpanded(!isFoldExpanded)}
                       >
-                        <Heading size='medium' variation='primary'>
+                        <Heading size='small' variation='primary'>
                           {makeTitleCase(group.replace(/_/g, ' '))}
                         </Heading>
                       </AccordionFoldTrigger>
@@ -494,14 +495,16 @@ function QueryForm (props) {
 
       <SubmissionSection>
         <Button
+          size='small'
           type='reset'
           onClick={resetClick}
-          variation='base-raised-light'
+          variation='primary-raised-light'
           useIcon='arrow-loop'
         >
           Reset
         </Button>
         <Button
+          size='small'
           type='submit'
           onClick={applyClick}
           variation='primary-raised-dark'

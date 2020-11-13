@@ -104,6 +104,7 @@ const TabControlBar = styled.div`
 
 const PresetMenu = styled(DropMenu)`
   padding: 0;
+  font-size: 0.875rem;
 `;
 
 const ContentInner = styled.div`
@@ -166,6 +167,7 @@ function TabbedBlock (props) {
                       alignment='left'
                       triggerElement={
                         <Button
+                          size='small'
                           className='drop-trigger'
                           variation='primary-plain'
                           useIcon={['chevron-down--small', 'after']}
