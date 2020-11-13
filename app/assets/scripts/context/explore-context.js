@@ -10,8 +10,7 @@ import QsState from '../utils/qs-state';
 
 import config from '../config';
 
-import countries from '../../data/countries.json';
-import regions from '../../data/regions.json';
+import areasJson from '../../data/areas.json';
 
 import { fetchZonesReducer, fetchZones } from './fetch-zones';
 
@@ -80,23 +79,18 @@ export function ExploreProvider (props) {
       return accum;
     }, new Map());
 
-    const areas = regions
-      .map((r) => ({
-        ...r,
-        type: 'region',
-        bounds: r.bounds ? r.bounds.split(',').map((x) => parseFloat(x)) : null
-      })) // add area type
-      .concat(
-        countries.map((c) => ({
-          ...c,
-          id: c.gid, // set id from GADM GID
-          type: 'country', // add area type
-          alpha2: c.alpha2, // set id from alpha-2
-          bounds: c.bounds ? c.bounds.split(',').map((x) => parseFloat(x)) : null,
-          eez: eezCountries.get(c.gid)
-        }))
-      );
-    setAreas(areas);
+    setAreas(
+      areasJson.map((a) => {
+        if (a.type === 'country') {
+          a.id = a.gid;
+          a.eez = eezCountries.get(a.id);
+        }
+        a.bounds = a.bounds
+          ? a.bounds.split(',').map((x) => parseFloat(x))
+          : null;
+        return a;
+      })
+    );
     hideGlobalLoading();
   };
 
