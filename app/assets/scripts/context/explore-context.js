@@ -164,7 +164,7 @@ export function ExploreProvider (props) {
 
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
 
-  function updateFilteredLayer(filterValues, weights, lcoe) {
+  function updateFilteredLayer (filterValues, weights, lcoe) {
     const filterString = filterValues
       .map(({ min, max }) => `${min},${max}`)
       .join('|');
