@@ -9,8 +9,7 @@ import useQsState from '../utils/qs-state-hook';
 
 import config from '../config';
 
-import countries from '../../data/countries.json';
-import regions from '../../data/regions.json';
+import areasJson from '../../data/areas.json';
 
 import { fetchZonesReducer, fetchZones } from './fetch-zones';
 
@@ -68,36 +67,31 @@ export function ExploreProvider (props) {
     showGlobalLoading();
     // Parse region and country files into area list
 
-    const eez = await fetch('public/zones/eez_v11.topojson').then(e => e.json());
+    const eez = await fetch('public/zones/eez_v11.topojson').then((e) =>
+      e.json()
+    );
     const { features: eezFeatures } = topojson.feature(
       eez,
       eez.objects.eez_v11
     );
     const eezCountries = eezFeatures.reduce((accum, z) => {
       const id = z.properties.ISO_TER1;
-      accum.set(id,
-        [...(accum.has(id) ? accum.get(id) : []), z]
-      );
+      accum.set(id, [...(accum.has(id) ? accum.get(id) : []), z]);
       return accum;
     }, new Map());
 
-    const areas = regions
-      .map((r) => ({
-        ...r,
-        type: 'region',
-        bounds: r.bounds ? r.bounds.split(',').map((x) => parseFloat(x)) : null
-      })) // add area type
-      .concat(
-        countries.map((c) => ({
-          ...c,
-          id: c.gid, // set id from GADM GID
-          type: 'country', // add area type
-          alpha2: c.alpha2, // set id from alpha-2
-          bounds: c.bounds ? c.bounds.split(',').map((x) => parseFloat(x)) : null,
-          eez: eezCountries.get(c.gid)
-        }))
-      );
-    setAreas(areas);
+    setAreas(
+      areasJson.map((a) => {
+        if (a.type === 'country') {
+          a.id = a.gid;
+          a.eez = eezCountries.get(a.id);
+        }
+        a.bounds = a.bounds
+          ? a.bounds.split(',').map((x) => parseFloat(x))
+          : null;
+        return a;
+      })
+    );
     hideGlobalLoading();
   };
 
@@ -143,11 +137,21 @@ export function ExploreProvider (props) {
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
 
-  const [currentZones, dispatchCurrentZones] = useReducer(fetchZonesReducer, initialApiRequestState);
+  const [currentZones, dispatchCurrentZones] = useReducer(
+    fetchZonesReducer,
+    initialApiRequestState
+  );
 
   const generateZones = async (filterString, weights, lcoe) => {
     showGlobalLoading();
-    fetchZones(gridMode && gridSize, selectedArea, filterString, weights, lcoe, dispatchCurrentZones);
+    fetchZones(
+      gridMode && gridSize,
+      selectedArea,
+      filterString,
+      weights,
+      lcoe,
+      dispatchCurrentZones
+    );
   };
 
   useEffect(() => {
