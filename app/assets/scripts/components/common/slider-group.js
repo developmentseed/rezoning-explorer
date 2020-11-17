@@ -11,8 +11,8 @@ const FormSliderGroup = styled.div`
   display: grid;
   align-items: center;
   grid-gap: 1rem;
-  grid-template-columns: ${({ isRange }) => isRange ? '3rem 1fr 3rem' : '1fr 3rem'};
-
+  grid-template-columns: ${({ isRange }) => isRange ? '3rem 1fr 4rem' : '1fr 3rem'};
+  
   label {
     ${visuallyHidden()}
   }

@@ -22,7 +22,7 @@ const SecPanel = styled(Panel)`
     width: 18rem;
   `}
   ${media.xlargeUp`
-    width: 20rem;
+    width: 22rem;
   `}
 `;
 const PreAnalysisMessage = styled(Prose)`

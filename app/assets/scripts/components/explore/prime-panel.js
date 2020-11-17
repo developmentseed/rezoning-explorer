@@ -31,7 +31,7 @@ import {
 
 const PrimePanel = styled(Panel)`
   ${media.largeUp`
-    width: 20rem;
+    width: 22rem;
   `}
 `;
 
