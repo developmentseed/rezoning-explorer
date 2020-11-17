@@ -49,7 +49,7 @@ export const fetchZonesReducer = wrapLogReducer(makeAPIReducer('FETCH_ZONES'));
 export async function fetchZones (grid, selectedArea, filterString, weights, lcoe, dispatch) {
   dispatch({ type: 'REQUEST_FETCH_ZONES' });
   try {
-    const { id: areaId } = selectedArea;
+    const { id: areaId, type } = selectedArea;
 
     let features;
 
@@ -60,7 +60,7 @@ export async function fetchZones (grid, selectedArea, filterString, weights, lco
     } else {
       // Get area topojson
       const { body: zonesTopoJSON } = await fetchJSON(
-    `/public/zones/${areaId}.topojson`
+    `/public/zones/${type}/${areaId}.topojson`
       );
 
       // Parse topojson
