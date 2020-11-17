@@ -36,6 +36,7 @@ export const INPUT_CONSTANTS = {
 export const filtersLists = {
   distance_filters: [
     {
+      id: 'f_airports',
       name: 'Distance to Airports',
       info: 'This filter has info.',
       isRange: true,
@@ -46,6 +47,7 @@ export const filtersLists = {
       }
     },
     {
+      id: 'f_ports',
       name: 'Distance to Ports',
       info: 'This filter has info.',
       isRange: true,
@@ -54,9 +56,9 @@ export const filtersLists = {
         range: [0, 1000000],
         isRange: true
       }
-
     },
     {
+      id: 'f_anchorages',
       name: 'Distance to Anchorages',
       info: 'This filter has info.',
       isRange: true,
@@ -65,9 +67,9 @@ export const filtersLists = {
         range: [0, 1000000],
         isRange: true
       }
-
     },
     {
+      id: 'f_grid',
       name: 'Distance to Grids',
       info: 'This filter has info.',
       isRange: true,
@@ -78,6 +80,7 @@ export const filtersLists = {
       }
     },
     {
+      id: 'f_roads',
       name: 'Distance to Roads',
       info: 'This filter has info.',
       isRange: true,
@@ -86,9 +89,9 @@ export const filtersLists = {
         range: [0, 10000],
         isRange: true
       }
-
     },
     {
+      id: 'f_worldpop',
       name: 'Population',
       info: 'This filter has info.',
       isRange: true,
@@ -99,6 +102,7 @@ export const filtersLists = {
       }
     },
     {
+      id: 'f_slope',
       name: 'Slope',
       info: 'This filter has info.',
       isRange: true,
@@ -109,6 +113,7 @@ export const filtersLists = {
       }
     },
     {
+      id: 'f_land_cover',
       name: 'Land Cover',
       info: 'This filter has info.',
       isRange: true,
@@ -117,7 +122,160 @@ export const filtersLists = {
         range: [0, 10000],
         isRange: true
       }
-
+    },
+    {
+      id: 'f_pp_whs',
+      name: 'PP WHS',
+      info: 'This filter has info.',
+      isRange: true,
+      input: {
+        type: SLIDER,
+        range: [0, 10000],
+        isRange: true
+      }
+    },
+    {
+      id: 'f_unep_coral',
+      name: 'UNEP CORAL',
+      info: 'This filter has info.',
+      isRange: true,
+      input: {
+        type: SLIDER,
+        range: [0, 10000],
+        isRange: true
+      }
+    },
+    {
+      id: 'f_unesco',
+      name: 'UNESO',
+      info: 'This filter has info.',
+      isRange: true,
+      input: {
+        type: SLIDER,
+        range: [0, 10000],
+        isRange: true
+      }
+    },
+    {
+      id: 'f_unesco_ramsar',
+      name: 'UNESO RAMSAR',
+      info: 'This filter has info.',
+      isRange: true,
+      input: {
+        type: SLIDER,
+        range: [0, 10000],
+        isRange: true
+      }
+    },
+    {
+      id: 'f_wwf_glw_1',
+      name: 'wwf_glw_1',
+      info: 'This filter has info.',
+      isRange: true,
+      input: {
+        type: SLIDER,
+        range: [0, 10000],
+        isRange: true
+      }
+    },
+    {
+      id: 'f_wwf_glw_2',
+      name: 'wwf_glw_2',
+      info: 'This filter has info.',
+      isRange: true,
+      input: {
+        type: SLIDER,
+        range: [0, 10000],
+        isRange: true
+      }
+    },
+    {
+      id: 'f_jrc_gsw',
+      name: 'jrc_gsw',
+      info: 'This filter has info.',
+      isRange: true,
+      input: {
+        type: SLIDER,
+        range: [0, 10000],
+        isRange: true
+      }
+    },
+    {
+      id: 'f_pp_marine_protected',
+      name: 'pp_marine_protected',
+      info: 'This filter has info.',
+      isRange: true,
+      input: {
+        type: SLIDER,
+        range: [0, 10000],
+        isRange: true
+      }
+    },
+    {
+      id: 'f_unep_tidal',
+      name: 'unep_tidal',
+      info: 'This filter has info.',
+      isRange: true,
+      input: {
+        type: SLIDER,
+        range: [0, 10000],
+        isRange: true
+      }
+    },
+    {
+      id: 'f_wwf_glw_3',
+      name: 'wwf_glw_3',
+      info: 'This filter has info.',
+      isRange: true,
+      input: {
+        type: SLIDER,
+        range: [0, 10000],
+        isRange: true
+      }
+    },
+    {
+      id: 'f_capacity_value',
+      name: 'capacity_value',
+      info: 'This filter has info.',
+      isRange: true,
+      input: {
+        type: SLIDER,
+        range: [0, 10000],
+        isRange: true
+      }
+    },
+    {
+      id: 'f_lcoe_gen',
+      name: 'lcoe_gen',
+      info: 'This filter has info.',
+      isRange: true,
+      input: {
+        type: SLIDER,
+        range: [0, 10000],
+        isRange: true
+      }
+    },
+    {
+      id: 'f_lcoe_transmission',
+      name: 'lcoe_transmission',
+      info: 'This filter has info.',
+      isRange: true,
+      input: {
+        type: SLIDER,
+        range: [0, 10000],
+        isRange: true
+      }
+    },
+    {
+      id: 'f_lcoe_road',
+      name: 'lcoe_road',
+      info: 'This filter has info.',
+      isRange: true,
+      input: {
+        type: SLIDER,
+        range: [0, 10000],
+        isRange: true
+      }
     }
   ]
 };
