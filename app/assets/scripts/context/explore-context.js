@@ -92,8 +92,7 @@ export function ExploreProvider (props) {
           isRange: filter.pattern === 'range_filter',
           input: {
             type: SLIDER,
-            range: [0, 1000000],
-            isRange: true
+            range: [0, 1000000]
           }
         };
       })

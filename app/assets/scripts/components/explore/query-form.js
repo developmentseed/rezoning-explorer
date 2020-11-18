@@ -327,7 +327,7 @@ function QueryForm (props) {
             range={option.input.range || [0, 100]}
             id={option.name}
             value={option.input.value}
-            isRange={option.input.isRange}
+            isRange={option.isRange}
             disabled={!option.active}
             onChange={onChange}
           />
