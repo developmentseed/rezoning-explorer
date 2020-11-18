@@ -9,7 +9,7 @@ import * as d3 from 'd3';
 import { themeVal } from '../../styles/utils/general';
 
 const HistogramWrapper = styled(SizeAwareElement)`
-  ${panelSkin()};
+  ${panelSkin()}
   position: relative;
   display: grid;
   grid-template-rows: 1fr 5fr;
@@ -30,9 +30,17 @@ const HistogramWrapper = styled(SizeAwareElement)`
     color: ${themeVal('color.baseAlphaD')};
   }
 
+  .grid line, .grid path {
+    stroke: ${themeVal('color.smoke')};
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+  }
+
+
   #y-axis path {
     display: none;
   }
+
   #x-axis .tick:first-child{
     text-anchor: start;
   }
@@ -41,13 +49,9 @@ const HistogramWrapper = styled(SizeAwareElement)`
     text-anchor: end;
   }
 
-  .grid line, .grid path{
-    stroke: ${themeVal('color.smoke')};
-    stroke-opacity: 0.7;
-    shape-rendering: crispEdges;
-  }
 `;
 const HistogramChart = styled.div`
+/* stylelint-disable-next-line */
 `;
 const HistogramHeader = styled.div`
   display: grid;
