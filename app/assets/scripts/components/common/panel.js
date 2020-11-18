@@ -89,6 +89,7 @@ const PanelBody = styled.div`
 const PanelOffsetActions = styled.div`
   ${panelSkin()}
   border-radius: ${themeVal('shape.rounded')};
+  max-width: fit-content;
 `;
 
 const PanelControls = styled.div`
@@ -198,7 +199,7 @@ class Panel extends React.Component {
           )}
           {
             additionalControls && additionalControls.map(ctrl => (
-              <PanelOffsetActions key={ctrl.props.id}>
+              <PanelOffsetActions key={`${ctrl.props.id}-wrapper`}>
                 {ctrl}
               </PanelOffsetActions>
             ))

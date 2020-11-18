@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import T from 'prop-types';
 import styled, { withTheme } from 'styled-components';
 import mapboxgl from 'mapbox-gl';
@@ -9,6 +9,8 @@ import { featureCollection } from '@turf/helpers';
 
 import ExploreContext from '../../../context/explore-context';
 import MapContext from '../../../context/map-context';
+import theme from '../../../styles/theme/theme';
+import { rgba } from 'polished';
 
 const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
@@ -20,6 +22,24 @@ const ZONES_BOUNDARIES_SOURCE_ID = 'ZONES_BOUNDARIES_SOURCE_ID';
 const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
 const EEZ_BOUNDARIES_SOURCE_ID = 'EEZ_BOUNDARIES_SOURCE_ID';
 const EEZ_BOUNDARIES_LAYER_ID = 'EEZ_BOUNDARIES_LAYER_ID';
+
+export const mapLayers = [
+  {
+    id: FILTERED_LAYER_ID,
+    name: 'Selected Area',
+    type: 'raster'
+  },
+  {
+    id: ZONES_BOUNDARIES_LAYER_ID,
+    name: 'Zone Boundaries',
+    type: 'vector',
+    stops: [
+      rgba(theme.main.color.tertiary, 0),
+      rgba(theme.main.color.tertiary, 1)
+    ]
+
+  }
+];
 
 const MapsContainer = styled.div`
   position: relative;
@@ -74,6 +94,11 @@ const initializeMap = ({
 
   map.on('load', () => {
     setMap(map);
+
+    /*
+     * Resize map on window size change
+     */
+    window.addEventListener('resize', resizeMap.bind(null, map));
 
     /**
      * Add placeholder map source and a hidden layer for the filtered layer,
@@ -155,14 +180,14 @@ const initializeMap = ({
 
 function MbMap (props) {
   const { triggerResize } = props;
-  const [map, setMap] = useState(null);
   const mapContainer = useRef(null);
 
   const {
     selectedArea,
     selectedResource,
     filteredLayerUrl,
-    currentZones
+    currentZones,
+    map, setMap
   } = useContext(ExploreContext);
 
   const { hoveredFeature, setHoveredFeature } = useContext(MapContext);

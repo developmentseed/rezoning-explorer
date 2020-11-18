@@ -6,7 +6,11 @@ import { FormGroupBody, FormGroupHeader, FormGroup } from '../../styles/form/gro
 import FormLabel from '../../styles/form/label';
 
 import StressedField from './stressed-field';
-
+import styled from 'styled-components';
+import { themeVal } from '../../styles/utils/general';
+const ErrorMessage = styled.div`
+  color: ${themeVal('color.danger')};
+`;
 /**
  * From group input structure implementing a stressed field.
  *
@@ -34,7 +38,9 @@ export default function StressedFormGroupInput (props) {
     placeholder,
     disabled,
     onChange,
-    title
+    title,
+    errorMessage,
+    validationTimeout
   } = props;
 
   return (
@@ -47,6 +53,7 @@ export default function StressedFormGroupInput (props) {
           value={value}
           validate={validate}
           onChange={onChange}
+          validationTimeout={validationTimeout}
           render={({
             ref,
             errored,
@@ -54,22 +61,25 @@ export default function StressedFormGroupInput (props) {
             onChangeHandler,
             onBlurHandler
           }) => (
-            <FormInput
-              ref={ref}
-              type={inputType}
-              variation={inputVariation}
-              readOnly={disabled}
-              name={name}
-              id={id}
-              invalid={errored}
-              stressed={errored}
-              size={inputSize}
-              value={value}
-              onBlur={onBlurHandler}
-              onChange={onChangeHandler}
-              placeholder={placeholder}
-              title={title}
-            />
+            <>
+              <FormInput
+                ref={ref}
+                type={inputType}
+                variation={inputVariation}
+                readOnly={disabled}
+                name={name}
+                id={id}
+                invalid={errored}
+                stressed={errored}
+                size={inputSize}
+                value={value}
+                onBlur={onBlurHandler}
+                onChange={onChangeHandler}
+                placeholder={placeholder}
+                title={title}
+              />
+              {errored && (<ErrorMessage>{errorMessage}</ErrorMessage>)}
+            </>
           )}
         />
       </FormGroupBody>
@@ -89,5 +99,7 @@ StressedFormGroupInput.propTypes = {
   validate: T.func,
   onChange: T.func,
   disabled: T.bool,
-  title: T.string
+  title: T.string,
+  errorMessage: T.string,
+  validationTimeout: T.number
 };

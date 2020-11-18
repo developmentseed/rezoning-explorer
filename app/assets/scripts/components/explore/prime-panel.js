@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import T from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Panel from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import ExploreContext from '../../context/explore-context';
@@ -9,10 +9,17 @@ import { ModalHeader } from '../common/modal';
 import ModalSelectArea from './modal-select-area';
 
 import Button from '../../styles/button/button';
+import InfoButton from '../common/info-button';
 
 import { Card } from '../common/card-list';
 
 import QueryForm from './query-form';
+import RasterTray from './raster-tray';
+import { mapLayers } from '../common/mb-map/mb-map';
+import theme from '../../styles/theme/theme';
+import { rgba } from 'polished';
+
+import { Subheading } from '../../styles/type/heading';
 
 import {
   resourceList,
@@ -24,10 +31,33 @@ import {
 
 const PrimePanel = styled(Panel)`
   ${media.largeUp`
-    width: 20rem;
+    width: 22rem;
   `}
 `;
 
+const RasterTrayWrapper = styled.div`
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  align-items: baseline;
+  ${({ show }) => show && css`
+    width: 20rem;
+  `}
+
+  > .info-button {
+    grid-column: 1;
+  }
+  > ${Subheading} {
+    grid-column: 2;
+    ${({ show }) => !show && 'display: none;'}
+
+  }
+
+  > .raster-tray {
+    grid-column: 1 /span 2;
+    ${({ show }) => !show && 'display: none;'}
+
+  }
+`;
 function ExpMapPrimePanel (props) {
   const { onPanelChange } = props;
 
@@ -48,8 +78,12 @@ function ExpMapPrimePanel (props) {
     setTourStep,
     gridMode,
     setGridMode,
-    gridSize, setGridSize
+    gridSize, setGridSize,
+    filteredLayerUrl,
+    map
   } = useContext(ExploreContext);
+
+  const [showRasterPanel, setShowRasterPanel] = useState(false);
 
   return (
     <>
@@ -68,7 +102,56 @@ function ExpMapPrimePanel (props) {
               disabled={tourStep >= 0}
             >
               <span>Open Tour</span>
-            </Button>
+            </Button>,
+
+            <RasterTrayWrapper
+              key='toggle-raster-tray'
+              show={showRasterPanel}
+            >
+              <InfoButton
+                id='toggle-raster-tray'
+                className='info-button'
+                variation='base-plain'
+                useIcon='iso-stack'
+                title='Toggle Raster Tray'
+                info={filteredLayerUrl ? null : 'Apply search to load raster layers'}
+                width='20rem'
+                hideText
+                visuallyDisabled={!filteredLayerUrl}
+                onClick={() => {
+                  if (filteredLayerUrl) { setShowRasterPanel(!showRasterPanel); }
+                }}
+              >
+                <span>Contextual Layers</span>
+              </InfoButton>
+              <Subheading>Contextual Layers</Subheading>
+
+              <RasterTray
+                show={showRasterPanel}
+                className='raster-tray'
+                layers={
+                  mapLayers.map(l => ({
+                    id: l.id,
+                    name: l.name,
+                    min: l.min || 0,
+                    max: l.max || 1,
+                    type: l.type,
+                    stops: l.stops || [
+                      rgba(theme.main.color.primary, 0),
+                      rgba(theme.main.color.primary, 1)
+                    ]
+                  }))
+                }
+                onLayerKnobChange={(layer, knob) => {
+                  map.setPaintProperty(layer.id,
+                    layer.type === 'vector' ? 'fill-opacity' : 'raster-opacity',
+                    knob.value / 100);
+                }}
+                onVisibilityToggle={(layer, visible) => {
+                  map.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none');
+                }}
+              />
+            </RasterTrayWrapper>
 
           ]
         }
