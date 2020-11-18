@@ -24,9 +24,7 @@ import { Subheading } from '../../styles/type/heading';
 import {
   resourceList,
   weightsList,
-  filtersLists,
-  lcoeList,
-  presets
+  lcoeList
 } from './panel-data';
 
 const PrimePanel = styled(Panel)`
@@ -164,9 +162,7 @@ function ExpMapPrimePanel (props) {
               area={selectedArea}
               resource={selectedResource}
               weightsList={weightsList}
-              filtersLists={filtersLists}
               lcoeList={lcoeList}
-              presets={presets}
               gridMode={gridMode}
               setGridMode={setGridMode}
               gridSize={gridSize}

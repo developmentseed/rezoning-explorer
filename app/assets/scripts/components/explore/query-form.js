@@ -185,15 +185,16 @@ const updateStateList = (list, i, updatedValue) => {
 };
 
 function QueryForm (props) {
-  const { updateFilteredLayer } = useContext(ExploreContext);
+  const { updateFilteredLayer, filtersLists, presets } = useContext(ExploreContext);
+
+  // Do not render form if filters are not available
+  if (!filtersLists) return <></>;
 
   const {
     area,
     resource,
     weightsList,
-    filtersLists,
     lcoeList,
-    presets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
@@ -628,7 +629,6 @@ function QueryForm (props) {
 
 FormWrapper.propTypes = {
   setPreset: T.func.isRequired,
-  presets: T.oneOfType([T.object, T.array]).isRequired,
   name: T.string,
   icon: T.string
 };
@@ -637,11 +637,9 @@ QueryForm.propTypes = {
   area: T.object,
   resource: T.string,
   weightsList: T.array,
-  filtersLists: T.object,
   lcoeList: T.array,
   onResourceEdit: T.func,
   onAreaEdit: T.func,
-  presets: T.object,
   onInputTouched: T.func,
   onSelectionChange: T.func,
   gridMode: T.bool,

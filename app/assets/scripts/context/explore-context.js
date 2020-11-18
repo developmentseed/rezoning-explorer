@@ -6,6 +6,7 @@ import bboxPolygon from '@turf/bbox-polygon';
 
 import { featureCollection } from '@turf/helpers';
 import useQsState from '../utils/qs-state-hook';
+import { randomRange } from '../utils/utils';
 
 import config from '../config';
 
@@ -17,14 +18,21 @@ import {
   showGlobalLoading,
   hideGlobalLoading
 } from '../components/common/global-loading';
-import { INPUT_CONSTANTS } from '../components/explore/panel-data';
+import {
+  INPUT_CONSTANTS,
+  presets as defaultPresets
+} from '../components/explore/panel-data';
 
 import { initialApiRequestState } from './contexeed';
-const { GRID_OPTIONS } = INPUT_CONSTANTS;
+import { fetchJSON } from './reduxeed';
+const { GRID_OPTIONS, SLIDER } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
+const presets = { ...defaultPresets };
 export function ExploreProvider (props) {
+  const [filtersLists, setFiltersLists] = useState(null);
+
   const [selectedArea, setSelectedArea] = useState(null);
 
   const [selectedAreaId, setSelectedAreaId] = useQsState({
@@ -63,10 +71,62 @@ export function ExploreProvider (props) {
 
   const [tourStep, setTourStep] = useState(0);
 
-  const loadAreas = async () => {
+  const initAreasAndFilters = async () => {
     showGlobalLoading();
-    // Parse region and country files into area list
 
+    // Fetch filters from API
+    const { body: filters } = await fetchJSON(
+      `${config.apiEndpoint}/filter/schema`
+    );
+
+    // Filter data structure from API doesn't match current
+    // frontend implementation, the following try to fix this.
+    const apiFilters = {
+      distance_filters: Object.keys(filters).map((filterId) => {
+        const filter = filters[filterId];
+        return {
+          ...filter,
+          id: filterId,
+          name: filter.title,
+          info: filter.description,
+          isRange: filter.pattern === 'range_filter',
+          input: {
+            type: SLIDER,
+            range: [0, 1000000],
+            isRange: true
+          }
+        };
+      })
+    };
+
+    // Apply a mock "Optimization" scenario to filter presets, just random numbers
+    presets.filters = {
+      Optimization: Object.entries(apiFilters).reduce(
+        (accum, [name, group]) => {
+          return {
+            ...accum,
+            [name]: group.map((filter) => ({
+              ...filter,
+              input: {
+                ...filter.input,
+                value: {
+                  max: filter.range
+                    ? randomRange(filter.range[0], filter.range[1])
+                    : randomRange(0, 100),
+                  min: filter.range ? filter.range[0] : 0
+                }
+              }
+            }))
+          };
+        },
+        {}
+      )
+    };
+
+    // Add to filters context
+    setFiltersLists(apiFilters);
+
+    // Parse region and country files into area list
     const eez = await fetch('public/zones/eez_v11.topojson').then((e) =>
       e.json()
     );
@@ -117,13 +177,14 @@ export function ExploreProvider (props) {
     setSelectedArea(nextArea);
   }, [areas, selectedAreaId, selectedResource]);
 
+  // Executed on page mount
   useEffect(() => {
     const visited = localStorage.getItem('site-tour');
     if (visited !== null) {
       setTourStep(Number(visited));
     }
 
-    loadAreas();
+    initAreasAndFilters();
   }, []);
 
   useEffect(() => {
@@ -181,6 +242,8 @@ export function ExploreProvider (props) {
           map,
           setMap,
           areas,
+          filtersLists,
+          presets,
           selectedArea,
           setSelectedAreaId,
           selectedResource,
