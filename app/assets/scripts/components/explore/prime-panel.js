@@ -24,14 +24,12 @@ import { Subheading } from '../../styles/type/heading';
 import {
   resourceList,
   weightsList,
-  filtersLists,
-  lcoeList,
-  presets
+  lcoeList
 } from './panel-data';
 
 const PrimePanel = styled(Panel)`
   ${media.largeUp`
-    width: 20rem;
+    width: 22rem;
   `}
 `;
 
@@ -80,6 +78,7 @@ function ExpMapPrimePanel (props) {
     setGridMode,
     gridSize, setGridSize,
     filteredLayerUrl,
+    filtersLists,
     map
   } = useContext(ExploreContext);
 
@@ -159,14 +158,12 @@ function ExpMapPrimePanel (props) {
         onPanelChange={onPanelChange}
         initialState={isLargeViewport()}
         bodyContent={
-          <>
+          filtersLists ? (
             <QueryForm
               area={selectedArea}
               resource={selectedResource}
               weightsList={weightsList}
-              filtersLists={filtersLists}
               lcoeList={lcoeList}
-              presets={presets}
               gridMode={gridMode}
               setGridMode={setGridMode}
               gridSize={gridSize}
@@ -180,7 +177,9 @@ function ExpMapPrimePanel (props) {
                 setZonesGenerated(false);
               }}
             />
-          </>
+          ) : (
+            <></>
+          )
         }
       />
       <ModalSelect

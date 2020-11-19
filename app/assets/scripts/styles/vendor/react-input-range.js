@@ -66,4 +66,11 @@ export default () => css`
     background: ${themeVal('color.primary')};
     ${disabled()}
   }
+
+  .input-range__label-container {
+    left: -25%;
+  }
+  .input-range__label--max .input-range__label-container {
+    left: 25%;
+  }
 `;

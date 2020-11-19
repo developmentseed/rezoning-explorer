@@ -43,7 +43,7 @@ function Home () {
         </InpageHeader>
         <InpageBody>
           <InpageBodyInner>
-            <Prose>Explore Project Areas of High Potential</Prose>
+            <Prose>Identify and explore high potential project areas for solar, wind and offshore wind development</Prose>
             <Button
               as={StyledLink}
               to='/explore'

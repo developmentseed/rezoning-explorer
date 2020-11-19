@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal, makeTitleCase } from '../../styles/utils/general';
+import useQsState from '../../utils/qs-state-hook';
+
 import {
   PanelBlock,
   PanelBlockHeader,
@@ -40,6 +42,7 @@ const PanelOption = styled.div`
 
 const PanelOptionTitle = styled.div`
   font-weight: ${themeVal('type.base.weight')};
+  font-size: 0.875rem;
 `;
 const HeadOption = styled.div`
   & ~ & {
@@ -191,15 +194,13 @@ const updateStateList = (list, i, updatedValue) => {
 };
 
 function QueryForm (props) {
-  const { updateFilteredLayer } = useContext(ExploreContext);
+  const { updateFilteredLayer, filtersLists, presets } = useContext(ExploreContext);
 
   const {
     area,
     resource,
     weightsList,
-    filtersLists,
     lcoeList,
-    presets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
@@ -209,9 +210,116 @@ function QueryForm (props) {
     gridSize, setGridSize
   } = props;
 
-  const [weights, setWeights] = useState(initListToState(weightsList));
-  const [filters, setFilters] = useState(initObjectToState(filtersLists));
-  const [lcoe, setLcoe] = useState(initListToState(lcoeList));
+  const [weights, setWeights] = useQsState({
+    key: 'weights',
+    hydrator: v => {
+      let base = initListToState(weightsList);
+      if (v) {
+        const qsValues = v.split('|').map(vals => {
+          const [value, active] = vals.split(',');
+          return {
+            value: Number(value),
+            active: active === undefined
+          };
+        });
+        base = base.map((weight, i) => (
+          {
+            ...weight,
+            active: qsValues[i].active,
+            input: {
+              ...weight.input,
+              value: qsValues[i].value || weight.input.value
+            }
+          }
+        ));
+      }
+      return base;
+    },
+    dehydrator: v => {
+      return v && v.map(w => {
+        const { value } = w.input;
+        let shard = `${value}`;
+        shard = w.active ? shard : `${shard},${false}`;
+        return shard;
+      }).join('|');
+    },
+    default: undefined
+  });
+
+  const [filters, setFilters] = useQsState({
+    key: 'filters',
+    hydrator: v => {
+      const baseFilts = initObjectToState(filtersLists);
+      if (v) {
+        const qsValues = v.split('|').map(vals => {
+          const [min, max, active] = vals.split(',');
+          return {
+            value: {
+              min: Number(min),
+              max: Number(max)
+            },
+            active: active === undefined
+          };
+        });
+        baseFilts.distance_filters = baseFilts.distance_filters.map((filt, i) => (
+          {
+            ...filt,
+            active: qsValues[i].active,
+            input: {
+              ...filt.input,
+              value: qsValues[i].value || filt.input.value
+            }
+          }
+        ));
+      }
+      return baseFilts;
+    },
+    dehydrator: v => {
+      return v && v.distance_filters.map(f => {
+        const { value } = f.input;
+        let shard = `${value.min}, ${value.max}`;
+        shard = f.active ? shard : `${shard},${false}`;
+        return shard;
+      }).join('|');
+    },
+    default: undefined
+  });
+
+  const [lcoe, setLcoe] = useQsState({
+    key: 'lcoe',
+    hydrator: v => {
+      let base = initListToState(lcoeList);
+      if (v) {
+        const qsValues = v.split('|').map(vals => {
+          const [value, active] = vals.split(',');
+          return {
+            value: Number(value),
+            active: active === undefined
+          };
+        });
+        base = base.map((cost, i) => (
+          {
+            ...cost,
+            active: qsValues[i].active,
+            input: {
+              ...cost.input,
+              value: qsValues[i].value || cost.input.value
+            }
+          }
+        ));
+      }
+      return base;
+    },
+    dehydrator: v => {
+      return v && v.map(w => {
+        const { value } = w.input;
+        let shard = `${value}`;
+        shard = w.active ? shard : `${shard},${false}`;
+        return shard;
+      }).join('|');
+    },
+    default: undefined
+  });
 
   const inputOfType = (option, onChange) => {
     const { range } = option.input;
@@ -225,7 +333,7 @@ function QueryForm (props) {
             range={option.input.range || [0, 100]}
             id={option.name}
             value={option.input.value}
-            isRange={option.input.isRange}
+            isRange={option.isRange}
             disabled={!option.active}
             onChange={onChange}
           />
@@ -285,9 +393,6 @@ function QueryForm (props) {
   };
 
   const applyClick = () => {
-    const filterValues = Object.values(filters)
-      .reduce((accum, section) => [...accum,
-        ...section.map(filter => filter.input.value)], []);
     const weightsValues = Object.values(weights)
       .reduce((accum, weight) => (
         {
@@ -301,7 +406,7 @@ function QueryForm (props) {
           ...accum,
           [weight.id || weight.name]: Number(weight.input.value)
         }), {});
-    updateFilteredLayer(filterValues, weightsValues, lcoeValues);
+    updateFilteredLayer(filters.distance_filters, weightsValues, lcoeValues);
   };
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
@@ -406,7 +511,7 @@ function QueryForm (props) {
                         isExpanded={isFoldExpanded}
                         onClick={() => setFoldExpanded(!isFoldExpanded)}
                       >
-                        <Heading size='medium' variation='primary'>
+                        <Heading size='small' variation='primary'>
                           {makeTitleCase(group.replace(/_/g, ' '))}
                         </Heading>
                       </AccordionFoldTrigger>
@@ -528,14 +633,16 @@ function QueryForm (props) {
 
       <SubmissionSection>
         <Button
+          size='small'
           type='reset'
           onClick={resetClick}
-          variation='base-raised-light'
+          variation='primary-raised-light'
           useIcon='arrow-loop'
         >
           Reset
         </Button>
         <Button
+          size='small'
           type='submit'
           onClick={applyClick}
           variation='primary-raised-dark'
@@ -550,7 +657,6 @@ function QueryForm (props) {
 
 FormWrapper.propTypes = {
   setPreset: T.func.isRequired,
-  presets: T.oneOfType([T.object, T.array]).isRequired,
   name: T.string,
   icon: T.string
 };
@@ -559,11 +665,9 @@ QueryForm.propTypes = {
   area: T.object,
   resource: T.string,
   weightsList: T.array,
-  filtersLists: T.object,
   lcoeList: T.array,
   onResourceEdit: T.func,
   onAreaEdit: T.func,
-  presets: T.object,
   onInputTouched: T.func,
   onSelectionChange: T.func,
   gridMode: T.bool,
