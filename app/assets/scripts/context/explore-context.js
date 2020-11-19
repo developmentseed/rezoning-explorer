@@ -133,6 +133,7 @@ export function ExploreProvider (props) {
             ...accum,
             [name]: group.map((filter) => ({
               ...filter,
+              active: Math.random() > 0.5,
               input: {
                 ...filter.input,
                 value: {
