@@ -359,9 +359,6 @@ function QueryForm (props) {
   };
 
   const applyClick = () => {
-    const filterValues = Object.values(filters)
-      .reduce((accum, section) => [...accum,
-        ...section.map(filter => filter.input.value)], []);
     const weightsValues = Object.values(weights)
       .reduce((accum, weight) => (
         {
@@ -375,7 +372,7 @@ function QueryForm (props) {
           ...accum,
           [weight.id || weight.name]: Number(weight.input.value)
         }), {});
-    updateFilteredLayer(filterValues, weightsValues, lcoeValues);
+    updateFilteredLayer(filters.distance_filters, weightsValues, lcoeValues);
   };
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);

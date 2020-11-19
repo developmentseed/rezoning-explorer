@@ -79,39 +79,49 @@ export function ExploreProvider (props) {
       `${config.apiEndpoint}/filter/schema`
     );
 
-    // Filter data structure from API doesn't match current
-    // frontend implementation, the following try to fix this.
+    // Prepare filters from the API to be consumed by the frontend
     const apiFilters = {
-      distance_filters: Object.keys(filters).map((filterId) => {
-        const filter = filters[filterId];
-        const isRange = filter.pattern === 'range_filter';
-        let value = 0;
+      distance_filters: Object.keys(filters)
+        .map((filterId) => ({ ...filters[filterId], id: filterId }))
+        .filter(
+          ({ id, pattern }) =>
+            (pattern === 'range_filter' && // enable range filters only
+            ![
+              'f_capacity_value',
+              'f_lcoe_gen',
+              'f_lcoe_transmission',
+              'f_lcoe_road'
+            ].includes(id)) // disable some filters not supported by the API
+        )
+        .map((filter) => {
+          const isRange = filter.pattern === 'range_filter';
+          let value = 0;
 
-        if (isRange) {
-          value = filter.range
-            ? {
-              min: filter.range[0],
-              max: filter.range[1]
-            }
-            : {
-              min: 0,
-              max: 1000000
-            };
-        }
-
-        return {
-          ...filter,
-          id: filterId,
-          name: filter.title,
-          info: filter.description,
-          isRange,
-          input: {
-            type: SLIDER,
-            range: [0, 1000000],
-            value
+          if (isRange) {
+            value = filter.range
+              ? {
+                min: filter.range[0],
+                max: filter.range[1]
+              }
+              : {
+                min: 0,
+                max: 1000000
+              };
           }
-        };
-      })
+
+          return {
+            ...filter,
+            id: filter.id,
+            name: filter.title,
+            info: filter.description,
+            isRange,
+            input: {
+              type: SLIDER,
+              range: [0, 1000000],
+              value
+            }
+          };
+        })
     };
 
     // Apply a mock "Optimization" scenario to filter presets, just random numbers
@@ -242,10 +252,21 @@ export function ExploreProvider (props) {
 
   function updateFilteredLayer (filterValues, weights, lcoe) {
     const filterString = filterValues
-      .map(({ min, max }) => `${min},${max}`)
-      .join('|');
+      .map((filter) => {
+        const { id, pattern } = filter;
+        if (pattern === 'range_filter') {
+          const {
+            value: { min, max }
+          } = filter.input;
+          return `${id}=${min},${max}`;
+        } else {
+          return null;
+        }
+      })
+      .filter((x) => x)
+      .join('&');
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=${filterString}&color=54,166,244,80`
+      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
     );
     generateZones(filterString, weights, lcoe);
   }
