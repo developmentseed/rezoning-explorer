@@ -513,8 +513,8 @@ function QueryForm (props) {
                       </Heading>
                     </AccordionFoldTrigger>
                   )}
-                  renderBody={({ isFoldExpanded }) =>
-                    (<>
+                  renderBody={({ isFoldExpanded }) => (
+                    <>
                       <PanelOption hidden={!isFoldExpanded}>
                         <OptionHeadline>
                           <PanelOptionTitle>{maxZoneScoreO.name}</PanelOptionTitle>
@@ -542,11 +542,12 @@ function QueryForm (props) {
                           setMaxLCOE({ min: round(min), max: round(max) });
                         })}
                       </PanelOption>
-                     </>)}
+                    </>
+                  )}
                 />
 
                 {Object.entries(filters).map(([group, list], idx) => {
-                  idx+=1
+                  idx += 1;
                   return (
                     <AccordionFold
                       key={group}
