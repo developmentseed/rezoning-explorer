@@ -37,7 +37,7 @@ export const filtersLists = {
   distance_filters: [
     {
       name: 'Distance to Airports',
-      info: 'This filter has info.',
+      info: 'Areas within a defined distance to airports.',
       isRange: true,
       input: {
         type: SLIDER,
@@ -47,7 +47,7 @@ export const filtersLists = {
     },
     {
       name: 'Distance to Ports',
-      info: 'This filter has info.',
+      info: 'Areas within a defined distance to ports.',
       isRange: true,
       input: {
         type: SLIDER,
@@ -68,8 +68,8 @@ export const filtersLists = {
 
     },
     {
-      name: 'Distance to Grids',
-      info: 'This filter has info.',
+      name: 'Distance to Transmission Lines',
+      info: 'Areas within a defined distance to transmission lines.',
       isRange: true,
       input: {
         type: SLIDER,
@@ -79,7 +79,7 @@ export const filtersLists = {
     },
     {
       name: 'Distance to Roads',
-      info: 'This filter has info.',
+      info: 'Areas within a defined distance to roads.',
       isRange: true,
       input: {
         type: SLIDER,
@@ -89,8 +89,8 @@ export const filtersLists = {
 
     },
     {
-      name: 'Population',
-      info: 'This filter has info.',
+      name: 'Population Density (people/km^2)',
+      info: 'A measurement of population per unit area.',
       isRange: true,
       input: {
         type: SLIDER,
@@ -100,7 +100,7 @@ export const filtersLists = {
     },
     {
       name: 'Slope',
-      info: 'This filter has info.',
+      info: 'The steepness or angle considered with reference to the horizon.',
       isRange: true,
       input: {
         type: SLIDER,
