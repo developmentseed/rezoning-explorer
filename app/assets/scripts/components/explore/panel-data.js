@@ -1,5 +1,18 @@
 import { randomRange } from '../../utils/utils';
 
+const WIND = 'Wind';
+const OFFSHORE = 'Off-Shore Wind';
+const SOLAR = 'SOLAR PV';
+
+export const exclusions = {
+  filters: {
+    f_ports: [WIND, SOLAR],
+    f_anchorages: [SOLAR, WIND]
+  },
+  weights: {},
+  lcoe: {}
+};
+
 export const resourceList = [
   {
     name: 'Solar PV',

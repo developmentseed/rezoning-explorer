@@ -166,7 +166,7 @@ const initListToState = (list) => {
     // unit: obj.unit || DEFAULT_UNIT,
     active: obj.active === undefined ? true : obj.active
     // value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
-  }));
+  })).filter(obj => !obj.excluded);
 };
 
 const initObjectToState = (obj) => {
@@ -271,7 +271,8 @@ function QueryForm (props) {
         let shard = `${value.min}, ${value.max}`;
         shard = f.active ? shard : `${shard},${false}`;
         return shard;
-      }).join('|');
+      }).filter(f => !f.excluded)
+        .join('|');
     },
     default: undefined
   });

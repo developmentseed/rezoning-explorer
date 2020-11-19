@@ -20,7 +20,8 @@ import {
 } from '../components/common/global-loading';
 import {
   INPUT_CONSTANTS,
-  presets as defaultPresets
+  presets as defaultPresets,
+  exclusions
 } from '../components/explore/panel-data';
 
 import { initialApiRequestState } from './contexeed';
@@ -213,6 +214,20 @@ export function ExploreProvider (props) {
 
     initAreasAndFilters();
   }, []);
+
+  useEffect(() => {
+    const upFilters = Object.entries(filtersLists || {})
+      .reduce((acc, [cat, list]) => {
+        Object.entries(exclusions.filters).forEach(([f, exs]) => {
+          list = list.map(filt => ({ ...filt, excluded: false }));
+          if (exs.find(e => e === selectedResource)) {
+            list.find(filt => filt.id === f).excluded = true;
+          }
+        });
+        return { ...acc, [cat]: list };
+      }, {});
+    Object.keys(upFilters).length > 0 && setFiltersLists(upFilters);
+  }, [selectedResource]);
 
   useEffect(() => {
     localStorage.setItem('site-tour', tourStep);
