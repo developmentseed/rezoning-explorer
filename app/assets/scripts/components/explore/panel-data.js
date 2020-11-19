@@ -126,6 +126,7 @@ export const lcoeList = [
   {
     name: 'Turbine / Solar Unit Type',
     id: 'turbine_type',
+    info: 'Choose a technology: Onshore wind, Offshore wind, or Solar PV.',
     input: {
       type: TEXT,
       range: [0, 3]
@@ -134,6 +135,7 @@ export const lcoeList = [
   {
     name: 'Capital Recovery Factor',
     id: 'crf',
+    info: 'A capital recovery factor is the ratio of a constant annuity to the present value of receiving that annuity for a given length of time.',
     input: {
       type: TEXT
     }
@@ -141,6 +143,7 @@ export const lcoeList = [
   {
     name: 'Generation - capital [USD/kW]',
     id: 'cg',
+    info: 'Capital expenditure for generation, per unit of capacity.',
     input: {
       type: TEXT
     }
@@ -149,6 +152,7 @@ export const lcoeList = [
   {
     name: 'Generation - fixed O&M [USD/MW/y]',
     id: 'omfg',
+    info: 'Fixed Operation and Maintenance costs for the generation part of the system, per unit of capacity, per year.',
     input: {
       type: TEXT
     }
@@ -156,6 +160,7 @@ export const lcoeList = [
   {
     name: 'Generation - variable O&M [USD/MWh]',
     id: 'omvg',
+    info: 'Variable Operation and Maintenance costs for generation, per unit of energy produced.',
     input: {
       type: TEXT
     }
@@ -163,6 +168,7 @@ export const lcoeList = [
   {
     name: 'Transmission (land cabling) - capital [USD/MW/km]',
     id: 'ct',
+    info: 'Capital expenditure for transmission (land cabling), per unit of capacity and distance.',
     input: {
       type: TEXT
     }
@@ -170,6 +176,7 @@ export const lcoeList = [
   {
     name: 'Transmission - fixed O&M [USD/km]',
     id: 'omft',
+    info: 'Fixed Operation and Maintenance costs for the transmission, per unit of distance, per year.',
     input: {
       type: TEXT
     }
@@ -177,6 +184,7 @@ export const lcoeList = [
   {
     name: 'Substation - capital [USD / two substations (per new transmission connection) ]',
     id: 'cs',
+    info: 'Capital expenditure for new substations or upgrades per transmission connection.',
     input: {
       type: TEXT
     }
@@ -184,6 +192,7 @@ export const lcoeList = [
   {
     name: 'Road - capital [USD/km]',
     id: 'cr',
+    info: 'Capital expenditure for road infrastructure, per unit of distance.',
     input: {
       type: TEXT
     }
@@ -191,6 +200,7 @@ export const lcoeList = [
   {
     name: 'Road - fixed O&M [USD/km]',
     id: 'omfr',
+    info: 'Fixed Operation and Maintenance costs for road infrastructure, per unit of distance, per year.',
     input: {
       type: TEXT
     }
@@ -198,6 +208,7 @@ export const lcoeList = [
   {
     name: 'Decommission % rate',
     id: 'decom',
+    info: 'Decommissioning costs incurred at end of lifetime as a share of capital costs of generation.',
     input: {
       type: TEXT
     }
@@ -205,6 +216,7 @@ export const lcoeList = [
   {
     name: 'Economic discount rate',
     id: 'i',
+    info: 'Rate of return used to discount future cash flows back to their present value. This rate is often a company’s Weighted Average Cost of Capital (WACC), required rate of return, or the hurdle rate that investors expect to earn relative to the risk of the investment.',
     input: {
       type: TEXT,
       range: [0.1, 100]
@@ -213,6 +225,7 @@ export const lcoeList = [
   {
     name: 'Lifetime [years]',
     id: 'n',
+    info: 'Lifetime of the power plant.',
     range: [1, 100],
     input: {
       type: TEXT,
