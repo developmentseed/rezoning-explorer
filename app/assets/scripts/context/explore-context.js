@@ -84,15 +84,31 @@ export function ExploreProvider (props) {
     const apiFilters = {
       distance_filters: Object.keys(filters).map((filterId) => {
         const filter = filters[filterId];
+        const isRange = filter.pattern === 'range_filter';
+        let value = 0;
+
+        if (isRange) {
+          value = filter.range
+            ? {
+                min: filter.range[0],
+                max: filter.range[1]
+              }
+            : {
+                min: 0,
+                max: 1000000
+              };
+        }
+
         return {
           ...filter,
           id: filterId,
           name: filter.title,
           info: filter.description,
-          isRange: filter.pattern === 'range_filter',
+          isRange,
           input: {
             type: SLIDER,
-            range: [0, 1000000]
+            range: [0, 1000000],
+            value
           }
         };
       })
