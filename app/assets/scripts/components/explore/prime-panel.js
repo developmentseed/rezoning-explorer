@@ -78,6 +78,7 @@ function ExpMapPrimePanel (props) {
     setGridMode,
     gridSize, setGridSize,
     filteredLayerUrl,
+    filtersLists,
     map
   } = useContext(ExploreContext);
 
@@ -157,7 +158,7 @@ function ExpMapPrimePanel (props) {
         onPanelChange={onPanelChange}
         initialState={isLargeViewport()}
         bodyContent={
-          <>
+          filtersLists ? (
             <QueryForm
               area={selectedArea}
               resource={selectedResource}
@@ -176,7 +177,9 @@ function ExpMapPrimePanel (props) {
                 setZonesGenerated(false);
               }}
             />
-          </>
+          ) : (
+            <></>
+          )
         }
       />
       <ModalSelect

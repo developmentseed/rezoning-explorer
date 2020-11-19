@@ -187,9 +187,6 @@ const updateStateList = (list, i, updatedValue) => {
 function QueryForm (props) {
   const { updateFilteredLayer, filtersLists, presets } = useContext(ExploreContext);
 
-  // Do not render form if filters are not available
-  if (!filtersLists) return <></>;
-
   const {
     area,
     resource,
