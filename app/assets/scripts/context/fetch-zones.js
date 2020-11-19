@@ -16,7 +16,7 @@ async function getZoneSummary (feature, filterString, weights, lcoe) {
 
   try {
     summary = (
-      await fetchJSON(`${apiEndpoint}/zone?filters=${filterString}`, {
+      await fetchJSON(`${apiEndpoint}/zone?${filterString}`, {
         method: 'POST',
         body: JSON.stringify({
           aoi: feature.geometry,
