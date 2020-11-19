@@ -36,7 +36,7 @@ const turbineTypeMap = {
 const { SLIDER, BOOL, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
 const maxZoneScoreO = {
-  name: 'Max Zone Score',
+  name: 'Zone Score Range',
   active: true,
   isRange: true,
   input: {
@@ -46,7 +46,7 @@ const maxZoneScoreO = {
   }
 };
 const maxLCOEO = {
-  name: 'Max LCOE',
+  name: 'LCOE Range',
   active: true,
   isRange: true,
   input: {
@@ -485,110 +485,135 @@ function QueryForm (props) {
             }
           }}
         >
-          <PanelOption>
-            <OptionHeadline>
-              <PanelOptionTitle>{maxZoneScoreO.name}</PanelOptionTitle>
-              {maxZoneScoreO.info && (
-                <InfoButton info={maxZoneScoreO.info} id={maxZoneScoreO.name}>
-                                Info
-                </InfoButton>
-              )}
-            </OptionHeadline>
-            {inputOfType(maxZoneScoreO, ({ min, max }) => {
-              setMaxZoneScore({ min: round(min), max: round(max) });
-            })}
-          </PanelOption>
-
-          <PanelOption>
-            <OptionHeadline>
-              <PanelOptionTitle>{maxLCOEO.name}</PanelOptionTitle>
-              {maxLCOEO.info && (
-                <InfoButton info={maxLCOEO.info} id={maxLCOEO.name}>
-                                Info
-                </InfoButton>
-              )}
-            </OptionHeadline>
-            {inputOfType(maxLCOEO, ({ min, max }) => {
-              setMaxLCOE({ min: round(min), max: round(max) });
-            })}
-          </PanelOption>
 
           <Accordion
             initialState={[
+              true,
               true,
               ...Object.keys(filters)
                 .slice(1)
                 .map((_) => false)
             ]}
+            foldCount={Object.keys(filters).length + 1}
+            allowMultiple
           >
-            {({ checkExpanded, setExpanded }) =>
-              Object.entries(filters).map(([group, list], idx) => {
-                return (
-                  <AccordionFold
-                    key={group}
-                    forwardedAs={FormGroupWrapper}
-                    isFoldExpanded={checkExpanded(idx)}
-                    setFoldExpanded={(v) => setExpanded(idx, v)}
-                    renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                      <AccordionFoldTrigger
-                        isExpanded={isFoldExpanded}
-                        onClick={() => setFoldExpanded(!isFoldExpanded)}
-                      >
-                        <Heading size='small' variation='primary'>
-                          {makeTitleCase(group.replace(/_/g, ' '))}
-                        </Heading>
-                      </AccordionFoldTrigger>
-                    )}
-                    renderBody={({ isFoldExpanded }) =>
-                      list.map((filter, ind) => (
-                        <PanelOption key={filter.name} hidden={!isFoldExpanded}>
-                          <OptionHeadline>
-                            <PanelOptionTitle>{filter.name}</PanelOptionTitle>
-                            {filter.info && (
-                              <InfoButton info={filter.info} id={filter.name}>
+            {({ checkExpanded, setExpanded }) => (
+              <>
+                <AccordionFold
+                  forwardedAs={FormGroupWrapper}
+                  isFoldExpanded={checkExpanded(0)}
+                  setFoldExpanded={(v) => setExpanded(0, v)}
+                  renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                    <AccordionFoldTrigger
+                      isExpanded={isFoldExpanded}
+                      onClick={() => setFoldExpanded(!isFoldExpanded)}
+                    >
+                      <Heading size='small' variation='primary'>
+                        {makeTitleCase('Output Filters')}
+                      </Heading>
+                    </AccordionFoldTrigger>
+                  )}
+                  renderBody={({ isFoldExpanded }) =>
+                    (<>
+                      <PanelOption hidden={!isFoldExpanded}>
+                        <OptionHeadline>
+                          <PanelOptionTitle>{maxZoneScoreO.name}</PanelOptionTitle>
+                          {maxZoneScoreO.info && (
+                            <InfoButton info={maxZoneScoreO.info} id={maxZoneScoreO.name}>
                                 Info
-                              </InfoButton>
-                            )}
-                            <FormSwitch
-                              hideText
-                              name={`toggle-${filter.name.replace(/ /g, '-')}`}
-                              disabled={filter.disabled}
-                              checked={filter.active}
-                              onChange={() => {
-                                setFilters({
-                                  ...filters,
-                                  [group]: updateStateList(list, ind, {
-                                    ...filter,
-                                    active: !filter.active
-                                  })
-                                });
-                              }}
-                            >
-                              Toggle filter
-                            </FormSwitch>
-                          </OptionHeadline>
-                          {
-                            inputOfType(filter, (value) => {
-                              if (filter.active) {
-                                setFilters({
-                                  ...filters,
-                                  [group]: updateStateList(list, ind, {
-                                    ...filter,
-                                    input: {
-                                      ...filter.input,
-                                      value
-                                    }
-                                  })
-                                });
-                              }
-                            })
-                          }
+                            </InfoButton>
+                          )}
+                        </OptionHeadline>
+                        {inputOfType(maxZoneScoreO, ({ min, max }) => {
+                          setMaxZoneScore({ min: round(min), max: round(max) });
+                        })}
+                      </PanelOption>
 
-                        </PanelOption>
-                      ))}
-                  />
-                );
-              })}
+                      <PanelOption hidden={!isFoldExpanded}>
+                        <OptionHeadline>
+                          <PanelOptionTitle>{maxLCOEO.name}</PanelOptionTitle>
+                          {maxLCOEO.info && (
+                            <InfoButton info={maxLCOEO.info} id={maxLCOEO.name}>
+                                Info
+                            </InfoButton>
+                          )}
+                        </OptionHeadline>
+                        {inputOfType(maxLCOEO, ({ min, max }) => {
+                          setMaxLCOE({ min: round(min), max: round(max) });
+                        })}
+                      </PanelOption>
+                     </>)}
+                />
+
+                {Object.entries(filters).map(([group, list], idx) => {
+                  idx+=1
+                  return (
+                    <AccordionFold
+                      key={group}
+                      forwardedAs={FormGroupWrapper}
+                      isFoldExpanded={checkExpanded(idx)}
+                      setFoldExpanded={(v) => setExpanded(idx, v)}
+                      renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                        <AccordionFoldTrigger
+                          isExpanded={isFoldExpanded}
+                          onClick={() => setFoldExpanded(!isFoldExpanded)}
+                        >
+                          <Heading size='small' variation='primary'>
+                            {makeTitleCase(group.replace(/_/g, ' '))}
+                          </Heading>
+                        </AccordionFoldTrigger>
+                      )}
+                      renderBody={({ isFoldExpanded }) =>
+                        list.map((filter, ind) => (
+                          <PanelOption key={filter.name} hidden={!isFoldExpanded}>
+                            <OptionHeadline>
+                              <PanelOptionTitle>{filter.name}</PanelOptionTitle>
+                              {filter.info && (
+                                <InfoButton info={filter.info} id={filter.name}>
+                                Info
+                                </InfoButton>
+                              )}
+                              <FormSwitch
+                                hideText
+                                name={`toggle-${filter.name.replace(/ /g, '-')}`}
+                                disabled={filter.disabled}
+                                checked={filter.active}
+                                onChange={() => {
+                                  setFilters({
+                                    ...filters,
+                                    [group]: updateStateList(list, ind, {
+                                      ...filter,
+                                      active: !filter.active
+                                    })
+                                  });
+                                }}
+                              >
+                              Toggle filter
+                              </FormSwitch>
+                            </OptionHeadline>
+                            {
+                              inputOfType(filter, (value) => {
+                                if (filter.active) {
+                                  setFilters({
+                                    ...filters,
+                                    [group]: updateStateList(list, ind, {
+                                      ...filter,
+                                      input: {
+                                        ...filter.input,
+                                        value
+                                      }
+                                    })
+                                  });
+                                }
+                              })
+                            }
+
+                          </PanelOption>
+                        ))}
+                    />
+                  );
+                })}
+              </>)}
           </Accordion>
         </FormWrapper>
 
@@ -697,9 +722,9 @@ QueryForm.propTypes = {
   setGridMode: T.func,
   gridSize: T.number,
   setGridSize: T.func,
-  maxZoneScore: T.number,
+  maxZoneScore: T.object,
   setMaxZoneScore: T.func,
-  maxLCOE: T.number,
+  maxLCOE: T.object,
   setMaxLCOE: T.func
 };
 
