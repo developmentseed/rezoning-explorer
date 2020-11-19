@@ -251,23 +251,34 @@ export function ExploreProvider (props) {
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
 
   function updateFilteredLayer (filterValues, weights, lcoe) {
+    // Prepare a query string to the API based from filter values
     const filterString = filterValues
       .map((filter) => {
-        const { id, pattern } = filter;
+        const { id, pattern, active } = filter;
+
+        // Bypass inactive filters
+        if (!active) return null;
+
+        // Add accepted filter types to the query
         if (pattern === 'range_filter') {
           const {
             value: { min, max }
           } = filter.input;
           return `${id}=${min},${max}`;
-        } else {
-          return null;
         }
+
+        // discard non-accepted filter types
+        return null;
       })
       .filter((x) => x)
       .join('&');
+
+    // Apply filter querystring to the map
     setFilteredLayerUrl(
       `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
     );
+
+    // Fetch zones
     generateZones(filterString, weights, lcoe);
   }
 
