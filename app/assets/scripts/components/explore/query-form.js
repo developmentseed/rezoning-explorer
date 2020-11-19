@@ -185,15 +185,13 @@ const updateStateList = (list, i, updatedValue) => {
 };
 
 function QueryForm (props) {
-  const { updateFilteredLayer } = useContext(ExploreContext);
+  const { updateFilteredLayer, filtersLists, presets } = useContext(ExploreContext);
 
   const {
     area,
     resource,
     weightsList,
-    filtersLists,
     lcoeList,
-    presets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
@@ -326,7 +324,7 @@ function QueryForm (props) {
             range={option.input.range || [0, 100]}
             id={option.name}
             value={option.input.value}
-            isRange={option.input.isRange}
+            isRange={option.isRange}
             disabled={!option.active}
             onChange={onChange}
           />
@@ -361,9 +359,6 @@ function QueryForm (props) {
   };
 
   const applyClick = () => {
-    const filterValues = Object.values(filters)
-      .reduce((accum, section) => [...accum,
-        ...section.map(filter => filter.input.value)], []);
     const weightsValues = Object.values(weights)
       .reduce((accum, weight) => (
         {
@@ -377,7 +372,7 @@ function QueryForm (props) {
           ...accum,
           [weight.id || weight.name]: Number(weight.input.value)
         }), {});
-    updateFilteredLayer(filterValues, weightsValues, lcoeValues);
+    updateFilteredLayer(filters.distance_filters, weightsValues, lcoeValues);
   };
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
@@ -628,7 +623,6 @@ function QueryForm (props) {
 
 FormWrapper.propTypes = {
   setPreset: T.func.isRequired,
-  presets: T.oneOfType([T.object, T.array]).isRequired,
   name: T.string,
   icon: T.string
 };
@@ -637,11 +631,9 @@ QueryForm.propTypes = {
   area: T.object,
   resource: T.string,
   weightsList: T.array,
-  filtersLists: T.object,
   lcoeList: T.array,
   onResourceEdit: T.func,
   onAreaEdit: T.func,
-  presets: T.object,
   onInputTouched: T.func,
   onSelectionChange: T.func,
   gridMode: T.bool,

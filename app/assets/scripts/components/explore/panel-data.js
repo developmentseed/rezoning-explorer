@@ -33,95 +33,6 @@ export const INPUT_CONSTANTS = {
   DEFAULT_RANGE
 };
 
-export const filtersLists = {
-  distance_filters: [
-    {
-      name: 'Distance to Airports',
-      info: 'This filter has info.',
-      isRange: true,
-      input: {
-        type: SLIDER,
-        range: [0, 1000000],
-        isRange: true
-      }
-    },
-    {
-      name: 'Distance to Ports',
-      info: 'This filter has info.',
-      isRange: true,
-      input: {
-        type: SLIDER,
-        range: [0, 1000000],
-        isRange: true
-      }
-
-    },
-    {
-      name: 'Distance to Anchorages',
-      info: 'This filter has info.',
-      isRange: true,
-      input: {
-        type: SLIDER,
-        range: [0, 1000000],
-        isRange: true
-      }
-
-    },
-    {
-      name: 'Distance to Grids',
-      info: 'This filter has info.',
-      isRange: true,
-      input: {
-        type: SLIDER,
-        range: [0, 1000000],
-        isRange: true
-      }
-    },
-    {
-      name: 'Distance to Roads',
-      info: 'This filter has info.',
-      isRange: true,
-      input: {
-        type: SLIDER,
-        range: [0, 10000],
-        isRange: true
-      }
-
-    },
-    {
-      name: 'Population',
-      info: 'This filter has info.',
-      isRange: true,
-      input: {
-        type: SLIDER,
-        range: [0, 1000000],
-        isRange: true
-      }
-    },
-    {
-      name: 'Slope',
-      info: 'This filter has info.',
-      isRange: true,
-      input: {
-        type: SLIDER,
-        range: [0, 10000],
-        isRange: true
-      }
-    },
-    {
-      name: 'Land Cover',
-      info: 'This filter has info.',
-      isRange: true,
-      input: {
-        type: SLIDER,
-        range: [0, 10000],
-        isRange: true
-      }
-
-    }
-  ]
-};
-
 export const lcoeList = [
   {
     name: 'Turbine / Solar Unit Type',
@@ -362,27 +273,6 @@ export const presets = {
         value: weight.range ? randomRange(weight.range[0], weight.range[1]) : randomRange(0, 100)
       }
     }))
-  },
-  filters: {
-    Optimization: Object.entries(filtersLists).reduce((accum, [name, group]) => {
-      return (
-        {
-          ...accum,
-          [name]: group.map(filter => (
-            {
-              ...filter,
-              input: {
-                ...filter.input,
-                value: {
-                  max: filter.range ? randomRange(filter.range[0], filter.range[1]) : randomRange(0, 100),
-                  min: filter.range ? filter.range[0] : 0
-                }
-              }
-            }
-          ))
-        }
-      );
-    }, {})
   },
   lcoe: {
     'Greatest Savings': lcoeList.map(lcoe => ({
