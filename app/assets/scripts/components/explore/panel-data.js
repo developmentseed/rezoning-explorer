@@ -179,28 +179,6 @@ export const weightsList = [
     }
   },
   {
-    name: 'Technology Co-Location',
-    id: 'technology_colocation',
-    range: [0, 1],
-    default: 1,
-    input: {
-      type: SLIDER,
-      range: [0, 1],
-      default: 1
-    }
-  },
-  {
-    name: 'Human Footprint',
-    id: 'human_footprint',
-    range: [0, 1],
-    default: 1,
-    input: {
-      type: SLIDER,
-      range: [0, 1],
-      default: 1
-    }
-  },
-  {
     name: 'Population Density',
     id: 'pop_density',
     range: [0, 1],
@@ -214,17 +192,6 @@ export const weightsList = [
   {
     name: 'Slope',
     id: 'slope',
-    range: [0, 1],
-    default: 1,
-    input: {
-      type: SLIDER,
-      range: [0, 1],
-      default: 1
-    }
-  },
-  {
-    name: 'Land Use Score',
-    id: 'land_use',
     range: [0, 1],
     default: 1,
     input: {
