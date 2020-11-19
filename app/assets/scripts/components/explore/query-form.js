@@ -25,6 +25,7 @@ import GridSetter from './grid-setter';
 
 import ExploreContext from '../../context/explore-context';
 import { INPUT_CONSTANTS } from './panel-data';
+import { round } from '../../utils/format';
 
 const turbineTypeMap = {
   'Off-Shore Wind': [1, 3],
@@ -33,6 +34,28 @@ const turbineTypeMap = {
 };
 
 const { SLIDER, BOOL, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
+
+const maxZoneScoreO = {
+  name: 'Max Zone Score',
+  active: true,
+  isRange: true,
+  input: {
+    value: { min: 0, max: 1 },
+    type: SLIDER,
+    range: [0, 1]
+  }
+};
+const maxLCOEO = {
+  name: 'Max LCOE',
+  active: true,
+  isRange: true,
+  input: {
+    value: { min: 0, max: 1 },
+    type: SLIDER,
+    range: [0, 1]
+  }
+};
+
 const PanelOption = styled.div`
   ${({ hidden }) => hidden && 'display: none;'}
   margin-bottom: 1.5rem;
@@ -198,8 +221,14 @@ function QueryForm (props) {
     onSelectionChange,
     gridMode,
     setGridMode,
-    gridSize, setGridSize
+    gridSize, setGridSize,
+    maxZoneScore, setMaxZoneScore,
+    maxLCOE, setMaxLCOE
+
   } = props;
+
+  maxZoneScoreO.input.value = maxZoneScore;
+  maxLCOEO.input.value = maxLCOE;
 
   const [weights, setWeights] = useQsState({
     key: 'weights',
@@ -456,6 +485,34 @@ function QueryForm (props) {
             }
           }}
         >
+          <PanelOption>
+            <OptionHeadline>
+              <PanelOptionTitle>{maxZoneScoreO.name}</PanelOptionTitle>
+              {maxZoneScoreO.info && (
+                <InfoButton info={maxZoneScoreO.info} id={maxZoneScoreO.name}>
+                                Info
+                </InfoButton>
+              )}
+            </OptionHeadline>
+            {inputOfType(maxZoneScoreO, ({ min, max }) => {
+              setMaxZoneScore({ min: round(min), max: round(max) });
+            })}
+          </PanelOption>
+
+          <PanelOption>
+            <OptionHeadline>
+              <PanelOptionTitle>{maxLCOEO.name}</PanelOptionTitle>
+              {maxLCOEO.info && (
+                <InfoButton info={maxLCOEO.info} id={maxLCOEO.name}>
+                                Info
+                </InfoButton>
+              )}
+            </OptionHeadline>
+            {inputOfType(maxLCOEO, ({ min, max }) => {
+              setMaxLCOE({ min: round(min), max: round(max) });
+            })}
+          </PanelOption>
+
           <Accordion
             initialState={[
               true,
@@ -639,7 +696,11 @@ QueryForm.propTypes = {
   gridMode: T.bool,
   setGridMode: T.func,
   gridSize: T.number,
-  setGridSize: T.func
+  setGridSize: T.func,
+  maxZoneScore: T.number,
+  setMaxZoneScore: T.func,
+  maxLCOE: T.number,
+  setMaxLCOE: T.func
 };
 
 export default QueryForm;

@@ -31,6 +31,32 @@ const ExploreContext = createContext({});
 
 const presets = { ...defaultPresets };
 export function ExploreProvider (props) {
+  const [maxZoneScore, setMaxZoneScore] = useQsState({
+    key: 'maxZoneScore',
+    default: undefined,
+    hydrator: v => {
+      if (v) {
+        const [min, max] = v.split(',').map(Number);
+        return { min, max };
+      } else return { min: 0, max: 1 };
+    },
+
+    dehydrator: v => {
+      return v && `${v.min},${v.max}`;
+    }
+  });
+  const [maxLCOE, setMaxLCOE] = useQsState({
+    key: 'maxLCOE',
+    default: undefined,
+    hydrator: v => {
+      if (v) {
+        const [min, max] = v.split(',').map(Number);
+        return { min, max };
+      } else return { min: 0, max: 1 };
+    },
+    dehydrator: v => v && `${v.min},${v.max}`
+  });
+
   const [filtersLists, setFiltersLists] = useState(null);
 
   const [selectedArea, setSelectedArea] = useState(null);
@@ -314,7 +340,11 @@ export function ExploreProvider (props) {
           filteredLayerUrl,
           updateFilteredLayer,
           tourStep,
-          setTourStep
+          setTourStep,
+          maxZoneScore,
+          setMaxZoneScore,
+          maxLCOE,
+          setMaxLCOE
         }}
       >
         {props.children}
