@@ -90,13 +90,13 @@ export function ExploreProvider (props) {
         if (isRange) {
           value = filter.range
             ? {
-                min: filter.range[0],
-                max: filter.range[1]
-              }
+              min: filter.range[0],
+              max: filter.range[1]
+            }
             : {
-                min: 0,
-                max: 1000000
-              };
+              min: 0,
+              max: 1000000
+            };
         }
 
         return {
