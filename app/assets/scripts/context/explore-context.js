@@ -114,6 +114,7 @@ export function ExploreProvider (props) {
             id: filter.id,
             name: filter.title,
             info: filter.description,
+            active: false,
             isRange,
             input: {
               type: SLIDER,
