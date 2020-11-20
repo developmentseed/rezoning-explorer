@@ -48,7 +48,12 @@ export function ExploreProvider (props) {
 
   const [map, setMap] = useState(null);
 
+  // Handle selected area id changes
   useEffect(() => {
+    // Clear current zones
+    dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
+
+    // Set area object to context
     setSelectedArea(areas.find((a) => a.id === selectedAreaId));
   }, [selectedAreaId]);
 
@@ -183,10 +188,6 @@ export function ExploreProvider (props) {
   };
 
   useEffect(() => {
-    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
-  }, [selectedAreaId]);
-
-  useEffect(() => {
     let nextArea = areas.find((a) => `${a.id}` === `${selectedAreaId}`);
 
     if (selectedResource === 'Off-Shore Wind' && nextArea) {
@@ -217,10 +218,6 @@ export function ExploreProvider (props) {
   useEffect(() => {
     localStorage.setItem('site-tour', tourStep);
   }, [tourStep]);
-
-  useEffect(() => {
-    dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
-  }, [selectedAreaId]);
 
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
