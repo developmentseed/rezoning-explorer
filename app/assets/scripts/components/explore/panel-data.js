@@ -199,17 +199,6 @@ export const weightsList = [
       range: [0, 1],
       default: 1
     }
-  },
-  {
-    name: 'Capacity Value (Wind Only)',
-    id: 'capacity_value',
-    range: [0, 1],
-    default: 1,
-    input: {
-      type: SLIDER,
-      range: [0, 1],
-      default: 1
-    }
   }
 ];
 
