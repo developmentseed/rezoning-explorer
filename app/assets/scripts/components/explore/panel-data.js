@@ -52,6 +52,10 @@ export const INPUT_CONSTANTS = {
   DEFAULT_RANGE
 };
 
+export const allowedTypes = new Map();
+allowedTypes.set('range_filter', SLIDER);
+allowedTypes.set('boolean', BOOL);
+
 export const lcoeList = [
   {
     name: 'Turbine / Solar Unit Type',

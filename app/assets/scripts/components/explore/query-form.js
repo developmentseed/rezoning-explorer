@@ -36,6 +36,20 @@ const turbineTypeMap = {
 };
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
+
+const castByFilterType = type => {
+  switch (type) {
+    case BOOL:
+      return Boolean;
+    case DROPDOWN:
+    case TEXT:
+      return String;
+    case SLIDER:
+      return Number;
+    default:
+      return String;
+  }
+};
 const PanelOption = styled.div`
   ${({ hidden }) => hidden && 'display: none;'}
   margin-bottom: 1.5rem;
@@ -154,6 +168,11 @@ const initByType = obj => {
         value: obj.value || obj.default || (obj.range || DEFAULT_RANGE)[0]
       };
     case BOOL:
+      return {
+        ...obj,
+        value: false,
+        range: [true, false]
+      };
     case MULTI:
     case DROPDOWN:
       return {
@@ -252,16 +271,26 @@ function QueryForm (props) {
     hydrator: v => {
       const baseFilts = initObjectToState(filtersLists);
       if (v) {
-        const qsValues = v.split('|').map(vals => {
-          const [min, max, active] = vals.split(',');
-          return {
-            value: {
-              min: Number(min),
-              max: Number(max)
-            },
-            active: active === undefined
-          };
+        const qsValues = v.split('|').map((vals, i) => {
+          const thisFilt = baseFilts.distance_filters[i];
+          if (thisFilt.isRange) {
+            const [min, max, active] = vals.split(',');
+            return {
+              value: {
+                min: Number(min),
+                max: Number(max)
+              },
+              active: active === undefined
+            };
+          } else {
+            const [val, active] = vals.split(',');
+            return {
+              value: castByFilterType(thisFilt.input.type)(val),
+              active: active === undefined
+            };
+          }
         });
+
         baseFilts.distance_filters = baseFilts.distance_filters.map((filt, i) => (
           {
             ...filt,
@@ -278,7 +307,7 @@ function QueryForm (props) {
     dehydrator: v => {
       return v && v.distance_filters.map(f => {
         const { value } = f.input;
-        let shard = `${value.min}, ${value.max}`;
+        let shard = f.isRange ? `${value.min}, ${value.max}` : `${value}`;
         shard = f.active ? shard : `${shard},${false}`;
         return shard;
       }).filter(f => !f.excluded)
@@ -357,6 +386,7 @@ function QueryForm (props) {
           />
         );
       case BOOL:
+        return null;
       case MULTI:
       case DROPDOWN:
         return (
@@ -539,7 +569,8 @@ function QueryForm (props) {
                                   ...filters,
                                   [group]: updateStateList(list, ind, {
                                     ...filter,
-                                    active: !filter.active
+                                    active: !filter.active,
+                                    value: filter.input.type === BOOL ? !filter.active : filter.value
                                   })
                                 });
                               }}
