@@ -20,7 +20,7 @@ import {
 } from '../components/common/global-loading';
 import {
   INPUT_CONSTANTS,
-  presets as defaultPresets,
+  presets as defaultPresets
 } from '../components/explore/panel-data';
 
 import { initialApiRequestState } from './contexeed';

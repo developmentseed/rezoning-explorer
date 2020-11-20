@@ -202,10 +202,9 @@ function QueryForm (props) {
   } = props;
 
   const checkExcluded = (type, obj, resource) => {
-    const t = exclusions[type][obj.id] ?  exclusions[type][obj.id].find(el => el === resource) : false;
+    const t = exclusions[type][obj.id] ? exclusions[type][obj.id].find(el => el === resource) : false;
     return t;
-  }
-
+  };
 
   const [weights, setWeights] = useQsState({
     key: 'weights',
@@ -491,7 +490,8 @@ function QueryForm (props) {
                     )}
                     renderBody={({ isFoldExpanded }) =>
                       list.map((filter, ind) => (
-                        !checkExcluded('filters', filter, resource) && <PanelOption key={filter.name} hidden={!isFoldExpanded}>
+                        !checkExcluded('filters', filter, resource) &&
+                        <PanelOption key={filter.name} hidden={!isFoldExpanded}>
                           <OptionHeadline>
                             <PanelOptionTitle>{filter.name}</PanelOptionTitle>
                             {filter.info && (

@@ -15,15 +15,15 @@ export const exclusions = {
 
 export const resourceList = [
   {
-    name: 'Solar PV',
+    name: SOLAR,
     iconPath: 'assets/graphics/content/resourceIcons/solar-pv.svg'
   },
   {
-    name: 'Wind',
+    name: WIND,
     iconPath: 'assets/graphics/content/resourceIcons/wind.svg'
   },
   {
-    name: 'Off-Shore Wind',
+    name: OFFSHORE,
     iconPath: 'assets/graphics/content/resourceIcons/wind-offshore.svg'
   }
 ];
