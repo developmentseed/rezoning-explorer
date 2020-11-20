@@ -19,6 +19,7 @@ const SLIDER = 'slider';
 const BOOL = 'bool';
 const MULTI = 'multi-select';
 const TEXT = 'text';
+const DROPDOWN = 'dropdown';
 const GRID_OPTIONS = [9, 25, 50];
 const DEFAULT_RANGE = [0, 100];
 const DEFAULT_UNIT = '%';
@@ -27,11 +28,16 @@ export const INPUT_CONSTANTS = {
   SLIDER,
   BOOL,
   MULTI,
+  DROPDOWN,
   TEXT,
   GRID_OPTIONS,
   DEFAULT_UNIT,
   DEFAULT_RANGE
 };
+
+export const allowedTypes = new Map();
+allowedTypes.set('range_filter', SLIDER);
+allowedTypes.set('boolean', BOOL);
 
 export const lcoeList = [
   {
@@ -129,6 +135,41 @@ export const lcoeList = [
       type: TEXT,
       range: [1, 100]
     }
+  },
+  {
+    name: 'Land Use Factor',
+    id: 'landuse',
+    input: {
+      range: [0, Infinity],
+      type: TEXT
+    }
+  },
+  {
+    name: 'Capacity Factor',
+    id: 'capfac',
+    input: {
+      type: DROPDOWN,
+      options: ['opt1', 'opt2', 'opt3']
+    }
+  },
+
+  {
+    name: 'Technical Loss Factor',
+    // TODO add correct id
+    id: 'tlf',
+    input: {
+      range: [0, 1],
+      type: TEXT
+    }
+  },
+  {
+    name: 'Unavailability Factor',
+    // TODO add correct id
+    id: 'uf',
+    input: {
+      range: [0, 1],
+      type: TEXT
+    }
   }
 ];
 
@@ -179,28 +220,6 @@ export const weightsList = [
     }
   },
   {
-    name: 'Technology Co-Location',
-    id: 'technology_colocation',
-    range: [0, 1],
-    default: 1,
-    input: {
-      type: SLIDER,
-      range: [0, 1],
-      default: 1
-    }
-  },
-  {
-    name: 'Human Footprint',
-    id: 'human_footprint',
-    range: [0, 1],
-    default: 1,
-    input: {
-      type: SLIDER,
-      range: [0, 1],
-      default: 1
-    }
-  },
-  {
     name: 'Population Density',
     id: 'pop_density',
     range: [0, 1],
@@ -214,28 +233,6 @@ export const weightsList = [
   {
     name: 'Slope',
     id: 'slope',
-    range: [0, 1],
-    default: 1,
-    input: {
-      type: SLIDER,
-      range: [0, 1],
-      default: 1
-    }
-  },
-  {
-    name: 'Land Use Score',
-    id: 'land_use',
-    range: [0, 1],
-    default: 1,
-    input: {
-      type: SLIDER,
-      range: [0, 1],
-      default: 1
-    }
-  },
-  {
-    name: 'Capacity Value (Wind Only)',
-    id: 'capacity_value',
     range: [0, 1],
     default: 1,
     input: {
