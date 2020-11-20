@@ -2,7 +2,7 @@ import { randomRange } from '../../utils/utils';
 
 const WIND = 'Wind';
 const OFFSHORE = 'Off-Shore Wind';
-const SOLAR = 'SOLAR PV';
+const SOLAR = 'Solar PV';
 
 export const exclusions = {
   filters: {

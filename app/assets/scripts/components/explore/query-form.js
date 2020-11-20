@@ -24,7 +24,7 @@ import InfoButton from '../common/info-button';
 import GridSetter from './grid-setter';
 
 import ExploreContext from '../../context/explore-context';
-import { INPUT_CONSTANTS } from './panel-data';
+import { INPUT_CONSTANTS, exclusions } from './panel-data';
 
 const turbineTypeMap = {
   'Off-Shore Wind': [1, 3],
@@ -200,6 +200,12 @@ function QueryForm (props) {
     setGridMode,
     gridSize, setGridSize
   } = props;
+
+  const checkExcluded = (type, obj, resource) => {
+    const t = exclusions[type][obj.id] ?  exclusions[type][obj.id].find(el => el === resource) : false;
+    return t;
+  }
+
 
   const [weights, setWeights] = useQsState({
     key: 'weights',
@@ -485,7 +491,7 @@ function QueryForm (props) {
                     )}
                     renderBody={({ isFoldExpanded }) =>
                       list.map((filter, ind) => (
-                        <PanelOption key={filter.name} hidden={!isFoldExpanded}>
+                        !checkExcluded('filters', filter, resource) && <PanelOption key={filter.name} hidden={!isFoldExpanded}>
                           <OptionHeadline>
                             <PanelOptionTitle>{filter.name}</PanelOptionTitle>
                             {filter.info && (
