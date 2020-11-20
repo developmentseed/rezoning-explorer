@@ -25,14 +25,16 @@ import GridSetter from './grid-setter';
 
 import ExploreContext from '../../context/explore-context';
 import { INPUT_CONSTANTS } from './panel-data';
-
+import FormSelect from '../../styles/form/select';
+import { FormGroup } from '../../styles/form/group';
+import FormLabel from '../../styles/form/label';
 const turbineTypeMap = {
   'Off-Shore Wind': [1, 3],
   Wind: [1, 3],
   'Solar PV': [0, 0]
 };
 
-const { SLIDER, BOOL, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
+const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
 const PanelOption = styled.div`
   ${({ hidden }) => hidden && 'display: none;'}
   margin-bottom: 1.5rem;
@@ -152,6 +154,13 @@ const initByType = obj => {
       };
     case BOOL:
     case MULTI:
+    case DROPDOWN:
+      return {
+        ...obj,
+        value: obj.value || obj.options[0],
+        range: [null, null],
+        unit: null
+      };
     default:
       return {};
   }
@@ -347,6 +356,31 @@ function QueryForm (props) {
         );
       case BOOL:
       case MULTI:
+      case DROPDOWN:
+        return (
+          <FormGroup>
+
+            <FormLabel htmlFor={option.name}>{option.name}</FormLabel>
+            <FormSelect
+              id={option.name}
+              onChange={(e) => onChange(e.target.value)}
+              value={option.input.value}
+            >
+              {
+                option.input.options.map(o => {
+                  return (
+                    <option
+                      value={o}
+                      key={o}
+                    >
+                      {o}
+                    </option>
+                  );
+                })
+              }
+            </FormSelect>
+          </FormGroup>
+        );
       default:
         return {};
     }

@@ -19,6 +19,7 @@ const SLIDER = 'slider';
 const BOOL = 'bool';
 const MULTI = 'multi-select';
 const TEXT = 'text';
+const DROPDOWN = 'dropdown';
 const GRID_OPTIONS = [9, 25, 50];
 const DEFAULT_RANGE = [0, 100];
 const DEFAULT_UNIT = '%';
@@ -27,6 +28,7 @@ export const INPUT_CONSTANTS = {
   SLIDER,
   BOOL,
   MULTI,
+  DROPDOWN,
   TEXT,
   GRID_OPTIONS,
   DEFAULT_UNIT,
@@ -128,6 +130,41 @@ export const lcoeList = [
     input: {
       type: TEXT,
       range: [1, 100]
+    }
+  },
+  {
+    name: 'Land Use Factor',
+    id: 'landuse',
+    input: {
+      range: [0, Infinity],
+      type: TEXT
+    }
+  },
+  {
+    name: 'Capacity Factor',
+    id: 'capfac',
+    input: {
+      type: DROPDOWN,
+      options: ['opt1', 'opt2', 'opt3']
+    }
+  },
+
+  {
+    name: 'Technical Loss Factor',
+    // TODO add correct id
+    id: 'tlf',
+    input: {
+      range: [0, 1],
+      type: TEXT
+    }
+  },
+  {
+    name: 'Unavailability Factor',
+    // TODO add correct id
+    id: 'uf',
+    input: {
+      range: [0, 1],
+      type: TEXT
     }
   }
 ];
