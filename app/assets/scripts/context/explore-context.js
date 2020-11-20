@@ -32,7 +32,6 @@ const ExploreContext = createContext({});
 
 const presets = { ...defaultPresets };
 export function ExploreProvider (props) {
-
   // Init filters state
   const [filtersLists, setFiltersLists] = useState(null);
   const [filterRanges, dispatchFilterRanges] = useReducer(
