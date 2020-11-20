@@ -12,7 +12,7 @@ import config from '../config';
 
 import areasJson from '../../data/areas.json';
 
-import { fetchZonesReducer, fetchZones } from './fetch-zones';
+import { fetchZonesReducer, fetchZones } from './reducers/zones';
 
 import {
   showGlobalLoading,
@@ -24,7 +24,7 @@ import {
 } from '../components/explore/panel-data';
 
 import { initialApiRequestState } from './contexeed';
-import { fetchJSON } from './reduxeed';
+import { fetchJSON } from './reducers/reduxeed';
 const { GRID_OPTIONS, SLIDER } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
