@@ -17,6 +17,8 @@ import { visuallyHidden } from '../../styles/helpers';
 import collecticon from '../../styles/collecticons';
 import { multiply } from '../../styles/utils/math';
 
+import LogoReverse from '../../../icons/collecticons/logo-reverse';
+
 const _rgba = stylizeFunction(rgba);
 
 const { appTitle, appShortTitle } = config;
@@ -73,16 +75,11 @@ const HomeLink = styled.a`
   position: relative;
   display: block;
   width: 4rem;
-  height: 3rem;
-  line-height: 3rem;
   text-align: center;
   transition: all 0.24s ease 0s;
   margin-bottom: ${multiply(themeVal('layout.space'), 6)};
-
-  &::before {
-    ${({ useIcon }) => collecticon(useIcon)}
-    font-size: 1.25rem
-  }
+  font-weight: ${themeVal('type.heading.bold')};
+  font-size: 1.5rem;
 
   &,
   &:visited {
@@ -146,11 +143,11 @@ class PageHeader extends React.Component {
                 <HomeLink
                   as={StyledLink}
                   to='/'
-                  useIcon='house'
                   title='Visit the home page'
-                  data-tip={appShortTitle}
+                  data-tip={appTitle}
                 >
-                  <span>{appTitle}</span>
+                  <LogoReverse />
+                  <span>{appShortTitle}</span>
                 </HomeLink>
               </li>
               <li>
@@ -160,7 +157,7 @@ class PageHeader extends React.Component {
                   to='/'
                   useIcon='house'
                   title='Visit the home page'
-                  data-tip={appShortTitle}
+                  data-tip={appTitle}
                 >
                   <span>{appTitle}</span>
                 </GlobalMenuLink>
