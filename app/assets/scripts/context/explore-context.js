@@ -86,7 +86,7 @@ export function ExploreProvider (props) {
         .map((filterId) => ({ ...filters[filterId], id: filterId }))
         .filter(
           ({ id, type, pattern }) =>
-            (allowedTypes.has(type === 'string' ? pattern : type) && // enable range filters only
+            (allowedTypes.has(type === 'string' ? pattern : type) &&
             ![
               'f_capacity_value',
               'f_lcoe_gen',
