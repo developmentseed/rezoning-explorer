@@ -12,7 +12,10 @@ import config from '../config';
 
 import areasJson from '../../data/areas.json';
 
+import { fetchJSON } from './reducers/reduxeed';
+import { initialApiRequestState } from './contexeed';
 import { fetchZonesReducer, fetchZones } from './reducers/zones';
+import { fetchFilterRanges, filterRangesReducer } from './reducers/filters';
 
 import {
   showGlobalLoading,
@@ -23,29 +26,32 @@ import {
   presets as defaultPresets
 } from '../components/explore/panel-data';
 
-import { initialApiRequestState } from './contexeed';
-import { fetchJSON } from './reducers/reduxeed';
 const { GRID_OPTIONS, SLIDER } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
 const presets = { ...defaultPresets };
 export function ExploreProvider (props) {
+
+  // Init filters state
   const [filtersLists, setFiltersLists] = useState(null);
+  const [filterRanges, dispatchFilterRanges] = useReducer(
+    filterRangesReducer,
+    initialApiRequestState
+  );
 
+  // Init areas state
+  const [areas, setAreas] = useState([]);
   const [selectedArea, setSelectedArea] = useState(null);
-
   const [selectedAreaId, setSelectedAreaId] = useQsState({
     key: 'areaId',
     default: undefined
   });
-
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
     !selectedAreaId
   );
 
-  const [areas, setAreas] = useState([]);
-
+  // Init map state
   const [map, setMap] = useState(null);
 
   // Handle selected area id changes
@@ -55,6 +61,9 @@ export function ExploreProvider (props) {
 
     // Set area object to context
     setSelectedArea(areas.find((a) => a.id === selectedAreaId));
+
+    // Update filter ranges for the selected area
+    fetchFilterRanges(selectedAreaId, dispatchFilterRanges);
   }, [selectedAreaId]);
 
   const [selectedResource, setSelectedResource] = useQsState({
@@ -289,6 +298,7 @@ export function ExploreProvider (props) {
           setMap,
           areas,
           filtersLists,
+          filterRanges,
           presets,
           selectedArea,
           setSelectedAreaId,

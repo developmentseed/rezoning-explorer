@@ -185,7 +185,7 @@ const updateStateList = (list, i, updatedValue) => {
 };
 
 function QueryForm (props) {
-  const { updateFilteredLayer, filtersLists, presets } = useContext(ExploreContext);
+  const { updateFilteredLayer, filtersLists, filterRanges, presets } = useContext(ExploreContext);
 
   const {
     area,
@@ -316,12 +316,15 @@ function QueryForm (props) {
     const { range } = option.input;
     const errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${range[0]} - ${range[1]}`;
 
+    // Get filter range, if available
+    const filterRange = filterRanges.getData()[option.id];
+
     switch (option.input.type) {
       case SLIDER:
         return (
           <SliderGroup
             unit={option.input.unit || '%'}
-            range={option.input.range || [0, 100]}
+            range={filterRange ? [filterRange.min, filterRange.max] : [0, 100]}
             id={option.name}
             value={option.input.value}
             isRange={option.isRange}
