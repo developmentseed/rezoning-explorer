@@ -20,7 +20,8 @@ import {
 } from '../components/common/global-loading';
 import {
   INPUT_CONSTANTS,
-  presets as defaultPresets
+  presets as defaultPresets,
+  checkIncluded
 } from '../components/explore/panel-data';
 
 import { initialApiRequestState } from './contexeed';
@@ -259,7 +260,7 @@ export function ExploreProvider (props) {
         const { id, pattern, active } = filter;
 
         // Bypass inactive filters
-        if (!active) return null;
+        if (!active || !checkIncluded(filter, selectedResource)) return null;
 
         // Add accepted filter types to the query
         if (pattern === 'range_filter') {
