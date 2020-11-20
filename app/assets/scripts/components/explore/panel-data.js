@@ -244,16 +244,16 @@ export const weightsList = [
 ];
 
 const LCOE_PRESETS = {
-  greatest_savings: {
+  default: {
     turbine_type: 0,
     crf: 1,
     cg: 2000,
     omfg: 50000,
     omvg: 4,
-    ct: 990,
+    ct: 1000,
     omft: 0,
-    cs: 71000,
-    cr: 407000,
+    cs: 70000,
+    cr: 400000,
     omfr: 0,
     decom: 0,
     i: 0.2,
@@ -272,11 +272,11 @@ export const presets = {
     }))
   },
   lcoe: {
-    'Greatest Savings': lcoeList.map(lcoe => ({
+    Default: lcoeList.map(lcoe => ({
       ...lcoe,
       input: {
         ...lcoe.input,
-        value: LCOE_PRESETS.greatest_savings[lcoe.id]
+        value: LCOE_PRESETS.default[lcoe.id]
       }
     }))
   }
