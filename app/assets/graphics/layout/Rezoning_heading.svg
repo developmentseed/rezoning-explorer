@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="615px" height="218px" viewBox="0 0 615 218" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Rezoning_heading</title>
+    <g id="Rezoning_heading" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect fill="#FFFFFF" x="0" y="0" width="615" height="218"></rect>
+        <g id="Group-2" transform="translate(34.000000, 34.000000)" fill="#B0E2FC">
+            <rect id="Rectangle" style="mix-blend-mode: multiply;" x="0" y="0" width="100" height="100"></rect>
+            <rect id="Rectangle" style="mix-blend-mode: multiply;" x="50" y="50" width="100" height="100"></rect>
+            <rect id="Rectangle" style="mix-blend-mode: multiply;" x="35" y="15" width="100" height="100"></rect>
+            <rect id="Rectangle" style="mix-blend-mode: multiply;" x="15" y="35" width="100" height="100"></rect>
+        </g>
+        <text id="Rezoning" font-family="IBMPlexSans, IBM Plex Sans" font-size="72" font-weight="normal" fill="#66C2FF">
+            <tspan x="219" y="184">REZONING</tspan>
+        </text>
+    </g>
+</svg>
