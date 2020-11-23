@@ -23,10 +23,11 @@ import {
 } from '../components/common/global-loading';
 import {
   INPUT_CONSTANTS,
-  presets as defaultPresets
+  presets as defaultPresets,
+  allowedTypes
 } from '../components/explore/panel-data';
 
-const { GRID_OPTIONS, SLIDER, DEFAULT_RANGE, DEFAULT_UNIT } = INPUT_CONSTANTS;
+const { GRID_OPTIONS, SLIDER, BOOL, DEFAULT_RANGE, DEFAULT_UNIT } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
@@ -97,8 +98,8 @@ export function ExploreProvider (props) {
       distance_filters: Object.keys(filters)
         .map((filterId) => ({ ...filters[filterId], id: filterId }))
         .filter(
-          ({ id, pattern }) =>
-            (pattern === 'range_filter' && // enable range filters only
+          ({ id, type, pattern }) =>
+            (allowedTypes.has(type === 'string' ? pattern : type) &&
             ![
               'f_capacity_value',
               'f_lcoe_gen',
@@ -118,8 +119,8 @@ export function ExploreProvider (props) {
             active: false,
             isRange,
             input: {
-              type: SLIDER,
-              range: DEFAULT_RANGE
+              range: DEFAULT_RANGE,
+              type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type)
             }
           };
         })
@@ -248,17 +249,19 @@ export function ExploreProvider (props) {
     // Prepare a query string to the API based from filter values
     const filterString = filterValues
       .map((filter) => {
-        const { id, pattern, active } = filter;
+        const { id, active, input } = filter;
 
         // Bypass inactive filters
         if (!active) return null;
 
         // Add accepted filter types to the query
-        if (pattern === 'range_filter') {
+        if (input.type === SLIDER) {
           const {
             value: { min, max }
           } = filter.input;
           return `${id}=${min},${max}`;
+        } else if (input.type === BOOL) {
+          return `${id}=${filter.input.value}`;
         }
 
         // discard non-accepted filter types

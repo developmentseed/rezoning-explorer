@@ -25,14 +25,30 @@ import GridSetter from './grid-setter';
 
 import ExploreContext from '../../context/explore-context';
 import { INPUT_CONSTANTS } from './panel-data';
-
+import FormSelect from '../../styles/form/select';
+import { FormGroup } from '../../styles/form/group';
+import FormLabel from '../../styles/form/label';
 const turbineTypeMap = {
   'Off-Shore Wind': [1, 3],
   Wind: [1, 3],
   'Solar PV': [0, 0]
 };
 
-const { SLIDER, BOOL, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
+const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
+
+const castByFilterType = type => {
+  switch (type) {
+    case BOOL:
+      return Boolean;
+    case DROPDOWN:
+    case TEXT:
+      return String;
+    case SLIDER:
+      return Number;
+    default:
+      return String;
+  }
+};
 const PanelOption = styled.div`
   ${({ hidden }) => hidden && 'display: none;'}
   margin-bottom: 1.5rem;
@@ -155,7 +171,18 @@ const initByType = (obj, ranges) => {
         value: input.value || input.default || (input.range || DEFAULT_RANGE)[0]
       };
     case BOOL:
+      return {
+        ...obj,
+        value: false,
+        range: [true, false]
+      };
     case MULTI:
+    case DROPDOWN:
+      return {
+        ...obj,
+        value: obj.value || (obj.options && obj.options[0]) || '',
+        unit: null
+      };
     default:
       return {};
   }
@@ -246,16 +273,26 @@ function QueryForm (props) {
     hydrator: v => {
       const baseFilts = initObjectToState(filtersLists);
       if (v) {
-        const qsValues = v.split('|').map(vals => {
-          const [min, max, active] = vals.split(',');
-          return {
-            value: {
-              min: Number(min),
-              max: Number(max)
-            },
-            active: active === undefined
-          };
+        const qsValues = v.split('|').map((vals, i) => {
+          const thisFilt = baseFilts.distance_filters[i];
+          if (thisFilt.isRange) {
+            const [min, max, active] = vals.split(',');
+            return {
+              value: {
+                min: Number(min),
+                max: Number(max)
+              },
+              active: active === undefined
+            };
+          } else {
+            const [val, active] = vals.split(',');
+            return {
+              value: castByFilterType(thisFilt.input.type)(val),
+              active: active === undefined
+            };
+          }
         });
+
         baseFilts.distance_filters = baseFilts.distance_filters.map((filt, i) => (
           {
             ...filt,
@@ -272,7 +309,7 @@ function QueryForm (props) {
     dehydrator: v => {
       return v && v.distance_filters.map(f => {
         const { value } = f.input;
-        let shard = `${value.min}, ${value.max}`;
+        let shard = f.isRange ? `${value.min}, ${value.max}` : `${value}`;
         shard = f.active ? shard : `${shard},${false}`;
         return shard;
       }).join('|');
@@ -318,7 +355,12 @@ function QueryForm (props) {
 
   const inputOfType = (option, onChange) => {
     const { range } = option.input;
-    const errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${range[0]} - ${range[1]}`;
+    let errorMessage;
+    if (range) {
+      errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${range[0]} - ${range[1]}`;
+    } else {
+      errorMessage = 'Value not accepted';
+    }
 
     // Get filter range, if available
     const filterRange = filterRanges.getData()[option.id];
@@ -353,9 +395,34 @@ function QueryForm (props) {
           />
         );
       case BOOL:
+        return null;
       case MULTI:
+      case DROPDOWN:
+        return (
+          <FormGroup>
+            <FormLabel htmlFor={option.name}>{option.name}</FormLabel>
+            <FormSelect
+              id={option.name}
+              onChange={(e) => onChange(e.target.value)}
+              value={option.input.value}
+            >
+              {
+                option.input.options.map(o => {
+                  return (
+                    <option
+                      value={o}
+                      key={o}
+                    >
+                      {o}
+                    </option>
+                  );
+                })
+              }
+            </FormSelect>
+          </FormGroup>
+        );
       default:
-        return {};
+        return null;
     }
   };
 
@@ -509,7 +576,8 @@ function QueryForm (props) {
                                   ...filters,
                                   [group]: updateStateList(list, ind, {
                                     ...filter,
-                                    active: !filter.active
+                                    active: !filter.active,
+                                    value: filter.input.type === BOOL ? !filter.active : filter.value
                                   })
                                 });
                               }}

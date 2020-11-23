@@ -16,9 +16,10 @@ export const resourceList = [
 ];
 
 const SLIDER = 'slider';
-const BOOL = 'bool';
+const BOOL = 'boolean';
 const MULTI = 'multi-select';
 const TEXT = 'text';
+const DROPDOWN = 'dropdown';
 const GRID_OPTIONS = [9, 25, 50];
 const DEFAULT_RANGE = [0, 1000000];
 const DEFAULT_UNIT = '%';
@@ -27,11 +28,16 @@ export const INPUT_CONSTANTS = {
   SLIDER,
   BOOL,
   MULTI,
+  DROPDOWN,
   TEXT,
   GRID_OPTIONS,
   DEFAULT_UNIT,
   DEFAULT_RANGE
 };
+
+export const allowedTypes = new Map();
+allowedTypes.set('range_filter', SLIDER);
+allowedTypes.set('boolean', BOOL);
 
 export const lcoeList = [
   {
@@ -128,6 +134,41 @@ export const lcoeList = [
       type: TEXT,
       range: [1, 100]
     }
+  },
+  {
+    name: 'Land Use Factor',
+    id: 'landuse',
+    input: {
+      range: [0, Infinity],
+      type: TEXT
+    }
+  },
+  {
+    name: 'Capacity Factor',
+    id: 'capfac',
+    input: {
+      type: DROPDOWN,
+      options: ['opt1', 'opt2', 'opt3']
+    }
+  },
+
+  {
+    name: 'Technical Loss Factor',
+    // TODO add correct id
+    id: 'tlf',
+    input: {
+      range: [0, 1],
+      type: TEXT
+    }
+  },
+  {
+    name: 'Unavailability Factor',
+    // TODO add correct id
+    id: 'uf',
+    input: {
+      range: [0, 1],
+      type: TEXT
+    }
   }
 ];
 
@@ -196,16 +237,16 @@ export const weightsList = [
 ];
 
 const LCOE_PRESETS = {
-  greatest_savings: {
+  default: {
     turbine_type: 0,
     crf: 1,
     cg: 2000,
     omfg: 50000,
     omvg: 4,
-    ct: 990,
+    ct: 1000,
     omft: 0,
-    cs: 71000,
-    cr: 407000,
+    cs: 70000,
+    cr: 400000,
     omfr: 0,
     decom: 0,
     i: 0.2,
@@ -224,11 +265,11 @@ export const presets = {
     }))
   },
   lcoe: {
-    'Greatest Savings': lcoeList.map(lcoe => ({
+    Default: lcoeList.map(lcoe => ({
       ...lcoe,
       input: {
         ...lcoe.input,
-        value: LCOE_PRESETS.greatest_savings[lcoe.id]
+        value: LCOE_PRESETS.default[lcoe.id]
       }
     }))
   }
