@@ -1,16 +1,33 @@
 import { randomRange } from '../../utils/utils';
 
+const WIND = 'Wind';
+const OFFSHORE = 'Off-Shore Wind';
+const SOLAR = 'Solar PV';
+export const RESOURCES = {
+  WIND, OFFSHORE, SOLAR
+};
+
+const apiResourceNameMap = {
+  [WIND]: 'wind',
+  [SOLAR]: 'solar',
+  [OFFSHORE]: 'offshore'
+};
+
+export const checkIncluded = (obj, resource) => {
+  return obj.energy_type.includes(apiResourceNameMap[resource]);
+};
+
 export const resourceList = [
   {
-    name: 'Solar PV',
+    name: SOLAR,
     iconPath: 'assets/graphics/content/resourceIcons/solar-pv.svg'
   },
   {
-    name: 'Wind',
+    name: WIND,
     iconPath: 'assets/graphics/content/resourceIcons/wind.svg'
   },
   {
-    name: 'Off-Shore Wind',
+    name: OFFSHORE,
     iconPath: 'assets/graphics/content/resourceIcons/wind-offshore.svg'
   }
 ];
@@ -244,16 +261,16 @@ export const weightsList = [
 ];
 
 const LCOE_PRESETS = {
-  greatest_savings: {
+  default: {
     turbine_type: 0,
     crf: 1,
     cg: 2000,
     omfg: 50000,
     omvg: 4,
-    ct: 990,
+    ct: 1000,
     omft: 0,
-    cs: 71000,
-    cr: 407000,
+    cs: 70000,
+    cr: 400000,
     omfr: 0,
     decom: 0,
     i: 0.2,
@@ -272,11 +289,11 @@ export const presets = {
     }))
   },
   lcoe: {
-    'Greatest Savings': lcoeList.map(lcoe => ({
+    Default: lcoeList.map(lcoe => ({
       ...lcoe,
       input: {
         ...lcoe.input,
-        value: LCOE_PRESETS.greatest_savings[lcoe.id]
+        value: LCOE_PRESETS.default[lcoe.id]
       }
     }))
   }
