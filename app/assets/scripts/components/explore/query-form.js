@@ -618,7 +618,7 @@ function QueryForm (props) {
           {weights.map((weight, ind) => (
             <PanelOption key={weight.name}>
               <PanelOptionTitle>{weight.name}</PanelOptionTitle>
-              <InfoButton info={'Placeholer text'} id={weight.name}>
+              <InfoButton info='Placeholer text' id={weight.name}>
                 Info
               </InfoButton>
               {inputOfType(weight, (value) => {
@@ -650,7 +650,7 @@ function QueryForm (props) {
         >
           {lcoe.map((cost, ind) => (
             <PanelOption key={cost.name}>
-              <InfoButton info={'Placeholer text'} id={cost.name}>
+              <InfoButton info='Placeholer text' id={cost.name}>
                 Info
               </InfoButton>
               {inputOfType(cost, (v) => {
