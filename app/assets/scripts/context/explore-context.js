@@ -24,6 +24,7 @@ import {
 import {
   INPUT_CONSTANTS,
   presets as defaultPresets,
+  checkIncluded,
   allowedTypes
 } from '../components/explore/panel-data';
 
@@ -252,7 +253,7 @@ export function ExploreProvider (props) {
         const { id, active, input } = filter;
 
         // Bypass inactive filters
-        if (!active) return null;
+        if (!active || !checkIncluded(filter, selectedResource)) return null;
 
         // Add accepted filter types to the query
         if (input.type === SLIDER) {

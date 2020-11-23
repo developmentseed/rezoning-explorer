@@ -1,16 +1,33 @@
 import { randomRange } from '../../utils/utils';
 
+const WIND = 'Wind';
+const OFFSHORE = 'Off-Shore Wind';
+const SOLAR = 'Solar PV';
+export const RESOURCES = {
+  WIND, OFFSHORE, SOLAR
+};
+
+const apiResourceNameMap = {
+  [WIND]: 'wind',
+  [SOLAR]: 'solar',
+  [OFFSHORE]: 'offshore'
+};
+
+export const checkIncluded = (obj, resource) => {
+  return obj.energy_type.includes(apiResourceNameMap[resource]);
+};
+
 export const resourceList = [
   {
-    name: 'Solar PV',
+    name: SOLAR,
     iconPath: 'assets/graphics/content/resourceIcons/solar-pv.svg'
   },
   {
-    name: 'Wind',
+    name: WIND,
     iconPath: 'assets/graphics/content/resourceIcons/wind.svg'
   },
   {
-    name: 'Off-Shore Wind',
+    name: OFFSHORE,
     iconPath: 'assets/graphics/content/resourceIcons/wind-offshore.svg'
   }
 ];
