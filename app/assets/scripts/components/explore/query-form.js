@@ -134,48 +134,30 @@ const SubmissionSection = styled(PanelBlockFooter)`
   gap: 0rem 1rem;
 `;
 
-const initByType = obj => {
-  switch (obj.type) {
+const initByType = (obj, ranges) => {
+  const apiRange = ranges[obj.id];
+  const { input } = obj;
+  console.log(apiRange && input)
+  switch (input.type) {
     case SLIDER:
       return {
-        ...obj,
-        range: obj.range || DEFAULT_RANGE,
-        unit: obj.unit || DEFAULT_UNIT,
-        value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
+        ...input,
+        range: apiRange ? [apiRange.min, apiRange.max] : DEFAULT_RANGE,
+        unit: input.unit || DEFAULT_UNIT,
+        value: input.value || input.default || (input.isRange ? { min: (apiRange && apiRange.min) || input.range[0], max: (apiRange && apiRange.max) || input.range[1] } : (apiRange || input.range || DEFAULT_RANGE)[0])
       };
     case TEXT:
       return {
-        ...obj,
-        range: obj.range || DEFAULT_RANGE,
-        unit: obj.unit || DEFAULT_UNIT,
-        value: obj.value || obj.default || (obj.range || DEFAULT_RANGE)[0]
+        ...input,
+        range: input.range || DEFAULT_RANGE,
+        unit: input.unit || DEFAULT_UNIT,
+        value: input.value || input.default || (input.range || DEFAULT_RANGE)[0]
       };
     case BOOL:
     case MULTI:
     default:
       return {};
   }
-};
-
-const initListToState = (list) => {
-  return list.map((obj) => ({
-    ...obj,
-    input: initByType(obj.input),
-
-    // range: obj.range || DEFAULT_RANGE,
-    // unit: obj.unit || DEFAULT_UNIT,
-    active: obj.active === undefined ? true : obj.active
-    // value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
-  }));
-};
-
-const initObjectToState = (obj) => {
-  return Object.keys(obj).reduce((accum, key) => {
-    return {
-      ...accum,
-      [key]: initListToState(obj[key])
-    };
-  }, {});
 };
 
 const updateStateList = (list, i, updatedValue) => {
@@ -200,6 +182,27 @@ function QueryForm (props) {
     setGridMode,
     gridSize, setGridSize
   } = props;
+
+  const initListToState = (list) => {
+    return list.map((obj) => ({
+      ...obj,
+      input: initByType(obj, filterRanges.getData()),
+
+      // range: obj.range || DEFAULT_RANGE,
+      // unit: obj.unit || DEFAULT_UNIT,
+      active: obj.active === undefined ? true : obj.active
+    // value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
+    }));
+  };
+
+  const initObjectToState = (obj) => {
+    return Object.keys(obj).reduce((accum, key) => {
+      return {
+        ...accum,
+        [key]: initListToState(obj[key])
+      };
+    }, {});
+  };
 
   const [weights, setWeights] = useQsState({
     key: 'weights',
