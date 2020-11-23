@@ -24,7 +24,8 @@ import InfoButton from '../common/info-button';
 import GridSetter from './grid-setter';
 
 import ExploreContext from '../../context/explore-context';
-import { INPUT_CONSTANTS } from './panel-data';
+import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
+
 import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
 import FormLabel from '../../styles/form/label';
@@ -194,7 +195,7 @@ const initListToState = (list) => {
     // unit: obj.unit || DEFAULT_UNIT,
     active: obj.active === undefined ? true : obj.active
     // value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
-  }));
+  })).filter(obj => !obj.excluded);
 };
 
 const initObjectToState = (obj) => {
@@ -309,7 +310,8 @@ function QueryForm (props) {
         let shard = f.isRange ? `${value.min}, ${value.max}` : `${value}`;
         shard = f.active ? shard : `${shard},${false}`;
         return shard;
-      }).join('|');
+      }).filter(f => !f.excluded)
+        .join('|');
     },
     default: undefined
   });
@@ -548,6 +550,7 @@ function QueryForm (props) {
                     )}
                     renderBody={({ isFoldExpanded }) =>
                       list.map((filter, ind) => (
+                        checkIncluded(filter, resource) &&
                         <PanelOption key={filter.name} hidden={!isFoldExpanded}>
                           <OptionHeadline>
                             <PanelOptionTitle>{filter.name}</PanelOptionTitle>
