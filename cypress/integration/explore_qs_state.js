@@ -13,8 +13,8 @@ describe('Explore view', () => {
 
     // URL is updated
     cy.url().should(
-      'eq',
-      'http://localhost:9000/explore?areaId=BFA'
+      'contain',
+      'areaId=BFA'
     );
 
     // Display "Select Resource" modal
@@ -45,8 +45,8 @@ describe('Explore view', () => {
     // Hitting "Back" should update the URL
     cy.go('back');
     cy.url().should(
-      'eq',
-      'http://localhost:9000/explore?areaId=BFA'
+      'contain',
+      'areaId=BFA'
     );
 
     // And redisplay resource modal
@@ -54,7 +54,7 @@ describe('Explore view', () => {
 
     // Hitting "Back" again should update the URL
     cy.go('back');
-    cy.url().should('eq', 'http://localhost:9000/explore');
+    cy.url().should('not.contain', 'areaId=BFA');
 
     // And redisplay resource modal
     cy.get('#select-area-modal-header').should('exist');
@@ -88,7 +88,7 @@ describe('Explore view', () => {
 
     // Hitting "Back" should update the URL
     cy.go('back');
-    cy.url().should('eq', 'http://localhost:9000/explore?resourceId=Wind');
+    cy.url().should('contain', 'resourceId=Wind').and().should('not.contain', 'areaId=BFA');
 
     // And redisplay area modal
     cy.get('#select-area-modal-header').should('exist');
@@ -121,8 +121,9 @@ describe('Explore view', () => {
 
     // URL is updated
     cy.url().should(
-      'eq',
-      'http://localhost:9000/explore?areaId=BDI&resourceId=Wind'
+      'contain',
+      'areaId=BDI',
+      'resourceId=Wind'
     );
 
     // Both modals are hidden
@@ -153,8 +154,8 @@ describe('Explore view', () => {
 
     // URL is kept
     cy.url().should(
-      'eq',
-      'http://localhost:9000/explore?areaId=BDI&resourceId=Wind'
+      'contain',
+      'areaId=BDI', 'resourceId=Wind'
     );
   });
 
@@ -185,8 +186,8 @@ describe('Explore view', () => {
 
     // And the URL should be updated too
     cy.url().should(
-      'eq',
-      'http://localhost:9000/explore?areaId=BDI&resourceId=Wind'
+      'contain',
+      'areaId=BDI', 'resourceId=Wind'
     );
   });
 });
