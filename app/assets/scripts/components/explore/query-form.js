@@ -29,6 +29,7 @@ import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
 import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
 import FormLabel from '../../styles/form/label';
+
 const turbineTypeMap = {
   'Off-Shore Wind': [1, 3],
   Wind: [1, 3],
@@ -155,14 +156,16 @@ const initByType = (obj, ranges) => {
   const apiRange = ranges[obj.id];
   const { input } = obj;
 
+  const range = (apiRange && [apiRange.min, apiRange.max]) || obj.input.range || DEFAULT_RANGE;
+
   switch (input.type) {
     case SLIDER:
       return {
         ...input,
-        range: apiRange ? [apiRange.min, apiRange.max] : input.range,
+        range,
         unit: input.unit || DEFAULT_UNIT,
         value: input.value || input.default ||
-          (obj.isRange ? { min: (apiRange && apiRange.min) || input.range[0], max: (apiRange && apiRange.max) || input.range[1] } : (apiRange || input.range)[0])
+        obj.isRange ? { min: range[0], max: range[1] } : range[0]
       };
     case TEXT:
       return {
@@ -461,6 +464,11 @@ function QueryForm (props) {
       turbineType.input.value = turbineType.input.range[0];
     }
   }, [resource]);
+
+  /* Reinitialize filters when new ranges are received */
+  useEffect(() => {
+    setFilters(initObjectToState(filtersLists));
+  }, [filterRanges]);
 
   return (
     <PanelBlock>

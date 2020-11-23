@@ -280,6 +280,21 @@ export function ExploreProvider (props) {
     generateZones(filterString, weights, lcoe);
   }
 
+  const reinitFilters = () => {
+    /*
+    if (filtersLists) {
+      Object.values(filtersLists).forEach((list) => {
+        list.forEach(filter => {
+          delete filter.input.value;
+          delete filter.input.range;
+        });
+      });
+      //setFiltersLists(filtersLists);
+    } */
+  };
+
+  useEffect(reinitFilters, [filterRanges]);
+
   return (
     <>
       <ExploreContext.Provider
