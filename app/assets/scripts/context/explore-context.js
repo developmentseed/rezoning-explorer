@@ -175,9 +175,12 @@ export function ExploreProvider (props) {
           a.id = a.gid;
           a.eez = eezCountries.get(a.id);
         }
-        a.bounds = a.bounds
-          ? a.bounds.split(',').map((x) => parseFloat(x))
-          : null;
+
+        // Parse bounds, if a string
+        if (a.bounds && typeof a.bounds === 'string') {
+          a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
+        }
+
         return a;
       })
     );
