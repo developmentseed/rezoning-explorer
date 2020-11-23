@@ -618,19 +618,20 @@ function QueryForm (props) {
           {weights.map((weight, ind) => (
             <PanelOption key={weight.name}>
               <PanelOptionTitle>{weight.name}</PanelOptionTitle>
-              {
-                inputOfType(weight, (value) => {
-                  setWeights(
-                    updateStateList(weights, ind, {
-                      ...weight,
-                      input: {
-                        ...weight.input,
-                        value
-                      }
-                    })
-                  );
-                })
-              }
+              <InfoButton info={'Placeholer text'} id={weight.name}>
+                Info
+              </InfoButton>
+              {inputOfType(weight, (value) => {
+                setWeights(
+                  updateStateList(weights, ind, {
+                    ...weight,
+                    input: {
+                      ...weight.input,
+                      value
+                    }
+                  })
+                );
+              })}
             </PanelOption>
           ))}
         </FormWrapper>
@@ -649,17 +650,20 @@ function QueryForm (props) {
         >
           {lcoe.map((cost, ind) => (
             <PanelOption key={cost.name}>
-              {
-                inputOfType(cost, (v) => {
-                  setLcoe(updateStateList(lcoe, ind, {
+              <InfoButton info={'Placeholer text'} id={cost.name}>
+                Info
+              </InfoButton>
+              {inputOfType(cost, (v) => {
+                setLcoe(
+                  updateStateList(lcoe, ind, {
                     ...cost,
                     input: {
                       ...cost.input,
                       value: v
                     }
-                  }));
-                })
-              }
+                  })
+                );
+              })}
             </PanelOption>
           ))}
         </FormWrapper>
