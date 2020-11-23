@@ -121,8 +121,9 @@ describe('Explore view', () => {
 
     // URL is updated
     cy.url().should(
-      'eq',
-      'http://localhost:9000/explore?areaId=BDI&resourceId=Wind'
+      'contain',
+      'areaId=BDI',
+      'resourceId=Wind'
     );
 
     // Both modals are hidden
