@@ -137,14 +137,15 @@ const SubmissionSection = styled(PanelBlockFooter)`
 const initByType = (obj, ranges) => {
   const apiRange = ranges[obj.id];
   const { input } = obj;
-  console.log(apiRange && input)
+
   switch (input.type) {
     case SLIDER:
       return {
         ...input,
-        range: apiRange ? [apiRange.min, apiRange.max] : DEFAULT_RANGE,
+        range: apiRange ? [apiRange.min, apiRange.max] : input.range,
         unit: input.unit || DEFAULT_UNIT,
-        value: input.value || input.default || (input.isRange ? { min: (apiRange && apiRange.min) || input.range[0], max: (apiRange && apiRange.max) || input.range[1] } : (apiRange || input.range || DEFAULT_RANGE)[0])
+        value: input.value || input.default ||
+          (obj.isRange ? { min: (apiRange && apiRange.min) || input.range[0], max: (apiRange && apiRange.max) || input.range[1] } : (apiRange || input.range)[0])
       };
     case TEXT:
       return {
@@ -327,7 +328,7 @@ function QueryForm (props) {
         return (
           <SliderGroup
             unit={option.input.unit || '%'}
-            range={filterRange ? [filterRange.min, filterRange.max] : [0, 100]}
+            range={filterRange ? [filterRange.min, filterRange.max] : option.input.range}
             id={option.name}
             value={option.input.value}
             isRange={option.isRange}

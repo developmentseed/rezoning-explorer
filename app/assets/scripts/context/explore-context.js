@@ -26,7 +26,7 @@ import {
   presets as defaultPresets
 } from '../components/explore/panel-data';
 
-const { GRID_OPTIONS, SLIDER } = INPUT_CONSTANTS;
+const { GRID_OPTIONS, SLIDER, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
@@ -108,6 +108,7 @@ export function ExploreProvider (props) {
         )
         .map((filter) => {
           const isRange = filter.pattern === 'range_filter';
+          /*
           let value = 0;
 
           if (isRange) {
@@ -117,22 +118,23 @@ export function ExploreProvider (props) {
                 max: filter.range[1]
               }
               : {
-                min: 0,
-                max: 1000000
+                min: DEFAULT_RANGE[0],
+                max: DEFAULT_RANGE[1]
               };
-          }
+          } */
 
           return {
             ...filter,
             id: filter.id,
             name: filter.title,
             info: filter.description,
+            unit: filter.unit || DEFAULT_UNIT,
             active: false,
             isRange,
             input: {
               type: SLIDER,
-              range: [0, 1000000],
-              value
+              range: DEFAULT_RANGE
+              // value
             }
           };
         })
