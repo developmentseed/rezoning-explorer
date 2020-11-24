@@ -13,7 +13,7 @@ import {
 import Button from '../../styles/button/button';
 import Prose from '../../styles/type/prose';
 import { themeVal, filterComponentProps } from '../../styles/utils/general';
-// import HomepageBackground from './background';
+import HomepageBackground from './background';
 
 import { Link } from 'react-router-dom';
 
@@ -91,7 +91,7 @@ function Home () {
           </InpageBodyInner>
         </InpageBody>
       </HomeInpage>
-      {/* <HomepageBackground /> */}
+      <HomepageBackground />
     </App>
   );
 }
