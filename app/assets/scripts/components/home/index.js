@@ -25,6 +25,7 @@ const HomeInpage = styled(Inpage)`
   background: rgb(2, 0, 36);
   color: ${themeVal('color.background')};
   padding-top: 12rem;
+  position: relative;
   p, ${Button} {
     margin-top: 4rem;
     margin-right: 1rem;
@@ -48,6 +49,15 @@ const HomeTitle = styled(InpageTitle)`
 const Lead = styled(Prose)`
   font-size: 1.25rem;
   line-height: 2rem;
+`;
+
+const BackgroundWrapper = styled.figure`
+  display: block;
+  position: absolute;
+  top: 30vh;
+  left: 50vw;
+  width: 100%;
+  height: 100%;
 `;
 
 function Home () {
@@ -92,7 +102,9 @@ function Home () {
           </InpageBodyInner>
         </InpageBody>
       </HomeInpage>
-      <HomepageBackground />
+      <BackgroundWrapper>
+        <HomepageBackground />
+      </BackgroundWrapper>
     </App>
   );
 }

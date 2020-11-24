@@ -41,10 +41,9 @@ function strokeStyles () {
   return css`${styles}`;
 }
 const StyledSvg = styled.svg`
-  max-width: 100%;
-  position: absolute;
-  right: 12vw;
-  bottom: 6vw;
+  display: block;
+  width: 100%;
+  height: 100%;
   ${fillStyles()}
   ${strokeStyles()}
   @keyframes dash {
@@ -65,16 +64,18 @@ const StyledSvg = styled.svg`
 `;
 function HomeBackground () {
   return (
-    <StyledSvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'>
-      <g id='zones'>
-        <path id='zone4-fill' fill='#004F8F' d='M0 0h398v398H0z' />
-        <path id='zone4-stroke' stroke='#C0E2FF' d='M2 2h394v394H2z' />
-        <path id='zone3-fill' fill='#003764' d='M202 202h398v398H202z' />
-        <path id='zone3-stroke' stroke='#72A9D9' d='M204 204h394v394H204z' />
-        <path id='zone2-fill' fill='#006DC6' d='M141 61h398v398H141z' />
-        <path id='zone2-stroke' stroke='#399CF3' d='M143 63h394v394H143z' />
-        <path id='zone1-fill' fill='#225F91' d='M61 141h398v398H61z' />
-        <path id='zone1-stroke' stroke='#81C4FF' d='M63 143h394v394H63z' />
+    <StyledSvg xmlns='http://www.w3.org/2000/svg' viewbox='0 0 1440 1024' preserveAspectRatio='xMaxYMin meet'>
+      <g id='home-bg' stroke='none' fill='none'>
+        <g id='zones'>
+          <rect id='zone4-fill' fill='#004F8F' x='0' y='0' width='400' height='400' />
+          <rect id='zone4-stroke' stroke='#C0E2FF' x='2' y='2' width='396' height='396' />
+          <rect id='zone3-fill' fill='#003764' x='200' y='200' width='400' height='400' />
+          <rect id='zone3-stroke' stroke='#72A9D9' x='202' y='202' width='396' height='396' />
+          <rect id='zone2-fill' fill='#006DC6' x='140' y='60' width='400' height='400' />
+          <rect id='zone2-stroke' stroke='#399CF3' x='142' y='62' width='396' height='396' />
+          <rect id='zone1-fill' fill='#225F91' x='60' y='140' width='400' height='400' />
+          <rect id='zone1-stroke' stroke='#81C4FF' x='62' y='142' width='396' height='396' />
+        </g>
       </g>
     </StyledSvg>
   );
