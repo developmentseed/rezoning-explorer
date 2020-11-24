@@ -18,6 +18,10 @@ localStorage.setItem('MapboxAccessToken', config.mbToken);
 
 const FILTERED_LAYER_SOURCE = 'FILTERED_LAYER_SOURCE';
 const FILTERED_LAYER_ID = 'FILTERED_LAYER_ID';
+
+const LCOE_LAYER_SOURCE_ID = 'LCOE_LAYER_SOURCE_ID';
+const LCOE_LAYER_LAYER_ID = 'LCOE_LAYER_LAYERE_ID';
+
 const ZONES_BOUNDARIES_SOURCE_ID = 'ZONES_BOUNDARIES_SOURCE_ID';
 const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
 const EEZ_BOUNDARIES_SOURCE_ID = 'EEZ_BOUNDARIES_SOURCE_ID';
@@ -30,6 +34,12 @@ export const outputLayers = [
     type: 'raster',
     visible: true
   },
+  {
+    id: LCOE_LAYER_LAYER_ID,
+    name: 'LCOE Tiles',
+    type: 'raster'
+  },
+
   {
     id: ZONES_BOUNDARIES_LAYER_ID,
     name: 'Zone Boundaries',
@@ -118,10 +128,32 @@ const initializeMap = ({
       layout: {
         visibility: 'none'
       },
+      paint: {
+        'raster-opacity': 0.5
+      },
       minzoom: 0,
       maxzoom: 22
     });
 
+    map.addSource(LCOE_LAYER_SOURCE_ID, {
+      type: 'raster',
+      tiles: ['https://placeholder.url/{z}/{x}/{y}.png'],
+      tileSize: 256
+    });
+    map.addLayer({
+      id: LCOE_LAYER_LAYER_ID,
+      type: 'raster',
+      source: LCOE_LAYER_SOURCE_ID,
+      layout: {
+        visibility: 'none'
+      },
+      paint: {
+        'raster-opacity': 0.5
+      },
+      minzoom: 0,
+      maxzoom: 22
+    });
+    //
     // Zone boundaries source
     map.addSource(ZONES_BOUNDARIES_SOURCE_ID, {
       type: 'geojson',
@@ -214,7 +246,8 @@ function MbMap (props) {
     currentZones,
     map, setMap,
     inputLayers,
-    setMapLayers
+    setMapLayers,
+    lcoeLayerUrl
   } = useContext(ExploreContext);
 
   const { hoveredFeature, setHoveredFeature } = useContext(MapContext);
@@ -291,6 +324,24 @@ function MbMap (props) {
 
     map.setLayoutProperty(FILTERED_LAYER_ID, 'visibility', 'visible');
   }, [filteredLayerUrl]);
+
+  useEffect(() => {
+    if (!lcoeLayerUrl || !map) return;
+
+    const style = map.getStyle();
+
+    map.setStyle({
+      ...style,
+      sources: {
+        ...style.sources,
+        [LCOE_LAYER_SOURCE_ID]: {
+          ...style.sources[LCOE_LAYER_SOURCE_ID],
+          tiles: [lcoeLayerUrl]
+        }
+      }
+    });
+
+  }, [lcoeLayerUrl]);
 
   // Update zone boundaries on change
   useEffect(() => {

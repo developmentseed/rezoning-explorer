@@ -256,6 +256,7 @@ export function ExploreProvider (props) {
   }, [currentZones]);
 
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
+  const [lcoeLayerUrl, setLcoeLayerUrl] = useState(null);
 
   function updateFilteredLayer (filterValues, weights, lcoe) {
     // Prepare a query string to the API based from filter values
@@ -287,7 +288,12 @@ export function ExploreProvider (props) {
       `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
     );
 
-    // Fetch zones
+    const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
+
+    setLcoeLayerUrl(
+      `${config.apiEndpoint}/lcoe/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=cool`
+    );
+
     generateZones(filterString, weights, lcoe);
   }
 
@@ -339,6 +345,7 @@ export function ExploreProvider (props) {
           setZonesGenerated,
           filteredLayerUrl,
           updateFilteredLayer,
+          lcoeLayerUrl,
           tourStep,
           setTourStep
         }}
