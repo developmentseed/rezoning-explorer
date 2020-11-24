@@ -218,23 +218,9 @@ function QueryForm (props) {
     return list.map((obj) => ({
       ...obj,
       input: initByType(obj, filterRanges.getData()),
-
-      // range: obj.range || DEFAULT_RANGE,
-      // unit: obj.unit || DEFAULT_UNIT,
       active: obj.active === undefined ? true : obj.active
-    // value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
     }));
   };
-
-  /*
-  const initObjectToState = (obj) => {
-    return Object.keys(obj).reduce((accum, key) => {
-      return {
-        ...accum,
-        [key]: initListToState(obj[key])
-      };
-    }, {});
-  }; */
 
   const [weights, setWeights] = useQsState({
     key: 'weights',
@@ -275,11 +261,9 @@ function QueryForm (props) {
   const [filters, setFilters] = useQsState({
     key: 'filters',
     hydrator: v => {
-      // const baseFilts = initObjectToState(filtersLists);
       let baseFilts = initListToState(filtersLists);
       if (v) {
         const qsValues = v.split('|').map((vals, i) => {
-          // const thisFilt = baseFilts.distance_filters[i];
           const thisFilt = baseFilts[i];
           if (thisFilt.isRange) {
             const [min, max, active] = vals.split(',');
@@ -299,7 +283,6 @@ function QueryForm (props) {
           }
         });
 
-        // baseFilts.distance_filters = baseFilts.distance_filters.map((filt, i) => (
         baseFilts = baseFilts.map((filt, i) => (
           {
             ...filt,
@@ -314,7 +297,6 @@ function QueryForm (props) {
       return baseFilts;
     },
     dehydrator: v => {
-      // return v && v.distance_filters.map(f => {
       return v && v.map(f => {
         const { value } = f.input;
         let shard = f.isRange ? `${value.min}, ${value.max}` : `${value}`;
@@ -437,7 +419,6 @@ function QueryForm (props) {
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));
-    // setFilters(initObjectToState(filtersLists));
     setFilters(initListToState(filtersLists));
     setLcoe(initListToState(lcoeList));
   };
@@ -456,7 +437,6 @@ function QueryForm (props) {
           ...accum,
           [weight.id || weight.name]: Number(weight.input.value)
         }), {});
-    // updateFilteredLayer(filters.distance_filters, weightsValues, lcoeValues);
     updateFilteredLayer(filters, weightsValues, lcoeValues);
   };
 
@@ -473,7 +453,6 @@ function QueryForm (props) {
 
   /* Reinitialize filters when new ranges are received */
   useEffect(() => {
-    // setFilters(initObjectToState(filtersLists));
     setFilters(initListToState(filtersLists));
   }, [filterRanges]);
 
@@ -541,10 +520,8 @@ function QueryForm (props) {
           presets={presets.filters}
           setPreset={(preset) => {
             if (preset === 'reset') {
-              // setFilters(initObjectToState(filtersLists));
               setFilters(initListToState(filtersLists));
             } else {
-              // setFilters(initObjectToState(presets.filters[preset]));
               setFilters(initListToState(presets.filters[preset]));
             }
           }}
@@ -552,7 +529,6 @@ function QueryForm (props) {
           <Accordion
             initialState={[
               true,
-              // ...Object.keys(filters)
               ...filters.reduce((seen, filt) => {
                 if (!seen.includes(filt.category)) {
                   seen.push(filt);
@@ -564,7 +540,6 @@ function QueryForm (props) {
             ]}
           >
             {({ checkExpanded, setExpanded }) =>
-              // Object.entries(filters).map(([group, list], idx) => {
               Object.entries(filters.reduce((accum, filt) => {
                 if (!accum[filt.category]) {
                   accum[filt.category] = [];
@@ -615,15 +590,6 @@ function QueryForm (props) {
                                     value: filter.input.type === BOOL ? !filter.active : filter.input.value
                                   }
                                 }));
-
-                                /* setFilters({
-                                  ...filters,
-                                  [group]: updateStateList(list, ind, {
-                                    ...filter,
-                                    active: !filter.active,
-                                    value: filter.input.type === BOOL ? !filter.active : filter.value
-                                  })
-                                }); */
                               }}
                             >
                               Toggle filter
@@ -641,17 +607,6 @@ function QueryForm (props) {
                                   }
 
                                 }));
-
-                                /* setFilters({
-                                  ...filters,
-                                  [group]: updateStateList(list, ind, {
-                                    ...filter,
-                                    input: {
-                                      ...filter.input,
-                                      value
-                                    }
-                                  })
-                                }); */
                               }
                             })
                           }
