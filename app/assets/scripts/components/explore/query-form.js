@@ -59,7 +59,7 @@ const maxLCOEO = {
     type: SLIDER,
     range: [0, 1]
   }
-};*/
+}; */
 
 const castByFilterType = type => {
   switch (type) {
@@ -826,9 +826,9 @@ QueryForm.propTypes = {
   gridSize: T.number,
   setGridSize: T.func,
   maxZoneScore: T.object,
-  setMaxZoneScore: T.func,
-  /*maxLCOE: T.object,
-  setMaxLCOE: T.func*/
+  setMaxZoneScore: T.func
+  /* maxLCOE: T.object,
+  setMaxLCOE: T.func */
 };
 
 export default QueryForm;

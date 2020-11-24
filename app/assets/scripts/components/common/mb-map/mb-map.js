@@ -187,6 +187,7 @@ function MbMap (props) {
     selectedResource,
     filteredLayerUrl,
     currentZones,
+    maxZoneScore,
     map, setMap
   } = useContext(ExploreContext);
 
@@ -256,7 +257,13 @@ function MbMap (props) {
     // Update GeoJSON source, applying hover effect if any
     map.getSource(ZONES_BOUNDARIES_SOURCE_ID).setData({
       type: 'FeatureCollection',
-      features: currentZones.getData()
+      features: currentZones.getData().map(z => ({
+        ...z,
+        properties: {
+          ...z.properties,
+          ...z.properties.summary
+        }
+      }))
     });
   }, [currentZones]);
 
@@ -271,6 +278,17 @@ function MbMap (props) {
       // setHoveredFeature(null);
     };
   }, [hoveredFeature]);
+
+  useEffect(() => {
+    if (!map) return;
+    map.setPaintProperty(ZONES_BOUNDARIES_LAYER_ID,
+      'fill-opacity',
+      ['case',
+        ['all', ['>=', ['get', 'zone_score'], maxZoneScore.min], ['<=', ['get', 'zone_score'], maxZoneScore.max]], 0.5,
+        0
+      ]
+    );
+  }, [maxZoneScore, currentZones]);
 
   return (
     <MapsContainer>
