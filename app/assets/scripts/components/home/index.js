@@ -25,7 +25,7 @@ const HomeInpage = styled(Inpage)`
   background: rgb(2, 0, 36);
   color: ${themeVal('color.background')};
   padding-top: 12rem;
-  ${Button} {
+  p, ${Button} {
     margin-top: 4rem;
     margin-right: 1rem;
   }
@@ -88,6 +88,7 @@ function Home () {
             >
               Learn More
             </Button>
+            <p>Inspired by <a href='https://mapre.lbl.gov/'>MapRE</a></p>
           </InpageBodyInner>
         </InpageBody>
       </HomeInpage>
