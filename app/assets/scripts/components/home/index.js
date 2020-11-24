@@ -67,10 +67,6 @@ const PartnerLogos = styled.ul`
   li {
     margin-right: 2rem;
   }
-  h4 {
-    flex: 100%;
-    text-transform: uppercase;
-  }
 `;
 
 function Home () {
