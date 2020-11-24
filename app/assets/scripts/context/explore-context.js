@@ -43,7 +43,7 @@ const abbreviateUnit = unit => {
   }
 };
 export function ExploreProvider (props) {
-  const [maxZoneScore, setMaxZoneScore] =useState({min: 0, max: 1})/* useQsState({
+  const [maxZoneScore, setMaxZoneScore] = useQsState({
     key: 'maxZoneScore',
     default: undefined,
     hydrator: v => {
@@ -58,7 +58,7 @@ export function ExploreProvider (props) {
     dehydrator: v => {
       return v && `${v.min},${v.max}`;
     }
-  });*/
+  });
   const [maxLCOE, setMaxLCOE] = useQsState({
     key: 'maxLCOE',
     default: undefined,

@@ -239,10 +239,6 @@ function QueryForm (props) {
 
   } = props;
 
-  //maxZoneScoreO.input.value = maxZoneScore;
-  //maxLCOEO.input.value = maxLCOE;
-  //console.log(maxLCOE)
-
   const initListToState = (list) => {
     return list.map((obj) => ({
       ...obj,
@@ -574,8 +570,8 @@ function QueryForm (props) {
             foldCount={Object.keys(filters).length + 1}
             allowMultiple
           >
-            {({ checkExpanded, setExpanded }) =>
-              (<>
+            {({ checkExpanded, setExpanded }) => (
+              <>
                 <AccordionFold
                   forwardedAs={FormGroupWrapper}
                   isFoldExpanded={checkExpanded(0)}
@@ -607,10 +603,8 @@ function QueryForm (props) {
                             ...maxZoneScoreO.input,
                             value: maxZoneScore
                           }
-
-                        }, (val) => {
-                          console.log(val)
-                          //setMaxZoneScore({ min: round(min), max: round(max) });
+                        }, ({ min, max }) => {
+                          setMaxZoneScore({ min: round(min), max: round(max) });
                         })}
                       </PanelOption>
 
@@ -623,7 +617,13 @@ function QueryForm (props) {
                             </InfoButton>
                           )}
                         </OptionHeadline>
-                        {inputOfType(maxLCOEO, ({ min, max }) => {
+                        {inputOfType({
+                          ...maxLCOEO,
+                          input: {
+                            ...maxLCOEO.input,
+                            value: maxLCOE
+                          }
+                        }, ({ min, max }) => {
                           setMaxLCOE({ min: round(min), max: round(max) });
                         })}
                       </PanelOption>
@@ -708,7 +708,8 @@ function QueryForm (props) {
                       />
                     );
                   })}
-              </>)}
+              </>
+            )}
           </Accordion>
         </FormWrapper>
 
