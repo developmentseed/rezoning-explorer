@@ -13,6 +13,7 @@ import {
 import Button from '../../styles/button/button';
 import Prose from '../../styles/type/prose';
 import { themeVal, filterComponentProps } from '../../styles/utils/general';
+import media from '../../styles/utils/media-queries.js';
 import HomepageBackground from './background';
 
 import { Link } from 'react-router-dom';
@@ -24,20 +25,45 @@ const StyledLink = filterComponentProps(Link, propsToFilter);
 const HomeInpage = styled(Inpage)`
   background: rgb(2, 0, 36);
   color: ${themeVal('color.background')};
-  padding-top: 12rem;
+  padding-top: 8vh;
   position: relative;
+  
   p, ${Button} {
-    margin-top: 4rem;
+    margin-top: 1rem;
     margin-right: 1rem;
   }
-  ${InpageBodyInner} {
-    max-width: 40rem;
-  }
+
+  ${media.mediumUp`
+    padding-top: 12vh;
+
+    p, ${Button} {
+      margin-top: 4rem;
+     
+    }
+    ${InpageBodyInner} {
+      max-width: 40rem;
+    }
+  `};
+`;
+
+const CTAButtons = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  width: 100%;
+  justify-content: space-between;
+  ${media.xsmallOnly`
+    flex-flow: column nowrap;
+  `};
+  ${media.smallUp`
+    justify-content: flex-start;
+  `};
 `;
 
 const HomeTitle = styled(InpageTitle)`
-  font-size: 3.5rem;
-  line-height: 4rem;
+  ${media.mediumUp`
+    font-size: 3.5rem;
+    line-height: 4rem;
+  `};
   
   span {
     font-size: 1.25rem;
@@ -52,21 +78,29 @@ const Lead = styled(Prose)`
 `;
 
 const BackgroundWrapper = styled.figure`
-  display: block;
-  position: absolute;
-  top: 30vh;
-  left: 50vw;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+  display: none;
+  ${media.mediumUp`
+    display: block;
+    position: absolute;
+    top: 20vh;
+    left: 50vw;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  `}
 `;
+
 const PartnerLogos = styled.ul`
   display: flex;
+  flex-flow: column nowrap;
   list-style: none;
   margin-top: 2rem;
   li {
     margin-right: 2rem;
   }
+  ${media.smallUp`
+    flex-flow: row nowrap;
+  `};
 `;
 
 function Home () {
@@ -89,24 +123,26 @@ function Home () {
               Identify and explore high potential project areas for solar, wind
               and offshore wind development
             </Lead>
-            <Button
-              as={StyledLink}
-              to='/explore'
-              variation='primary-raised-dark'
-              size='xlarge'
-              title='Visit Explore Page'
-            >
-              Explore
-            </Button>
-            <Button
-              as={StyledLink}
-              to='/about'
-              variation='base-raised-light'
-              size='xlarge'
-              title='Visit About Page'
-            >
-              Learn More
-            </Button>
+            <CTAButtons>
+              <Button
+                as={StyledLink}
+                to='/explore'
+                variation='primary-raised-dark'
+                size='xlarge'
+                title='Visit Explore Page'
+              >
+                Explore
+              </Button>
+              <Button
+                as={StyledLink}
+                to='/about'
+                variation='base-raised-light'
+                size='xlarge'
+                title='Visit About Page'
+              >
+                Learn More
+              </Button>
+            </CTAButtons>
             <p>Inspired by <a href='https://mapre.lbl.gov/'>MapRE</a></p>
             <PartnerLogos>
               <li><img src='https://via.placeholder.com/140x60.png?text=Logo' /></li>

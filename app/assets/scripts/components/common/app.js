@@ -9,13 +9,18 @@ import PageFooter from './page-footer';
 
 import config from '../../config';
 import SizeAwareElement from './size-aware-element';
+import media from '../../styles/utils/media-queries';
 
 const { appTitle, appDescription } = config;
 
 const Page = styled.div`
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(4rem, max-content) auto 0;
+  grid-template-columns: 1;
+  grid-template-rows: minmax(4rem, max-content) auto 0;
+  ${media.mediumUp`
+    grid-template-columns: minmax(4rem, max-content) auto 0;
+  `}
 `;
 
 const PageBody = styled.main`
