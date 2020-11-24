@@ -95,40 +95,40 @@ export function ExploreProvider (props) {
     );
 
     // Prepare filters from the API to be consumed by the frontend
-    const apiFilters = {
-      distance_filters: Object.keys(filters)
-        .map((filterId) => ({ ...filters[filterId], id: filterId }))
-        .filter(
-          ({ id, type, pattern }) =>
-            (allowedTypes.has(type === 'string' ? pattern : type) &&
+    const apiFilters = Object.keys(filters)
+      .map((filterId) => ({ ...filters[filterId], id: filterId }))
+      .filter(
+        ({ id, type, pattern }) =>
+          (allowedTypes.has(type === 'string' ? pattern : type) &&
             ![
               'f_capacity_value',
               'f_lcoe_gen',
               'f_lcoe_transmission',
               'f_lcoe_road'
             ].includes(id)) // disable some filters not supported by the API
-        )
-        .map((filter) => {
-          const isRange = filter.pattern === 'range_filter';
+      )
+      .map((filter) => {
+        const isRange = filter.pattern === 'range_filter';
 
-          return {
-            ...filter,
-            id: filter.id,
-            name: filter.title,
-            info: filter.description,
-            unit: filter.unit || DEFAULT_UNIT,
-            active: false,
-            isRange,
-            input: {
-              range: DEFAULT_RANGE,
-              type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type)
-            }
-          };
-        })
-    };
+        return {
+          ...filter,
+          id: filter.id,
+          name: filter.title,
+          info: filter.description,
+          unit: filter.unit || DEFAULT_UNIT,
+          category: filter.category,
+          active: false,
+          isRange,
+          input: {
+            range: DEFAULT_RANGE,
+            type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type)
+          }
+        };
+      });
 
     // Apply a mock "Optimization" scenario to filter presets, just random numbers
     presets.filters = {
+      /*
       Optimization: Object.entries(apiFilters).reduce(
         (accum, [name, group]) => {
           return {
@@ -149,7 +149,7 @@ export function ExploreProvider (props) {
           };
         },
         {}
-      )
+      ) */
     };
 
     // Add to filters context

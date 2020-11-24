@@ -227,6 +227,7 @@ function QueryForm (props) {
     }));
   };
 
+  /*
   const initObjectToState = (obj) => {
     return Object.keys(obj).reduce((accum, key) => {
       return {
@@ -234,7 +235,7 @@ function QueryForm (props) {
         [key]: initListToState(obj[key])
       };
     }, {});
-  };
+  };*/
 
   const [weights, setWeights] = useQsState({
     key: 'weights',
@@ -275,10 +276,12 @@ function QueryForm (props) {
   const [filters, setFilters] = useQsState({
     key: 'filters',
     hydrator: v => {
-      const baseFilts = initObjectToState(filtersLists);
+      // const baseFilts = initObjectToState(filtersLists);
+      let baseFilts = initListToState(filtersLists);
       if (v) {
         const qsValues = v.split('|').map((vals, i) => {
-          const thisFilt = baseFilts.distance_filters[i];
+          // const thisFilt = baseFilts.distance_filters[i];
+          const thisFilt = baseFilts[i];
           if (thisFilt.isRange) {
             const [min, max, active] = vals.split(',');
             return {
@@ -297,7 +300,8 @@ function QueryForm (props) {
           }
         });
 
-        baseFilts.distance_filters = baseFilts.distance_filters.map((filt, i) => (
+        // baseFilts.distance_filters = baseFilts.distance_filters.map((filt, i) => (
+        baseFilts = baseFilts.map((filt, i) => (
           {
             ...filt,
             active: qsValues[i].active,
@@ -311,7 +315,8 @@ function QueryForm (props) {
       return baseFilts;
     },
     dehydrator: v => {
-      return v && v.distance_filters.map(f => {
+      // return v && v.distance_filters.map(f => {
+      return v && v.map(f => {
         const { value } = f.input;
         let shard = f.isRange ? `${value.min}, ${value.max}` : `${value}`;
         shard = f.active ? shard : `${shard},${false}`;
@@ -433,7 +438,8 @@ function QueryForm (props) {
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));
-    setFilters(initObjectToState(filtersLists));
+    // setFilters(initObjectToState(filtersLists));
+    setFilters(initListToState(filtersLists));
     setLcoe(initListToState(lcoeList));
   };
 
@@ -451,7 +457,8 @@ function QueryForm (props) {
           ...accum,
           [weight.id || weight.name]: Number(weight.input.value)
         }), {});
-    updateFilteredLayer(filters.distance_filters, weightsValues, lcoeValues);
+    // updateFilteredLayer(filters.distance_filters, weightsValues, lcoeValues);
+    updateFilteredLayer(filters, weightsValues, lcoeValues);
   };
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
@@ -467,7 +474,8 @@ function QueryForm (props) {
 
   /* Reinitialize filters when new ranges are received */
   useEffect(() => {
-    setFilters(initObjectToState(filtersLists));
+    // setFilters(initObjectToState(filtersLists));
+    setFilters(initListToState(filtersLists));
   }, [filterRanges]);
 
   return (
@@ -534,41 +542,57 @@ function QueryForm (props) {
           presets={presets.filters}
           setPreset={(preset) => {
             if (preset === 'reset') {
-              setFilters(initObjectToState(filtersLists));
+              // setFilters(initObjectToState(filtersLists));
+              setFilters(initListToState(filtersLists));
             } else {
-              setFilters(initObjectToState(presets.filters[preset]));
+              // setFilters(initObjectToState(presets.filters[preset]));
+              setFilters(initListToState(presets.filters[preset]));
             }
           }}
         >
           <Accordion
             initialState={[
               true,
-              ...Object.keys(filters)
+              // ...Object.keys(filters)
+              ...filters.reduce((seen, filt) => {
+                if (!seen.includes(filt.category)) {
+                  seen.push(filt);
+                }
+                return seen;
+              }, [])
                 .slice(1)
                 .map((_) => false)
             ]}
           >
             {({ checkExpanded, setExpanded }) =>
-              Object.entries(filters).map(([group, list], idx) => {
-                return (
-                  <AccordionFold
-                    key={group}
-                    forwardedAs={FormGroupWrapper}
-                    isFoldExpanded={checkExpanded(idx)}
-                    setFoldExpanded={(v) => setExpanded(idx, v)}
-                    renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                      <AccordionFoldTrigger
-                        isExpanded={isFoldExpanded}
-                        onClick={() => setFoldExpanded(!isFoldExpanded)}
-                      >
-                        <Heading size='small' variation='primary'>
-                          {makeTitleCase(group.replace(/_/g, ' '))}
-                        </Heading>
-                      </AccordionFoldTrigger>
-                    )}
-                    renderBody={({ isFoldExpanded }) =>
-                      list.map((filter, ind) => (
-                        checkIncluded(filter, resource) &&
+              // Object.entries(filters).map(([group, list], idx) => {
+              Object.entries(filters.reduce((accum, filt) => {
+                if (!accum[filt.category]) {
+                  accum[filt.category] = [];
+                }
+                accum[filt.category].push(filt);
+                return accum;
+              }, {}))
+                .map(([group, list], idx) => {
+                  return (
+                    <AccordionFold
+                      key={group}
+                      forwardedAs={FormGroupWrapper}
+                      isFoldExpanded={checkExpanded(idx)}
+                      setFoldExpanded={(v) => setExpanded(idx, v)}
+                      renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                        <AccordionFoldTrigger
+                          isExpanded={isFoldExpanded}
+                          onClick={() => setFoldExpanded(!isFoldExpanded)}
+                        >
+                          <Heading size='small' variation='primary'>
+                            {makeTitleCase(group.replace(/_/g, ' '))}
+                          </Heading>
+                        </AccordionFoldTrigger>
+                      )}
+                      renderBody={({ isFoldExpanded }) =>
+                        list.map((filter, ind) => (
+                          checkIncluded(filter, resource) &&
                         <PanelOption key={filter.name} hidden={!isFoldExpanded}>
                           <OptionHeadline>
                             <PanelOptionTitle>{filter.name}</PanelOptionTitle>
@@ -583,14 +607,24 @@ function QueryForm (props) {
                               disabled={filter.disabled}
                               checked={filter.active}
                               onChange={() => {
-                                setFilters({
+                                const ind = filters.findIndex(f => f.id === filter.id);
+                                setFilters(updateStateList(filters, ind, {
+                                  ...filter,
+                                  active: !filter.active,
+                                  input: {
+                                    ...filter.input,
+                                    value: filter.input.type === BOOL ? !filter.active : filter.input.value
+                                  }
+                                }));
+
+                                /* setFilters({
                                   ...filters,
                                   [group]: updateStateList(list, ind, {
                                     ...filter,
                                     active: !filter.active,
                                     value: filter.input.type === BOOL ? !filter.active : filter.value
                                   })
-                                });
+                                }); */
                               }}
                             >
                               Toggle filter
@@ -599,7 +633,17 @@ function QueryForm (props) {
                           {
                             inputOfType(filter, (value) => {
                               if (filter.active) {
-                                setFilters({
+                                const ind = filters.findIndex(f => f.id === filter.id);
+                                setFilters(updateStateList(filters, ind, {
+                                  ...filter,
+                                  input: {
+                                    ...filter.input,
+                                    value
+                                  }
+
+                                }));
+
+                                /* setFilters({
                                   ...filters,
                                   [group]: updateStateList(list, ind, {
                                     ...filter,
@@ -608,16 +652,16 @@ function QueryForm (props) {
                                       value
                                     }
                                   })
-                                });
+                                }); */
                               }
                             })
                           }
 
                         </PanelOption>
-                      ))}
-                  />
-                );
-              })}
+                        ))}
+                    />
+                  );
+                })}
           </Accordion>
         </FormWrapper>
 
