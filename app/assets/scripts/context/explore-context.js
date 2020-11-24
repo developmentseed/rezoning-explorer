@@ -6,42 +6,74 @@ import bboxPolygon from '@turf/bbox-polygon';
 
 import { featureCollection } from '@turf/helpers';
 import useQsState from '../utils/qs-state-hook';
+import { randomRange } from '../utils/utils';
 
 import config from '../config';
 
 import areasJson from '../../data/areas.json';
 
-import { fetchZonesReducer, fetchZones } from './fetch-zones';
+import { fetchJSON } from './reducers/reduxeed';
+import { initialApiRequestState } from './contexeed';
+import { fetchZonesReducer, fetchZones } from './reducers/zones';
+import { fetchFilterRanges, filterRangesReducer } from './reducers/filters';
 
 import {
   showGlobalLoading,
   hideGlobalLoading
 } from '../components/common/global-loading';
-import { INPUT_CONSTANTS } from '../components/explore/panel-data';
+import {
+  INPUT_CONSTANTS,
+  presets as defaultPresets,
+  checkIncluded,
+  allowedTypes
+} from '../components/explore/panel-data';
 
-import { initialApiRequestState } from './contexeed';
-const { GRID_OPTIONS } = INPUT_CONSTANTS;
+const { GRID_OPTIONS, SLIDER, BOOL, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
-export function ExploreProvider (props) {
-  const [selectedArea, setSelectedArea] = useState(null);
+const presets = { ...defaultPresets };
 
+const abbreviateUnit = unit => {
+  switch (unit) {
+    case 'meters':
+      return 'm';
+    default:
+      return unit;
+  }
+};
+export function ExploreProvider (props) {
+  // Init filters state
+  const [filtersLists, setFiltersLists] = useState(null);
+  const [filterRanges, dispatchFilterRanges] = useReducer(
+    filterRangesReducer,
+    initialApiRequestState
+  );
+
+  // Init areas state
+  const [areas, setAreas] = useState([]);
+  const [selectedArea, setSelectedArea] = useState(null);
   const [selectedAreaId, setSelectedAreaId] = useQsState({
     key: 'areaId',
     default: undefined
   });
-
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
     !selectedAreaId
   );
 
-  const [areas, setAreas] = useState([]);
-
+  // Init map state
   const [map, setMap] = useState(null);
 
+  // Handle selected area id changes
   useEffect(() => {
+    // Clear current zones
+    dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
+
+    // Set area object to context
     setSelectedArea(areas.find((a) => a.id === selectedAreaId));
+
+    // Update filter ranges for the selected area
+    fetchFilterRanges(selectedAreaId, dispatchFilterRanges);
   }, [selectedAreaId]);
 
   const [selectedResource, setSelectedResource] = useQsState({
@@ -63,10 +95,67 @@ export function ExploreProvider (props) {
 
   const [tourStep, setTourStep] = useState(0);
 
-  const loadAreas = async () => {
+  const initAreasAndFilters = async () => {
     showGlobalLoading();
-    // Parse region and country files into area list
 
+    // Fetch filters from API
+    const { body: filters } = await fetchJSON(
+      `${config.apiEndpoint}/filter/schema`
+    );
+
+    // Prepare filters from the API to be consumed by the frontend
+    const apiFilters = Object.keys(filters)
+      .map((filterId) => ({ ...filters[filterId], id: filterId }))
+      .filter(
+        ({ id, type, pattern }) =>
+          (allowedTypes.has(type === 'string' ? pattern : type) &&
+            ![
+              'f_capacity_value',
+              'f_lcoe_gen',
+              'f_lcoe_transmission',
+              'f_lcoe_road'
+            ].includes(id)) // disable some filters not supported by the API
+      )
+      .map((filter) => {
+        const isRange = filter.pattern === 'range_filter';
+
+        return {
+          ...filter,
+          id: filter.id,
+          name: filter.title,
+          info: filter.description,
+          unit: abbreviateUnit(filter.unit),
+          category: filter.category,
+          active: false,
+          isRange,
+          input: {
+            range: DEFAULT_RANGE,
+            type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type)
+          }
+        };
+      });
+
+    // Apply a mock "Optimization" scenario to filter presets, just random numbers
+    presets.filters = {
+      Optimizaiton: apiFilters.map(filter => ({
+        ...filter,
+        active: Math.random() > 0.5,
+        input: {
+          ...filter.input,
+          value: filter.input.type === SLIDER ? {
+            max: filter.range
+              ? randomRange(filter.range[0], filter.range[1])
+              : randomRange(0, 100),
+            min: filter.range ? filter.range[0] : 0
+          } : false
+        }
+      }))
+    };
+
+    // Add to filters context
+    setFiltersLists(apiFilters);
+
+    // Parse region and country files into area list
     const eez = await fetch('public/zones/eez_v11.topojson').then((e) =>
       e.json()
     );
@@ -86,18 +175,17 @@ export function ExploreProvider (props) {
           a.id = a.gid;
           a.eez = eezCountries.get(a.id);
         }
-        a.bounds = a.bounds
-          ? a.bounds.split(',').map((x) => parseFloat(x))
-          : null;
+
+        // Parse bounds, if a string
+        if (a.bounds && typeof a.bounds === 'string') {
+          a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
+        }
+
         return a;
       })
     );
     hideGlobalLoading();
   };
-
-  useEffect(() => {
-    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
-  }, [selectedAreaId]);
 
   useEffect(() => {
     let nextArea = areas.find((a) => `${a.id}` === `${selectedAreaId}`);
@@ -117,22 +205,19 @@ export function ExploreProvider (props) {
     setSelectedArea(nextArea);
   }, [areas, selectedAreaId, selectedResource]);
 
+  // Executed on page mount
   useEffect(() => {
     const visited = localStorage.getItem('site-tour');
     if (visited !== null) {
       setTourStep(Number(visited));
     }
 
-    loadAreas();
+    initAreasAndFilters();
   }, []);
 
   useEffect(() => {
     localStorage.setItem('site-tour', tourStep);
   }, [tourStep]);
-
-  useEffect(() => {
-    dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
-  }, [selectedAreaId]);
 
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
@@ -165,14 +250,53 @@ export function ExploreProvider (props) {
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
 
   function updateFilteredLayer (filterValues, weights, lcoe) {
+    // Prepare a query string to the API based from filter values
     const filterString = filterValues
-      .map(({ min, max }) => `${min},${max}`)
-      .join('|');
+      .map((filter) => {
+        const { id, active, input } = filter;
+
+        // Bypass inactive filters
+        if (!active || !checkIncluded(filter, selectedResource)) return null;
+
+        // Add accepted filter types to the query
+        if (input.type === SLIDER) {
+          const {
+            value: { min, max }
+          } = filter.input;
+          return `${id}=${min},${max}`;
+        } else if (input.type === BOOL) {
+          return `${id}=${filter.input.value}`;
+        }
+
+        // discard non-accepted filter types
+        return null;
+      })
+      .filter((x) => x)
+      .join('&');
+
+    // Apply filter querystring to the map
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=${filterString}&color=54,166,244,80`
+      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
     );
+
+    // Fetch zones
     generateZones(filterString, weights, lcoe);
   }
+
+  const reinitFilters = () => {
+    /*
+    if (filtersLists) {
+      Object.values(filtersLists).forEach((list) => {
+        list.forEach(filter => {
+          delete filter.input.value;
+          delete filter.input.range;
+        });
+      });
+      //setFiltersLists(filtersLists);
+    } */
+  };
+
+  useEffect(reinitFilters, [filterRanges]);
 
   return (
     <>
@@ -181,6 +305,9 @@ export function ExploreProvider (props) {
           map,
           setMap,
           areas,
+          filtersLists,
+          filterRanges,
+          presets,
           selectedArea,
           setSelectedAreaId,
           selectedResource,

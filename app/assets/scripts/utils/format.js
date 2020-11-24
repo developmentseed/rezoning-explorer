@@ -8,6 +8,13 @@ export function round (value, decimals = 2) {
   return Math.round(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
 }
 
+export function truncateDecimals (number, digits = 2) {
+  const multiplier = Math.pow(10, digits);
+  const adjustedNum = number * multiplier;
+  const truncatedNum = Math[adjustedNum < 0 ? 'ceil' : 'floor'](adjustedNum);
+  return truncatedNum / multiplier;
+}
+
 export function shortenLargeNumber (value, decimals = 2) {
   if (value / 1e9 >= 1) {
     return {

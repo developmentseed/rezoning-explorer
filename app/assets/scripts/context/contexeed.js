@@ -1,4 +1,4 @@
-import { wrapApiResult } from './reduxeed';
+import { wrapApiResult } from './reducers/reduxeed';
 import config from '../config';
 
 const { environment } = config;
