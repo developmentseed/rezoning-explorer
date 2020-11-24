@@ -1,12 +1,12 @@
 import * as topojson from 'topojson-client';
-import { fetchJSON, makeAPIReducer } from '../context/reduxeed';
-import config from '../config';
+import { fetchJSON, makeAPIReducer } from './reduxeed';
+import config from '../../config';
 import get from 'lodash.get';
-import zoneScoreColor from '../styles/zoneScoreColors';
-import theme from '../styles/theme/theme';
+import zoneScoreColor from '../../styles/zoneScoreColors';
+import theme from '../../styles/theme/theme';
 import squareGrid from '@turf/square-grid';
 import pLimit from 'p-limit';
-import { wrapLogReducer } from './contexeed';
+import { wrapLogReducer } from './../contexeed';
 
 const limit = pLimit(50);
 const { apiEndpoint } = config;

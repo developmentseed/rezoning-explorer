@@ -12,7 +12,10 @@ import config from '../config';
 
 import areasJson from '../../data/areas.json';
 
-import { fetchZonesReducer, fetchZones } from './fetch-zones';
+import { fetchJSON } from './reducers/reduxeed';
+import { initialApiRequestState } from './contexeed';
+import { fetchZonesReducer, fetchZones } from './reducers/zones';
+import { fetchFilterRanges, filterRangesReducer } from './reducers/filters';
 
 import {
   showGlobalLoading,
@@ -25,33 +28,43 @@ import {
   allowedTypes
 } from '../components/explore/panel-data';
 
-import { initialApiRequestState } from './contexeed';
-import { fetchJSON } from './reduxeed';
-const { GRID_OPTIONS, BOOL, SLIDER } = INPUT_CONSTANTS;
+const { GRID_OPTIONS, SLIDER, BOOL, DEFAULT_RANGE, DEFAULT_UNIT } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
 const presets = { ...defaultPresets };
 export function ExploreProvider (props) {
+  // Init filters state
   const [filtersLists, setFiltersLists] = useState(null);
+  const [filterRanges, dispatchFilterRanges] = useReducer(
+    filterRangesReducer,
+    initialApiRequestState
+  );
 
+  // Init areas state
+  const [areas, setAreas] = useState([]);
   const [selectedArea, setSelectedArea] = useState(null);
-
   const [selectedAreaId, setSelectedAreaId] = useQsState({
     key: 'areaId',
     default: undefined
   });
-
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
     !selectedAreaId
   );
 
-  const [areas, setAreas] = useState([]);
-
+  // Init map state
   const [map, setMap] = useState(null);
 
+  // Handle selected area id changes
   useEffect(() => {
+    // Clear current zones
+    dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
+
+    // Set area object to context
     setSelectedArea(areas.find((a) => a.id === selectedAreaId));
+
+    // Update filter ranges for the selected area
+    fetchFilterRanges(selectedAreaId, dispatchFilterRanges);
   }, [selectedAreaId]);
 
   const [selectedResource, setSelectedResource] = useQsState({
@@ -97,31 +110,18 @@ export function ExploreProvider (props) {
         )
         .map((filter) => {
           const isRange = filter.pattern === 'range_filter';
-          let value = 0;
-
-          if (isRange) {
-            value = filter.range
-              ? {
-                min: filter.range[0],
-                max: filter.range[1]
-              }
-              : {
-                min: 0,
-                max: 1000000
-              };
-          }
 
           return {
             ...filter,
             id: filter.id,
             name: filter.title,
             info: filter.description,
+            unit: filter.unit || DEFAULT_UNIT,
             active: false,
             isRange,
             input: {
-              type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type),
-              range: isRange ? [0, 1000000] : null,
-              value
+              range: DEFAULT_RANGE,
+              type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type)
             }
           };
         })
@@ -175,18 +175,17 @@ export function ExploreProvider (props) {
           a.id = a.gid;
           a.eez = eezCountries.get(a.id);
         }
-        a.bounds = a.bounds
-          ? a.bounds.split(',').map((x) => parseFloat(x))
-          : null;
+
+        // Parse bounds, if a string
+        if (a.bounds && typeof a.bounds === 'string') {
+          a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
+        }
+
         return a;
       })
     );
     hideGlobalLoading();
   };
-
-  useEffect(() => {
-    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
-  }, [selectedAreaId]);
 
   useEffect(() => {
     let nextArea = areas.find((a) => `${a.id}` === `${selectedAreaId}`);
@@ -219,10 +218,6 @@ export function ExploreProvider (props) {
   useEffect(() => {
     localStorage.setItem('site-tour', tourStep);
   }, [tourStep]);
-
-  useEffect(() => {
-    dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
-  }, [selectedAreaId]);
 
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
@@ -288,6 +283,21 @@ export function ExploreProvider (props) {
     generateZones(filterString, weights, lcoe);
   }
 
+  const reinitFilters = () => {
+    /*
+    if (filtersLists) {
+      Object.values(filtersLists).forEach((list) => {
+        list.forEach(filter => {
+          delete filter.input.value;
+          delete filter.input.range;
+        });
+      });
+      //setFiltersLists(filtersLists);
+    } */
+  };
+
+  useEffect(reinitFilters, [filterRanges]);
+
   return (
     <>
       <ExploreContext.Provider
@@ -296,6 +306,7 @@ export function ExploreProvider (props) {
           setMap,
           areas,
           filtersLists,
+          filterRanges,
           presets,
           selectedArea,
           setSelectedAreaId,
