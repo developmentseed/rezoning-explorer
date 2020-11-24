@@ -145,8 +145,8 @@ function Home () {
             </CTAButtons>
             <p>Inspired by <a href='https://mapre.lbl.gov/'>MapRE</a></p>
             <PartnerLogos>
-              <li><img src='https://via.placeholder.com/140x60.png?text=Partner Logo 1' /></li>
-              <li><img src='https://via.placeholder.com/140x60.png?text=Partner Logo 2' /></li>
+              <li><img src='https://via.placeholder.com/140x60.png/EFEFEF/000000/?text=Partner+Logo+1' /></li>
+              <li><img src='https://via.placeholder.com/140x60.png/EFEFEF/000000/?text=Partner+Logo+2' /></li>
             </PartnerLogos>
           </InpageBodyInner>
         </InpageBody>
