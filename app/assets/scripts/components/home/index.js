@@ -35,15 +35,13 @@ const HomeInpage = styled(Inpage)`
 
   ${media.mediumUp`
     padding-top: 12vh;
-
-    p, ${Button} {
+    p,${Button} {
       margin-top: 4rem;
-     
     }
     ${InpageBodyInner} {
       max-width: 40rem;
     }
-  `};
+  `}
 `;
 
 const CTAButtons = styled.div`
@@ -53,18 +51,17 @@ const CTAButtons = styled.div`
   justify-content: space-between;
   ${media.xsmallOnly`
     flex-flow: column nowrap;
-  `};
+  `}
   ${media.smallUp`
     justify-content: flex-start;
-  `};
+  `}
 `;
 
 const HomeTitle = styled(InpageTitle)`
   ${media.mediumUp`
     font-size: 3.5rem;
     line-height: 4rem;
-  `};
-  
+  `}
   span {
     font-size: 1.25rem;
     text-transform: uppercase;
@@ -100,7 +97,7 @@ const PartnerLogos = styled.ul`
   }
   ${media.smallUp`
     flex-flow: row nowrap;
-  `};
+  `}
 `;
 
 function Home () {

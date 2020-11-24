@@ -38,7 +38,7 @@ const PageHead = styled.header`
     left: 0;
     bottom: 0;
     height: 100vh;
-  `};
+  `}
 `;
 
 const PageHeadInner = styled.div`
@@ -51,7 +51,7 @@ const PageHeadInner = styled.div`
     flex-flow: column nowrap;
     padding: ${themeVal('layout.space')} 0
     ${multiply(themeVal('layout.space'), 1.5)} 0;
-  `};
+  `}
 `;
 
 const PageNav = styled.nav`
@@ -60,7 +60,7 @@ const PageNav = styled.nav`
   flex: 1;
   ${media.mediumUp`
     flex-flow: column nowrap;
-  `};
+  `}
 `;
 
 const GlobalMenu = styled.ul`
@@ -73,7 +73,7 @@ const GlobalMenu = styled.ul`
   list-style: none;
   ${media.mediumUp`
     flex-flow: column nowrap;
-  `};
+  `}
 
   > * {
     margin: 0;
@@ -93,7 +93,7 @@ const GlobalMenu = styled.ul`
     > *:last-child {
       margin-top: auto;
     }
-  `};
+  `}
 `;
 
 const HomeLink = styled.a`
