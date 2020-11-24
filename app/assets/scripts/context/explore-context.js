@@ -28,11 +28,20 @@ import {
   allowedTypes
 } from '../components/explore/panel-data';
 
-const { GRID_OPTIONS, SLIDER, BOOL, DEFAULT_RANGE, DEFAULT_UNIT } = INPUT_CONSTANTS;
+const { GRID_OPTIONS, SLIDER, BOOL, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
 const presets = { ...defaultPresets };
+
+const abbreviateUnit = unit => {
+  switch (unit) {
+    case 'meters':
+      return 'm';
+    default:
+      return unit;
+  }
+};
 export function ExploreProvider (props) {
   // Init filters state
   const [filtersLists, setFiltersLists] = useState(null);
@@ -95,61 +104,52 @@ export function ExploreProvider (props) {
     );
 
     // Prepare filters from the API to be consumed by the frontend
-    const apiFilters = {
-      distance_filters: Object.keys(filters)
-        .map((filterId) => ({ ...filters[filterId], id: filterId }))
-        .filter(
-          ({ id, type, pattern }) =>
-            (allowedTypes.has(type === 'string' ? pattern : type) &&
+    const apiFilters = Object.keys(filters)
+      .map((filterId) => ({ ...filters[filterId], id: filterId }))
+      .filter(
+        ({ id, type, pattern }) =>
+          (allowedTypes.has(type === 'string' ? pattern : type) &&
             ![
               'f_capacity_value',
               'f_lcoe_gen',
               'f_lcoe_transmission',
               'f_lcoe_road'
             ].includes(id)) // disable some filters not supported by the API
-        )
-        .map((filter) => {
-          const isRange = filter.pattern === 'range_filter';
+      )
+      .map((filter) => {
+        const isRange = filter.pattern === 'range_filter';
 
-          return {
-            ...filter,
-            id: filter.id,
-            name: filter.title,
-            info: filter.description,
-            unit: filter.unit || DEFAULT_UNIT,
-            active: false,
-            isRange,
-            input: {
-              range: DEFAULT_RANGE,
-              type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type)
-            }
-          };
-        })
-    };
+        return {
+          ...filter,
+          id: filter.id,
+          name: filter.title,
+          info: filter.description,
+          unit: abbreviateUnit(filter.unit),
+          category: filter.category,
+          active: false,
+          isRange,
+          input: {
+            range: DEFAULT_RANGE,
+            type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type)
+          }
+        };
+      });
 
     // Apply a mock "Optimization" scenario to filter presets, just random numbers
     presets.filters = {
-      Optimization: Object.entries(apiFilters).reduce(
-        (accum, [name, group]) => {
-          return {
-            ...accum,
-            [name]: group.map((filter) => ({
-              ...filter,
-              active: Math.random() > 0.5,
-              input: {
-                ...filter.input,
-                value: {
-                  max: filter.range
-                    ? randomRange(filter.range[0], filter.range[1])
-                    : randomRange(0, 100),
-                  min: filter.range ? filter.range[0] : 0
-                }
-              }
-            }))
-          };
-        },
-        {}
-      )
+      Optimizaiton: apiFilters.map(filter => ({
+        ...filter,
+        active: Math.random() > 0.5,
+        input: {
+          ...filter.input,
+          value: filter.input.type === SLIDER ? {
+            max: filter.range
+              ? randomRange(filter.range[0], filter.range[1])
+              : randomRange(0, 100),
+            min: filter.range ? filter.range[0] : 0
+          } : false
+        }
+      }))
     };
 
     // Add to filters context
