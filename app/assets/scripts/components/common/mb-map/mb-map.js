@@ -340,7 +340,6 @@ function MbMap (props) {
         }
       }
     });
-
   }, [lcoeLayerUrl]);
 
   // Update zone boundaries on change
