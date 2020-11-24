@@ -133,18 +133,36 @@ function ExpMapPrimePanel (props) {
                 }}
                 onVisibilityToggle={(layer, visible) => {
                   if (visible) {
-                    const ml = mapLayers.map(l => {
-                      if (l.type === 'raster') {
-                        map.setLayoutProperty(l.id, 'visibility', l.id === layer.id ? 'visible' : 'none');
-                        l.visible = l.id === layer.id;
-                      }
-                      return l;
-                    });
-                    setMapLayers(ml);
+                    if (layer.type === 'raster') {
+                      const ml = mapLayers.map(l => {
+                        if (l.type === 'raster') {
+                          map.setLayoutProperty(l.id, 'visibility', l.id === layer.id ? 'visible' : 'none');
+                          l.visible = l.id === layer.id;
+                        }
+                        return l;
+                      });
+                      setMapLayers(ml);
+                    } else {
+                      map.setLayoutProperty(layer.id, 'visibility', 'visible');
+                      const ind = mapLayers.findIndex(l => l.id === layer.id);
+                      setMapLayers([...mapLayers.slice(0, ind),
+                        {
+                          ...layer,
+                          visible: true
+                        },
+                        ...mapLayers.slice(ind + 1)
+                      ]);
+                    }
                   } else {
                     map.setLayoutProperty(layer.id, 'visibility', 'none');
-                    mapLayers.find(l => l.id === layer.id).visible = false;
-                    setMapLayers(mapLayers);
+                    const ind = mapLayers.findIndex(l => l.id === layer.id);
+                    setMapLayers([...mapLayers.slice(0, ind),
+                      {
+                        ...layer,
+                        visible: false
+                      },
+                      ...mapLayers.slice(ind + 1)
+                    ]);
                   }
                 }}
               />
