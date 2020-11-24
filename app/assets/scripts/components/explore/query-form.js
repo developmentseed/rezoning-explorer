@@ -24,15 +24,32 @@ import InfoButton from '../common/info-button';
 import GridSetter from './grid-setter';
 
 import ExploreContext from '../../context/explore-context';
-import { INPUT_CONSTANTS } from './panel-data';
+import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
 
+import FormSelect from '../../styles/form/select';
+import { FormGroup } from '../../styles/form/group';
+import FormLabel from '../../styles/form/label';
 const turbineTypeMap = {
   'Off-Shore Wind': [1, 3],
   Wind: [1, 3],
   'Solar PV': [0, 0]
 };
 
-const { SLIDER, BOOL, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
+const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
+
+const castByFilterType = type => {
+  switch (type) {
+    case BOOL:
+      return Boolean;
+    case DROPDOWN:
+    case TEXT:
+      return String;
+    case SLIDER:
+      return Number;
+    default:
+      return String;
+  }
+};
 const PanelOption = styled.div`
   ${({ hidden }) => hidden && 'display: none;'}
   margin-bottom: 1.5rem;
@@ -151,7 +168,19 @@ const initByType = obj => {
         value: obj.value || obj.default || (obj.range || DEFAULT_RANGE)[0]
       };
     case BOOL:
+      return {
+        ...obj,
+        value: false,
+        range: [true, false]
+      };
     case MULTI:
+    case DROPDOWN:
+      return {
+        ...obj,
+        value: obj.value || obj.options[0],
+        range: [null, null],
+        unit: null
+      };
     default:
       return {};
   }
@@ -166,7 +195,7 @@ const initListToState = (list) => {
     // unit: obj.unit || DEFAULT_UNIT,
     active: obj.active === undefined ? true : obj.active
     // value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
-  }));
+  })).filter(obj => !obj.excluded);
 };
 
 const initObjectToState = (obj) => {
@@ -185,15 +214,13 @@ const updateStateList = (list, i, updatedValue) => {
 };
 
 function QueryForm (props) {
-  const { updateFilteredLayer } = useContext(ExploreContext);
+  const { updateFilteredLayer, filtersLists, presets } = useContext(ExploreContext);
 
   const {
     area,
     resource,
     weightsList,
-    filtersLists,
     lcoeList,
-    presets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
@@ -244,16 +271,26 @@ function QueryForm (props) {
     hydrator: v => {
       const baseFilts = initObjectToState(filtersLists);
       if (v) {
-        const qsValues = v.split('|').map(vals => {
-          const [min, max, active] = vals.split(',');
-          return {
-            value: {
-              min: Number(min),
-              max: Number(max)
-            },
-            active: active === undefined
-          };
+        const qsValues = v.split('|').map((vals, i) => {
+          const thisFilt = baseFilts.distance_filters[i];
+          if (thisFilt.isRange) {
+            const [min, max, active] = vals.split(',');
+            return {
+              value: {
+                min: Number(min),
+                max: Number(max)
+              },
+              active: active === undefined
+            };
+          } else {
+            const [val, active] = vals.split(',');
+            return {
+              value: castByFilterType(thisFilt.input.type)(val),
+              active: active === undefined
+            };
+          }
         });
+
         baseFilts.distance_filters = baseFilts.distance_filters.map((filt, i) => (
           {
             ...filt,
@@ -270,10 +307,11 @@ function QueryForm (props) {
     dehydrator: v => {
       return v && v.distance_filters.map(f => {
         const { value } = f.input;
-        let shard = `${value.min}, ${value.max}`;
+        let shard = f.isRange ? `${value.min}, ${value.max}` : `${value}`;
         shard = f.active ? shard : `${shard},${false}`;
         return shard;
-      }).join('|');
+      }).filter(f => !f.excluded)
+        .join('|');
     },
     default: undefined
   });
@@ -326,7 +364,7 @@ function QueryForm (props) {
             range={option.input.range || [0, 100]}
             id={option.name}
             value={option.input.value}
-            isRange={option.input.isRange}
+            isRange={option.isRange}
             disabled={!option.active}
             onChange={onChange}
           />
@@ -348,7 +386,33 @@ function QueryForm (props) {
           />
         );
       case BOOL:
+        return null;
       case MULTI:
+      case DROPDOWN:
+        return (
+          <FormGroup>
+
+            <FormLabel htmlFor={option.name}>{option.name}</FormLabel>
+            <FormSelect
+              id={option.name}
+              onChange={(e) => onChange(e.target.value)}
+              value={option.input.value}
+            >
+              {
+                option.input.options.map(o => {
+                  return (
+                    <option
+                      value={o}
+                      key={o}
+                    >
+                      {o}
+                    </option>
+                  );
+                })
+              }
+            </FormSelect>
+          </FormGroup>
+        );
       default:
         return {};
     }
@@ -361,9 +425,6 @@ function QueryForm (props) {
   };
 
   const applyClick = () => {
-    const filterValues = Object.values(filters)
-      .reduce((accum, section) => [...accum,
-        ...section.map(filter => filter.input.value)], []);
     const weightsValues = Object.values(weights)
       .reduce((accum, weight) => (
         {
@@ -377,7 +438,7 @@ function QueryForm (props) {
           ...accum,
           [weight.id || weight.name]: Number(weight.input.value)
         }), {});
-    updateFilteredLayer(filterValues, weightsValues, lcoeValues);
+    updateFilteredLayer(filters.distance_filters, weightsValues, lcoeValues);
   };
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
@@ -489,6 +550,7 @@ function QueryForm (props) {
                     )}
                     renderBody={({ isFoldExpanded }) =>
                       list.map((filter, ind) => (
+                        checkIncluded(filter, resource) &&
                         <PanelOption key={filter.name} hidden={!isFoldExpanded}>
                           <OptionHeadline>
                             <PanelOptionTitle>{filter.name}</PanelOptionTitle>
@@ -507,7 +569,8 @@ function QueryForm (props) {
                                   ...filters,
                                   [group]: updateStateList(list, ind, {
                                     ...filter,
-                                    active: !filter.active
+                                    active: !filter.active,
+                                    value: filter.input.type === BOOL ? !filter.active : filter.value
                                   })
                                 });
                               }}
@@ -628,7 +691,6 @@ function QueryForm (props) {
 
 FormWrapper.propTypes = {
   setPreset: T.func.isRequired,
-  presets: T.oneOfType([T.object, T.array]).isRequired,
   name: T.string,
   icon: T.string
 };
@@ -637,11 +699,9 @@ QueryForm.propTypes = {
   area: T.object,
   resource: T.string,
   weightsList: T.array,
-  filtersLists: T.object,
   lcoeList: T.array,
   onResourceEdit: T.func,
   onAreaEdit: T.func,
-  presets: T.object,
   onInputTouched: T.func,
   onSelectionChange: T.func,
   gridMode: T.bool,

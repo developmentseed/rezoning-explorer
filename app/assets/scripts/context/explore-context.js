@@ -6,6 +6,7 @@ import bboxPolygon from '@turf/bbox-polygon';
 
 import { featureCollection } from '@turf/helpers';
 import useQsState from '../utils/qs-state-hook';
+import { randomRange } from '../utils/utils';
 
 import config from '../config';
 
@@ -17,14 +18,23 @@ import {
   showGlobalLoading,
   hideGlobalLoading
 } from '../components/common/global-loading';
-import { INPUT_CONSTANTS } from '../components/explore/panel-data';
+import {
+  INPUT_CONSTANTS,
+  presets as defaultPresets,
+  checkIncluded,
+  allowedTypes
+} from '../components/explore/panel-data';
 
 import { initialApiRequestState } from './contexeed';
-const { GRID_OPTIONS } = INPUT_CONSTANTS;
+import { fetchJSON } from './reduxeed';
+const { GRID_OPTIONS, BOOL, SLIDER } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
+const presets = { ...defaultPresets };
 export function ExploreProvider (props) {
+  const [filtersLists, setFiltersLists] = useState(null);
+
   const [selectedArea, setSelectedArea] = useState(null);
 
   const [selectedAreaId, setSelectedAreaId] = useQsState({
@@ -63,10 +73,89 @@ export function ExploreProvider (props) {
 
   const [tourStep, setTourStep] = useState(0);
 
-  const loadAreas = async () => {
+  const initAreasAndFilters = async () => {
     showGlobalLoading();
-    // Parse region and country files into area list
 
+    // Fetch filters from API
+    const { body: filters } = await fetchJSON(
+      `${config.apiEndpoint}/filter/schema`
+    );
+
+    // Prepare filters from the API to be consumed by the frontend
+    const apiFilters = {
+      distance_filters: Object.keys(filters)
+        .map((filterId) => ({ ...filters[filterId], id: filterId }))
+        .filter(
+          ({ id, type, pattern }) =>
+            (allowedTypes.has(type === 'string' ? pattern : type) &&
+            ![
+              'f_capacity_value',
+              'f_lcoe_gen',
+              'f_lcoe_transmission',
+              'f_lcoe_road'
+            ].includes(id)) // disable some filters not supported by the API
+        )
+        .map((filter) => {
+          const isRange = filter.pattern === 'range_filter';
+          let value = 0;
+
+          if (isRange) {
+            value = filter.range
+              ? {
+                min: filter.range[0],
+                max: filter.range[1]
+              }
+              : {
+                min: 0,
+                max: 1000000
+              };
+          }
+
+          return {
+            ...filter,
+            id: filter.id,
+            name: filter.title,
+            info: filter.description,
+            active: false,
+            isRange,
+            input: {
+              type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type),
+              range: isRange ? [0, 1000000] : null,
+              value
+            }
+          };
+        })
+    };
+
+    // Apply a mock "Optimization" scenario to filter presets, just random numbers
+    presets.filters = {
+      Optimization: Object.entries(apiFilters).reduce(
+        (accum, [name, group]) => {
+          return {
+            ...accum,
+            [name]: group.map((filter) => ({
+              ...filter,
+              active: Math.random() > 0.5,
+              input: {
+                ...filter.input,
+                value: {
+                  max: filter.range
+                    ? randomRange(filter.range[0], filter.range[1])
+                    : randomRange(0, 100),
+                  min: filter.range ? filter.range[0] : 0
+                }
+              }
+            }))
+          };
+        },
+        {}
+      )
+    };
+
+    // Add to filters context
+    setFiltersLists(apiFilters);
+
+    // Parse region and country files into area list
     const eez = await fetch('public/zones/eez_v11.topojson').then((e) =>
       e.json()
     );
@@ -117,13 +206,14 @@ export function ExploreProvider (props) {
     setSelectedArea(nextArea);
   }, [areas, selectedAreaId, selectedResource]);
 
+  // Executed on page mount
   useEffect(() => {
     const visited = localStorage.getItem('site-tour');
     if (visited !== null) {
       setTourStep(Number(visited));
     }
 
-    loadAreas();
+    initAreasAndFilters();
   }, []);
 
   useEffect(() => {
@@ -166,11 +256,33 @@ export function ExploreProvider (props) {
   const [lcoeLayerUrl, setLcoeLayerUrl] = useState(null);
 
   function updateFilteredLayer (filterValues, weights, lcoe) {
+    // Prepare a query string to the API based from filter values
     const filterString = filterValues
-      .map(({ min, max }) => `${min},${max}`)
-      .join('|');
+      .map((filter) => {
+        const { id, active, input } = filter;
+
+        // Bypass inactive filters
+        if (!active || !checkIncluded(filter, selectedResource)) return null;
+
+        // Add accepted filter types to the query
+        if (input.type === SLIDER) {
+          const {
+            value: { min, max }
+          } = filter.input;
+          return `${id}=${min},${max}`;
+        } else if (input.type === BOOL) {
+          return `${id}=${filter.input.value}`;
+        }
+
+        // discard non-accepted filter types
+        return null;
+      })
+      .filter((x) => x)
+      .join('&');
+
+    // Apply filter querystring to the map
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?filters=${filterString}&color=54,166,244,80`
+      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
     );
 
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
@@ -178,6 +290,7 @@ export function ExploreProvider (props) {
     setLcoeLayerUrl(
       `${config.apiEndpoint}/lcoe/{z}/{x}/{y}.png?filters=${filterString}&${lcoeReduction}&colormap=cool`
     );
+
     generateZones(filterString, weights, lcoe);
   }
 
@@ -188,6 +301,8 @@ export function ExploreProvider (props) {
           map,
           setMap,
           areas,
+          filtersLists,
+          presets,
           selectedArea,
           setSelectedAreaId,
           selectedResource,
