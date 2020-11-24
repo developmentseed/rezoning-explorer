@@ -28,11 +28,20 @@ import {
   allowedTypes
 } from '../components/explore/panel-data';
 
-const { GRID_OPTIONS, SLIDER, BOOL, DEFAULT_RANGE, DEFAULT_UNIT } = INPUT_CONSTANTS;
+const { GRID_OPTIONS, SLIDER, BOOL, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
 const presets = { ...defaultPresets };
+
+const abbreviateUnit = unit => {
+  switch (unit) {
+    case 'meters':
+      return 'm';
+    default:
+      return unit;
+  }
+};
 export function ExploreProvider (props) {
   // Init filters state
   const [filtersLists, setFiltersLists] = useState(null);
@@ -115,7 +124,7 @@ export function ExploreProvider (props) {
           id: filter.id,
           name: filter.title,
           info: filter.description,
-          unit: filter.unit || DEFAULT_UNIT,
+          unit: abbreviateUnit(filter.unit),
           category: filter.category,
           active: false,
           isRange,
@@ -128,28 +137,19 @@ export function ExploreProvider (props) {
 
     // Apply a mock "Optimization" scenario to filter presets, just random numbers
     presets.filters = {
-      /*
-      Optimization: Object.entries(apiFilters).reduce(
-        (accum, [name, group]) => {
-          return {
-            ...accum,
-            [name]: group.map((filter) => ({
-              ...filter,
-              active: Math.random() > 0.5,
-              input: {
-                ...filter.input,
-                value: {
-                  max: filter.range
-                    ? randomRange(filter.range[0], filter.range[1])
-                    : randomRange(0, 100),
-                  min: filter.range ? filter.range[0] : 0
-                }
-              }
-            }))
-          };
-        },
-        {}
-      ) */
+      Optimizaiton: apiFilters.map(filter => ({
+        ...filter,
+        active: Math.random() > 0.5,
+        input: {
+          ...filter.input,
+          value: filter.input.type === SLIDER ? {
+            max: filter.range
+              ? randomRange(filter.range[0], filter.range[1])
+              : randomRange(0, 100),
+            min: filter.range ? filter.range[0] : 0
+          } : false
+        }
+      }))
     };
 
     // Add to filters context

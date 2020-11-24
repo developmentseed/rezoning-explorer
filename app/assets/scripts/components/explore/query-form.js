@@ -36,7 +36,7 @@ const turbineTypeMap = {
   'Solar PV': [0, 0]
 };
 
-const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
+const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
 const castByFilterType = type => {
   switch (type) {
@@ -163,15 +163,14 @@ const initByType = (obj, ranges) => {
       return {
         ...input,
         range,
-        unit: input.unit || DEFAULT_UNIT,
-        value: input.value || input.default ||
-        obj.isRange ? { min: range[0], max: range[1] } : range[0]
+        unit: input.unit,
+        value: input.value || input.default || (obj.isRange ? { min: range[0], max: range[1] } : range[0])
       };
     case TEXT:
       return {
         ...input,
         range: input.range || DEFAULT_RANGE,
-        unit: input.unit || DEFAULT_UNIT,
+        unit: input.unit,
         value: input.value || input.default || (input.range || DEFAULT_RANGE)[0]
       };
     case BOOL:
@@ -235,7 +234,7 @@ function QueryForm (props) {
         [key]: initListToState(obj[key])
       };
     }, {});
-  };*/
+  }; */
 
   const [weights, setWeights] = useQsState({
     key: 'weights',
@@ -595,7 +594,7 @@ function QueryForm (props) {
                           checkIncluded(filter, resource) &&
                         <PanelOption key={filter.name} hidden={!isFoldExpanded}>
                           <OptionHeadline>
-                            <PanelOptionTitle>{filter.name}</PanelOptionTitle>
+                            <PanelOptionTitle>{`${filter.name}`.concat(filter.unit ? ` - (${filter.unit})` : '')}</PanelOptionTitle>
                             {filter.info && (
                               <InfoButton info={filter.info} id={filter.name}>
                                 Info
