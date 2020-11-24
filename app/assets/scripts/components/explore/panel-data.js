@@ -160,6 +160,7 @@ export const lcoeList = [
       type: TEXT
     }
   },
+  /*
   {
     name: 'Capacity Factor',
     id: 'capfac',
@@ -167,7 +168,7 @@ export const lcoeList = [
       type: DROPDOWN,
       options: ['opt1', 'opt2', 'opt3']
     }
-  },
+  }, */
 
   {
     name: 'Technical Loss Factor',
