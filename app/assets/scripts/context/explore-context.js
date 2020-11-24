@@ -275,8 +275,9 @@ export function ExploreProvider (props) {
       .join('&');
 
     // Apply filter querystring to the map
+    const basePath = selectedArea.type === 'country' ? `/filter/${selectedArea.id}` : '/filter';
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
+      `${config.apiEndpoint}${basePath}/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
     );
 
     // Fetch zones
