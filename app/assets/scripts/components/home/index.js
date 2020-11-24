@@ -60,6 +60,18 @@ const BackgroundWrapper = styled.figure`
   height: 100%;
   pointer-events: none;
 `;
+const PartnerLogos = styled.ul`
+  display: flex;
+  list-style: none;
+  margin-top: 2rem;
+  li {
+    margin-right: 2rem;
+  }
+  h4 {
+    flex: 100%;
+    text-transform: uppercase;
+  }
+`;
 
 function Home () {
   return (
@@ -100,6 +112,10 @@ function Home () {
               Learn More
             </Button>
             <p>Inspired by <a href='https://mapre.lbl.gov/'>MapRE</a></p>
+            <PartnerLogos>
+              <li><img src='https://via.placeholder.com/140x60.png?text=Logo' /></li>
+              <li><img src='https://via.placeholder.com/140x60.png?text=Logo' /></li>
+            </PartnerLogos>
           </InpageBodyInner>
         </InpageBody>
       </HomeInpage>
