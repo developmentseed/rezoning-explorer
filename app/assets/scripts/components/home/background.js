@@ -14,7 +14,6 @@ function fillStyles () {
         animation-fill-mode: forwards;
         opacity: 0;
         mix-blend-mode: screen;
-        box-shadow: 4px 4px 20px rgba(0,0,0,0.4);
       }
     `;
   }
@@ -32,7 +31,7 @@ function strokeStyles () {
         animation-duration: calc(${i} * 3s);
         animation-name: dash, fade;
         animation-timing-function: ease;
-        animation-direction: alternate;
+        animation-direction: forwards;
         fill: none;
         mix-blend-mode: screen;
         stroke-width: 4;
