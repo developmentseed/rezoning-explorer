@@ -16,11 +16,13 @@ import { fetchJSON } from './reducers/reduxeed';
 import { initialApiRequestState } from './contexeed';
 import { fetchZonesReducer, fetchZones } from './reducers/zones';
 import { fetchFilterRanges, filterRangesReducer } from './reducers/filters';
+import { fetchInputLayers, inputLayersReducer } from './reducers/layers';
 
 import {
   showGlobalLoading,
   hideGlobalLoading
 } from '../components/common/global-loading';
+
 import {
   INPUT_CONSTANTS,
   presets as defaultPresets,
@@ -43,10 +45,15 @@ const abbreviateUnit = unit => {
   }
 };
 export function ExploreProvider (props) {
+  const [mapLayers, setMapLayers] = useState([]);
   // Init filters state
   const [filtersLists, setFiltersLists] = useState(null);
   const [filterRanges, dispatchFilterRanges] = useReducer(
     filterRangesReducer,
+    initialApiRequestState
+  );
+  const [inputLayers, dispatchInputLayers] = useReducer(
+    inputLayersReducer,
     initialApiRequestState
   );
 
@@ -213,6 +220,7 @@ export function ExploreProvider (props) {
     }
 
     initAreasAndFilters();
+    fetchInputLayers(dispatchInputLayers);
   }, []);
 
   useEffect(() => {
@@ -303,6 +311,9 @@ export function ExploreProvider (props) {
       <ExploreContext.Provider
         value={{
           map,
+          inputLayers,
+          mapLayers,
+          setMapLayers,
           setMap,
           areas,
           filtersLists,

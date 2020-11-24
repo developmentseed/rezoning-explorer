@@ -15,10 +15,6 @@ import { Card } from '../common/card-list';
 
 import QueryForm from './query-form';
 import RasterTray from './raster-tray';
-import { mapLayers } from '../common/mb-map/mb-map';
-import theme from '../../styles/theme/theme';
-import { rgba } from 'polished';
-
 import { Subheading } from '../../styles/type/heading';
 
 import {
@@ -79,7 +75,8 @@ function ExpMapPrimePanel (props) {
     gridSize, setGridSize,
     filteredLayerUrl,
     filtersLists,
-    map
+    map,
+    mapLayers, setMapLayers
   } = useContext(ExploreContext);
 
   const [showRasterPanel, setShowRasterPanel] = useState(false);
@@ -128,26 +125,27 @@ function ExpMapPrimePanel (props) {
               <RasterTray
                 show={showRasterPanel}
                 className='raster-tray'
-                layers={
-                  mapLayers.map(l => ({
-                    id: l.id,
-                    name: l.name,
-                    min: l.min || 0,
-                    max: l.max || 1,
-                    type: l.type,
-                    stops: l.stops || [
-                      rgba(theme.main.color.primary, 0),
-                      rgba(theme.main.color.primary, 1)
-                    ]
-                  }))
-                }
+                layers={mapLayers}
                 onLayerKnobChange={(layer, knob) => {
                   map.setPaintProperty(layer.id,
                     layer.type === 'vector' ? 'fill-opacity' : 'raster-opacity',
                     knob.value / 100);
                 }}
                 onVisibilityToggle={(layer, visible) => {
-                  map.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none');
+                  if (visible) {
+                    const ml = mapLayers.map(l => {
+                      if (l.type === 'raster') {
+                        map.setLayoutProperty(l.id, 'visibility', l.id === layer.id ? 'visible' : 'none');
+                        l.visible = l.id === layer.id;
+                      }
+                      return l;
+                    });
+                    setMapLayers(ml);
+                  } else {
+                    map.setLayoutProperty(layer.id, 'visibility', 'none');
+                    mapLayers.find(l => l.id === layer.id).visible = false;
+                    setMapLayers(mapLayers);
+                  }
                 }}
               />
             </RasterTrayWrapper>
