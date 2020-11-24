@@ -27,7 +27,27 @@ const HomeInpage = styled(Inpage)`
   padding-top: 12rem;
   ${Button} {
     margin-top: 4rem;
+    margin-right: 1rem;
   }
+  ${InpageBodyInner} {
+    max-width: 40rem;
+  }
+`;
+
+const HomeTitle = styled(InpageTitle)`
+  font-size: 3.5rem;
+  line-height: 4rem;
+  
+  span {
+    font-size: 1.25rem;
+    text-transform: uppercase;
+    display: block;
+  }
+`;
+
+const Lead = styled(Prose)`
+  font-size: 1.25rem;
+  line-height: 2rem;
 `;
 
 function Home () {
@@ -37,20 +57,36 @@ function Home () {
         <InpageHeader>
           <InpageHeaderInner>
             <InpageHeadline>
-              <InpageTitle>Welcome to Rezoning</InpageTitle>
+              <HomeTitle size='xlarge'>
+                <span>Welcome to </span>
+                Rezoning
+              </HomeTitle>
             </InpageHeadline>
           </InpageHeaderInner>
         </InpageHeader>
         <InpageBody>
           <InpageBodyInner>
-            <Prose>Identify and explore high potential project areas for solar, wind and offshore wind development</Prose>
+            <Lead>
+              Identify and explore high potential project areas for solar, wind
+              and offshore wind development
+            </Lead>
             <Button
               as={StyledLink}
               to='/explore'
-              variation='base-raised-light'
+              variation='primary-raised-dark'
+              size='xlarge'
               title='Visit Explore Page'
             >
               Explore
+            </Button>
+            <Button
+              as={StyledLink}
+              to='/about'
+              variation='base-raised-light'
+              size='xlarge'
+              title='Visit About Page'
+            >
+              Learn More
             </Button>
           </InpageBodyInner>
         </InpageBody>
