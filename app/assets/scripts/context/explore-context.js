@@ -59,6 +59,7 @@ export function ExploreProvider (props) {
       return v && `${v.min},${v.max}`;
     }
   });
+  /*
   const [maxLCOE, setMaxLCOE] = useQsState({
     key: 'maxLCOE',
     default: undefined,
@@ -71,7 +72,7 @@ export function ExploreProvider (props) {
       }
     },
     dehydrator: v => v && `${v.min},${v.max}`
-  });
+  }); */
 
   // Init filters state
   const [filtersLists, setFiltersLists] = useState(null);
@@ -361,9 +362,9 @@ export function ExploreProvider (props) {
           tourStep,
           setTourStep,
           maxZoneScore,
-          setMaxZoneScore,
-          maxLCOE,
-          setMaxLCOE
+          setMaxZoneScore
+          /* maxLCOE,
+          setMaxLCOE */
         }}
       >
         {props.children}

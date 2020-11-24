@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useRef, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal, makeTitleCase } from '../../styles/utils/general';
@@ -48,6 +48,7 @@ const maxZoneScoreO = {
     range: [0, 1]
   }
 };
+/*
 const maxLCOEO = {
   name: 'LCOE Range',
   id: 'lcoe-range',
@@ -58,7 +59,7 @@ const maxLCOEO = {
     type: SLIDER,
     range: [0, 1]
   }
-};
+};*/
 
 const castByFilterType = type => {
   switch (type) {
@@ -234,10 +235,11 @@ function QueryForm (props) {
     gridMode,
     setGridMode,
     gridSize, setGridSize,
-    maxZoneScore, setMaxZoneScore,
-    maxLCOE, setMaxLCOE
-
+    maxZoneScore, setMaxZoneScore
+    // maxLCOE, setMaxLCOE
   } = props;
+
+  const firstLoad = useRef(true);
 
   const initListToState = (list) => {
     return list.map((obj) => ({
@@ -480,8 +482,13 @@ function QueryForm (props) {
   }, [resource]);
 
   /* Reinitialize filters when new ranges are received */
+
   useEffect(() => {
-    setFilters(initListToState(filtersLists));
+    if (firstLoad.current) {
+      firstLoad.current = false;
+    } else {
+      setFilters(initListToState(filtersLists));
+    }
   }, [filterRanges]);
 
   return (
@@ -608,7 +615,7 @@ function QueryForm (props) {
                         })}
                       </PanelOption>
 
-                      <PanelOption hidden={!isFoldExpanded}>
+                      {/* <PanelOption hidden={!isFoldExpanded}>
                         <OptionHeadline>
                           <PanelOptionTitle>{maxLCOEO.name}</PanelOptionTitle>
                           {maxLCOEO.info && (
@@ -626,7 +633,7 @@ function QueryForm (props) {
                         }, ({ min, max }) => {
                           setMaxLCOE({ min: round(min), max: round(max) });
                         })}
-                      </PanelOption>
+                      </PanelOption> */}
                     </>
                   )}
                 />
@@ -820,8 +827,8 @@ QueryForm.propTypes = {
   setGridSize: T.func,
   maxZoneScore: T.object,
   setMaxZoneScore: T.func,
-  maxLCOE: T.object,
-  setMaxLCOE: T.func
+  /*maxLCOE: T.object,
+  setMaxLCOE: T.func*/
 };
 
 export default QueryForm;

@@ -80,8 +80,8 @@ function ExpMapPrimePanel (props) {
     filteredLayerUrl,
     filtersLists,
     map,
-    maxZoneScore, setMaxZoneScore,
-    maxLCOE, setMaxLCOE
+    maxZoneScore, setMaxZoneScore
+    // maxLCOE, setMaxLCOE
   } = useContext(ExploreContext);
 
   const [showRasterPanel, setShowRasterPanel] = useState(false);
@@ -172,8 +172,8 @@ function ExpMapPrimePanel (props) {
               setGridSize={setGridSize}
               maxZoneScore={maxZoneScore}
               setMaxZoneScore={setMaxZoneScore}
-              maxLCOE={maxLCOE}
-              setMaxLCOE={setMaxLCOE}
+              // maxLCOE={maxLCOE}
+              // setMaxLCOE={setMaxLCOE}
               onAreaEdit={() => setShowSelectAreaModal(true)}
               onResourceEdit={() => setShowSelectResourceModal(true)}
               onInputTouched={() => {

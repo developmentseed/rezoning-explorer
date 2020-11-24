@@ -14,14 +14,14 @@ const PanelInner = styled.div`
 
 function ZoneAnalysisPanel (props) {
   const { currentZones, inputTouched } = props;
-  const { maxZoneScore, maxLCOE } = useContext(ExploreContext);
+  const { maxZoneScore/*, maxLCOE */ } = useContext(ExploreContext);
 
   const filteredZones = currentZones && currentZones.filter(z => {
     /* eslint-disable camelcase */
-    const { zone_score, lcoe } = z.properties.summary;
+    const { zone_score/*, lcoe */ } = z.properties.summary;
     const zs = zone_score >= maxZoneScore.min && zone_score <= maxZoneScore.max;
-    const zl = lcoe >= maxLCOE.min && lcoe <= maxLCOE.max;
-    return zs && zl;
+    // const zl = lcoe >= maxLCOE.min && lcoe <= maxLCOE.max;
+    return zs;// && zl;
   });
 
   return (
