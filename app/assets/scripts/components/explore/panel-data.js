@@ -33,12 +33,12 @@ export const resourceList = [
 ];
 
 const SLIDER = 'slider';
-const BOOL = 'bool';
+const BOOL = 'boolean';
 const MULTI = 'multi-select';
 const TEXT = 'text';
 const DROPDOWN = 'dropdown';
 const GRID_OPTIONS = [9, 25, 50];
-const DEFAULT_RANGE = [0, 100];
+const DEFAULT_RANGE = [0, 1000000];
 const DEFAULT_UNIT = '%';
 
 export const INPUT_CONSTANTS = {
@@ -147,7 +147,6 @@ export const lcoeList = [
   {
     name: 'Lifetime [years]',
     id: 'n',
-    range: [1, 100],
     input: {
       type: TEXT,
       range: [1, 100]
@@ -194,7 +193,6 @@ export const weightsList = [
   {
     name: 'LCOE Generation',
     id: 'lcoe_gen',
-    range: [0, 1],
     default: 1,
     input: {
       type: SLIDER,
@@ -205,7 +203,6 @@ export const weightsList = [
   {
     name: 'LCOE Transmission',
     id: 'lcoe_transmission',
-    range: [0, 1],
     default: 1,
     input: {
       type: SLIDER,
@@ -217,7 +214,6 @@ export const weightsList = [
   {
     name: 'LCOE Road',
     id: 'lcoe_road',
-    range: [0, 1],
     default: 1,
     input: {
       type: SLIDER,
@@ -228,7 +224,6 @@ export const weightsList = [
   {
     name: 'Distance to Load Centers',
     id: 'distance_load',
-    range: [0, 1],
     default: 1,
     input: {
       type: SLIDER,
@@ -239,7 +234,6 @@ export const weightsList = [
   {
     name: 'Population Density',
     id: 'pop_density',
-    range: [0, 1],
     default: 1,
     input: {
       type: SLIDER,
@@ -250,7 +244,6 @@ export const weightsList = [
   {
     name: 'Slope',
     id: 'slope',
-    range: [0, 1],
     default: 1,
     input: {
       type: SLIDER,
@@ -284,7 +277,7 @@ export const presets = {
       ...weight,
       input: {
         ...weight.input,
-        value: weight.range ? randomRange(weight.range[0], weight.range[1]) : randomRange(0, 100)
+        value: weight.input.range ? randomRange(...weight.input.range) : randomRange(0, 1)
       }
     }))
   },

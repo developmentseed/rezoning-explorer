@@ -29,6 +29,7 @@ import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
 import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
 import FormLabel from '../../styles/form/label';
+
 const turbineTypeMap = {
   'Off-Shore Wind': [1, 3],
   Wind: [1, 3],
@@ -172,21 +173,27 @@ const SubmissionSection = styled(PanelBlockFooter)`
   gap: 0rem 1rem;
 `;
 
-const initByType = obj => {
-  switch (obj.type) {
+const initByType = (obj, ranges) => {
+  const apiRange = ranges[obj.id];
+  const { input } = obj;
+
+  const range = (apiRange && [apiRange.min, apiRange.max]) || obj.input.range || DEFAULT_RANGE;
+
+  switch (input.type) {
     case SLIDER:
       return {
-        ...obj,
-        range: obj.range || DEFAULT_RANGE,
-        unit: obj.unit || DEFAULT_UNIT,
-        value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
+        ...input,
+        range,
+        unit: input.unit || DEFAULT_UNIT,
+        value: input.value || input.default ||
+        obj.isRange ? { min: range[0], max: range[1] } : range[0]
       };
     case TEXT:
       return {
-        ...obj,
-        range: obj.range || DEFAULT_RANGE,
-        unit: obj.unit || DEFAULT_UNIT,
-        value: obj.value || obj.default || (obj.range || DEFAULT_RANGE)[0]
+        ...input,
+        range: input.range || DEFAULT_RANGE,
+        unit: input.unit || DEFAULT_UNIT,
+        value: input.value || input.default || (input.range || DEFAULT_RANGE)[0]
       };
     case BOOL:
       return {
@@ -198,34 +205,12 @@ const initByType = obj => {
     case DROPDOWN:
       return {
         ...obj,
-        value: obj.value || obj.options[0],
-        range: [null, null],
+        value: obj.value || (obj.options && obj.options[0]) || '',
         unit: null
       };
     default:
       return {};
   }
-};
-
-const initListToState = (list) => {
-  return list.map((obj) => ({
-    ...obj,
-    input: initByType(obj.input),
-
-    // range: obj.range || DEFAULT_RANGE,
-    // unit: obj.unit || DEFAULT_UNIT,
-    active: obj.active === undefined ? true : obj.active
-    // value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
-  })).filter(obj => !obj.excluded);
-};
-
-const initObjectToState = (obj) => {
-  return Object.keys(obj).reduce((accum, key) => {
-    return {
-      ...accum,
-      [key]: initListToState(obj[key])
-    };
-  }, {});
 };
 
 const updateStateList = (list, i, updatedValue) => {
@@ -235,7 +220,7 @@ const updateStateList = (list, i, updatedValue) => {
 };
 
 function QueryForm (props) {
-  const { updateFilteredLayer, filtersLists, presets } = useContext(ExploreContext);
+  const { updateFilteredLayer, filtersLists, filterRanges, presets } = useContext(ExploreContext);
 
   const {
     area,
@@ -256,6 +241,27 @@ function QueryForm (props) {
 
   maxZoneScoreO.input.value = maxZoneScore;
   maxLCOEO.input.value = maxLCOE;
+
+  const initListToState = (list) => {
+    return list.map((obj) => ({
+      ...obj,
+      input: initByType(obj, filterRanges.getData()),
+
+      // range: obj.range || DEFAULT_RANGE,
+      // unit: obj.unit || DEFAULT_UNIT,
+      active: obj.active === undefined ? true : obj.active
+    // value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
+    }));
+  };
+
+  const initObjectToState = (obj) => {
+    return Object.keys(obj).reduce((accum, key) => {
+      return {
+        ...accum,
+        [key]: initListToState(obj[key])
+      };
+    }, {});
+  };
 
   const [weights, setWeights] = useQsState({
     key: 'weights',
@@ -381,14 +387,22 @@ function QueryForm (props) {
 
   const inputOfType = (option, onChange) => {
     const { range } = option.input;
-    const errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${range[0]} - ${range[1]}`;
+    let errorMessage;
+    if (range) {
+      errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${range[0]} - ${range[1]}`;
+    } else {
+      errorMessage = 'Value not accepted';
+    }
+
+    // Get filter range, if available
+    const filterRange = filterRanges.getData()[option.id];
 
     switch (option.input.type) {
       case SLIDER:
         return (
           <SliderGroup
             unit={option.input.unit || '%'}
-            range={option.input.range || [0, 100]}
+            range={filterRange ? [filterRange.min, filterRange.max] : option.input.range}
             id={option.name}
             value={option.input.value}
             isRange={option.isRange}
@@ -418,7 +432,6 @@ function QueryForm (props) {
       case DROPDOWN:
         return (
           <FormGroup>
-
             <FormLabel htmlFor={option.name}>{option.name}</FormLabel>
             <FormSelect
               id={option.name}
@@ -441,7 +454,7 @@ function QueryForm (props) {
           </FormGroup>
         );
       default:
-        return {};
+        return null;
     }
   };
 
@@ -478,6 +491,11 @@ function QueryForm (props) {
       turbineType.input.value = turbineType.input.range[0];
     }
   }, [resource]);
+
+  /* Reinitialize filters when new ranges are received */
+  useEffect(() => {
+    setFilters(initObjectToState(filtersLists));
+  }, [filterRanges]);
 
   return (
     <PanelBlock>
