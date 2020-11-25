@@ -16,6 +16,7 @@ import { rgba } from 'polished';
 import { visuallyHidden } from '../../styles/helpers';
 import collecticon from '../../styles/collecticons';
 import { multiply } from '../../styles/utils/math';
+import media from '../../styles/utils/media-queries';
 
 import LogoReverse from '../../../icons/collecticons/logo-reverse';
 
@@ -30,56 +31,83 @@ const PageHead = styled.header`
   z-index: 20;
   top: 0;
   left: 0;
-  bottom: 0;
-  height: 100vh;
+  right: 0;
+  height: 4rem;
+  ${media.mediumUp`
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+  `}
 `;
 
 const PageHeadInner = styled.div`
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: row nowrap;
   align-items: center;
-  padding: ${themeVal('layout.space')} 0
-    ${multiply(themeVal('layout.space'), 1.5)} 0;
   margin: 0 auto;
   height: 100%;
+  ${media.mediumUp`
+    flex-flow: column nowrap;
+    padding: ${themeVal('layout.space')} 0
+    ${multiply(themeVal('layout.space'), 1.5)} 0;
+  `}
 `;
 
 const PageNav = styled.nav`
-  flex-flow: column nowrap;
-  flex: 1;
   display: flex;
+  flex-flow: row nowrap;
+  flex: 1;
+  ${media.mediumUp`
+    flex-flow: column nowrap;
+  `}
 `;
 
 const GlobalMenu = styled.ul`
   display: flex;
   flex: 1;
-  flex-flow: column nowrap;
+  flex-flow: row nowrap;
   justify-content: center;
+  align-items: center;
   margin: 0;
   list-style: none;
+  ${media.mediumUp`
+    flex-flow: column nowrap;
+  `}
 
   > * {
     margin: 0;
   }
-  > *:last-child {
-    margin-top: auto;
+  > *:first-child {
+    margin-right: auto;
   }
   > *:last-child > * {
     width: 4rem;
     height: 3rem;
     text-align: center;
   }
+  ${media.mediumUp`
+    > *:first-child {
+      margin: 0;
+    }
+    > *:last-child {
+      margin-top: auto;
+    }
+  `}
 `;
 
 const HomeLink = styled.a`
   position: relative;
   display: block;
   width: 4rem;
+  height: 3rem;
   text-align: center;
   transition: all 0.24s ease 0s;
-  margin-bottom: ${multiply(themeVal('layout.space'), 6)};
   font-weight: ${themeVal('type.heading.bold')};
   font-size: 1.5rem;
+  ${media.mediumUp`
+    margin-bottom: ${multiply(themeVal('layout.space'), 6)};
+  `}
 
   &,
   &:visited {
@@ -100,12 +128,14 @@ const HomeLink = styled.a`
 const GlobalMenuLink = styled.a`
   position: relative;
   display: block;
-  width: 4rem;
+  width: 3rem;
   height: 3rem;
   line-height: 3rem;
   text-align: center;
   transition: all 0.24s ease 0s;
-
+  ${media.mediumUp`
+    width: 4rem;
+  `}
   &::before {
     ${({ useIcon }) => collecticon(useIcon)}
     font-size: 1.25rem
