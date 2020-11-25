@@ -45,11 +45,10 @@ export const outputLayers = [
     name: 'Zone Boundaries',
     type: 'vector',
     stops: [
-      rgba(theme.main.color.tertiary, 0),
-      rgba(theme.main.color.tertiary, 1)
+      rgba(theme.main.color.base, 0),
+      rgba(theme.main.color.base, 1)
     ],
     visible: true
-
   }
 ];
 
