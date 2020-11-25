@@ -23,7 +23,7 @@ const LCOE_LAYER_SOURCE_ID = 'LCOE_LAYER_SOURCE_ID';
 const LCOE_LAYER_LAYER_ID = 'LCOE_LAYER_LAYERE_ID';
 
 const ZONES_BOUNDARIES_SOURCE_ID = 'ZONES_BOUNDARIES_SOURCE_ID';
-const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
+export const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
 const EEZ_BOUNDARIES_SOURCE_ID = 'EEZ_BOUNDARIES_SOURCE_ID';
 const EEZ_BOUNDARIES_LAYER_ID = 'EEZ_BOUNDARIES_LAYER_ID';
 
@@ -247,7 +247,8 @@ function MbMap (props) {
     map, setMap,
     inputLayers,
     setMapLayers,
-    lcoeLayerUrl
+    lcoeLayerUrl,
+    maxZoneScore
   } = useContext(ExploreContext);
 
   const { hoveredFeature, setHoveredFeature } = useContext(MapContext);
@@ -348,7 +349,13 @@ function MbMap (props) {
     // Update GeoJSON source, applying hover effect if any
     map.getSource(ZONES_BOUNDARIES_SOURCE_ID).setData({
       type: 'FeatureCollection',
-      features: currentZones.getData()
+      features: currentZones.getData().map(z => ({
+        ...z,
+        properties: {
+          ...z.properties,
+          ...z.properties.summary
+        }
+      }))
     });
   }, [currentZones]);
 
@@ -363,6 +370,29 @@ function MbMap (props) {
       // setHoveredFeature(null);
     };
   }, [hoveredFeature]);
+
+  useEffect(() => {
+    if (!map) return;
+
+    // Get current fill-opacity
+    const currentPaintProperty = map.getPaintProperty(
+      ZONES_BOUNDARIES_LAYER_ID,
+      'fill-opacity'
+    );
+    const currentFillOpacity = currentPaintProperty[2];
+
+    // Update paint property with new condition
+    map.setPaintProperty(ZONES_BOUNDARIES_LAYER_ID, 'fill-opacity', [
+      'case',
+      [
+        'all',
+        ['>=', ['get', 'zone_score'], maxZoneScore.min],
+        ['<=', ['get', 'zone_score'], maxZoneScore.max]
+      ],
+      currentFillOpacity,
+      0
+    ]);
+  }, [maxZoneScore, currentZones]);
 
   return (
     <MapsContainer>

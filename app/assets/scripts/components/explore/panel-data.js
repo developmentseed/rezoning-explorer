@@ -105,35 +105,41 @@ export const lcoeList = [
     name: 'Transmission - fixed O&M [USD/km]',
     id: 'omft',
     input: {
-      type: TEXT
+      type: TEXT,
+      default: 1
+
     }
   },
   {
     name: 'Substation - capital [USD / two substations (per new transmission connection) ]',
     id: 'cs',
     input: {
-      type: TEXT
+      type: TEXT,
+      default: 1
     }
   },
   {
     name: 'Road - capital [USD/km]',
     id: 'cr',
     input: {
-      type: TEXT
+      type: TEXT,
+      default: 1
     }
   },
   {
     name: 'Road - fixed O&M [USD/km]',
     id: 'omfr',
     input: {
-      type: TEXT
+      type: TEXT,
+      default: 1
     }
   },
   {
     name: 'Decommission % rate',
     id: 'decom',
     input: {
-      type: TEXT
+      type: TEXT,
+      default: 1
     }
   },
   {
@@ -141,6 +147,7 @@ export const lcoeList = [
     id: 'i',
     input: {
       type: TEXT,
+      default: 1,
       range: [0.1, 100]
     }
   },
@@ -149,6 +156,7 @@ export const lcoeList = [
     id: 'n',
     input: {
       type: TEXT,
+      default: 1,
       range: [1, 100]
     }
   },
@@ -156,6 +164,7 @@ export const lcoeList = [
     name: 'Land Use Factor',
     id: 'landuse',
     input: {
+      default: 1,
       range: [0, Infinity],
       type: TEXT
     }
@@ -175,6 +184,7 @@ export const lcoeList = [
     // TODO add correct id
     id: 'tlf',
     input: {
+      default: 1,
       range: [0, 1],
       type: TEXT
     }
@@ -184,6 +194,7 @@ export const lcoeList = [
     // TODO add correct id
     id: 'uf',
     input: {
+      default: 1,
       range: [0, 1],
       type: TEXT
     }
@@ -265,8 +276,8 @@ const LCOE_PRESETS = {
     omft: 0,
     cs: 70000,
     cr: 400000,
-    omfr: 0,
-    decom: 0,
+    omfr: 1,
+    decom: 1,
     i: 0.2,
     n: 25
   }
@@ -287,7 +298,7 @@ export const presets = {
       ...lcoe,
       input: {
         ...lcoe.input,
-        value: LCOE_PRESETS.default[lcoe.id]
+        value: LCOE_PRESETS.default[lcoe.id] || lcoe.input.default
       }
     }))
   }

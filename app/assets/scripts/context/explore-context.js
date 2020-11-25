@@ -46,6 +46,37 @@ const abbreviateUnit = unit => {
 };
 export function ExploreProvider (props) {
   const [mapLayers, setMapLayers] = useState([]);
+  const [maxZoneScore, setMaxZoneScore] = useQsState({
+    key: 'maxZoneScore',
+    default: undefined,
+    hydrator: v => {
+      if (v) {
+        const [min, max] = v.split(',').map(Number);
+        return { min, max };
+      } else {
+        return { min: 0, max: 1 };
+      }
+    },
+
+    dehydrator: v => {
+      return v && `${v.min},${v.max}`;
+    }
+  });
+  /*
+  const [maxLCOE, setMaxLCOE] = useQsState({
+    key: 'maxLCOE',
+    default: undefined,
+    hydrator: v => {
+      if (v) {
+        const [min, max] = v.split(',').map(Number);
+        return { min, max };
+      } else {
+        return { min: 0, max: 1 };
+      }
+    },
+    dehydrator: v => v && `${v.min},${v.max}`
+  }); */
+
   // Init filters state
   const [filtersLists, setFiltersLists] = useState(null);
   const [filterRanges, dispatchFilterRanges] = useReducer(
@@ -284,8 +315,9 @@ export function ExploreProvider (props) {
       .join('&');
 
     // Apply filter querystring to the map
+    const basePath = selectedArea.type === 'country' ? `/filter/${selectedArea.id}` : '/filter';
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
+      `${config.apiEndpoint}${basePath}/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
     );
 
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
@@ -347,7 +379,11 @@ export function ExploreProvider (props) {
           updateFilteredLayer,
           lcoeLayerUrl,
           tourStep,
-          setTourStep
+          setTourStep,
+          maxZoneScore,
+          setMaxZoneScore
+          /* maxLCOE,
+          setMaxLCOE */
         }}
       >
         {props.children}

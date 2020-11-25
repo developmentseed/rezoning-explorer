@@ -15,6 +15,7 @@ import { Card } from '../common/card-list';
 
 import QueryForm from './query-form';
 import RasterTray from './raster-tray';
+import { ZONES_BOUNDARIES_LAYER_ID } from '../common/mb-map/mb-map';
 import { Subheading } from '../../styles/type/heading';
 
 import {
@@ -76,7 +77,9 @@ function ExpMapPrimePanel (props) {
     filteredLayerUrl,
     filtersLists,
     map,
-    mapLayers, setMapLayers
+    mapLayers, setMapLayers,
+    maxZoneScore, setMaxZoneScore
+    // maxLCOE, setMaxLCOE
   } = useContext(ExploreContext);
 
   const [showRasterPanel, setShowRasterPanel] = useState(false);
@@ -127,9 +130,26 @@ function ExpMapPrimePanel (props) {
                 className='raster-tray'
                 layers={mapLayers}
                 onLayerKnobChange={(layer, knob) => {
-                  map.setPaintProperty(layer.id,
-                    layer.type === 'vector' ? 'fill-opacity' : 'raster-opacity',
-                    knob.value / 100);
+                  // Check if changes are applied to zones layer, which
+                  // have conditional paint properties due to filters
+                  if (layer.id === ZONES_BOUNDARIES_LAYER_ID) {
+                    const paintProperty = map.getPaintProperty(
+                      layer.id,
+                      'fill-opacity'
+                    );
+                    paintProperty[2] = knob.value / 100;
+                    map.setPaintProperty(
+                      layer.id,
+                      'fill-opacity',
+                      paintProperty
+                    );
+                  } else {
+                    map.setPaintProperty(
+                      layer.id,
+                      layer.type === 'vector' ? 'fill-opacity' : 'raster-opacity',
+                      knob.value / 100
+                    );
+                  }
                 }}
                 onVisibilityToggle={(layer, visible) => {
                   if (visible) {
@@ -184,6 +204,10 @@ function ExpMapPrimePanel (props) {
               setGridMode={setGridMode}
               gridSize={gridSize}
               setGridSize={setGridSize}
+              maxZoneScore={maxZoneScore}
+              setMaxZoneScore={setMaxZoneScore}
+              // maxLCOE={maxLCOE}
+              // setMaxLCOE={setMaxLCOE}
               onAreaEdit={() => setShowSelectAreaModal(true)}
               onResourceEdit={() => setShowSelectResourceModal(true)}
               onInputTouched={() => {

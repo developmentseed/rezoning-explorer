@@ -10,8 +10,9 @@ describe('Explore view', () => {
     cy.visit('/explore?areaId=BFA&resourceId=Wind');
     // URL is updated
     cy.url().should(
-      'eq',
-      'http://localhost:9000/explore?areaId=BFA&resourceId=Wind'
+      'contain',
+      'areaId=BFA',
+      'resourceId=Wind'
     );
 
     cy.get('#tour-next-btn').should('exist');
