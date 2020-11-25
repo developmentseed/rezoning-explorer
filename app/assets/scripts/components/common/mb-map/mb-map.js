@@ -281,13 +281,25 @@ function MbMap (props) {
 
   useEffect(() => {
     if (!map) return;
-    map.setPaintProperty(ZONES_BOUNDARIES_LAYER_ID,
-      'fill-opacity',
-      ['case',
-        ['all', ['>=', ['get', 'zone_score'], maxZoneScore.min], ['<=', ['get', 'zone_score'], maxZoneScore.max]], 0.5,
-        0
-      ]
+
+    // Get current fill-opacity
+    const currentPaintProperty = map.getPaintProperty(
+      ZONES_BOUNDARIES_LAYER_ID,
+      'fill-opacity'
     );
+    const currentFillOpacity = currentPaintProperty[2];
+
+    // Update paint property with new condition
+    map.setPaintProperty(ZONES_BOUNDARIES_LAYER_ID, 'fill-opacity', [
+      'case',
+      [
+        'all',
+        ['>=', ['get', 'zone_score'], maxZoneScore.min],
+        ['<=', ['get', 'zone_score'], maxZoneScore.max]
+      ],
+      currentFillOpacity,
+      0
+    ]);
   }, [maxZoneScore, currentZones]);
 
   return (
