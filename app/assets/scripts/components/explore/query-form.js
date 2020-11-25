@@ -669,7 +669,7 @@ function QueryForm (props) {
                             checkIncluded(filter, resource) &&
                         <PanelOption key={filter.name} hidden={!isFoldExpanded}>
                           <OptionHeadline>
-                            <PanelOptionTitle>{`${filter.name}`.concat(filter.unit ? ` - (${filter.unit})` : '')}</PanelOptionTitle>
+                            <PanelOptionTitle>{`${filter.name}`.concat(filter.unit ? ` (${filter.unit})` : '')}</PanelOptionTitle>
                             {filter.info && (
                               <InfoButton info={filter.info} id={filter.name}>
                                 Info
