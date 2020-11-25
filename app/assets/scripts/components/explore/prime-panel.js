@@ -15,10 +15,7 @@ import { Card } from '../common/card-list';
 
 import QueryForm from './query-form';
 import RasterTray from './raster-tray';
-import { mapLayers, ZONES_BOUNDARIES_LAYER_ID } from '../common/mb-map/mb-map';
-import theme from '../../styles/theme/theme';
-import { rgba } from 'polished';
-
+import { ZONES_BOUNDARIES_LAYER_ID } from '../common/mb-map/mb-map';
 import { Subheading } from '../../styles/type/heading';
 
 import {
@@ -80,6 +77,7 @@ function ExpMapPrimePanel (props) {
     filteredLayerUrl,
     filtersLists,
     map,
+    mapLayers, setMapLayers,
     maxZoneScore, setMaxZoneScore
     // maxLCOE, setMaxLCOE
   } = useContext(ExploreContext);
@@ -130,19 +128,7 @@ function ExpMapPrimePanel (props) {
               <RasterTray
                 show={showRasterPanel}
                 className='raster-tray'
-                layers={
-                  mapLayers.map(l => ({
-                    id: l.id,
-                    name: l.name,
-                    min: l.min || 0,
-                    max: l.max || 1,
-                    type: l.type,
-                    stops: l.stops || [
-                      rgba(theme.main.color.primary, 0),
-                      rgba(theme.main.color.primary, 1)
-                    ]
-                  }))
-                }
+                layers={mapLayers}
                 onLayerKnobChange={(layer, knob) => {
                   // Check if changes are applied to zones layer, which
                   // have conditional paint properties due to filters
@@ -166,7 +152,38 @@ function ExpMapPrimePanel (props) {
                   }
                 }}
                 onVisibilityToggle={(layer, visible) => {
-                  map.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none');
+                  if (visible) {
+                    if (layer.type === 'raster') {
+                      const ml = mapLayers.map(l => {
+                        if (l.type === 'raster') {
+                          map.setLayoutProperty(l.id, 'visibility', l.id === layer.id ? 'visible' : 'none');
+                          l.visible = l.id === layer.id;
+                        }
+                        return l;
+                      });
+                      setMapLayers(ml);
+                    } else {
+                      map.setLayoutProperty(layer.id, 'visibility', 'visible');
+                      const ind = mapLayers.findIndex(l => l.id === layer.id);
+                      setMapLayers([...mapLayers.slice(0, ind),
+                        {
+                          ...layer,
+                          visible: true
+                        },
+                        ...mapLayers.slice(ind + 1)
+                      ]);
+                    }
+                  } else {
+                    map.setLayoutProperty(layer.id, 'visibility', 'none');
+                    const ind = mapLayers.findIndex(l => l.id === layer.id);
+                    setMapLayers([...mapLayers.slice(0, ind),
+                      {
+                        ...layer,
+                        visible: false
+                      },
+                      ...mapLayers.slice(ind + 1)
+                    ]);
+                  }
                 }}
               />
             </RasterTrayWrapper>

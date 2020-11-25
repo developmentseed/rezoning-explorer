@@ -61,6 +61,7 @@ const PageNav = styled.nav`
   ${media.mediumUp`
     flex-flow: column nowrap;
   `}
+
 `;
 
 const GlobalMenu = styled.ul`
@@ -71,9 +72,6 @@ const GlobalMenu = styled.ul`
   align-items: center;
   margin: 0;
   list-style: none;
-  ${media.mediumUp`
-    flex-flow: column nowrap;
-  `}
 
   > * {
     margin: 0;
@@ -86,6 +84,12 @@ const GlobalMenu = styled.ul`
     height: 3rem;
     text-align: center;
   }
+
+  ${media.mediumUp`
+    flex-flow: column nowrap;
+  `}
+
+
   ${media.mediumUp`
     > *:first-child {
       margin: 0;

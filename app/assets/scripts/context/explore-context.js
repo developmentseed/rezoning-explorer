@@ -16,11 +16,13 @@ import { fetchJSON } from './reducers/reduxeed';
 import { initialApiRequestState } from './contexeed';
 import { fetchZonesReducer, fetchZones } from './reducers/zones';
 import { fetchFilterRanges, filterRangesReducer } from './reducers/filters';
+import { fetchInputLayers, inputLayersReducer } from './reducers/layers';
 
 import {
   showGlobalLoading,
   hideGlobalLoading
 } from '../components/common/global-loading';
+
 import {
   INPUT_CONSTANTS,
   presets as defaultPresets,
@@ -43,6 +45,7 @@ const abbreviateUnit = unit => {
   }
 };
 export function ExploreProvider (props) {
+  const [mapLayers, setMapLayers] = useState([]);
   const [maxZoneScore, setMaxZoneScore] = useQsState({
     key: 'maxZoneScore',
     default: undefined,
@@ -78,6 +81,10 @@ export function ExploreProvider (props) {
   const [filtersLists, setFiltersLists] = useState(null);
   const [filterRanges, dispatchFilterRanges] = useReducer(
     filterRangesReducer,
+    initialApiRequestState
+  );
+  const [inputLayers, dispatchInputLayers] = useReducer(
+    inputLayersReducer,
     initialApiRequestState
   );
 
@@ -244,6 +251,7 @@ export function ExploreProvider (props) {
     }
 
     initAreasAndFilters();
+    fetchInputLayers(dispatchInputLayers);
   }, []);
 
   useEffect(() => {
@@ -279,6 +287,7 @@ export function ExploreProvider (props) {
   }, [currentZones]);
 
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
+  const [lcoeLayerUrl, setLcoeLayerUrl] = useState(null);
 
   function updateFilteredLayer (filterValues, weights, lcoe) {
     // Prepare a query string to the API based from filter values
@@ -311,7 +320,12 @@ export function ExploreProvider (props) {
       `${config.apiEndpoint}${basePath}/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
     );
 
-    // Fetch zones
+    const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
+
+    setLcoeLayerUrl(
+      `${config.apiEndpoint}/lcoe/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=cool`
+    );
+
     generateZones(filterString, weights, lcoe);
   }
 
@@ -335,6 +349,9 @@ export function ExploreProvider (props) {
       <ExploreContext.Provider
         value={{
           map,
+          inputLayers,
+          mapLayers,
+          setMapLayers,
           setMap,
           areas,
           filtersLists,
@@ -360,6 +377,7 @@ export function ExploreProvider (props) {
           setZonesGenerated,
           filteredLayerUrl,
           updateFilteredLayer,
+          lcoeLayerUrl,
           tourStep,
           setTourStep,
           maxZoneScore,
