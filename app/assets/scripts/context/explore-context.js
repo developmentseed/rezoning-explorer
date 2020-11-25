@@ -16,11 +16,13 @@ import { fetchJSON } from './reducers/reduxeed';
 import { initialApiRequestState } from './contexeed';
 import { fetchZonesReducer, fetchZones } from './reducers/zones';
 import { fetchFilterRanges, filterRangesReducer } from './reducers/filters';
+import { fetchInputLayers, inputLayersReducer } from './reducers/layers';
 
 import {
   showGlobalLoading,
   hideGlobalLoading
 } from '../components/common/global-loading';
+
 import {
   INPUT_CONSTANTS,
   presets as defaultPresets,
@@ -43,10 +45,46 @@ const abbreviateUnit = unit => {
   }
 };
 export function ExploreProvider (props) {
+  const [mapLayers, setMapLayers] = useState([]);
+  const [maxZoneScore, setMaxZoneScore] = useQsState({
+    key: 'maxZoneScore',
+    default: undefined,
+    hydrator: v => {
+      if (v) {
+        const [min, max] = v.split(',').map(Number);
+        return { min, max };
+      } else {
+        return { min: 0, max: 1 };
+      }
+    },
+
+    dehydrator: v => {
+      return v && `${v.min},${v.max}`;
+    }
+  });
+  /*
+  const [maxLCOE, setMaxLCOE] = useQsState({
+    key: 'maxLCOE',
+    default: undefined,
+    hydrator: v => {
+      if (v) {
+        const [min, max] = v.split(',').map(Number);
+        return { min, max };
+      } else {
+        return { min: 0, max: 1 };
+      }
+    },
+    dehydrator: v => v && `${v.min},${v.max}`
+  }); */
+
   // Init filters state
   const [filtersLists, setFiltersLists] = useState(null);
   const [filterRanges, dispatchFilterRanges] = useReducer(
     filterRangesReducer,
+    initialApiRequestState
+  );
+  const [inputLayers, dispatchInputLayers] = useReducer(
+    inputLayersReducer,
     initialApiRequestState
   );
 
@@ -137,7 +175,7 @@ export function ExploreProvider (props) {
 
     // Apply a mock "Optimization" scenario to filter presets, just random numbers
     presets.filters = {
-      Optimizaiton: apiFilters.map(filter => ({
+      Optimization: apiFilters.map(filter => ({
         ...filter,
         active: Math.random() > 0.5,
         input: {
@@ -213,6 +251,7 @@ export function ExploreProvider (props) {
     }
 
     initAreasAndFilters();
+    fetchInputLayers(dispatchInputLayers);
   }, []);
 
   useEffect(() => {
@@ -248,6 +287,7 @@ export function ExploreProvider (props) {
   }, [currentZones]);
 
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
+  const [lcoeLayerUrl, setLcoeLayerUrl] = useState(null);
 
   function updateFilteredLayer (filterValues, weights, lcoe) {
     // Prepare a query string to the API based from filter values
@@ -275,11 +315,17 @@ export function ExploreProvider (props) {
       .join('&');
 
     // Apply filter querystring to the map
+    const basePath = selectedArea.type === 'country' ? `/filter/${selectedArea.id}` : '/filter';
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
+      `${config.apiEndpoint}${basePath}/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
     );
 
-    // Fetch zones
+    const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
+
+    setLcoeLayerUrl(
+      `${config.apiEndpoint}/lcoe/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=cool`
+    );
+
     generateZones(filterString, weights, lcoe);
   }
 
@@ -303,6 +349,9 @@ export function ExploreProvider (props) {
       <ExploreContext.Provider
         value={{
           map,
+          inputLayers,
+          mapLayers,
+          setMapLayers,
           setMap,
           areas,
           filtersLists,
@@ -328,8 +377,13 @@ export function ExploreProvider (props) {
           setZonesGenerated,
           filteredLayerUrl,
           updateFilteredLayer,
+          lcoeLayerUrl,
           tourStep,
-          setTourStep
+          setTourStep,
+          maxZoneScore,
+          setMaxZoneScore
+          /* maxLCOE,
+          setMaxLCOE */
         }}
       >
         {props.children}

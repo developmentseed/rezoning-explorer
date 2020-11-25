@@ -93,7 +93,7 @@ function ModalSelectArea () {
               ? `/assets/graphics/content/flags-4x3/${area.alpha2.toLowerCase()}.svg`
               : undefined
           }
-          size='small'
+          size={areaType === 'country' ? 'small' : 'large'}
           onClick={() => {
             setShowSelectAreaModal(false);
             setSelectedAreaId(area.id);
