@@ -3,9 +3,7 @@ import { rgba } from 'polished';
 let color = {
   baseLight: '#FFFFFF',
   baseDark: '#374863',
-  primary: '#23A6F5',
-  secondary: '#098EDE',
-  tertiary: '#673285' // Royal Purple
+  primary: '#23A6F5'
 };
 
 color = {
