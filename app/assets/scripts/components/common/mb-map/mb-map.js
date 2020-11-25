@@ -22,6 +22,7 @@ const ZONES_BOUNDARIES_SOURCE_ID = 'ZONES_BOUNDARIES_SOURCE_ID';
 const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
 const EEZ_BOUNDARIES_SOURCE_ID = 'EEZ_BOUNDARIES_SOURCE_ID';
 const EEZ_BOUNDARIES_LAYER_ID = 'EEZ_BOUNDARIES_LAYER_ID';
+const SATELLITE_LAYER= 'satellite_layer'
 
 export const mapLayers = [
   {
@@ -106,17 +107,13 @@ const initializeMap = ({
      */
 
     map.setPaintProperty('land', 'background-opacity', 0.7);
-    map.addLayer({
-      id: 'satellite',
-      source: { type: 'raster', url: 'mapbox://mapbox.satellite', tileSize: 256 },
-      type: 'raster'
-    }, 'land');
 
     map.addSource(FILTERED_LAYER_SOURCE, {
       type: 'raster',
       tiles: ['https://placeholder.url/{z}/{x}/{y}.png'],
       tileSize: 256
     });
+
     map.addLayer({
       id: FILTERED_LAYER_ID,
       type: 'raster',
@@ -127,6 +124,13 @@ const initializeMap = ({
       minzoom: 0,
       maxzoom: 22
     });
+
+    map.addLayer({
+      id: SATELLITE_LAYER,
+      source: { type: 'raster', url: 'mapbox://mapbox.satellite', tileSize: 256 },
+      type: 'raster'
+    }, 'land');
+
 
     // Zone boundaries source
     map.addSource(ZONES_BOUNDARIES_SOURCE_ID, {
@@ -149,8 +153,8 @@ const initializeMap = ({
         'fill-opacity': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
-          0.5,
-          0.2
+          0.7,
+          0.5
         ]
       }
     });
