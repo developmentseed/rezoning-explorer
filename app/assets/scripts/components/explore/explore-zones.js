@@ -117,6 +117,15 @@ function ExploreZones (props) {
     }
   };
 
+  const formatLabel = function (id) {
+    switch (id) {
+      case 'lcoe':
+        return `${id.replace(/_/g, ' ')} [USD/MwH]`;
+      default:
+        return id.replace(/_/g, ' ');
+    }
+  };
+
   const onRowHoverEvent = (event, row) => {
     setHoveredFeature(event === 'enter' ? row : null);
   };
@@ -161,7 +170,7 @@ function ExploreZones (props) {
                       .filter(([label, value]) => FILTERED_PROPERTIES[label])
                       .map(([label, value]) => (
                         <Detail key={`${data.id}-${label}`}>
-                          <dt>{label.replace(/_/g, ' ')}</dt>
+                          <dt>{formatLabel(label)}</dt>
                           <dd>{formatIndicator(label, value)}</dd>
                         </Detail>
                       )
