@@ -2,11 +2,11 @@ import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { panelSkin } from '../../styles/skins';
-import Button from '../../styles/button/button';
 import Heading, { headingAlt } from '../../styles/type/heading';
 import SizeAwareElement from '../../components/common/size-aware-element';
 import * as d3 from 'd3';
 import { themeVal } from '../../styles/utils/general';
+import { FormCheckable } from '../../styles/form/checkable';
 
 const HistogramWrapper = styled(SizeAwareElement)`
   ${panelSkin()}
@@ -65,9 +65,15 @@ const HistogramHeader = styled.div`
 const SortToggle = styled.div`
   display: grid;
   grid-template-columns: 1fr auto auto;
+  gap: 0.5rem;
+  align-items: center;
   > ${Heading} {
     ${headingAlt()}
     padding: 0.125rem 0;
+  }
+  ${FormCheckable} {
+    font-size: 0.875rem;
+    align-items: center;
   }
 `;
 function Histogram (props) {
@@ -172,15 +178,13 @@ function Histogram (props) {
         <SortToggle>
           <Heading size='small'>Sort by:</Heading>
           {xPropOptions.map(p => (
-            <Button
+            <FormCheckable
               key={p}
-              variation='base-plain'
-              size='small'
-              visuallyDisabled={p === xProp}
+              type='radio'
+              checked={p === xProp}
               onClick={() => setXProp(p)}
-            >
-              {p.replace(/_/g, ' ')}
-            </Button>
+            >{p.replace(/_/g, ' ')}
+            </FormCheckable>
           ))}
         </SortToggle>
 
