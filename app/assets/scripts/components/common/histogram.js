@@ -91,9 +91,10 @@ function Histogram (props) {
     const width = container.current.clientWidth - margin.left - margin.right;
     const height = container.current.clientHeight - margin.top - margin.bottom;
 
-    d3.selectAll('svg').remove();
+    d3.selectAll('.chart-cont').remove();
     const svg = d3.select(container.current)
       .append('svg')
+      .attr('class', 'chart-cont')
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
