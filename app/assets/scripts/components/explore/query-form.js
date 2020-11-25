@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useRef, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal, makeTitleCase } from '../../styles/utils/general';
@@ -24,12 +24,13 @@ import InfoButton from '../common/info-button';
 import GridSetter from './grid-setter';
 
 import ExploreContext from '../../context/explore-context';
+import { round } from '../../utils/format';
 import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
-
 import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
 import FormLabel from '../../styles/form/label';
-import { round } from '../../utils/format.js';
+
+const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
 const turbineTypeMap = {
   'Off-Shore Wind': [1, 3],
@@ -37,7 +38,29 @@ const turbineTypeMap = {
   'Solar PV': [0, 0]
 };
 
-const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
+const maxZoneScoreO = {
+  name: 'Zone Score Range',
+  id: 'zone-score-range',
+  active: true,
+  isRange: true,
+  input: {
+    value: { min: 0, max: 1 },
+    type: SLIDER,
+    range: [0, 1]
+  }
+};
+/*
+const maxLCOEO = {
+  name: 'LCOE Range',
+  id: 'lcoe-range',
+  active: true,
+  isRange: true,
+  input: {
+    value: { min: 0, max: 1 },
+    type: SLIDER,
+    range: [0, 1]
+  }
+}; */
 
 const castByFilterType = type => {
   switch (type) {
@@ -212,8 +235,12 @@ function QueryForm (props) {
     onSelectionChange,
     gridMode,
     setGridMode,
-    gridSize, setGridSize
+    gridSize, setGridSize,
+    maxZoneScore, setMaxZoneScore
+    // maxLCOE, setMaxLCOE
   } = props;
+
+  const firstLoad = useRef(true);
 
   const initListToState = (list) => {
     return list.map((obj) => ({
@@ -357,6 +384,9 @@ function QueryForm (props) {
     // Get filter range, if available
     const filterRange = filterRanges.getData()[option.id];
 
+    if (option.id === 'lcoe-range') {
+    }
+
     switch (option.input.type) {
       case SLIDER:
         return (
@@ -453,8 +483,13 @@ function QueryForm (props) {
   }, [resource]);
 
   /* Reinitialize filters when new ranges are received */
+
   useEffect(() => {
-    setFilters(initListToState(filtersLists));
+    if (firstLoad.current) {
+      firstLoad.current = false;
+    } else {
+      setFilters(initListToState(filtersLists));
+    }
   }, [filterRanges]);
 
   return (
@@ -527,6 +562,7 @@ function QueryForm (props) {
             }
           }}
         >
+
           <Accordion
             initialState={[
               true,
@@ -539,35 +575,98 @@ function QueryForm (props) {
                 .slice(1)
                 .map((_) => false)
             ]}
+            foldCount={Object.keys(filters).length + 1}
+            allowMultiple
           >
-            {({ checkExpanded, setExpanded }) =>
-              Object.entries(filters.reduce((accum, filt) => {
-                if (!accum[filt.category]) {
-                  accum[filt.category] = [];
-                }
-                accum[filt.category].push(filt);
-                return accum;
-              }, {}))
-                .map(([group, list], idx) => {
-                  return (
-                    <AccordionFold
-                      key={group}
-                      forwardedAs={FormGroupWrapper}
-                      isFoldExpanded={checkExpanded(idx)}
-                      setFoldExpanded={(v) => setExpanded(idx, v)}
-                      renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                        <AccordionFoldTrigger
-                          isExpanded={isFoldExpanded}
-                          onClick={() => setFoldExpanded(!isFoldExpanded)}
-                        >
-                          <Heading size='small' variation='primary'>
-                            {makeTitleCase(group.replace(/_/g, ' '))}
-                          </Heading>
-                        </AccordionFoldTrigger>
-                      )}
-                      renderBody={({ isFoldExpanded }) =>
-                        list.map((filter, ind) => (
-                          checkIncluded(filter, resource) &&
+            {({ checkExpanded, setExpanded }) => (
+              <>
+                <AccordionFold
+                  forwardedAs={FormGroupWrapper}
+                  isFoldExpanded={checkExpanded(0)}
+                  setFoldExpanded={(v) => setExpanded(0, v)}
+                  renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                    <AccordionFoldTrigger
+                      isExpanded={isFoldExpanded}
+                      onClick={() => setFoldExpanded(!isFoldExpanded)}
+                    >
+                      <Heading size='small' variation='primary'>
+                        {makeTitleCase('Output Filters')}
+                      </Heading>
+                    </AccordionFoldTrigger>
+                  )}
+                  renderBody={({ isFoldExpanded }) => (
+                    <>
+                      <PanelOption hidden={!isFoldExpanded}>
+                        <OptionHeadline>
+                          <PanelOptionTitle>{maxZoneScoreO.name}</PanelOptionTitle>
+                          {maxZoneScoreO.info && (
+                            <InfoButton info={maxZoneScoreO.info} id={maxZoneScoreO.name}>
+                                Info
+                            </InfoButton>
+                          )}
+                        </OptionHeadline>
+                        {inputOfType({
+                          ...maxZoneScoreO,
+                          input: {
+                            ...maxZoneScoreO.input,
+                            value: maxZoneScore
+                          }
+                        }, ({ min, max }) => {
+                          setMaxZoneScore({ min: round(min), max: round(max) });
+                        })}
+                      </PanelOption>
+
+                      {/* <PanelOption hidden={!isFoldExpanded}>
+                        <OptionHeadline>
+                          <PanelOptionTitle>{maxLCOEO.name}</PanelOptionTitle>
+                          {maxLCOEO.info && (
+                            <InfoButton info={maxLCOEO.info} id={maxLCOEO.name}>
+                                Info
+                            </InfoButton>
+                          )}
+                        </OptionHeadline>
+                        {inputOfType({
+                          ...maxLCOEO,
+                          input: {
+                            ...maxLCOEO.input,
+                            value: maxLCOE
+                          }
+                        }, ({ min, max }) => {
+                          setMaxLCOE({ min: round(min), max: round(max) });
+                        })}
+                      </PanelOption> */}
+                    </>
+                  )}
+                />
+
+                {Object.entries(filters.reduce((accum, filt) => {
+                  if (!accum[filt.category]) {
+                    accum[filt.category] = [];
+                  }
+                  accum[filt.category].push(filt);
+                  return accum;
+                }, {}))
+                  .map(([group, list], idx) => {
+                    idx += 1;
+                    return (
+                      <AccordionFold
+                        key={group}
+                        forwardedAs={FormGroupWrapper}
+                        isFoldExpanded={checkExpanded(idx)}
+                        setFoldExpanded={(v) => setExpanded(idx, v)}
+                        renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                          <AccordionFoldTrigger
+                            isExpanded={isFoldExpanded}
+                            onClick={() => setFoldExpanded(!isFoldExpanded)}
+                          >
+                            <Heading size='small' variation='primary'>
+                              {makeTitleCase(group.replace(/_/g, ' '))}
+                            </Heading>
+                          </AccordionFoldTrigger>
+                        )}
+                        renderBody={({ isFoldExpanded }) =>
+                          list.map((filter, ind) => (
+                            checkIncluded(filter, resource) &&
                         <PanelOption key={filter.name} hidden={!isFoldExpanded}>
                           <OptionHeadline>
                             <PanelOptionTitle>{`${filter.name}`.concat(filter.unit ? ` - (${filter.unit})` : '')}</PanelOptionTitle>
@@ -613,10 +712,12 @@ function QueryForm (props) {
                           }
 
                         </PanelOption>
-                        ))}
-                    />
-                  );
-                })}
+                          ))}
+                      />
+                    );
+                  })}
+              </>
+            )}
           </Accordion>
         </FormWrapper>
 
@@ -724,7 +825,11 @@ QueryForm.propTypes = {
   gridMode: T.bool,
   setGridMode: T.func,
   gridSize: T.number,
-  setGridSize: T.func
+  setGridSize: T.func,
+  maxZoneScore: T.object,
+  setMaxZoneScore: T.func
+  /* maxLCOE: T.object,
+  setMaxLCOE: T.func */
 };
 
 export default QueryForm;
