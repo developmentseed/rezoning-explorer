@@ -85,7 +85,7 @@ const initializeMap = ({
 }) => {
   const map = new mapboxgl.Map({
     container: mapContainer.current,
-    style: 'mapbox://styles/mapbox/light-v10',
+    style: 'mapbox://styles/wbg-cdrp/ckhwwisf207qz1ap9hl2vlulj',
     center: [0, 0],
     zoom: 5,
     bounds: selectedArea && selectedArea.bounds,
