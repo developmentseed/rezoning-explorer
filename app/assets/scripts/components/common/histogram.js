@@ -23,11 +23,13 @@ const HistogramWrapper = styled(SizeAwareElement)`
 
   .axis-label {
     ${headingAlt()}
-    font-size: 0.5rem;
-    color: ${themeVal('color.baseAlphaD')};
+    color: ${themeVal('color.base')};
   }
   .tick {
     color: ${themeVal('color.baseAlphaD')};
+    text {
+      font-size: 0.75rem;
+    }
   }
 
   .grid line, .grid path {
