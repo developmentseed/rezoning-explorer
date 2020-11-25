@@ -132,12 +132,12 @@ describe('Explore view', () => {
       'areaId=BDI',
       'resourceId=Wind'
     );
-    /*
 
     // Both modals are hidden
     cy.get('#select-area-modal-header').should('not.exist');
     cy.get('#select-resource-modal-header').should('not.exist');
 
+    /*
     // Prime panel contain selections
     cy.get('#selected-area-prime-panel-heading').should(
       'contain',
