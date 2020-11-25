@@ -183,9 +183,11 @@ function Histogram (props) {
           {xPropOptions.map(p => (
             <FormCheckable
               key={p}
+              name={p}
+              id={p}
               type='radio'
               checked={p === xProp}
-              onClick={() => setXProp(p)}
+              onChange={() => setXProp(p)}
             >{p.replace(/_/g, ' ')}
             </FormCheckable>
           ))}
