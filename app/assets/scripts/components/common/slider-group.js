@@ -42,7 +42,7 @@ function SliderGroup (props) {
       <InputRange
         minValue={truncateDecimals(range[0])}
         maxValue={truncateDecimals(range[1])}
-        step={(range[1] % 1 !== 0 || range[1] < 1) ? 0.01 : 1}
+        step={(range[1] % 1 !== 0 || range[1] <= 1) ? 0.01 : 1}
         value={Number(value) ? truncateDecimals(value) : value}
         onChange={onChange}
         disabled={disabled}

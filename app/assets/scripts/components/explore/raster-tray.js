@@ -5,9 +5,13 @@ import Button from '../../styles/button/button';
 import InfoButton from '../common/info-button';
 import Prose from '../../styles/type/prose';
 import GradientChart from '../common/gradient-legend-chart/chart';
+import theme from '../../styles/theme/theme';
+import { rgba } from 'polished';
+import ShadowScrollbar from '../common/shadow-scrollbar';
 
-const TrayWrapper = styled.div`
+const TrayWrapper = styled(ShadowScrollbar)`
   padding: 0.25rem;
+  height: 20rem;
 `;
 const ControlWrapper = styled.div`
   padding: 0.5rem;
@@ -44,14 +48,13 @@ const LayersWrapper = styled.div`
 `;
 
 const defaultStops = [
-  'rgba(0, 0, 255, 0)',
-  'rgba(0, 0, 255, 1)'
+  rgba(theme.main.color.primary, 0),
+  rgba(theme.main.color.primary, 1)
 ];
 
 function LayerControl (props) {
-  const { id, name, min, max, stops, onLayerKnobChange, onVisibilityToggle } = props;
+  const { id, name, min, max, stops, onLayerKnobChange, onVisibilityToggle, visible } = props;
   const [knobPos, setKnobPos] = useState(50);
-  const [visibility, setLayerVisibility] = useState(true);
 
   return (
     <ControlWrapper>
@@ -68,12 +71,11 @@ function LayerControl (props) {
           <Button
             id='layer-visibility'
             variation='base-plain'
-            useIcon={visibility ? 'eye' : 'eye-disabled'}
+            useIcon={visible ? 'eye' : 'eye-disabled'}
             title='toggle-layer-visibility'
             hideText
             onClick={() => {
-              setLayerVisibility(!visibility);
-              onVisibilityToggle(props, !visibility);
+              onVisibilityToggle(props, !visible);
             }}
           >
             <span>Toggle Layer Visibility</span>
@@ -106,7 +108,8 @@ LayerControl.propTypes = {
   stops: T.array,
   onLayerKnobChange: T.func,
   onVisibilityToggle: T.func,
-  info: T.string
+  info: T.string,
+  visible: T.bool
 };
 
 function RasterTray (props) {

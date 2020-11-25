@@ -58,15 +58,16 @@ const CTAButtons = styled.div`
 `;
 
 const HomeTitle = styled(InpageTitle)`
-  ${media.mediumUp`
-    font-size: 3.5rem;
-    line-height: 4rem;
-  `}
   span {
     font-size: 1.25rem;
     text-transform: uppercase;
     display: block;
   }
+  ${media.mediumUp`
+    font-size: 3.5rem;
+    line-height: 4rem;
+  `}
+
 `;
 
 const Lead = styled(Prose)`
