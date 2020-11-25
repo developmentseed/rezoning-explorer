@@ -27,6 +27,7 @@ color = {
   baseAlphaB: rgba(color.base, 0.08),
   baseAlphaC: rgba(color.base, 0.16),
   baseAlphaD: rgba(color.base, 0.32),
+  primaryAlpha: rgba(color.primary, 0.16),
   silk: `radial-gradient(farthest-side, ${color.surface}, ${rgba(
     color.surface,
     0.64
