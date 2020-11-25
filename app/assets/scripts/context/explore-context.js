@@ -137,7 +137,7 @@ export function ExploreProvider (props) {
 
     // Apply a mock "Optimization" scenario to filter presets, just random numbers
     presets.filters = {
-      Optimizaiton: apiFilters.map(filter => ({
+      Optimization: apiFilters.map(filter => ({
         ...filter,
         active: Math.random() > 0.5,
         input: {
