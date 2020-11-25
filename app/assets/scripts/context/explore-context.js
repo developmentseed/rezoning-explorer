@@ -43,6 +43,37 @@ const abbreviateUnit = unit => {
   }
 };
 export function ExploreProvider (props) {
+  const [maxZoneScore, setMaxZoneScore] = useQsState({
+    key: 'maxZoneScore',
+    default: undefined,
+    hydrator: v => {
+      if (v) {
+        const [min, max] = v.split(',').map(Number);
+        return { min, max };
+      } else {
+        return { min: 0, max: 1 };
+      }
+    },
+
+    dehydrator: v => {
+      return v && `${v.min},${v.max}`;
+    }
+  });
+  /*
+  const [maxLCOE, setMaxLCOE] = useQsState({
+    key: 'maxLCOE',
+    default: undefined,
+    hydrator: v => {
+      if (v) {
+        const [min, max] = v.split(',').map(Number);
+        return { min, max };
+      } else {
+        return { min: 0, max: 1 };
+      }
+    },
+    dehydrator: v => v && `${v.min},${v.max}`
+  }); */
+
   // Init filters state
   const [filtersLists, setFiltersLists] = useState(null);
   const [filterRanges, dispatchFilterRanges] = useReducer(
@@ -330,7 +361,11 @@ export function ExploreProvider (props) {
           filteredLayerUrl,
           updateFilteredLayer,
           tourStep,
-          setTourStep
+          setTourStep,
+          maxZoneScore,
+          setMaxZoneScore
+          /* maxLCOE,
+          setMaxLCOE */
         }}
       >
         {props.children}
