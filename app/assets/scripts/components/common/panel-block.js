@@ -40,6 +40,7 @@ export const PanelBlockTitle = styled(Heading).attrs({ size: 'medium' })`
 export const PanelBlockBody = styled.div`
   display: flex;
   flex-flow: column nowrap;
+  justify-content: center;
   flex: 1;
 `;
 

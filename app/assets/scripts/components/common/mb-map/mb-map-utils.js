@@ -1,7 +1,7 @@
-export const resizeMap = map => {
+export const resizeMap = (map, timeout) => {
   if (map) {
     setTimeout(() => {
       map.resize();
-    }, 200);
+    }, timeout || 200);
   }
 };

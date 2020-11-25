@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal, makeTitleCase } from '../../styles/utils/general';
+import useQsState from '../../utils/qs-state-hook';
+
 import {
   PanelBlock,
   PanelBlockHeader,
@@ -22,7 +24,11 @@ import InfoButton from '../common/info-button';
 import GridSetter from './grid-setter';
 
 import ExploreContext from '../../context/explore-context';
-import { INPUT_CONSTANTS } from './panel-data';
+import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
+
+import FormSelect from '../../styles/form/select';
+import { FormGroup } from '../../styles/form/group';
+import FormLabel from '../../styles/form/label';
 
 const turbineTypeMap = {
   'Off-Shore Wind': [1, 3],
@@ -30,7 +36,21 @@ const turbineTypeMap = {
   'Solar PV': [0, 0]
 };
 
-const { SLIDER, BOOL, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
+const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
+
+const castByFilterType = type => {
+  switch (type) {
+    case BOOL:
+      return Boolean;
+    case DROPDOWN:
+    case TEXT:
+      return String;
+    case SLIDER:
+      return Number;
+    default:
+      return String;
+  }
+};
 const PanelOption = styled.div`
   ${({ hidden }) => hidden && 'display: none;'}
   margin-bottom: 1.5rem;
@@ -38,6 +58,7 @@ const PanelOption = styled.div`
 
 const PanelOptionTitle = styled.div`
   font-weight: ${themeVal('type.base.weight')};
+  font-size: 0.875rem;
 `;
 const HeadOption = styled.div`
   & ~ & {
@@ -131,48 +152,43 @@ const SubmissionSection = styled(PanelBlockFooter)`
   gap: 0rem 1rem;
 `;
 
-const initByType = obj => {
-  switch (obj.type) {
+const initByType = (obj, ranges) => {
+  const apiRange = ranges[obj.id];
+  const { input } = obj;
+
+  const range = (apiRange && [apiRange.min, apiRange.max]) || obj.input.range || DEFAULT_RANGE;
+
+  switch (input.type) {
     case SLIDER:
       return {
-        ...obj,
-        range: obj.range || DEFAULT_RANGE,
-        unit: obj.unit || DEFAULT_UNIT,
-        value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
+        ...input,
+        range,
+        unit: input.unit,
+        value: input.value || input.default || (obj.isRange ? { min: range[0], max: range[1] } : range[0])
       };
     case TEXT:
       return {
-        ...obj,
-        range: obj.range || DEFAULT_RANGE,
-        unit: obj.unit || DEFAULT_UNIT,
-        value: obj.value || obj.default || (obj.range || DEFAULT_RANGE)[0]
+        ...input,
+        range: input.range || DEFAULT_RANGE,
+        unit: input.unit,
+        value: input.value || input.default || (input.range || DEFAULT_RANGE)[0]
       };
     case BOOL:
+      return {
+        ...obj,
+        value: false,
+        range: [true, false]
+      };
     case MULTI:
+    case DROPDOWN:
+      return {
+        ...obj,
+        value: obj.value || (obj.options && obj.options[0]) || '',
+        unit: null
+      };
     default:
       return {};
   }
-};
-
-const initListToState = (list) => {
-  return list.map((obj) => ({
-    ...obj,
-    input: initByType(obj.input),
-
-    // range: obj.range || DEFAULT_RANGE,
-    // unit: obj.unit || DEFAULT_UNIT,
-    active: obj.active === undefined ? true : obj.active
-    // value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
-  }));
-};
-
-const initObjectToState = (obj) => {
-  return Object.keys(obj).reduce((accum, key) => {
-    return {
-      ...accum,
-      [key]: initListToState(obj[key])
-    };
-  }, {});
 };
 
 const updateStateList = (list, i, updatedValue) => {
@@ -182,15 +198,13 @@ const updateStateList = (list, i, updatedValue) => {
 };
 
 function QueryForm (props) {
-  const { updateFilteredLayer } = useContext(ExploreContext);
+  const { updateFilteredLayer, filtersLists, filterRanges, presets } = useContext(ExploreContext);
 
   const {
     area,
     resource,
     weightsList,
-    filtersLists,
     lcoeList,
-    presets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
@@ -200,23 +214,157 @@ function QueryForm (props) {
     gridSize, setGridSize
   } = props;
 
-  const [weights, setWeights] = useState(initListToState(weightsList));
-  const [filters, setFilters] = useState(initObjectToState(filtersLists));
-  const [lcoe, setLcoe] = useState(initListToState(lcoeList));
+  const initListToState = (list) => {
+    return list.map((obj) => ({
+      ...obj,
+      input: initByType(obj, filterRanges.getData()),
+      active: obj.active === undefined ? true : obj.active
+    }));
+  };
+
+  const [weights, setWeights] = useQsState({
+    key: 'weights',
+    hydrator: v => {
+      let base = initListToState(weightsList);
+      if (v) {
+        const qsValues = v.split('|').map(vals => {
+          const [value, active] = vals.split(',');
+          return {
+            value: Number(value),
+            active: active === undefined
+          };
+        });
+        base = base.map((weight, i) => (
+          {
+            ...weight,
+            active: qsValues[i].active,
+            input: {
+              ...weight.input,
+              value: qsValues[i].value || weight.input.value
+            }
+          }
+        ));
+      }
+      return base;
+    },
+    dehydrator: v => {
+      return v && v.map(w => {
+        const { value } = w.input;
+        let shard = `${value}`;
+        shard = w.active ? shard : `${shard},${false}`;
+        return shard;
+      }).join('|');
+    },
+    default: undefined
+  });
+
+  const [filters, setFilters] = useQsState({
+    key: 'filters',
+    hydrator: v => {
+      let baseFilts = initListToState(filtersLists);
+      if (v) {
+        const qsValues = v.split('|').map((vals, i) => {
+          const thisFilt = baseFilts[i];
+          if (thisFilt.isRange) {
+            const [min, max, active] = vals.split(',');
+            return {
+              value: {
+                min: Number(min),
+                max: Number(max)
+              },
+              active: active === undefined
+            };
+          } else {
+            const [val, active] = vals.split(',');
+            return {
+              value: castByFilterType(thisFilt.input.type)(val),
+              active: active === undefined
+            };
+          }
+        });
+
+        baseFilts = baseFilts.map((filt, i) => (
+          {
+            ...filt,
+            active: qsValues[i].active,
+            input: {
+              ...filt.input,
+              value: qsValues[i].value || filt.input.value
+            }
+          }
+        ));
+      }
+      return baseFilts;
+    },
+    dehydrator: v => {
+      return v && v.map(f => {
+        const { value } = f.input;
+        let shard = f.isRange ? `${value.min}, ${value.max}` : `${value}`;
+        shard = f.active ? shard : `${shard},${false}`;
+        return shard;
+      }).filter(f => !f.excluded)
+        .join('|');
+    },
+    default: undefined
+  });
+
+  const [lcoe, setLcoe] = useQsState({
+    key: 'lcoe',
+    hydrator: v => {
+      let base = initListToState(lcoeList);
+      if (v) {
+        const qsValues = v.split('|').map(vals => {
+          const [value, active] = vals.split(',');
+          return {
+            value: Number(value),
+            active: active === undefined
+          };
+        });
+        base = base.map((cost, i) => (
+          {
+            ...cost,
+            active: qsValues[i].active,
+            input: {
+              ...cost.input,
+              value: qsValues[i].value || cost.input.value
+            }
+          }
+        ));
+      }
+      return base;
+    },
+    dehydrator: v => {
+      return v && v.map(w => {
+        const { value } = w.input;
+        let shard = `${value}`;
+        shard = w.active ? shard : `${shard},${false}`;
+        return shard;
+      }).join('|');
+    },
+    default: undefined
+  });
 
   const inputOfType = (option, onChange) => {
     const { range } = option.input;
-    const errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${range[0]} - ${range[1]}`;
+    let errorMessage;
+    if (range) {
+      errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${range[0]} - ${range[1]}`;
+    } else {
+      errorMessage = 'Value not accepted';
+    }
+
+    // Get filter range, if available
+    const filterRange = filterRanges.getData()[option.id];
 
     switch (option.input.type) {
       case SLIDER:
         return (
           <SliderGroup
             unit={option.input.unit || '%'}
-            range={option.input.range || [0, 100]}
+            range={filterRange ? [filterRange.min, filterRange.max] : option.input.range}
             id={option.name}
             value={option.input.value}
-            isRange={option.input.isRange}
+            isRange={option.isRange}
             disabled={!option.active}
             onChange={onChange}
           />
@@ -238,22 +386,44 @@ function QueryForm (props) {
           />
         );
       case BOOL:
+        return null;
       case MULTI:
+      case DROPDOWN:
+        return (
+          <FormGroup>
+            <FormLabel htmlFor={option.name}>{option.name}</FormLabel>
+            <FormSelect
+              id={option.name}
+              onChange={(e) => onChange(e.target.value)}
+              value={option.input.value}
+            >
+              {
+                option.input.options.map(o => {
+                  return (
+                    <option
+                      value={o}
+                      key={o}
+                    >
+                      {o}
+                    </option>
+                  );
+                })
+              }
+            </FormSelect>
+          </FormGroup>
+        );
       default:
-        return {};
+        return null;
     }
   };
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));
-    setFilters(initObjectToState(filtersLists));
+    setFilters(initListToState(filtersLists));
     setLcoe(initListToState(lcoeList));
   };
 
   const applyClick = () => {
-    const filterValues = Object.values(filters)
-      .reduce((accum, section) => [...accum,
-        ...section.map(filter => filter.input.value)], []);
     const weightsValues = Object.values(weights)
       .reduce((accum, weight) => (
         {
@@ -267,7 +437,7 @@ function QueryForm (props) {
           ...accum,
           [weight.id || weight.name]: Number(weight.input.value)
         }), {});
-    updateFilteredLayer(filterValues, weightsValues, lcoeValues);
+    updateFilteredLayer(filters, weightsValues, lcoeValues);
   };
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
@@ -280,6 +450,11 @@ function QueryForm (props) {
       turbineType.input.value = turbineType.input.range[0];
     }
   }, [resource]);
+
+  /* Reinitialize filters when new ranges are received */
+  useEffect(() => {
+    setFilters(initListToState(filtersLists));
+  }, [filterRanges]);
 
   return (
     <PanelBlock>
@@ -345,43 +520,56 @@ function QueryForm (props) {
           presets={presets.filters}
           setPreset={(preset) => {
             if (preset === 'reset') {
-              setFilters(initObjectToState(filtersLists));
+              setFilters(initListToState(filtersLists));
             } else {
-              setFilters(initObjectToState(presets.filters[preset]));
+              setFilters(initListToState(presets.filters[preset]));
             }
           }}
         >
           <Accordion
             initialState={[
               true,
-              ...Object.keys(filters)
+              ...filters.reduce((seen, filt) => {
+                if (!seen.includes(filt.category)) {
+                  seen.push(filt);
+                }
+                return seen;
+              }, [])
                 .slice(1)
                 .map((_) => false)
             ]}
           >
             {({ checkExpanded, setExpanded }) =>
-              Object.entries(filters).map(([group, list], idx) => {
-                return (
-                  <AccordionFold
-                    key={group}
-                    forwardedAs={FormGroupWrapper}
-                    isFoldExpanded={checkExpanded(idx)}
-                    setFoldExpanded={(v) => setExpanded(idx, v)}
-                    renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                      <AccordionFoldTrigger
-                        isExpanded={isFoldExpanded}
-                        onClick={() => setFoldExpanded(!isFoldExpanded)}
-                      >
-                        <Heading size='medium' variation='primary'>
-                          {makeTitleCase(group.replace(/_/g, ' '))}
-                        </Heading>
-                      </AccordionFoldTrigger>
-                    )}
-                    renderBody={({ isFoldExpanded }) =>
-                      list.map((filter, ind) => (
+              Object.entries(filters.reduce((accum, filt) => {
+                if (!accum[filt.category]) {
+                  accum[filt.category] = [];
+                }
+                accum[filt.category].push(filt);
+                return accum;
+              }, {}))
+                .map(([group, list], idx) => {
+                  return (
+                    <AccordionFold
+                      key={group}
+                      forwardedAs={FormGroupWrapper}
+                      isFoldExpanded={checkExpanded(idx)}
+                      setFoldExpanded={(v) => setExpanded(idx, v)}
+                      renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                        <AccordionFoldTrigger
+                          isExpanded={isFoldExpanded}
+                          onClick={() => setFoldExpanded(!isFoldExpanded)}
+                        >
+                          <Heading size='small' variation='primary'>
+                            {makeTitleCase(group.replace(/_/g, ' '))}
+                          </Heading>
+                        </AccordionFoldTrigger>
+                      )}
+                      renderBody={({ isFoldExpanded }) =>
+                        list.map((filter, ind) => (
+                          checkIncluded(filter, resource) &&
                         <PanelOption key={filter.name} hidden={!isFoldExpanded}>
                           <OptionHeadline>
-                            <PanelOptionTitle>{filter.name}</PanelOptionTitle>
+                            <PanelOptionTitle>{`${filter.name}`.concat(filter.unit ? ` - (${filter.unit})` : '')}</PanelOptionTitle>
                             {filter.info && (
                               <InfoButton info={filter.info} id={filter.name}>
                                 Info
@@ -393,13 +581,15 @@ function QueryForm (props) {
                               disabled={filter.disabled}
                               checked={filter.active}
                               onChange={() => {
-                                setFilters({
-                                  ...filters,
-                                  [group]: updateStateList(list, ind, {
-                                    ...filter,
-                                    active: !filter.active
-                                  })
-                                });
+                                const ind = filters.findIndex(f => f.id === filter.id);
+                                setFilters(updateStateList(filters, ind, {
+                                  ...filter,
+                                  active: !filter.active,
+                                  input: {
+                                    ...filter.input,
+                                    value: filter.input.type === BOOL ? !filter.active : filter.input.value
+                                  }
+                                }));
                               }}
                             >
                               Toggle filter
@@ -408,25 +598,24 @@ function QueryForm (props) {
                           {
                             inputOfType(filter, (value) => {
                               if (filter.active) {
-                                setFilters({
-                                  ...filters,
-                                  [group]: updateStateList(list, ind, {
-                                    ...filter,
-                                    input: {
-                                      ...filter.input,
-                                      value
-                                    }
-                                  })
-                                });
+                                const ind = filters.findIndex(f => f.id === filter.id);
+                                setFilters(updateStateList(filters, ind, {
+                                  ...filter,
+                                  input: {
+                                    ...filter.input,
+                                    value
+                                  }
+
+                                }));
                               }
                             })
                           }
 
                         </PanelOption>
-                      ))}
-                  />
-                );
-              })}
+                        ))}
+                    />
+                  );
+                })}
           </Accordion>
         </FormWrapper>
 
@@ -494,14 +683,16 @@ function QueryForm (props) {
 
       <SubmissionSection>
         <Button
+          size='small'
           type='reset'
           onClick={resetClick}
-          variation='base-raised-light'
+          variation='primary-raised-light'
           useIcon='arrow-loop'
         >
           Reset
         </Button>
         <Button
+          size='small'
           type='submit'
           onClick={applyClick}
           variation='primary-raised-dark'
@@ -516,7 +707,6 @@ function QueryForm (props) {
 
 FormWrapper.propTypes = {
   setPreset: T.func.isRequired,
-  presets: T.oneOfType([T.object, T.array]).isRequired,
   name: T.string,
   icon: T.string
 };
@@ -525,11 +715,9 @@ QueryForm.propTypes = {
   area: T.object,
   resource: T.string,
   weightsList: T.array,
-  filtersLists: T.object,
   lcoeList: T.array,
   onResourceEdit: T.func,
   onAreaEdit: T.func,
-  presets: T.object,
   onInputTouched: T.func,
   onSelectionChange: T.func,
   gridMode: T.bool,
