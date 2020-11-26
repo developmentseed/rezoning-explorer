@@ -2,7 +2,6 @@ import React from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import StatSummary from '../common/table';
-import BarChart from '../common/bar-chart';
 import { themeVal } from '../../styles/utils/general';
 import { formatThousands } from '../../utils/format';
 
@@ -80,7 +79,6 @@ function ExploreStats (props) {
   const statData = zonesSummary(zones || []);
   return (
     <StatsWrapper active={active}>
-      {zones && <BarChart title='Calculated Zone Scores' />}
       <StatSummary
         title='Summary'
         data={statData}

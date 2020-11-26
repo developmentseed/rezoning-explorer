@@ -1,13 +1,16 @@
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import T from 'prop-types';
 import styled, { withTheme } from 'styled-components';
 import mapboxgl from 'mapbox-gl';
 import config from '../../../config';
 import { glsp } from '../../../styles/utils/theme-values';
 import { resizeMap } from './mb-map-utils';
-import throttle from 'lodash.throttle';
+import { featureCollection } from '@turf/helpers';
 
 import ExploreContext from '../../../context/explore-context';
+import MapContext from '../../../context/map-context';
+import theme from '../../../styles/theme/theme';
+import { rgba } from 'polished';
 
 const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
@@ -15,8 +18,39 @@ localStorage.setItem('MapboxAccessToken', config.mbToken);
 
 const FILTERED_LAYER_SOURCE = 'FILTERED_LAYER_SOURCE';
 const FILTERED_LAYER_ID = 'FILTERED_LAYER_ID';
+
+const LCOE_LAYER_SOURCE_ID = 'LCOE_LAYER_SOURCE_ID';
+const LCOE_LAYER_LAYER_ID = 'LCOE_LAYER_LAYERE_ID';
+
 const ZONES_BOUNDARIES_SOURCE_ID = 'ZONES_BOUNDARIES_SOURCE_ID';
-const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
+export const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
+const EEZ_BOUNDARIES_SOURCE_ID = 'EEZ_BOUNDARIES_SOURCE_ID';
+const EEZ_BOUNDARIES_LAYER_ID = 'EEZ_BOUNDARIES_LAYER_ID';
+
+export const outputLayers = [
+  {
+    id: FILTERED_LAYER_ID,
+    name: 'Selected Area',
+    type: 'raster',
+    visible: true
+  },
+  {
+    id: LCOE_LAYER_LAYER_ID,
+    name: 'LCOE Tiles',
+    type: 'raster'
+  },
+
+  {
+    id: ZONES_BOUNDARIES_LAYER_ID,
+    name: 'Zone Boundaries',
+    type: 'vector',
+    stops: [
+      rgba(theme.main.color.base, 0),
+      rgba(theme.main.color.base, 1)
+    ],
+    visible: true
+  }
+];
 
 const MapsContainer = styled.div`
   position: relative;
@@ -58,7 +92,7 @@ const initializeMap = ({
   selectedArea,
   setMap,
   mapContainer,
-  setHoveredFeatures
+  setHoveredFeature
 }) => {
   const map = new mapboxgl.Map({
     container: mapContainer.current,
@@ -71,6 +105,11 @@ const initializeMap = ({
 
   map.on('load', () => {
     setMap(map);
+
+    /*
+     * Resize map on window size change
+     */
+    window.addEventListener('resize', resizeMap.bind(null, map));
 
     /**
      * Add placeholder map source and a hidden layer for the filtered layer,
@@ -88,17 +127,40 @@ const initializeMap = ({
       layout: {
         visibility: 'none'
       },
+      paint: {
+        'raster-opacity': 0.5
+      },
       minzoom: 0,
       maxzoom: 22
     });
 
+    map.addSource(LCOE_LAYER_SOURCE_ID, {
+      type: 'raster',
+      tiles: ['https://placeholder.url/{z}/{x}/{y}.png'],
+      tileSize: 256
+    });
+    map.addLayer({
+      id: LCOE_LAYER_LAYER_ID,
+      type: 'raster',
+      source: LCOE_LAYER_SOURCE_ID,
+      layout: {
+        visibility: 'none'
+      },
+      paint: {
+        'raster-opacity': 0.5
+      },
+      minzoom: 0,
+      maxzoom: 22
+    });
+    //
     // Zone boundaries source
     map.addSource(ZONES_BOUNDARIES_SOURCE_ID, {
       type: 'geojson',
       data: {
         type: 'FeatureCollection',
         features: []
-      }
+      },
+      promoteId: 'id'
     });
 
     // Zone boundaries source
@@ -111,49 +173,111 @@ const initializeMap = ({
         'fill-color': ['get', 'color'],
         'fill-opacity': [
           'case',
-          ['boolean', ['get', 'hover'], false],
+          ['boolean', ['feature-state', 'hover'], false],
           0.5,
           0.2
         ]
       }
     });
 
-    const highlighFeature = throttle(
-      (e) => {
-        const features = map.queryRenderedFeatures(e.point, {
-          layers: [ZONES_BOUNDARIES_LAYER_ID]
-        });
-        const nextHoveredFeatures = features.map((f) => f.properties.id);
-        setHoveredFeatures(nextHoveredFeatures);
-      },
-      100,
-      {
-        leading: true
+    map.addSource(EEZ_BOUNDARIES_SOURCE_ID, {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: []
       }
-    );
-    map.on('mousemove', highlighFeature);
+    });
+
+    // Zone boundaries source
+    map.addLayer({
+      id: EEZ_BOUNDARIES_LAYER_ID,
+      type: 'fill',
+      source: EEZ_BOUNDARIES_SOURCE_ID,
+      layout: {},
+      paint: {
+        'fill-color': '#efefef',
+        'fill-opacity': 0.4,
+        'fill-outline-color': '#232323'
+      }
+    });
+
+    map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
+      if (e.features) {
+        setHoveredFeature(e.features ? e.features[0].properties.id : null);
+      }
+    });
 
     map.resize();
   });
 };
 
+const addInputLayersToMap = (map, layers) => {
+  layers.forEach(layer => {
+    map.addSource(`${layer}_source`, {
+      type: 'raster',
+      tiles: [`${config.apiEndpoint}/layers/${layer}/{z}/{x}/{y}.png?colormap=cool`],
+      tileSize: 256
+    });
+    map.addLayer({
+      id: layer,
+      type: 'raster',
+      source: `${layer}_source`,
+      layout: {
+        visibility: 'none'
+      },
+      paint: {
+        'raster-opacity': 0.5
+      },
+      minzoom: 0,
+      maxzoom: 22
+    });
+  });
+};
+
 function MbMap (props) {
   const { triggerResize } = props;
-  const [map, setMap] = useState(null);
   const mapContainer = useRef(null);
 
   const {
     selectedArea,
+    selectedResource,
     filteredLayerUrl,
     currentZones,
-    hoveredFeatures,
-    setHoveredFeatures
+    map, setMap,
+    inputLayers,
+    setMapLayers,
+    lcoeLayerUrl,
+    maxZoneScore
   } = useContext(ExploreContext);
+
+  const { hoveredFeature, setHoveredFeature } = useContext(MapContext);
 
   // Initialize map on mount
   useEffect(() => {
-    if (!map) { initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeatures }); }
+    if (!map) {
+      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeature });
+      return;
+    }
+
+    if (selectedArea && selectedArea.bounds) {
+      map.fitBounds(selectedArea.bounds, fitBoundsOptions);
+    }
   }, [map]);
+
+  useEffect(() => {
+    if (map && inputLayers.isReady()) {
+      const layers = inputLayers.getData();
+      setMapLayers([
+        ...outputLayers,
+        ...layers.map(l => ({
+          id: l,
+          name: l.split('-').map(w => `${w[0].toUpperCase()}${w.slice(1)}`).join(' '),
+          type: 'raster'
+        }))
+      ]);
+      addInputLayersToMap(map, layers);
+    }
+  }, [map, inputLayers]);
 
   // Watch window size changes
   useEffect(() => {
@@ -170,11 +294,21 @@ function MbMap (props) {
     if (selectedArea && selectedArea.bounds) {
       map.fitBounds(selectedArea.bounds, fitBoundsOptions);
     }
-  }, [selectedArea]);
+  }, [selectedArea, map]);
+
+  useEffect(() => {
+    // Map must be loaded
+    if (!map) return;
+    if (selectedArea && selectedArea.eez && selectedResource === 'Off-Shore Wind') {
+      map.getSource(EEZ_BOUNDARIES_SOURCE_ID).setData(featureCollection(selectedArea.eez));
+    } else {
+      map.getSource(EEZ_BOUNDARIES_SOURCE_ID).setData(featureCollection([]));
+    }
+  }, [selectedArea, selectedResource, map]);
 
   // If filtered layer source URL have changed, apply to the map
   useEffect(() => {
-    if (!filteredLayerUrl) return;
+    if (!filteredLayerUrl || !map) return;
 
     const style = map.getStyle();
     map.setStyle({
@@ -191,21 +325,62 @@ function MbMap (props) {
     map.setLayoutProperty(FILTERED_LAYER_ID, 'visibility', 'visible');
   }, [filteredLayerUrl]);
 
+  useEffect(() => {
+    if (!lcoeLayerUrl || !map) return;
+
+    const style = map.getStyle();
+
+    map.setStyle({
+      ...style,
+      sources: {
+        ...style.sources,
+        [LCOE_LAYER_SOURCE_ID]: {
+          ...style.sources[LCOE_LAYER_SOURCE_ID],
+          tiles: [lcoeLayerUrl]
+        }
+      }
+    });
+  }, [lcoeLayerUrl]);
+
   // Update zone boundaries on change
   useEffect(() => {
-    if (!map || !currentZones) return;
+    if (!map || !currentZones.isReady()) return;
     // Update GeoJSON source, applying hover effect if any
     map.getSource(ZONES_BOUNDARIES_SOURCE_ID).setData({
       type: 'FeatureCollection',
-      features: currentZones.map((z) => ({
+      features: currentZones.getData().map(z => ({
         ...z,
         properties: {
           ...z.properties,
-          hover: hoveredFeatures.includes(z.id)
+          ...z.properties.summary
         }
       }))
     });
-  }, [currentZones, hoveredFeatures]);
+  }, [currentZones]);
+
+  useEffect(() => {
+    if (!map) return;
+
+    map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeature || null }, { hover: true });
+    // setHoveredFeature(hoveredFeature);
+
+    return () => {
+      map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeature || null }, { hover: false });
+      // setHoveredFeature(null);
+    };
+  }, [hoveredFeature]);
+
+  useEffect(() => {
+    if (!map) return;
+
+    // Update filter expression for boundaries layer
+    map.setFilter(ZONES_BOUNDARIES_LAYER_ID, [
+      'all',
+      ['>=', ['get', 'zone_score'], maxZoneScore.min],
+      ['<=', ['get', 'zone_score'], maxZoneScore.max]
+    ]
+    );
+  }, [maxZoneScore, currentZones]);
 
   return (
     <MapsContainer>

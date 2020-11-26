@@ -14,12 +14,12 @@ const Tab = styled(Button)`
   position: relative;
   transition: color .16s ease-in-out 0s;
   padding: 0.75rem 0;
-  color: ${themeVal('color.baseAlphaD')};
+  color: ${themeVal('color.base')};
   font-weight: ${themeVal('type.heading.weight')};
   &,
   &:visited {
     background-color: transparent;
-    color: ${themeVal('color.baseAlphaD')};
+    color: ${themeVal('color.base')};
   }
 
   &:hover {
@@ -104,6 +104,7 @@ const TabControlBar = styled.div`
 
 const PresetMenu = styled(DropMenu)`
   padding: 0;
+  font-size: 0.875rem;
 `;
 
 const ContentInner = styled.div`
@@ -166,6 +167,7 @@ function TabbedBlock (props) {
                       alignment='left'
                       triggerElement={
                         <Button
+                          size='small'
                           className='drop-trigger'
                           variation='primary-plain'
                           useIcon={['chevron-down--small', 'after']}

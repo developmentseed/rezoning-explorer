@@ -9,7 +9,10 @@ import Dl from '../../styles/type/definition-list';
 import Button from '../../styles/button/button';
 import { formatThousands } from '../../utils/format';
 import get from 'lodash.get';
-import ExploreContext from '../../context/explore-context';
+import MapContext from '../../context/map-context';
+
+import { FormCheckable } from '../../styles/form/checkable';
+
 import ColorScale from '../common/color-scale';
 import zoneScoreColor from '../../styles/zoneScoreColors';
 
@@ -37,7 +40,6 @@ const ZonesHeader = styled(Subheading)`
 `;
 
 const Card = styled(CardWrapper)`
-  display: flex;
   height: auto;
   box-shadow: none;
   border: none;
@@ -48,7 +50,10 @@ const Card = styled(CardWrapper)`
   &:hover {
     box-shadow: none;
     transform: none;
-    background: ${themeVal('color.baseAlphaB')};
+    background: ${themeVal('color.primaryAlpha')};
+  }
+  ${FormCheckable} {
+    padding: 0 1rem;
   }
 `;
 
@@ -62,6 +67,7 @@ const CardIcon = styled.div`
   flex-direction: column;
   justify-content: center;
   margin-right: 1rem;
+  margin-left: 0.5rem;
   font-size: 0.5rem;
 `;
 
@@ -92,15 +98,14 @@ const Detail = styled(Dl)`
 `;
 
 function ExploreZones (props) {
-  const { active } = props;
+  const { active, currentZones } = props;
 
-  const { currentZones, hoveredFeatures, setHoveredFeatures } = useContext(ExploreContext);
+  // const { currentZones } = useContext(ExploreContext);
+  const { hoveredFeature, setHoveredFeature } = useContext(MapContext);
 
   const [focusZone, setFocusZone] = useState(null);
 
-  const [selectedZones, setSelectedZones] = useState({});
-
-  const zoneData = currentZones || [];
+  const [selectedZones, setSelectedZones] = useState(currentZones.reduce((accum, zone) => ({ ...accum, [zone.id]: false }), {}));
 
   const formatIndicator = function (id, value) {
     switch (id) {
@@ -113,8 +118,17 @@ function ExploreZones (props) {
     }
   };
 
+  const formatLabel = function (id) {
+    switch (id) {
+      case 'lcoe':
+        return `${id.replace(/_/g, ' ')} [USD/MwH]`;
+      default:
+        return id.replace(/_/g, ' ');
+    }
+  };
+
   const onRowHoverEvent = (event, row) => {
-    setHoveredFeatures(event === 'enter' ? [row] : []);
+    setHoveredFeature(event === 'enter' ? row : null);
   };
 
   return (
@@ -137,15 +151,17 @@ function ExploreZones (props) {
         <>
           <CardList
             numColumns={1}
-            data={zoneData}
+            data={currentZones}
             renderCard={(data) => (
               <Card
                 size='large'
                 key={data.id}
-                isHovered={hoveredFeatures.includes(data.id)}
+                isHovered={hoveredFeature === data.id}
                 onMouseEnter={onRowHoverEvent.bind(null, 'enter', data.id)}
                 onMouseLeave={onRowHoverEvent.bind(null, 'leave', data.id)}
+                onClick={() => setFocusZone(data)}
               >
+
                 <CardIcon color={get(data, 'properties.color')}>
                   <div>{data.id}</div>
                 </CardIcon>
@@ -155,18 +171,40 @@ function ExploreZones (props) {
                       .filter(([label, value]) => FILTERED_PROPERTIES[label])
                       .map(([label, value]) => (
                         <Detail key={`${data.id}-${label}`}>
-                          <dt>{label.replace(/_/g, ' ')}</dt>
+                          <dt>{formatLabel(label)}</dt>
                           <dd>{formatIndicator(label, value)}</dd>
                         </Detail>
                       )
                       )
                     : 'UNAVAILABLE'}
                 </CardDetails>
+                <FormCheckable
+                  name={data.id}
+                  id={data.id}
+                  type='checkbox'
+                  checked={selectedZones[data.id]}
+                  onChange={() => {
+                    setSelectedZones({
+                      ...selectedZones,
+                      [data.id]: !selectedZones[data.id]
+                    });
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  hideText
+                >Add zone to selection
+                </FormCheckable>
+
               </Card>
             )}
           />
         </>
       )}
+
+      <ExportZonesButton
+        onExport={() => {}}
+      />
     </ZonesWrapper>
   );
 }
@@ -183,7 +221,7 @@ const ExportWrapper = styled.div`
 const ExportZonesButton = ({ onExport, small, usePadding }) => {
   return (
     <ExportWrapper usePadding={usePadding}>
-      <Button as='a' useIcon='download' variation='primary-raised-dark'>
+      <Button as='a' useIcon='download' variation='primary-raised-dark' size='small'>
         {small ? 'Export' : 'Export Selected Zones'}
       </Button>
     </ExportWrapper>
@@ -197,7 +235,8 @@ ExportZonesButton.propTypes = {
 export { ExportZonesButton };
 
 ExploreZones.propTypes = {
-  active: T.bool
+  active: T.bool,
+  currentZones: T.array
 };
 
 export default ExploreZones;

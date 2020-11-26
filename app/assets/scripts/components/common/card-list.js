@@ -58,9 +58,12 @@ const CardTitle = styled.h4`
 export const Card = ({ id, title, iconPath, size, onClick, borderlessMedia }) => {
   return (
     <CardWrapper id={id} size={size} onClick={onClick}>
-      <CardMedia borderlessMedia={borderlessMedia}>
-        <CardIcon src={iconPath} />
-      </CardMedia>
+      {
+        iconPath &&
+        <CardMedia borderlessMedia={borderlessMedia}>
+          <CardIcon src={iconPath} />
+        </CardMedia>
+      }
       <CardTitle>{title}</CardTitle>
     </CardWrapper>
   );

@@ -129,7 +129,7 @@ workflows:
           filters:
             branches:
               only: develop
-      - deploy-surge-dev:
+      - deploy-surge:
           requires:
             - lint
             - test

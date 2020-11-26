@@ -18,6 +18,8 @@ import MbMap from '../common/mb-map/mb-map';
 
 import ExploreContext from '../../context/explore-context';
 import Tour from '../common/tour';
+import { MapProvider } from '../../context/map-context';
+import Histogram from '../common/histogram';
 
 const ExploreCanvas = styled.div`
   display: grid;
@@ -51,7 +53,8 @@ const ExploreCarto = styled.section`
 
 function Explore () {
   const [triggerResize, setTriggerResize] = useState(true);
-  const { selectedArea, selectedResource, tourStep, setTourStep } = useContext(ExploreContext);
+  const { selectedArea, selectedResource, tourStep, setTourStep, currentZones } = useContext(ExploreContext);
+  const zoneData = currentZones.isReady() ? currentZones.getData() : null;
   return (
     <App
       pageTitle='Explore'
@@ -71,23 +74,32 @@ function Explore () {
         </InpageHeader>
         <InpageBody>
           <ExploreCanvas>
-            <PrimePanel
-              onPanelChange={() => {
-                setTriggerResize(!triggerResize);
-              }}
-            />
-
-            <ExploreCarto>
-              <MbMap
-                triggerResize={triggerResize}
+            <MapProvider>
+              <PrimePanel
+                onPanelChange={() => {
+                  setTriggerResize(!triggerResize);
+                }}
               />
-            </ExploreCarto>
 
-            <SecPanel
-              onPanelChange={() => {
-                setTriggerResize(!triggerResize);
-              }}
-            />
+              <ExploreCarto>
+                <MbMap
+                  triggerResize={triggerResize}
+                />
+                { zoneData && (
+                  <Histogram
+                    yProp='lcoe'
+                    xProp={['zone_output', 'lcoe']}
+                    data={zoneData.map(datum => ({ ...datum.properties.summary, color: datum.properties.color }))}
+                  />
+                )}
+              </ExploreCarto>
+
+              <SecPanel
+                onPanelChange={() => {
+                  setTriggerResize(!triggerResize);
+                }}
+              />
+            </MapProvider>
           </ExploreCanvas>
         </InpageBody>
       </Inpage>

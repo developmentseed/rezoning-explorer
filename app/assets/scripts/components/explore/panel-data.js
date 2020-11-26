@@ -1,75 +1,283 @@
 import { randomRange } from '../../utils/utils';
 
+const WIND = 'Wind';
+const OFFSHORE = 'Off-Shore Wind';
+const SOLAR = 'Solar PV';
+export const RESOURCES = {
+  WIND, OFFSHORE, SOLAR
+};
+
+const apiResourceNameMap = {
+  [WIND]: 'wind',
+  [SOLAR]: 'solar',
+  [OFFSHORE]: 'offshore'
+};
+
+export const checkIncluded = (obj, resource) => {
+  return obj.energy_type.includes(apiResourceNameMap[resource]);
+};
+
 export const resourceList = [
   {
-    name: 'Solar PV',
+    name: SOLAR,
     iconPath: 'assets/graphics/content/resourceIcons/solar-pv.svg'
   },
   {
-    name: 'Wind',
+    name: WIND,
     iconPath: 'assets/graphics/content/resourceIcons/wind.svg'
   },
   {
-    name: 'Off-Shore Wind',
+    name: OFFSHORE,
     iconPath: 'assets/graphics/content/resourceIcons/wind-offshore.svg'
   }
 ];
 
-export const filtersLists = {
-  distance_filters: [
-    { name: 'Distance to Airports', range: [0, 1000000], info: 'This filter has info.', isRange: true },
-    { name: 'Distance to Ports', range: [0, 1000000], info: 'This filter has info.', isRange: true },
-    { name: 'Distance to Anchorages', range: [0, 1000000], info: 'This filter has info.', isRange: true },
-    { name: 'Distance to Grids', range: [0, 1000000], info: 'This filter has info.', isRange: true },
-    { name: 'Distance to Roads', range: [0, 10000], info: 'This filter has info.', isRange: true },
-    { name: 'Population', range: [0, 1000000], info: 'This filter has info.', isRange: true },
-    { name: 'Slope', range: [0, 10000], info: 'This filter has info.', isRange: true },
-    { name: 'Land Cover', range: [0, 10000], info: 'This filter has info.', isRange: true }
-  ]
+const SLIDER = 'slider';
+const BOOL = 'boolean';
+const MULTI = 'multi-select';
+const TEXT = 'text';
+const DROPDOWN = 'dropdown';
+const GRID_OPTIONS = [9, 25, 50];
+const DEFAULT_RANGE = [0, 1000000];
+const DEFAULT_UNIT = '%';
+
+export const INPUT_CONSTANTS = {
+  SLIDER,
+  BOOL,
+  MULTI,
+  DROPDOWN,
+  TEXT,
+  GRID_OPTIONS,
+  DEFAULT_UNIT,
+  DEFAULT_RANGE
 };
 
+export const allowedTypes = new Map();
+allowedTypes.set('range_filter', SLIDER);
+allowedTypes.set('boolean', BOOL);
+
 export const lcoeList = [
-  { name: 'Turbine / Solar Unit Type', id: 'turbine_type', range: [0, 100] },
-  { name: 'Capital Recovery Factor', id: 'crf' },
-  { name: 'Generation - capital [USD/kW]', id: 'cg' },
-  { name: 'Generation - fixed O&M [USD/MW/y]', id: 'omfg' },
-  { name: 'Generation - variable O&M [USD/MWh]', id: 'omvg' },
-  { name: 'Transmission (land cabling) - capital [USD/MW/km]', id: 'ct' },
-  { name: 'Transmission - fixed O&M [USD/km]', id: 'omft' },
-  { name: 'Substation - capital [USD / two substations (per new transmission connection) ]', id: 'cs' },
-  { name: 'Road - capital [USD/km]', id: 'cr' },
-  { name: 'Road - fixed O&M [USD/km]', id: 'omfr' },
-  { name: 'Decommission % rate', id: 'decom' },
-  { name: 'Economic discount rate', id: 'i', range: [1, 100] },
-  { name: 'Lifetime [years]', id: 'n', range: [1, 100] }
+  {
+    name: 'Turbine / Solar Unit Type',
+    id: 'turbine_type',
+    input: {
+      type: TEXT,
+      range: [0, 3]
+    }
+  },
+  {
+    name: 'Capital Recovery Factor',
+    id: 'crf',
+    input: {
+      type: TEXT
+    }
+  },
+  {
+    name: 'Generation - capital [USD/kW]',
+    id: 'cg',
+    input: {
+      type: TEXT
+    }
+
+  },
+  {
+    name: 'Generation - fixed O&M [USD/MW/y]',
+    id: 'omfg',
+    input: {
+      type: TEXT
+    }
+  },
+  {
+    name: 'Generation - variable O&M [USD/MWh]',
+    id: 'omvg',
+    input: {
+      type: TEXT
+    }
+  },
+  {
+    name: 'Transmission (land cabling) - capital [USD/MW/km]',
+    id: 'ct',
+    input: {
+      type: TEXT
+    }
+  },
+  {
+    name: 'Transmission - fixed O&M [USD/km]',
+    id: 'omft',
+    input: {
+      type: TEXT,
+      default: 1
+
+    }
+  },
+  {
+    name: 'Substation - capital [USD / two substations (per new transmission connection) ]',
+    id: 'cs',
+    input: {
+      type: TEXT,
+      default: 1
+    }
+  },
+  {
+    name: 'Road - capital [USD/km]',
+    id: 'cr',
+    input: {
+      type: TEXT,
+      default: 1
+    }
+  },
+  {
+    name: 'Road - fixed O&M [USD/km]',
+    id: 'omfr',
+    input: {
+      type: TEXT,
+      default: 1
+    }
+  },
+  {
+    name: 'Decommission % rate',
+    id: 'decom',
+    input: {
+      type: TEXT,
+      default: 1
+    }
+  },
+  {
+    name: 'Economic discount rate',
+    id: 'i',
+    input: {
+      type: TEXT,
+      default: 1,
+      range: [0.1, 100]
+    }
+  },
+  {
+    name: 'Lifetime [years]',
+    id: 'n',
+    input: {
+      type: TEXT,
+      default: 1,
+      range: [1, 100]
+    }
+  },
+  {
+    name: 'Land Use Factor',
+    id: 'landuse',
+    input: {
+      default: 1,
+      range: [0, Infinity],
+      type: TEXT
+    }
+  },
+  /*
+  {
+    name: 'Capacity Factor',
+    id: 'capfac',
+    input: {
+      type: DROPDOWN,
+      options: ['opt1', 'opt2', 'opt3']
+    }
+  }, */
+
+  {
+    name: 'Technical Loss Factor',
+    // TODO add correct id
+    id: 'tlf',
+    input: {
+      default: 1,
+      range: [0, 1],
+      type: TEXT
+    }
+  },
+  {
+    name: 'Unavailability Factor',
+    // TODO add correct id
+    id: 'uf',
+    input: {
+      default: 1,
+      range: [0, 1],
+      type: TEXT
+    }
+  }
 ];
 
 export const weightsList = [
-  { name: 'LCOE Generation', id: 'lcoe_gen', range: [0, 1], default: 1 },
-  { name: 'LCOE Transmission', id: 'lcoe_transmission', range: [0, 1], default: 1 },
-  { name: 'LCOE Road', id: 'lcoe_road', range: [0, 1], default: 1 },
-  { name: 'Distance to Load Centers', id: 'distance_load', range: [0, 1], default: 1 },
-  { name: 'Technology Co-Location', id: 'technology_colocation', range: [0, 1], default: 1 },
-  { name: 'Human Footprint', id: 'human_footprint', range: [0, 1], default: 1 },
-  { name: 'Population Density', id: 'pop_density', range: [0, 1], default: 1 },
-  { name: 'Slope', id: 'slope', range: [0, 1], default: 1 },
-  { name: 'Land Use Score', id: 'land_use', range: [0, 1], default: 1 },
-  { name: 'Capacity Value (Wind Only)', id: 'capacity_value', range: [0, 1], default: 1 }
+  {
+    name: 'LCOE Generation',
+    id: 'lcoe_gen',
+    default: 1,
+    input: {
+      type: SLIDER,
+      range: [0, 1],
+      default: 1
+    }
+  },
+  {
+    name: 'LCOE Transmission',
+    id: 'lcoe_transmission',
+    default: 1,
+    input: {
+      type: SLIDER,
+      range: [0, 1],
+      default: 1
+    }
+
+  },
+  {
+    name: 'LCOE Road',
+    id: 'lcoe_road',
+    default: 1,
+    input: {
+      type: SLIDER,
+      range: [0, 1],
+      default: 1
+    }
+  },
+  {
+    name: 'Distance to Load Centers',
+    id: 'distance_load',
+    default: 1,
+    input: {
+      type: SLIDER,
+      range: [0, 1],
+      default: 1
+    }
+  },
+  {
+    name: 'Population Density',
+    id: 'pop_density',
+    default: 1,
+    input: {
+      type: SLIDER,
+      range: [0, 1],
+      default: 1
+    }
+  },
+  {
+    name: 'Slope',
+    id: 'slope',
+    default: 1,
+    input: {
+      type: SLIDER,
+      range: [0, 1],
+      default: 1
+    }
+  }
 ];
 
 const LCOE_PRESETS = {
-  greatest_savings: {
+  default: {
     turbine_type: 0,
     crf: 1,
     cg: 2000,
     omfg: 50000,
     omvg: 4,
-    ct: 990,
+    ct: 1000,
     omft: 0,
-    cs: 71000,
-    cr: 407000,
-    omfr: 0,
-    decom: 0,
+    cs: 70000,
+    cr: 400000,
+    omfr: 1,
+    decom: 1,
     i: 0.2,
     n: 25
   }
@@ -79,23 +287,19 @@ export const presets = {
   weights: {
     'Power Output': weightsList.map(weight => ({
       ...weight,
-      value: weight.range ? randomRange(weight.range[0], weight.range[1]) : randomRange(0, 100)
+      input: {
+        ...weight.input,
+        value: weight.input.range ? randomRange(...weight.input.range) : randomRange(0, 1)
+      }
     }))
   },
-  filters: {
-    Optimization: Object.entries(filtersLists).reduce((accum, [name, group]) => {
-      return (
-        {
-          ...accum,
-          [name]: group.map(filter => ({ ...filter, value: filter.range ? randomRange(filter.range[0], filter.range[1]) : randomRange(0, 100) }))
-        }
-      );
-    }, {})
-  },
   lcoe: {
-    'Greatest Savings': lcoeList.map(lcoe => ({
+    Default: lcoeList.map(lcoe => ({
       ...lcoe,
-      value: LCOE_PRESETS.greatest_savings[lcoe.id]
+      input: {
+        ...lcoe.input,
+        value: LCOE_PRESETS.default[lcoe.id] || lcoe.input.default
+      }
     }))
   }
 };

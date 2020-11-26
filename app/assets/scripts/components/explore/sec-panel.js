@@ -12,6 +12,7 @@ import {
 import Heading from '../../styles/type/heading';
 
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
+import Prose from '../../styles/type/prose';
 
 import ExploreContext from '../../context/explore-context';
 import ZoneAnalysisPanel from './zone-analysis-panel';
@@ -21,8 +22,11 @@ const SecPanel = styled(Panel)`
     width: 18rem;
   `}
   ${media.xlargeUp`
-    width: 20rem;
+    width: 22rem;
   `}
+`;
+const PreAnalysisMessage = styled(Prose)`
+  padding: 1rem;
 `;
 
 function ExpMapSecPanel (props) {
@@ -44,11 +48,15 @@ function ExpMapSecPanel (props) {
               </Heading>
             </PanelBlockHeader>
             <PanelBlockBody>
-              <ZoneAnalysisPanel
-                currentZones={currentZones}
-                inputTouched={inputTouched}
-                zonesGenerated={zonesGenerated}
-              />
+              {currentZones.isReady()
+                ? (
+                  <ZoneAnalysisPanel
+                    currentZones={currentZones.getData()}
+                    inputTouched={inputTouched}
+                    zonesGenerated={zonesGenerated}
+                  />) : (
+                  <PreAnalysisMessage>{currentZones.fetching ? 'Loading...' : 'Please apply parameters (filters, weights & lcoe) via left panel to load zone analysis.'}</PreAnalysisMessage>
+                )}
             </PanelBlockBody>
           </PanelBlock>
         </>
