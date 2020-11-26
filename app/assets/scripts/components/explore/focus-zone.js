@@ -11,7 +11,6 @@ import { ExportZonesButton } from './explore-zones';
 const Details = styled.div`
 /* stylelint-disable */
   dd {
-    font-family: ${themeVal('type.mono.family')};
     font-weight: ${themeVal('type.base.bold')};
     color: ${themeVal('color.primary')};
   }
