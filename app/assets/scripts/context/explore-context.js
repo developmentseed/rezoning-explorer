@@ -15,7 +15,9 @@ import areasJson from '../../data/areas.json';
 import { fetchJSON } from './reducers/reduxeed';
 import { initialApiRequestState } from './contexeed';
 import { fetchZonesReducer, fetchZones } from './reducers/zones';
-import { fetchFilterRanges, filterRangesReducer } from './reducers/filters';
+import { fetchFilterRanges, filterRangesReducer } from './reducers/filter-ranges';
+import { fetchFilters, filtersReducer } from './reducers/filters';
+
 import { fetchInputLayers, inputLayersReducer } from './reducers/layers';
 
 import {
@@ -78,7 +80,10 @@ export function ExploreProvider (props) {
   }); */
 
   // Init filters state
-  const [filtersLists, setFiltersLists] = useState(null);
+  const [filtersList, dispatchTestF] = useReducer(
+    filtersReducer,
+    initialApiRequestState
+  );
   const [filterRanges, dispatchFilterRanges] = useReducer(
     filterRangesReducer,
     initialApiRequestState
@@ -135,63 +140,7 @@ export function ExploreProvider (props) {
 
   const initAreasAndFilters = async () => {
     showGlobalLoading();
-
-    // Fetch filters from API
-    const { body: filters } = await fetchJSON(
-      `${config.apiEndpoint}/filter/schema`
-    );
-
-    // Prepare filters from the API to be consumed by the frontend
-    const apiFilters = Object.keys(filters)
-      .map((filterId) => ({ ...filters[filterId], id: filterId }))
-      .filter(
-        ({ id, type, pattern }) =>
-          (allowedTypes.has(type === 'string' ? pattern : type) &&
-            ![
-              'f_capacity_value',
-              'f_lcoe_gen',
-              'f_lcoe_transmission',
-              'f_lcoe_road'
-            ].includes(id)) // disable some filters not supported by the API
-      )
-      .map((filter) => {
-        const isRange = filter.pattern === 'range_filter';
-
-        return {
-          ...filter,
-          id: filter.id,
-          name: filter.title,
-          info: filter.description,
-          unit: abbreviateUnit(filter.unit),
-          category: filter.category,
-          active: false,
-          isRange,
-          input: {
-            range: DEFAULT_RANGE,
-            type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type)
-          }
-        };
-      });
-
-    // Apply a mock "Optimization" scenario to filter presets, just random numbers
-    presets.filters = {
-      Optimization: apiFilters.map(filter => ({
-        ...filter,
-        active: Math.random() > 0.5,
-        input: {
-          ...filter.input,
-          value: filter.input.type === SLIDER ? {
-            max: filter.range
-              ? randomRange(filter.range[0], filter.range[1])
-              : randomRange(0, 100),
-            min: filter.range ? filter.range[0] : 0
-          } : false
-        }
-      }))
-    };
-
-    // Add to filters context
-    setFiltersLists(apiFilters);
+    fetchFilters(dispatchTestF);
 
     // Parse region and country files into area list
     const eez = await fetch('public/zones/eez_v11.topojson').then((e) =>
@@ -329,20 +278,30 @@ export function ExploreProvider (props) {
     generateZones(filterString, weights, lcoe);
   }
 
-  const reinitFilters = () => {
-    /*
-    if (filtersLists) {
-      Object.values(filtersLists).forEach((list) => {
-        list.forEach(filter => {
-          delete filter.input.value;
-          delete filter.input.range;
-        });
-      });
-      //setFiltersLists(filtersLists);
-    } */
-  };
 
-  useEffect(reinitFilters, [filterRanges]);
+  useEffect(() => {
+    if (!filtersList.isReady()) {
+      return
+    }
+
+    // Apply a mock "Optimization" scenario to filter presets, just random numbers
+    presets.filters = {
+      Optimization: filtersList.getData().map(filter => ({
+        ...filter,
+        active: Math.random() > 0.5,
+        input: {
+          ...filter.input,
+          value: filter.input.type === SLIDER ? {
+            max: filter.range
+              ? randomRange(filter.range[0], filter.range[1])
+              : randomRange(0, 100),
+            min: filter.range ? filter.range[0] : 0
+          } : false
+        }
+      }))
+    };
+
+  }, [filtersList])
 
   return (
     <>
@@ -354,7 +313,7 @@ export function ExploreProvider (props) {
           setMapLayers,
           setMap,
           areas,
-          filtersLists,
+          filtersLists: (filtersList.isReady() && presets.filters )? filtersList.getData() : null,
           filterRanges,
           presets,
           selectedArea,

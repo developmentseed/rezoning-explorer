@@ -1,32 +1,67 @@
 import { fetchJSON, makeAPIReducer } from './reduxeed';
 import config from '../../config';
 import { wrapLogReducer } from './../contexeed';
+import {
+  allowedTypes,
+  INPUT_CONSTANTS
+} from '../../components/explore/panel-data';
+
+const abbreviateUnit = unit => {
+  switch (unit) {
+    case 'meters':
+      return 'm';
+    default:
+      return unit;
+  }
+};
 
 const { apiEndpoint } = config;
 
-export const filterRangesReducer = wrapLogReducer(
-  makeAPIReducer('FILTER_RANGES')
-);
-
+export const filtersReducer = wrapLogReducer(makeAPIReducer('FETCH_FILTERS'));
 /*
- * Fetch filter ranges for the selected area from API
- */
-export async function fetchFilterRanges (selectedAreaId, dispatch) {
-  dispatch({ type: 'REQUEST_FILTER_RANGES' });
+ * Make all asynchronous requests to load zone score from REZoning API
+ * dispatch updates to some context using 'dispatch' function
+*/
+export async function fetchFilters (dispatch) {
+  dispatch({ type: 'REQUEST_FETCH_FILTERS' });
   try {
-    const layers = (
-      await fetchJSON(`${apiEndpoint}/filter/${selectedAreaId}/layers`)
-    ).body;
+    const { body: filters } = await fetchJSON(
+      `${apiEndpoint}/filter/schema`
+    );
 
-    // Filters have "f_" prefix, apply
-    const filterRanges = Object.keys(layers).reduce((acc, layerId) => {
-      const filterId = `f_${layerId}`;
-      acc[filterId] = layers[layerId];
-      return acc;
-    }, {});
+    // Prepare filters from the API to be consumed by the frontend
+    const apiFilters = Object.keys(filters)
+      .map((filterId) => ({ ...filters[filterId], id: filterId }))
+      .filter(
+        ({ id, type, pattern }) =>
+          (allowedTypes.has(type === 'string' ? pattern : type) &&
+            ![
+              'f_capacity_value',
+              'f_lcoe_gen',
+              'f_lcoe_transmission',
+              'f_lcoe_road'
+            ].includes(id)) // disable some filters not supported by the API
+      )
+      .map((filter) => {
+        const isRange = filter.pattern === 'range_filter';
 
-    dispatch({ type: 'RECEIVE_FILTER_RANGES', data: filterRanges });
+        return {
+          ...filter,
+          id: filter.id,
+          name: filter.title,
+          info: filter.description,
+          unit: abbreviateUnit(filter.unit),
+          category: filter.category,
+          active: false,
+          isRange,
+          input: {
+            range: INPUT_CONSTANTS.DEFAULT_RANGE,
+            type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type)
+          }
+        };
+      });
+    dispatch({ type: 'RECEIVE_FETCH_FILTERS', data: apiFilters });
   } catch (err) {
-    dispatch({ type: 'INVALIDATE_FILTER_RANGES', error: err });
+    dispatch({ type: 'ERROR', error: err });
   }
 }
