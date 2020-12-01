@@ -134,16 +134,21 @@ describe('Explore view', () => {
     );
 
     // Both modals are hidden
-    cy.get('#select-area-modal-header').should('not.exist');
-    cy.get('#select-resource-modal-header').should('not.exist');
+    //cy.get('#select-area-modal-header').should('not.exist');
+    //cy.get('#select-resource-modal-header').should('not.exist');
+    
 
-    /*
+    cy.get('#select-area-modal-header').should($p => {
+
+    })
+
+
     // Prime panel contain selections
     cy.get('#selected-area-prime-panel-heading').should(
       'contain',
       'Burundi'
     );
-    cy.get('#selected-resource-prime-panel-heading').should('contain', 'Wind');*/
+    cy.get('#selected-resource-prime-panel-heading').should('contain', 'Wind');
   });
 
   it('Visit /explore?areaId=BDI&resourceId=Wind', () => {
