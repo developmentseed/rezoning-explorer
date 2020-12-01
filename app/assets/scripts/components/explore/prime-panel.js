@@ -19,9 +19,9 @@ import { ZONES_BOUNDARIES_LAYER_ID } from '../common/mb-map/mb-map';
 import { Subheading } from '../../styles/type/heading';
 
 import {
-  resourceList,
+  resourceList
   // weightsList,
-  lcoeList
+  // lcoeList
 } from './panel-data';
 
 const PrimePanel = styled(Panel)`
@@ -77,6 +77,7 @@ function ExpMapPrimePanel (props) {
     filteredLayerUrl,
     filtersLists,
     weightsList,
+    lcoeList,
     map,
     mapLayers, setMapLayers,
     maxZoneScore, setMaxZoneScore
@@ -196,7 +197,8 @@ function ExpMapPrimePanel (props) {
         initialState={isLargeViewport()}
         bodyContent={
           (filtersLists &&
-            weightsList
+            weightsList &&
+            lcoeList
           ) ? (
               <QueryForm
                 area={selectedArea}

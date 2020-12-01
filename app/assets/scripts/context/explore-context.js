@@ -17,6 +17,7 @@ import { fetchZonesReducer, fetchZones } from './reducers/zones';
 import { fetchFilterRanges, filterRangesReducer } from './reducers/filter-ranges';
 import { fetchFilters, filtersReducer } from './reducers/filters';
 import { fetchWeights, weightsReducer } from './reducers/weights';
+import { fetchLcoe, lcoeReducer } from './reducers/lcoe';
 
 import { fetchInputLayers, inputLayersReducer } from './reducers/layers';
 
@@ -85,6 +86,11 @@ export function ExploreProvider (props) {
     initialApiRequestState
   );
 
+  const [lcoeList, dispatchLcoeList] = useReducer(
+    lcoeReducer,
+    initialApiRequestState
+  );
+
   const [inputLayers, dispatchInputLayers] = useReducer(
     inputLayersReducer,
     initialApiRequestState
@@ -139,6 +145,7 @@ export function ExploreProvider (props) {
     showGlobalLoading();
     fetchFilters(dispatchFiltersList);
     fetchWeights(dispatchWeightsList);
+    fetchLcoe(dispatchLcoeList);
 
     // Parse region and country files into area list
     const eez = await fetch('public/zones/eez_v11.topojson').then((e) =>
@@ -311,6 +318,7 @@ export function ExploreProvider (props) {
           areas,
           filtersLists: (filtersList.isReady() && presets.filters) ? filtersList.getData() : null,
           weightsList: (weightsList.isReady() && presets.weights) ? weightsList.getData() : null,
+          lcoeList: (lcoeList.isReady() && presets.lcoe) ? lcoeList.getData() : null,
           filterRanges,
           presets,
           selectedArea,

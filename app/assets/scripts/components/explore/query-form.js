@@ -28,7 +28,6 @@ import { round } from '../../utils/format';
 import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
 import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
-import FormLabel from '../../styles/form/label';
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
@@ -408,7 +407,6 @@ function QueryForm (props) {
             disabled={option.readOnly}
             id={`${option.name}`}
             name={`${option.name}`}
-            label={option.name}
             value={option.input.value}
             validate={option.input.range ? validateRangeNum(option.input.range[0], option.input.range[1]) : () => true}
             errorMessage={errorMessage}
@@ -422,7 +420,6 @@ function QueryForm (props) {
       case DROPDOWN:
         return (
           <FormGroup>
-            <FormLabel htmlFor={option.name}>{option.name}</FormLabel>
             <FormSelect
               id={option.name}
               onChange={(e) => onChange(e.target.value)}
@@ -770,9 +767,13 @@ function QueryForm (props) {
         >
           {lcoe.map((cost, ind) => (
             <PanelOption key={cost.name}>
-              <InfoButton info='Placeholer text' id={cost.name}>
+              <OptionHeadline>
+                <PanelOptionTitle>{cost.name}</PanelOptionTitle>
+
+                <InfoButton info='Placeholer text' id={cost.name}>
                 Info
-              </InfoButton>
+                </InfoButton>
+              </OptionHeadline>
               {inputOfType(cost, (v) => {
                 setLcoe(
                   updateStateList(lcoe, ind, {
