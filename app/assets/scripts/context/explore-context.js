@@ -12,11 +12,11 @@ import config from '../config';
 
 import areasJson from '../../data/areas.json';
 
-import { fetchJSON } from './reducers/reduxeed';
 import { initialApiRequestState } from './contexeed';
 import { fetchZonesReducer, fetchZones } from './reducers/zones';
 import { fetchFilterRanges, filterRangesReducer } from './reducers/filter-ranges';
 import { fetchFilters, filtersReducer } from './reducers/filters';
+import { fetchWeights, weightsReducer } from './reducers/weights';
 
 import { fetchInputLayers, inputLayersReducer } from './reducers/layers';
 
@@ -28,24 +28,15 @@ import {
 import {
   INPUT_CONSTANTS,
   presets as defaultPresets,
-  checkIncluded,
-  allowedTypes
+  checkIncluded
 } from '../components/explore/panel-data';
 
-const { GRID_OPTIONS, SLIDER, BOOL, DEFAULT_RANGE } = INPUT_CONSTANTS;
+const { GRID_OPTIONS, SLIDER, BOOL } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
 const presets = { ...defaultPresets };
 
-const abbreviateUnit = unit => {
-  switch (unit) {
-    case 'meters':
-      return 'm';
-    default:
-      return unit;
-  }
-};
 export function ExploreProvider (props) {
   const [mapLayers, setMapLayers] = useState([]);
   const [maxZoneScore, setMaxZoneScore] = useQsState({
@@ -80,7 +71,7 @@ export function ExploreProvider (props) {
   }); */
 
   // Init filters state
-  const [filtersList, dispatchTestF] = useReducer(
+  const [filtersList, dispatchFiltersList] = useReducer(
     filtersReducer,
     initialApiRequestState
   );
@@ -88,6 +79,12 @@ export function ExploreProvider (props) {
     filterRangesReducer,
     initialApiRequestState
   );
+
+  const [weightsList, dispatchWeightsList] = useReducer(
+    weightsReducer,
+    initialApiRequestState
+  );
+
   const [inputLayers, dispatchInputLayers] = useReducer(
     inputLayersReducer,
     initialApiRequestState
@@ -140,7 +137,8 @@ export function ExploreProvider (props) {
 
   const initAreasAndFilters = async () => {
     showGlobalLoading();
-    fetchFilters(dispatchTestF);
+    fetchFilters(dispatchFiltersList);
+    fetchWeights(dispatchWeightsList);
 
     // Parse region and country files into area list
     const eez = await fetch('public/zones/eez_v11.topojson').then((e) =>
@@ -278,10 +276,9 @@ export function ExploreProvider (props) {
     generateZones(filterString, weights, lcoe);
   }
 
-
   useEffect(() => {
     if (!filtersList.isReady()) {
-      return
+      return;
     }
 
     // Apply a mock "Optimization" scenario to filter presets, just random numbers
@@ -300,8 +297,7 @@ export function ExploreProvider (props) {
         }
       }))
     };
-
-  }, [filtersList])
+  }, [filtersList]);
 
   return (
     <>
@@ -313,7 +309,8 @@ export function ExploreProvider (props) {
           setMapLayers,
           setMap,
           areas,
-          filtersLists: (filtersList.isReady() && presets.filters )? filtersList.getData() : null,
+          filtersLists: (filtersList.isReady() && presets.filters) ? filtersList.getData() : null,
+          weightsList: (weightsList.isReady() && presets.weights) ? weightsList.getData() : null,
           filterRanges,
           presets,
           selectedArea,
