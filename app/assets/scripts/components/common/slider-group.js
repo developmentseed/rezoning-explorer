@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import T from 'prop-types';
 import { visuallyHidden } from '../../styles/helpers';
 import { validateRangeNum } from '../../utils/utils';
-import { round } from '../../utils/format';
+import { truncateDecimals } from '../../utils/format';
 import StressedFormGroupInput from './stressed-form-group-input';
 
 const FormSliderGroup = styled.div`
@@ -30,7 +30,7 @@ function SliderGroup (props) {
         id={`slider-input-min-${id}`}
         name={`slider-input-min-${id}}`}
         label='Min value'
-        value={round(value.min)}
+        value={truncateDecimals(value.min)}
         disabled={disabled}
         validate={validateRangeNum(range[0], value.max)}
         onChange={(val) => {
@@ -40,10 +40,10 @@ function SliderGroup (props) {
       />}
 
       <InputRange
-        minValue={range[0]}
-        maxValue={range[1]}
-        step={range[1] > 1 ? 1 : 0.1}
-        value={Number(value) ? round(value) : value}
+        minValue={truncateDecimals(range[0])}
+        maxValue={truncateDecimals(range[1])}
+        step={(range[1] % 1 !== 0 || range[1] <= 1) ? 0.01 : 1}
+        value={Number(value) ? truncateDecimals(value) : value}
         onChange={onChange}
         disabled={disabled}
       />
@@ -54,7 +54,7 @@ function SliderGroup (props) {
         id={`slider-input-max-${id}`}
         name={`slider-input-max-${id}}`}
         label='Max value'
-        value={round(value.max || value)}
+        value={truncateDecimals(value.max || value)}
         disabled={disabled}
         validate={validateRangeNum(value.min || range[0], range[1])}
         onChange={(val) => {

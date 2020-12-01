@@ -33,12 +33,12 @@ export const resourceList = [
 ];
 
 const SLIDER = 'slider';
-const BOOL = 'bool';
+const BOOL = 'boolean';
 const MULTI = 'multi-select';
 const TEXT = 'text';
 const DROPDOWN = 'dropdown';
 const GRID_OPTIONS = [9, 25, 50];
-const DEFAULT_RANGE = [0, 100];
+const DEFAULT_RANGE = [0, 1000000];
 const DEFAULT_UNIT = '%';
 
 export const INPUT_CONSTANTS = {
@@ -105,35 +105,41 @@ export const lcoeList = [
     name: 'Transmission - fixed O&M [USD/km]',
     id: 'omft',
     input: {
-      type: TEXT
+      type: TEXT,
+      default: 1
+
     }
   },
   {
     name: 'Substation - capital [USD / two substations (per new transmission connection) ]',
     id: 'cs',
     input: {
-      type: TEXT
+      type: TEXT,
+      default: 1
     }
   },
   {
     name: 'Road - capital [USD/km]',
     id: 'cr',
     input: {
-      type: TEXT
+      type: TEXT,
+      default: 1
     }
   },
   {
     name: 'Road - fixed O&M [USD/km]',
     id: 'omfr',
     input: {
-      type: TEXT
+      type: TEXT,
+      default: 1
     }
   },
   {
     name: 'Decommission % rate',
     id: 'decom',
     input: {
-      type: TEXT
+      type: TEXT,
+      default: 1
     }
   },
   {
@@ -141,15 +147,16 @@ export const lcoeList = [
     id: 'i',
     input: {
       type: TEXT,
+      default: 1,
       range: [0.1, 100]
     }
   },
   {
     name: 'Lifetime [years]',
     id: 'n',
-    range: [1, 100],
     input: {
       type: TEXT,
+      default: 1,
       range: [1, 100]
     }
   },
@@ -157,10 +164,12 @@ export const lcoeList = [
     name: 'Land Use Factor',
     id: 'landuse',
     input: {
+      default: 1,
       range: [0, Infinity],
       type: TEXT
     }
   },
+  /*
   {
     name: 'Capacity Factor',
     id: 'capfac',
@@ -168,13 +177,14 @@ export const lcoeList = [
       type: DROPDOWN,
       options: ['opt1', 'opt2', 'opt3']
     }
-  },
+  }, */
 
   {
     name: 'Technical Loss Factor',
     // TODO add correct id
     id: 'tlf',
     input: {
+      default: 1,
       range: [0, 1],
       type: TEXT
     }
@@ -184,6 +194,7 @@ export const lcoeList = [
     // TODO add correct id
     id: 'uf',
     input: {
+      default: 1,
       range: [0, 1],
       type: TEXT
     }
@@ -194,7 +205,6 @@ export const weightsList = [
   {
     name: 'LCOE Generation',
     id: 'lcoe_gen',
-    range: [0, 1],
     default: 1,
     input: {
       type: SLIDER,
@@ -205,7 +215,6 @@ export const weightsList = [
   {
     name: 'LCOE Transmission',
     id: 'lcoe_transmission',
-    range: [0, 1],
     default: 1,
     input: {
       type: SLIDER,
@@ -217,7 +226,6 @@ export const weightsList = [
   {
     name: 'LCOE Road',
     id: 'lcoe_road',
-    range: [0, 1],
     default: 1,
     input: {
       type: SLIDER,
@@ -228,7 +236,6 @@ export const weightsList = [
   {
     name: 'Distance to Load Centers',
     id: 'distance_load',
-    range: [0, 1],
     default: 1,
     input: {
       type: SLIDER,
@@ -239,7 +246,6 @@ export const weightsList = [
   {
     name: 'Population Density',
     id: 'pop_density',
-    range: [0, 1],
     default: 1,
     input: {
       type: SLIDER,
@@ -250,7 +256,6 @@ export const weightsList = [
   {
     name: 'Slope',
     id: 'slope',
-    range: [0, 1],
     default: 1,
     input: {
       type: SLIDER,
@@ -271,8 +276,8 @@ const LCOE_PRESETS = {
     omft: 0,
     cs: 70000,
     cr: 400000,
-    omfr: 0,
-    decom: 0,
+    omfr: 1,
+    decom: 1,
     i: 0.2,
     n: 25
   }
@@ -284,7 +289,7 @@ export const presets = {
       ...weight,
       input: {
         ...weight.input,
-        value: weight.range ? randomRange(weight.range[0], weight.range[1]) : randomRange(0, 100)
+        value: weight.input.range ? randomRange(...weight.input.range) : randomRange(0, 1)
       }
     }))
   },
@@ -293,7 +298,7 @@ export const presets = {
       ...lcoe,
       input: {
         ...lcoe.input,
-        value: LCOE_PRESETS.default[lcoe.id]
+        value: LCOE_PRESETS.default[lcoe.id] || lcoe.input.default
       }
     }))
   }

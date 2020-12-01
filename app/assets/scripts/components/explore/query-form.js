@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useRef, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal, makeTitleCase } from '../../styles/utils/general';
@@ -24,18 +24,43 @@ import InfoButton from '../common/info-button';
 import GridSetter from './grid-setter';
 
 import ExploreContext from '../../context/explore-context';
+import { round } from '../../utils/format';
 import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
-
 import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
 import FormLabel from '../../styles/form/label';
+
+const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
+
 const turbineTypeMap = {
   'Off-Shore Wind': [1, 3],
   Wind: [1, 3],
   'Solar PV': [0, 0]
 };
 
-const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_UNIT, DEFAULT_RANGE } = INPUT_CONSTANTS;
+const maxZoneScoreO = {
+  name: 'Zone Score Range',
+  id: 'zone-score-range',
+  active: true,
+  isRange: true,
+  input: {
+    value: { min: 0, max: 1 },
+    type: SLIDER,
+    range: [0, 1]
+  }
+};
+/*
+const maxLCOEO = {
+  name: 'LCOE Range',
+  id: 'lcoe-range',
+  active: true,
+  isRange: true,
+  input: {
+    value: { min: 0, max: 1 },
+    type: SLIDER,
+    range: [0, 1]
+  }
+}; */
 
 const castByFilterType = type => {
   switch (type) {
@@ -151,21 +176,26 @@ const SubmissionSection = styled(PanelBlockFooter)`
   gap: 0rem 1rem;
 `;
 
-const initByType = obj => {
-  switch (obj.type) {
+const initByType = (obj, ranges) => {
+  const apiRange = ranges[obj.id];
+  const { input } = obj;
+
+  const range = (apiRange && [round(apiRange.min), round(apiRange.max)]) || obj.input.range || DEFAULT_RANGE;
+
+  switch (input.type) {
     case SLIDER:
       return {
-        ...obj,
-        range: obj.range || DEFAULT_RANGE,
-        unit: obj.unit || DEFAULT_UNIT,
-        value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
+        ...input,
+        range,
+        unit: input.unit,
+        value: input.value || input.default || (obj.isRange ? { min: round(range[0]), max: round(range[1]) } : range[0])
       };
     case TEXT:
       return {
-        ...obj,
-        range: obj.range || DEFAULT_RANGE,
-        unit: obj.unit || DEFAULT_UNIT,
-        value: obj.value || obj.default || (obj.range || DEFAULT_RANGE)[0]
+        ...input,
+        range: input.range || DEFAULT_RANGE,
+        unit: input.unit,
+        value: input.value || input.default || (input.range || DEFAULT_RANGE)[0]
       };
     case BOOL:
       return {
@@ -177,34 +207,12 @@ const initByType = obj => {
     case DROPDOWN:
       return {
         ...obj,
-        value: obj.value || obj.options[0],
-        range: [null, null],
+        value: obj.value || (obj.options && obj.options[0]) || '',
         unit: null
       };
     default:
       return {};
   }
-};
-
-const initListToState = (list) => {
-  return list.map((obj) => ({
-    ...obj,
-    input: initByType(obj.input),
-
-    // range: obj.range || DEFAULT_RANGE,
-    // unit: obj.unit || DEFAULT_UNIT,
-    active: obj.active === undefined ? true : obj.active
-    // value: obj.value || obj.default || (obj.isRange ? { min: obj.range[0], max: obj.range[1] } : (obj.range || DEFAULT_RANGE)[0])
-  })).filter(obj => !obj.excluded);
-};
-
-const initObjectToState = (obj) => {
-  return Object.keys(obj).reduce((accum, key) => {
-    return {
-      ...accum,
-      [key]: initListToState(obj[key])
-    };
-  }, {});
 };
 
 const updateStateList = (list, i, updatedValue) => {
@@ -214,7 +222,7 @@ const updateStateList = (list, i, updatedValue) => {
 };
 
 function QueryForm (props) {
-  const { updateFilteredLayer, filtersLists, presets } = useContext(ExploreContext);
+  const { updateFilteredLayer, filtersLists, filterRanges, presets } = useContext(ExploreContext);
 
   const {
     area,
@@ -227,8 +235,20 @@ function QueryForm (props) {
     onSelectionChange,
     gridMode,
     setGridMode,
-    gridSize, setGridSize
+    gridSize, setGridSize,
+    maxZoneScore, setMaxZoneScore
+    // maxLCOE, setMaxLCOE
   } = props;
+
+  const firstLoad = useRef(true);
+
+  const initListToState = (list) => {
+    return list.map((obj) => ({
+      ...obj,
+      input: initByType(obj, filterRanges.getData()),
+      active: obj.active === undefined ? true : obj.active
+    }));
+  };
 
   const [weights, setWeights] = useQsState({
     key: 'weights',
@@ -269,10 +289,10 @@ function QueryForm (props) {
   const [filters, setFilters] = useQsState({
     key: 'filters',
     hydrator: v => {
-      const baseFilts = initObjectToState(filtersLists);
+      let baseFilts = initListToState(filtersLists);
       if (v) {
         const qsValues = v.split('|').map((vals, i) => {
-          const thisFilt = baseFilts.distance_filters[i];
+          const thisFilt = baseFilts[i];
           if (thisFilt.isRange) {
             const [min, max, active] = vals.split(',');
             return {
@@ -291,7 +311,7 @@ function QueryForm (props) {
           }
         });
 
-        baseFilts.distance_filters = baseFilts.distance_filters.map((filt, i) => (
+        baseFilts = baseFilts.map((filt, i) => (
           {
             ...filt,
             active: qsValues[i].active,
@@ -305,7 +325,7 @@ function QueryForm (props) {
       return baseFilts;
     },
     dehydrator: v => {
-      return v && v.distance_filters.map(f => {
+      return v && v.map(f => {
         const { value } = f.input;
         let shard = f.isRange ? `${value.min}, ${value.max}` : `${value}`;
         shard = f.active ? shard : `${shard},${false}`;
@@ -354,14 +374,25 @@ function QueryForm (props) {
 
   const inputOfType = (option, onChange) => {
     const { range } = option.input;
-    const errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${range[0]} - ${range[1]}`;
+    let errorMessage;
+    if (range) {
+      errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${round(range[0])} - ${round(range[1])}`;
+    } else {
+      errorMessage = 'Value not accepted';
+    }
+
+    // Get filter range, if available
+    const filterRange = filterRanges.getData()[option.id];
+
+    if (option.id === 'lcoe-range') {
+    }
 
     switch (option.input.type) {
       case SLIDER:
         return (
           <SliderGroup
             unit={option.input.unit || '%'}
-            range={option.input.range || [0, 100]}
+            range={filterRange ? [round(filterRange.min), round(filterRange.max)] : option.input.range}
             id={option.name}
             value={option.input.value}
             isRange={option.isRange}
@@ -391,7 +422,6 @@ function QueryForm (props) {
       case DROPDOWN:
         return (
           <FormGroup>
-
             <FormLabel htmlFor={option.name}>{option.name}</FormLabel>
             <FormSelect
               id={option.name}
@@ -414,13 +444,13 @@ function QueryForm (props) {
           </FormGroup>
         );
       default:
-        return {};
+        return null;
     }
   };
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));
-    setFilters(initObjectToState(filtersLists));
+    setFilters(initListToState(filtersLists));
     setLcoe(initListToState(lcoeList));
   };
 
@@ -438,7 +468,7 @@ function QueryForm (props) {
           ...accum,
           [weight.id || weight.name]: Number(weight.input.value)
         }), {});
-    updateFilteredLayer(filters.distance_filters, weightsValues, lcoeValues);
+    updateFilteredLayer(filters, weightsValues, lcoeValues);
   };
 
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
@@ -451,6 +481,16 @@ function QueryForm (props) {
       turbineType.input.value = turbineType.input.range[0];
     }
   }, [resource]);
+
+  /* Reinitialize filters when new ranges are received */
+
+  useEffect(() => {
+    if (firstLoad.current) {
+      firstLoad.current = false;
+    } else {
+      setFilters(initListToState(filtersLists));
+    }
+  }, [filterRanges]);
 
   return (
     <PanelBlock>
@@ -516,44 +556,120 @@ function QueryForm (props) {
           presets={presets.filters}
           setPreset={(preset) => {
             if (preset === 'reset') {
-              setFilters(initObjectToState(filtersLists));
+              setFilters(initListToState(filtersLists));
             } else {
-              setFilters(initObjectToState(presets.filters[preset]));
+              setFilters(initListToState(presets.filters[preset]));
             }
           }}
         >
+
           <Accordion
             initialState={[
               true,
-              ...Object.keys(filters)
+              ...filters.reduce((seen, filt) => {
+                if (!seen.includes(filt.category)) {
+                  seen.push(filt);
+                }
+                return seen;
+              }, [])
                 .slice(1)
                 .map((_) => false)
             ]}
+            foldCount={Object.keys(filters).length + 1}
+            allowMultiple
           >
-            {({ checkExpanded, setExpanded }) =>
-              Object.entries(filters).map(([group, list], idx) => {
-                return (
-                  <AccordionFold
-                    key={group}
-                    forwardedAs={FormGroupWrapper}
-                    isFoldExpanded={checkExpanded(idx)}
-                    setFoldExpanded={(v) => setExpanded(idx, v)}
-                    renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                      <AccordionFoldTrigger
-                        isExpanded={isFoldExpanded}
-                        onClick={() => setFoldExpanded(!isFoldExpanded)}
-                      >
-                        <Heading size='small' variation='primary'>
-                          {makeTitleCase(group.replace(/_/g, ' '))}
-                        </Heading>
-                      </AccordionFoldTrigger>
-                    )}
-                    renderBody={({ isFoldExpanded }) =>
-                      list.map((filter, ind) => (
-                        checkIncluded(filter, resource) &&
+            {({ checkExpanded, setExpanded }) => (
+              <>
+                <AccordionFold
+                  forwardedAs={FormGroupWrapper}
+                  isFoldExpanded={checkExpanded(0)}
+                  setFoldExpanded={(v) => setExpanded(0, v)}
+                  renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                    <AccordionFoldTrigger
+                      isExpanded={isFoldExpanded}
+                      onClick={() => setFoldExpanded(!isFoldExpanded)}
+                    >
+                      <Heading size='small' variation='primary'>
+                        {makeTitleCase('Output Filters')}
+                      </Heading>
+                    </AccordionFoldTrigger>
+                  )}
+                  renderBody={({ isFoldExpanded }) => (
+                    <>
+                      <PanelOption hidden={!isFoldExpanded}>
+                        <OptionHeadline>
+                          <PanelOptionTitle>{maxZoneScoreO.name}</PanelOptionTitle>
+                          {maxZoneScoreO.info && (
+                            <InfoButton info={maxZoneScoreO.info} id={maxZoneScoreO.name}>
+                                Info
+                            </InfoButton>
+                          )}
+                        </OptionHeadline>
+                        {inputOfType({
+                          ...maxZoneScoreO,
+                          input: {
+                            ...maxZoneScoreO.input,
+                            value: maxZoneScore
+                          }
+                        }, ({ min, max }) => {
+                          setMaxZoneScore({ min: round(min), max: round(max) });
+                        })}
+                      </PanelOption>
+
+                      {/* <PanelOption hidden={!isFoldExpanded}>
+                        <OptionHeadline>
+                          <PanelOptionTitle>{maxLCOEO.name}</PanelOptionTitle>
+                          {maxLCOEO.info && (
+                            <InfoButton info={maxLCOEO.info} id={maxLCOEO.name}>
+                                Info
+                            </InfoButton>
+                          )}
+                        </OptionHeadline>
+                        {inputOfType({
+                          ...maxLCOEO,
+                          input: {
+                            ...maxLCOEO.input,
+                            value: maxLCOE
+                          }
+                        }, ({ min, max }) => {
+                          setMaxLCOE({ min: round(min), max: round(max) });
+                        })}
+                      </PanelOption> */}
+                    </>
+                  )}
+                />
+
+                {Object.entries(filters.reduce((accum, filt) => {
+                  if (!accum[filt.category]) {
+                    accum[filt.category] = [];
+                  }
+                  accum[filt.category].push(filt);
+                  return accum;
+                }, {}))
+                  .map(([group, list], idx) => {
+                    idx += 1;
+                    return (
+                      <AccordionFold
+                        key={group}
+                        forwardedAs={FormGroupWrapper}
+                        isFoldExpanded={checkExpanded(idx)}
+                        setFoldExpanded={(v) => setExpanded(idx, v)}
+                        renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                          <AccordionFoldTrigger
+                            isExpanded={isFoldExpanded}
+                            onClick={() => setFoldExpanded(!isFoldExpanded)}
+                          >
+                            <Heading size='small' variation='primary'>
+                              {makeTitleCase(group.replace(/_/g, ' '))}
+                            </Heading>
+                          </AccordionFoldTrigger>
+                        )}
+                        renderBody={({ isFoldExpanded }) =>
+                          list.map((filter, ind) => (
+                            checkIncluded(filter, resource) &&
                         <PanelOption key={filter.name} hidden={!isFoldExpanded}>
                           <OptionHeadline>
-                            <PanelOptionTitle>{filter.name}</PanelOptionTitle>
+                            <PanelOptionTitle>{`${filter.name}`.concat(filter.unit ? ` (${filter.unit})` : '')}</PanelOptionTitle>
                             {filter.info && (
                               <InfoButton info={filter.info} id={filter.name}>
                                 Info
@@ -565,14 +681,15 @@ function QueryForm (props) {
                               disabled={filter.disabled}
                               checked={filter.active}
                               onChange={() => {
-                                setFilters({
-                                  ...filters,
-                                  [group]: updateStateList(list, ind, {
-                                    ...filter,
-                                    active: !filter.active,
-                                    value: filter.input.type === BOOL ? !filter.active : filter.value
-                                  })
-                                });
+                                const ind = filters.findIndex(f => f.id === filter.id);
+                                setFilters(updateStateList(filters, ind, {
+                                  ...filter,
+                                  active: !filter.active,
+                                  input: {
+                                    ...filter.input,
+                                    value: filter.input.type === BOOL ? !filter.active : filter.input.value
+                                  }
+                                }));
                               }}
                             >
                               Toggle filter
@@ -581,25 +698,26 @@ function QueryForm (props) {
                           {
                             inputOfType(filter, (value) => {
                               if (filter.active) {
-                                setFilters({
-                                  ...filters,
-                                  [group]: updateStateList(list, ind, {
-                                    ...filter,
-                                    input: {
-                                      ...filter.input,
-                                      value
-                                    }
-                                  })
-                                });
+                                const ind = filters.findIndex(f => f.id === filter.id);
+                                setFilters(updateStateList(filters, ind, {
+                                  ...filter,
+                                  input: {
+                                    ...filter.input,
+                                    value
+                                  }
+
+                                }));
                               }
                             })
                           }
 
                         </PanelOption>
-                      ))}
-                  />
-                );
-              })}
+                          ))}
+                      />
+                    );
+                  })}
+              </>
+            )}
           </Accordion>
         </FormWrapper>
 
@@ -711,7 +829,11 @@ QueryForm.propTypes = {
   gridMode: T.bool,
   setGridMode: T.func,
   gridSize: T.number,
-  setGridSize: T.func
+  setGridSize: T.func,
+  maxZoneScore: T.object,
+  setMaxZoneScore: T.func
+  /* maxLCOE: T.object,
+  setMaxLCOE: T.func */
 };
 
 export default QueryForm;

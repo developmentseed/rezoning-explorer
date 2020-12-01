@@ -40,9 +40,6 @@ const ZonesHeader = styled(Subheading)`
 `;
 
 const Card = styled(CardWrapper)`
-  display: grid;
-  grid-auto-flow: column;
-  justify-content: space-between;
   height: auto;
   box-shadow: none;
   border: none;
@@ -53,7 +50,10 @@ const Card = styled(CardWrapper)`
   &:hover {
     box-shadow: none;
     transform: none;
-    background: ${themeVal('color.baseAlphaB')};
+    background: ${themeVal('color.primaryAlpha')};
+  }
+  ${FormCheckable} {
+    padding: 0 1rem;
   }
 `;
 
@@ -67,6 +67,7 @@ const CardIcon = styled.div`
   flex-direction: column;
   justify-content: center;
   margin-right: 1rem;
+  margin-left: 0.5rem;
   font-size: 0.5rem;
 `;
 
@@ -117,6 +118,15 @@ function ExploreZones (props) {
     }
   };
 
+  const formatLabel = function (id) {
+    switch (id) {
+      case 'lcoe':
+        return `${id.replace(/_/g, ' ')} [USD/MwH]`;
+      default:
+        return id.replace(/_/g, ' ');
+    }
+  };
+
   const onRowHoverEvent = (event, row) => {
     setHoveredFeature(event === 'enter' ? row : null);
   };
@@ -161,7 +171,7 @@ function ExploreZones (props) {
                       .filter(([label, value]) => FILTERED_PROPERTIES[label])
                       .map(([label, value]) => (
                         <Detail key={`${data.id}-${label}`}>
-                          <dt>{label.replace(/_/g, ' ')}</dt>
+                          <dt>{formatLabel(label)}</dt>
                           <dd>{formatIndicator(label, value)}</dd>
                         </Detail>
                       )
