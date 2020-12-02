@@ -29,6 +29,7 @@ import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
 import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
 import FormLabel from '../../styles/form/label';
+
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
 const turbineTypeMap = {
@@ -179,7 +180,7 @@ const initByType = (obj, ranges) => {
   const apiRange = ranges[obj.id];
   const { input } = obj;
 
-  const range = (apiRange && [apiRange.min, apiRange.max]) || obj.input.range || DEFAULT_RANGE;
+  const range = (apiRange && [round(apiRange.min), round(apiRange.max)]) || obj.input.range || DEFAULT_RANGE;
 
   switch (input.type) {
     case SLIDER:
@@ -187,7 +188,7 @@ const initByType = (obj, ranges) => {
         ...input,
         range,
         unit: input.unit,
-        value: input.value || input.default || (obj.isRange ? { min: range[0], max: range[1] } : range[0])
+        value: input.value || input.default || (obj.isRange ? { min: round(range[0]), max: round(range[1]) } : range[0])
       };
     case TEXT:
       return {
@@ -375,7 +376,7 @@ function QueryForm (props) {
     const { range } = option.input;
     let errorMessage;
     if (range) {
-      errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${range[0]} - ${range[1]}`;
+      errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${round(range[0])} - ${round(range[1])}`;
     } else {
       errorMessage = 'Value not accepted';
     }
@@ -391,7 +392,7 @@ function QueryForm (props) {
         return (
           <SliderGroup
             unit={option.input.unit || '%'}
-            range={filterRange ? [filterRange.min, filterRange.max] : option.input.range}
+            range={filterRange ? [round(filterRange.min), round(filterRange.max)] : option.input.range}
             id={option.name}
             value={option.input.value}
             isRange={option.isRange}
@@ -668,7 +669,7 @@ function QueryForm (props) {
                             checkIncluded(filter, resource) &&
                         <PanelOption key={filter.name} hidden={!isFoldExpanded}>
                           <OptionHeadline>
-                            <PanelOptionTitle>{`${filter.name}`.concat(filter.unit ? ` - (${filter.unit})` : '')}</PanelOptionTitle>
+                            <PanelOptionTitle>{`${filter.name}`.concat(filter.unit ? ` (${filter.unit})` : '')}</PanelOptionTitle>
                             {filter.info && (
                               <InfoButton info={filter.info} id={filter.name}>
                                 Info
