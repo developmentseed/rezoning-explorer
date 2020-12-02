@@ -4,6 +4,8 @@ import styled, { css } from 'styled-components';
 import Panel from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import ExploreContext from '../../context/explore-context';
+import MapContext from '../../context/map-context';
+
 import ModalSelect from './modal-select';
 import { ModalHeader } from '../common/modal';
 import ModalSelectArea from './modal-select-area';
@@ -76,11 +78,14 @@ function ExpMapPrimePanel (props) {
     filtersLists,
     weightsList,
     lcoeList,
-    map,
-    mapLayers, setMapLayers,
     maxZoneScore, setMaxZoneScore
     // maxLCOE, setMaxLCOE
   } = useContext(ExploreContext);
+
+  const {
+    map,
+    mapLayers, setMapLayers
+  } = useContext(MapContext);
 
   const [showRasterPanel, setShowRasterPanel] = useState(false);
 

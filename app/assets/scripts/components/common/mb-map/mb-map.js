@@ -243,14 +243,17 @@ function MbMap (props) {
     selectedResource,
     filteredLayerUrl,
     currentZones,
-    map, setMap,
-    inputLayers,
-    setMapLayers,
     lcoeLayerUrl,
     maxZoneScore
   } = useContext(ExploreContext);
 
-  const { hoveredFeature, setHoveredFeature } = useContext(MapContext);
+  const {
+    hoveredFeature, setHoveredFeature,
+    map, setMap,
+    inputLayers,
+    setMapLayers
+
+  } = useContext(MapContext);
 
   // Initialize map on mount
   useEffect(() => {

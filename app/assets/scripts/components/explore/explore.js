@@ -19,6 +19,8 @@ import MbMap from '../common/mb-map/mb-map';
 import ExploreContext from '../../context/explore-context';
 import Tour from '../common/tour';
 import { MapProvider } from '../../context/map-context';
+import { FormProvider } from '../../context/form-context';
+
 import Histogram from '../common/histogram';
 
 const ExploreCanvas = styled.div`
@@ -75,30 +77,33 @@ function Explore () {
         <InpageBody>
           <ExploreCanvas>
             <MapProvider>
-              <PrimePanel
-                onPanelChange={() => {
-                  setTriggerResize(!triggerResize);
-                }}
-              />
+              <FormProvider>
 
-              <ExploreCarto>
-                <MbMap
-                  triggerResize={triggerResize}
+                <PrimePanel
+                  onPanelChange={() => {
+                    setTriggerResize(!triggerResize);
+                  }}
                 />
-                { zoneData && (
-                  <Histogram
-                    yProp='lcoe'
-                    xProp={['zone_output', 'lcoe']}
-                    data={zoneData.map(datum => ({ ...datum.properties.summary, color: datum.properties.color }))}
-                  />
-                )}
-              </ExploreCarto>
 
-              <SecPanel
-                onPanelChange={() => {
-                  setTriggerResize(!triggerResize);
-                }}
-              />
+                <ExploreCarto>
+                  <MbMap
+                    triggerResize={triggerResize}
+                  />
+                  { zoneData && (
+                    <Histogram
+                      yProp='lcoe'
+                      xProp={['zone_output', 'lcoe']}
+                      data={zoneData.map(datum => ({ ...datum.properties.summary, color: datum.properties.color }))}
+                    />
+                  )}
+                </ExploreCarto>
+
+                <SecPanel
+                  onPanelChange={() => {
+                    setTriggerResize(!triggerResize);
+                  }}
+                />
+              </FormProvider>
             </MapProvider>
           </ExploreCanvas>
         </InpageBody>
