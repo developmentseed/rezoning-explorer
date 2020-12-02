@@ -19,7 +19,7 @@ import { fetchFilters, filtersReducer } from './reducers/filters';
 import { fetchWeights, weightsReducer } from './reducers/weights';
 import { fetchLcoe, lcoeReducer } from './reducers/lcoe';
 
-import { fetchInputLayers, inputLayersReducer } from './reducers/layers';
+// import { fetchInputLayers, inputLayersReducer } from './reducers/layers';
 
 import {
   showGlobalLoading,
@@ -39,7 +39,7 @@ const ExploreContext = createContext({});
 const presets = { ...defaultPresets };
 
 export function ExploreProvider (props) {
-  const [mapLayers, setMapLayers] = useState([]);
+  // const [mapLayers, setMapLayers] = useState([]);
   const [maxZoneScore, setMaxZoneScore] = useQsState({
     key: 'maxZoneScore',
     default: undefined,
@@ -91,10 +91,10 @@ export function ExploreProvider (props) {
     initialApiRequestState
   );
 
-  const [inputLayers, dispatchInputLayers] = useReducer(
+  /* const [inputLayers, dispatchInputLayers] = useReducer(
     inputLayersReducer,
     initialApiRequestState
-  );
+  ); */
 
   // Init areas state
   const [areas, setAreas] = useState([]);
@@ -106,9 +106,6 @@ export function ExploreProvider (props) {
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
     !selectedAreaId
   );
-
-  // Init map state
-  const [map, setMap] = useState(null);
 
   // Handle selected area id changes
   useEffect(() => {
@@ -205,7 +202,7 @@ export function ExploreProvider (props) {
     }
 
     initAreasAndFilters();
-    fetchInputLayers(dispatchInputLayers);
+    // fetchInputLayers(dispatchInputLayers);
   }, []);
 
   useEffect(() => {
@@ -310,44 +307,62 @@ export function ExploreProvider (props) {
     <>
       <ExploreContext.Provider
         value={{
-          map,
-          inputLayers,
-          mapLayers,
+          /* map context */
+          /* map,
           setMapLayers,
           setMap,
+          mapLayers,
+          inputLayers, */
+
           areas,
+
+          /* form context */
+
           filtersLists: (filtersList.isReady() && presets.filters) ? filtersList.getData() : null,
           weightsList: (weightsList.isReady() && presets.weights) ? weightsList.getData() : null,
           lcoeList: (lcoeList.isReady() && presets.lcoe) ? lcoeList.getData() : null,
           filterRanges,
           presets,
+
+          inputTouched,
+          setInputTouched,
+
+          // output filters
+          maxZoneScore,
+          setMaxZoneScore,
+          /* maxLCOE,
+          setMaxLCOE */
+
+          /* explore context */
+
           selectedArea,
           setSelectedAreaId,
           selectedResource,
           setSelectedResource,
+
           showSelectAreaModal,
           setShowSelectAreaModal,
           showSelectResourceModal,
           setShowSelectResourceModal,
+
           gridMode,
           setGridMode,
           gridSize,
           setGridSize,
+
           currentZones,
           generateZones,
-          inputTouched,
-          setInputTouched,
-          zonesGenerated,
-          setZonesGenerated,
+
           filteredLayerUrl,
           updateFilteredLayer,
           lcoeLayerUrl,
           tourStep,
           setTourStep,
-          maxZoneScore,
-          setMaxZoneScore
-          /* maxLCOE,
-          setMaxLCOE */
+
+          // unused
+          zonesGenerated,
+          setZonesGenerated
+
         }}
       >
         {props.children}
