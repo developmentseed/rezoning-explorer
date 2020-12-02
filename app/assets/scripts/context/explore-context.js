@@ -314,16 +314,18 @@ export function ExploreProvider (props) {
       .filter((x) => x)
       .join('&');
 
+    // If area of country type, prepare path string to add to URL
+    const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
+
     // Apply filter querystring to the map
-    const basePath = selectedArea.type === 'country' ? `/filter/${selectedArea.id}` : '/filter';
     setFilteredLayerUrl(
-      `${config.apiEndpoint}${basePath}/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
+      `${config.apiEndpoint}/filter${countryPath}/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
     );
 
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
 
     setLcoeLayerUrl(
-      `${config.apiEndpoint}/lcoe/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=cool`
+      `${config.apiEndpoint}/lcoe${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=cool`
     );
 
     generateZones(filterString, weights, lcoe);
