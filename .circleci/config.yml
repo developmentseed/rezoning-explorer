@@ -117,7 +117,6 @@ workflows:
       - test:
           requires:
             - prepare
-      - ci
       - build:
           requires:
             - prepare
