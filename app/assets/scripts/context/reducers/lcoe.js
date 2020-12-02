@@ -9,7 +9,7 @@ const { apiEndpoint } = config;
 
 export const lcoeReducer = wrapLogReducer(makeAPIReducer('FETCH_LCOE'));
 /*
- * Make all asynchronous requests to load zone score from REZoning API
+ * Make async request to api for lcoe schema
  * dispatch updates to some context using 'dispatch' function
 */
 export async function fetchLcoe (dispatch) {
@@ -36,8 +36,6 @@ export async function fetchLcoe (dispatch) {
         });
       }
       );
-
-    // Prepare filters from the API to be consumed by the frontend
     dispatch({ type: 'RECEIVE_FETCH_LCOE', data: apiLcoe });
   } catch (err) {
     dispatch({ type: 'ERROR', error: err });

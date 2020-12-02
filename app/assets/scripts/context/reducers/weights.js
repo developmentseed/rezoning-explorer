@@ -9,7 +9,7 @@ const { apiEndpoint } = config;
 
 export const weightsReducer = wrapLogReducer(makeAPIReducer('FETCH_WEIGHTS'));
 /*
- * Make all asynchronous requests to load zone score from REZoning API
+ * Make async request to api for weights schema
  * dispatch updates to some context using 'dispatch' function
 */
 export async function fetchWeights (dispatch) {

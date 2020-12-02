@@ -19,7 +19,7 @@ const { apiEndpoint } = config;
 
 export const filtersReducer = wrapLogReducer(makeAPIReducer('FETCH_FILTERS'));
 /*
- * Make all asynchronous requests to load zone score from REZoning API
+ * Request filter schema from api
  * dispatch updates to some context using 'dispatch' function
 */
 export async function fetchFilters (dispatch) {
