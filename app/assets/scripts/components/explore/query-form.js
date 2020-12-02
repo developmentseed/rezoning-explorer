@@ -24,8 +24,8 @@ import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
 import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
 import FormLabel from '../../styles/form/label';
-import { HeadOption, HeadOptionHeadline } from './form';
-import FiltersForm from './filters-form';
+import { HeadOption, HeadOptionHeadline } from './form/form';
+import { FiltersForm, WeightsForm } from './form';;
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
@@ -489,6 +489,23 @@ function QueryForm (props) {
               [maxZoneScore, setMaxZoneScore, maxZoneScoreO]
             ]
           }
+        />
+        <WeightsForm 
+          name='weights'
+          icon='sliders-horizontal'
+          weights={weights}
+          setWeights={setWeights}
+          inputOfType={inputOfType}
+          updateStateList={updateStateList}
+          presets={presets.weights}
+          setPreset={(preset) => {
+            if (preset === 'reset') {
+              setWeights(initListToState(weightsList));
+            } else {
+              setWeights(initListToState(presets.weights[preset]));
+            }
+          }}
+
         />
         {/*
         <FormWrapper

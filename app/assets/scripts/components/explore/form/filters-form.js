@@ -1,18 +1,18 @@
 import React from 'react';
 import T from 'prop-types';
+import styled from 'styled-components';
 
 import { FormWrapper, FormGroupWrapper, PanelOption, OptionHeadline, PanelOptionTitle } from './form';
-import { Accordion, AccordionFold } from '../../components/accordion';
-import collecticon from '../../styles/collecticons';
-import { glsp } from '../../styles/utils/theme-values';
-import styled from 'styled-components';
-import Heading from '../../styles/type/heading';
-import { makeTitleCase } from '../../styles/utils/general';
+import { Accordion, AccordionFold } from '../../../components/accordion';
+import collecticon from '../../../styles/collecticons';
+import { glsp } from '../../../styles/utils/theme-values';
+import Heading from '../../../styles/type/heading';
+import { makeTitleCase } from '../../../styles/utils/general';
 
-import InfoButton from '../common/info-button';
-import { FormSwitch } from '../../styles/form/switch';
-import { round } from '../../utils/format';
-import { INPUT_CONSTANTS } from './panel-data';
+import InfoButton from '../../common/info-button';
+import { FormSwitch } from '../../../styles/form/switch';
+import { round } from '../../../utils/format';
+import { INPUT_CONSTANTS } from '../panel-data';
 const { BOOL } = INPUT_CONSTANTS;
 
 const AccordionFoldTrigger = styled.a`
@@ -213,6 +213,8 @@ FiltersForm.propTypes = {
   /* eslint-disable react/no-unused-prop-types */
   presets: T.object,
   setPreset: T.func,
+  name: T.string,
+  icon: T.string,
   filters: T.array,
   inputOfType: T.func,
   resource: T.string,
