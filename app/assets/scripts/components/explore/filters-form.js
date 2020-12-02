@@ -1,11 +1,19 @@
 import React from 'react';
-import { FormWrapper, FormGroupWrapper } from './form';
+import T from 'prop-types';
+
+import { FormWrapper, FormGroupWrapper, PanelOption, OptionHeadline, PanelOptionTitle } from './form';
 import { Accordion, AccordionFold } from '../../components/accordion';
 import collecticon from '../../styles/collecticons';
 import { glsp } from '../../styles/utils/theme-values';
 import styled from 'styled-components';
-import Heading  from '../../styles/type/heading';
+import Heading from '../../styles/type/heading';
 import { makeTitleCase } from '../../styles/utils/general';
+
+import InfoButton from '../common/info-button';
+import { FormSwitch } from '../../styles/form/switch';
+import { round } from '../../utils/format';
+import { INPUT_CONSTANTS } from './panel-data';
+const { BOOL } = INPUT_CONSTANTS;
 
 const AccordionFoldTrigger = styled.a`
   display: flex;
@@ -29,19 +37,30 @@ const AccordionFoldTrigger = styled.a`
   }
 `;
 
-
+/* Filters form
+ * @param outputFilters is an array of shape
+ *  [
+ *    [getFilter1 (value), setFilter1 (func), filter1Object (object) ],
+ *    ...
+ *  ]
+ *  @param presets - required, accessed by parent TabbedBlockBody
+ *  @param setPreset - requred, accessed by parent TabbedBlockBody
+*/
 function FiltersForm (props) {
   const {
-    preset,
-    setPreset,
-    filters
+    filters,
+    inputOfType,
+    checkIncluded,
+    resource,
+    setFilters,
+    updateStateList,
+    outputFilters,
+    active
   } = props;
+
   return (
     <FormWrapper
-      name='filters'
-      icon='filter'
-      presets={preset}
-      setPreset={setPreset}
+      active={active}
     >
 
       <Accordion
@@ -77,45 +96,30 @@ function FiltersForm (props) {
               )}
               renderBody={({ isFoldExpanded }) => (
                 <>
-                  <PanelOption hidden={!isFoldExpanded}>
-                    <OptionHeadline>
-                      <PanelOptionTitle>{maxZoneScoreO.name}</PanelOptionTitle>
-                      {maxZoneScoreO.info && (
-                        <InfoButton info={maxZoneScoreO.info} id={maxZoneScoreO.name}>
-                                Info
-                        </InfoButton>
-                      )}
-                    </OptionHeadline>
-                    {inputOfType({
-                      ...maxZoneScoreO,
-                      input: {
-                        ...maxZoneScoreO.input,
-                        value: maxZoneScore
-                      }
-                    }, ({ min, max }) => {
-                      setMaxZoneScore({ min: round(min), max: round(max) });
-                    })}
-                  </PanelOption>
-
-                  {/* <PanelOption hidden={!isFoldExpanded}>
+                  {
+                    outputFilters.map(([val, setVal, filterObject]) => (
+                      <PanelOption key={filterObject.name} hidden={!isFoldExpanded}>
                         <OptionHeadline>
-                          <PanelOptionTitle>{maxLCOEO.name}</PanelOptionTitle>
-                          {maxLCOEO.info && (
-                            <InfoButton info={maxLCOEO.info} id={maxLCOEO.name}>
+                          <PanelOptionTitle>{filterObject.name}</PanelOptionTitle>
+                          {filterObject.info && (
+                            <InfoButton info={filterObject.info} id={filterObject.name}>
                                 Info
                             </InfoButton>
                           )}
                         </OptionHeadline>
                         {inputOfType({
-                          ...maxLCOEO,
+                          ...filterObject,
                           input: {
-                            ...maxLCOEO.input,
-                            value: maxLCOE
+                            ...filterObject.input,
+                            value: val
                           }
                         }, ({ min, max }) => {
-                          setMaxLCOE({ min: round(min), max: round(max) });
+                          setVal({ min: round(min), max: round(max) });
                         })}
-                      </PanelOption> */}
+                      </PanelOption>
+
+                    ))
+                  }
                 </>
               )}
             />
@@ -204,5 +208,20 @@ function FiltersForm (props) {
 
   );
 }
+
+FiltersForm.propTypes = {
+  /* eslint-disable react/no-unused-prop-types */
+  presets: T.object,
+  setPreset: T.func,
+  filters: T.array,
+  inputOfType: T.func,
+  resource: T.string,
+  setFilters: T.func,
+  updateStateList: T.func,
+  outputFilters: T.array,
+  checkIncluded: T.func,
+  active: T.bool
+
+};
 
 export default FiltersForm;

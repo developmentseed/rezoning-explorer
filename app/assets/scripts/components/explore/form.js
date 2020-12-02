@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { themeVal } from '../../styles/utils/general';
 import { glsp } from '../../styles/utils/theme-values';
+import { FormSwitch } from '../../styles/form/switch';
+import Button from '../../styles/button/button';
 
 export const FormWrapper = styled.section`
   ${({ active }) => {
@@ -60,5 +62,3 @@ export const OptionHeadline = styled(HeadOptionHeadline)`
     grid-column-start: 4;
   }
 `;
-
-

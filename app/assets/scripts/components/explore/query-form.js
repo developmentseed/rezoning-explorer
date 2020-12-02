@@ -14,11 +14,8 @@ import Button from '../../styles/button/button';
 import SliderGroup from '../common/slider-group';
 import StressedFormGroupInput from '../common/stressed-form-group-input';
 import Heading, { Subheading } from '../../styles/type/heading';
-import { FormSwitch } from '../../styles/form/switch';
-import { glsp } from '../../styles/utils/theme-values';
 import { validateRangeNum } from '../../utils/utils';
 
-import InfoButton from '../common/info-button';
 import GridSetter from './grid-setter';
 
 import ExploreContext from '../../context/explore-context';
@@ -27,6 +24,8 @@ import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
 import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
 import FormLabel from '../../styles/form/label';
+import { HeadOption, HeadOptionHeadline } from './form';
+import FiltersForm from './filters-form';
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
@@ -78,7 +77,6 @@ const Subheadingstrong = styled.strong`
   color: ${themeVal('color.base')};
 `;
 
-
 export const EditButton = styled(Button).attrs({
   variation: 'base-plain',
   size: 'small',
@@ -88,7 +86,6 @@ export const EditButton = styled(Button).attrs({
   opacity: 50%;
   margin-left: auto;
 `;
-
 
 const SubmissionSection = styled(PanelBlockFooter)`
   display: grid;
@@ -471,7 +468,9 @@ function QueryForm (props) {
 
       <TabbedBlockBody>
         <FiltersForm
-          preset={presets.filters}
+          name='filters'
+          icon='filter'
+          presets={presets.filters}
           setPreset={(preset) => {
             if (preset === 'reset') {
               setFilters(initListToState(filtersLists));
@@ -480,8 +479,18 @@ function QueryForm (props) {
             }
           }}
           filters={filters}
+          inputOfType={inputOfType}
+          checkIncluded={checkIncluded}
+          resource={resource}
+          setFilters={setFilters}
+          updateStateList={updateStateList}
+          outputFilters={
+            [
+              [maxZoneScore, setMaxZoneScore, maxZoneScoreO]
+            ]
+          }
         />
-
+        {/*
         <FormWrapper
           name='weights'
           icon='sliders-horizontal'
@@ -541,7 +550,7 @@ function QueryForm (props) {
               }
             </PanelOption>
           ))}
-        </FormWrapper>
+        </FormWrapper> */}
       </TabbedBlockBody>
 
       <SubmissionSection>
@@ -567,12 +576,6 @@ function QueryForm (props) {
     </PanelBlock>
   );
 }
-
-FormWrapper.propTypes = {
-  setPreset: T.func.isRequired,
-  name: T.string,
-  icon: T.string
-};
 
 QueryForm.propTypes = {
   area: T.object,
