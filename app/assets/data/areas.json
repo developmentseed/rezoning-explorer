@@ -99,13 +99,6 @@
     "bounds": "-171.09,-14.549,-168.143,-11.048"
   },
   {
-    "gid": "ATA",
-    "alpha2": "AQ",
-    "name": "Antarctica",
-    "type": "country",
-    "bounds": "-180,-90,180,-59.594"
-  },
-  {
     "gid": "ATF",
     "alpha2": "TF",
     "name": "French Southern Territories",
@@ -1665,13 +1658,6 @@
     "name": "Uzbekistan",
     "type": "country",
     "bounds": "55.998,37.177,73.135,45.571"
-  },
-  {
-    "gid": "VAT",
-    "alpha2": "VA",
-    "name": "Vatican City",
-    "type": "country",
-    "bounds": "12.446,41.9,12.458,41.908"
   },
   {
     "gid": "VCT",
