@@ -770,7 +770,7 @@ function QueryForm (props) {
               <OptionHeadline>
                 <PanelOptionTitle>{cost.name}</PanelOptionTitle>
 
-                <InfoButton info='Placeholer text' id={cost.name}>
+                <InfoButton info='Placeholder text' id={cost.name}>
                 Info
                 </InfoButton>
               </OptionHeadline>

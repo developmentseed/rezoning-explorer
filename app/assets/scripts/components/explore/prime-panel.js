@@ -20,8 +20,6 @@ import { Subheading } from '../../styles/type/heading';
 
 import {
   resourceList
-  // weightsList,
-  // lcoeList
 } from './panel-data';
 
 const PrimePanel = styled(Panel)`
