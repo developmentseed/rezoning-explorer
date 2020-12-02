@@ -71,7 +71,7 @@ export async function fetchZones (grid, selectedArea, filterString, weights, lco
 
       // Set id from GID, if undefined
       features = features.map((f) => {
-        if (typeof f.id === 'undefined') {
+        if (typeof f.properties.id === 'undefined') {
           f.properties.id = f.properties.GID_0;
         }
         return f;
