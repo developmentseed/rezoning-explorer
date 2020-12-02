@@ -79,6 +79,7 @@ function FiltersForm (props) {
         allowMultiple
       >
         {({ checkExpanded, setExpanded }) => (
+          /* Output filters, not toggleable */
           <>
             <AccordionFold
               forwardedAs={FormGroupWrapper}
@@ -132,6 +133,7 @@ function FiltersForm (props) {
               return accum;
             }, {}))
               .map(([group, list], idx) => {
+                /* Filters, built as AccordionFolds for each category */
                 idx += 1;
                 return (
                   <AccordionFold

@@ -1,3 +1,4 @@
 import FiltersForm from './filters-form';
 import WeightsForm from './weights-form';
-export { FiltersForm, WeightsForm };
+import LCOEForm from './lcoe-form';
+export { FiltersForm, WeightsForm, LCOEForm };

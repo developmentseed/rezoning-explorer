@@ -25,7 +25,7 @@ import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
 import FormLabel from '../../styles/form/label';
 import { HeadOption, HeadOptionHeadline } from './form/form';
-import { FiltersForm, WeightsForm } from './form';;
+import { FiltersForm, WeightsForm, LCOEForm } from './form';
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
@@ -46,6 +46,7 @@ const maxZoneScoreO = {
     range: [0, 1]
   }
 };
+
 /*
 const maxLCOEO = {
   name: 'LCOE Range',
@@ -490,7 +491,7 @@ function QueryForm (props) {
             ]
           }
         />
-        <WeightsForm 
+        <WeightsForm
           name='weights'
           icon='sliders-horizontal'
           weights={weights}
@@ -507,42 +508,13 @@ function QueryForm (props) {
           }}
 
         />
-        {/*
-        <FormWrapper
-          name='weights'
-          icon='sliders-horizontal'
-          presets={presets.weights}
-          setPreset={(preset) => {
-            if (preset === 'reset') {
-              setWeights(initListToState(weightsList));
-            } else {
-              setWeights(initListToState(presets.weights[preset]));
-            }
-          }}
-        >
-          {weights.map((weight, ind) => (
-            <PanelOption key={weight.name}>
-              <PanelOptionTitle>{weight.name}</PanelOptionTitle>
-              {
-                inputOfType(weight, (value) => {
-                  setWeights(
-                    updateStateList(weights, ind, {
-                      ...weight,
-                      input: {
-                        ...weight.input,
-                        value
-                      }
-                    })
-                  );
-                })
-              }
-            </PanelOption>
-          ))}
-        </FormWrapper>
-
-        <FormWrapper
+        <LCOEForm
           name='lcoe'
           icon='disc-dollar'
+          lcoe={lcoe}
+          setLcoe={setLcoe}
+          inputOfType={inputOfType}
+          updateStateList={updateStateList}
           presets={presets.lcoe}
           setPreset={(preset) => {
             if (preset === 'reset') {
@@ -551,23 +523,9 @@ function QueryForm (props) {
               setLcoe(initListToState(presets.lcoe[preset]));
             }
           }}
-        >
-          {lcoe.map((cost, ind) => (
-            <PanelOption key={cost.name}>
-              {
-                inputOfType(cost, (v) => {
-                  setLcoe(updateStateList(lcoe, ind, {
-                    ...cost,
-                    input: {
-                      ...cost.input,
-                      value: v
-                    }
-                  }));
-                })
-              }
-            </PanelOption>
-          ))}
-        </FormWrapper> */}
+
+        />
+
       </TabbedBlockBody>
 
       <SubmissionSection>
