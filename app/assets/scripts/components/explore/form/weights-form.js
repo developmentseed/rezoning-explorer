@@ -1,6 +1,7 @@
 import React from 'react';
 import T from 'prop-types';
-import { FormWrapper, PanelOption, PanelOptionTitle } from './form';
+import { FormWrapper, PanelOption, PanelOptionTitle, OptionHeadline } from './form';
+import InfoButton from '../../common/info-button';
 
 function WeightsForm (props) {
   const {
@@ -16,7 +17,13 @@ function WeightsForm (props) {
     >
       {weights.map((weight, ind) => (
         <PanelOption key={weight.name}>
-          <PanelOptionTitle>{weight.name}</PanelOptionTitle>
+          <OptionHeadline>
+            <PanelOptionTitle>{weight.name}</PanelOptionTitle>
+            <InfoButton info={weight.info} id={weight.name}>
+                Info
+            </InfoButton>
+          </OptionHeadline>
+
           {
             inputOfType(weight, (value) => {
               setWeights(

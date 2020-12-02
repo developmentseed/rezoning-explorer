@@ -1,6 +1,7 @@
 import React from 'react';
 import T from 'prop-types';
-import { FormWrapper, PanelOption } from './form';
+import { FormWrapper, PanelOption, PanelOptionTitle, OptionHeadline } from './form';
+import InfoButton from '../../common/info-button';
 
 function LCOEForm (props) {
   const {
@@ -16,6 +17,14 @@ function LCOEForm (props) {
     >
       {lcoe.map((cost, ind) => (
         <PanelOption key={cost.name}>
+          <OptionHeadline>
+            <PanelOptionTitle>{cost.name}</PanelOptionTitle>
+
+            <InfoButton info='Placeholder text' id={cost.name}>
+                Info
+            </InfoButton>
+          </OptionHeadline>
+
           {
             inputOfType(cost, (v) => {
               setLcoe(updateStateList(lcoe, ind, {
