@@ -28,7 +28,6 @@ import { round } from '../../utils/format';
 import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
 import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
-import FormLabel from '../../styles/form/label';
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
@@ -408,7 +407,6 @@ function QueryForm (props) {
             disabled={option.readOnly}
             id={`${option.name}`}
             name={`${option.name}`}
-            label={option.name}
             value={option.input.value}
             validate={option.input.range ? validateRangeNum(option.input.range[0], option.input.range[1]) : () => true}
             errorMessage={errorMessage}
@@ -422,7 +420,6 @@ function QueryForm (props) {
       case DROPDOWN:
         return (
           <FormGroup>
-            <FormLabel htmlFor={option.name}>{option.name}</FormLabel>
             <FormSelect
               id={option.name}
               onChange={(e) => onChange(e.target.value)}
@@ -735,20 +732,23 @@ function QueryForm (props) {
         >
           {weights.map((weight, ind) => (
             <PanelOption key={weight.name}>
-              <PanelOptionTitle>{weight.name}</PanelOptionTitle>
-              {
-                inputOfType(weight, (value) => {
-                  setWeights(
-                    updateStateList(weights, ind, {
-                      ...weight,
-                      input: {
-                        ...weight.input,
-                        value
-                      }
-                    })
-                  );
-                })
-              }
+              <OptionHeadline>
+                <PanelOptionTitle>{weight.name}</PanelOptionTitle>
+                <InfoButton info={weight.info} id={weight.name}>
+                Info
+                </InfoButton>
+              </OptionHeadline>
+              {inputOfType(weight, (value) => {
+                setWeights(
+                  updateStateList(weights, ind, {
+                    ...weight,
+                    input: {
+                      ...weight.input,
+                      value
+                    }
+                  })
+                );
+              })}
             </PanelOption>
           ))}
         </FormWrapper>
@@ -767,17 +767,24 @@ function QueryForm (props) {
         >
           {lcoe.map((cost, ind) => (
             <PanelOption key={cost.name}>
-              {
-                inputOfType(cost, (v) => {
-                  setLcoe(updateStateList(lcoe, ind, {
+              <OptionHeadline>
+                <PanelOptionTitle>{cost.name}</PanelOptionTitle>
+
+                <InfoButton info='Placeholder text' id={cost.name}>
+                Info
+                </InfoButton>
+              </OptionHeadline>
+              {inputOfType(cost, (v) => {
+                setLcoe(
+                  updateStateList(lcoe, ind, {
                     ...cost,
                     input: {
                       ...cost.input,
                       value: v
                     }
-                  }));
-                })
-              }
+                  })
+                );
+              })}
             </PanelOption>
           ))}
         </FormWrapper>
