@@ -68,6 +68,14 @@ export async function fetchZones (grid, selectedArea, filterString, weights, lco
         zonesTopoJSON,
         zonesTopoJSON.objects[areaId]
       ).features;
+
+      // Set id from GID, if undefined
+      features = features.map((f) => {
+        if (typeof f.id === 'undefined') {
+          f.properties.id = f.properties.GID_0;
+        }
+        return f;
+      });
     }
 
     // Fetch Lcoe for each sub-area
