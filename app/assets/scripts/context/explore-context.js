@@ -6,20 +6,10 @@ import bboxPolygon from '@turf/bbox-polygon';
 
 import { featureCollection } from '@turf/helpers';
 import useQsState from '../utils/qs-state-hook';
-// import { randomRange } from '../utils/utils';
-
 import config from '../config';
-
 import areasJson from '../../data/areas.json';
-
 import { initialApiRequestState } from './contexeed';
 import { fetchZonesReducer, fetchZones } from './reducers/zones';
-// import { fetchFilterRanges, filterRangesReducer } from './reducers/filter-ranges';
-// import { fetchFilters, filtersReducer } from './reducers/filters';
-// import { fetchWeights, weightsReducer } from './reducers/weights';
-// import { fetchLcoe, lcoeReducer } from './reducers/lcoe';
-
-// import { fetchInputLayers, inputLayersReducer } from './reducers/layers';
 
 import {
   showGlobalLoading,
@@ -28,7 +18,6 @@ import {
 
 import {
   INPUT_CONSTANTS,
-  // presets as defaultPresets,
   checkIncluded
 } from '../components/explore/panel-data';
 
@@ -36,10 +25,7 @@ const { GRID_OPTIONS, SLIDER, BOOL } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
-// const presets = { ...defaultPresets };
-
 export function ExploreProvider (props) {
-  // const [mapLayers, setMapLayers] = useState([]);
   const [maxZoneScore, setMaxZoneScore] = useQsState({
     key: 'maxZoneScore',
     default: undefined,
@@ -74,42 +60,41 @@ export function ExploreProvider (props) {
   // Init areas state
   const [areas, setAreas] = useState([]);
   const [selectedArea, setSelectedArea] = useState(null);
+
   const [selectedAreaId, setSelectedAreaId] = useQsState({
     key: 'areaId',
     default: undefined
   });
-  const [showSelectAreaModal, setShowSelectAreaModal] = useState(
-    !selectedAreaId
-  );
-
-  // Handle selected area id changes
-  useEffect(() => {
-    // Clear current zones
-    dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
-
-    // Set area object to context
-    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
-  }, [selectedAreaId]);
-
   const [selectedResource, setSelectedResource] = useQsState({
     key: 'resourceId',
     default: undefined
   });
-
-  const [showSelectResourceModal, setShowSelectResourceModal] = useState(
-    !selectedResource
-  );
-
-  useEffect(() => {
-    setShowSelectAreaModal(!selectedAreaId);
-    setShowSelectResourceModal(!selectedResource);
-  }, [selectedAreaId, selectedResource]);
 
   const [gridMode, setGridMode] = useState(false);
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
 
   const [tourStep, setTourStep] = useState(0);
 
+  const [currentZones, dispatchCurrentZones] = useReducer(
+    fetchZonesReducer,
+    initialApiRequestState
+  );
+
+  const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
+  const [lcoeLayerUrl, setLcoeLayerUrl] = useState(null);
+
+  // Executed on page mount
+  useEffect(() => {
+    const visited = localStorage.getItem('site-tour');
+    if (visited !== null) {
+      setTourStep(Number(visited));
+    }
+
+    initAreasAndFilters();
+    // fetchInputLayers(dispatchInputLayers);
+  }, []);
+
+  // Load eezs
   const initAreasAndFilters = async () => {
     showGlobalLoading();
     // Parse region and country files into area list
@@ -132,7 +117,6 @@ export function ExploreProvider (props) {
           a.id = a.gid;
           a.eez = eezCountries.get(a.id);
         }
-
         // Parse bounds, if a string
         if (a.bounds && typeof a.bounds === 'string') {
           a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
@@ -144,6 +128,17 @@ export function ExploreProvider (props) {
     hideGlobalLoading();
   };
 
+  // Handle selected area id changes
+  useEffect(() => {
+    // Clear current zones
+    dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
+
+    // Set area object to context
+    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
+  }, [selectedAreaId]);
+
+  // Find selected area based on changes in id
+  // Change options based on energy type
   useEffect(() => {
     let nextArea = areas.find((a) => `${a.id}` === `${selectedAreaId}`);
 
@@ -162,25 +157,9 @@ export function ExploreProvider (props) {
     setSelectedArea(nextArea);
   }, [areas, selectedAreaId, selectedResource]);
 
-  // Executed on page mount
-  useEffect(() => {
-    const visited = localStorage.getItem('site-tour');
-    if (visited !== null) {
-      setTourStep(Number(visited));
-    }
-
-    initAreasAndFilters();
-    // fetchInputLayers(dispatchInputLayers);
-  }, []);
-
   useEffect(() => {
     localStorage.setItem('site-tour', tourStep);
   }, [tourStep]);
-
-  const [currentZones, dispatchCurrentZones] = useReducer(
-    fetchZonesReducer,
-    initialApiRequestState
-  );
 
   const generateZones = async (filterString, weights, lcoe) => {
     showGlobalLoading();
@@ -194,10 +173,7 @@ export function ExploreProvider (props) {
     );
   };
 
-  const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
-  const [lcoeLayerUrl, setLcoeLayerUrl] = useState(null);
-
-  function updateFilteredLayer (filterValues, weights, lcoe) {
+  const updateFilteredLayer = (filterValues, weights, lcoe) => {
     // Prepare a query string to the API based from filter values
     const filterString = filterValues
       .map((filter) => {
@@ -235,7 +211,7 @@ export function ExploreProvider (props) {
     );
 
     generateZones(filterString, weights, lcoe);
-  }
+  };
 
   return (
     <>
@@ -251,17 +227,11 @@ export function ExploreProvider (props) {
           setMaxLCOE */
 
           /* explore context */
-
           selectedArea,
           selectedAreaId,
           setSelectedAreaId,
           selectedResource,
           setSelectedResource,
-
-          showSelectAreaModal,
-          setShowSelectAreaModal,
-          showSelectResourceModal,
-          setShowSelectResourceModal,
 
           gridMode,
           setGridMode,

@@ -64,10 +64,6 @@ function ExpMapPrimePanel (props) {
     selectedResource,
     selectedArea,
     setSelectedResource,
-    showSelectAreaModal,
-    setShowSelectAreaModal,
-    showSelectResourceModal,
-    setShowSelectResourceModal,
     tourStep,
     setTourStep,
     gridMode,
@@ -80,6 +76,10 @@ function ExpMapPrimePanel (props) {
     // maxLCOE, setMaxLCOE
   } = useContext(ExploreContext);
   const {
+    showSelectAreaModal,
+    setShowSelectAreaModal,
+    showSelectResourceModal,
+    setShowSelectResourceModal,
     setZonesGenerated,
     setInputTouched,
     filtersLists,

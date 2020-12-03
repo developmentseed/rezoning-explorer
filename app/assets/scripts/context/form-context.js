@@ -17,9 +17,16 @@ import {
 
 const FormContext = createContext({});
 export function FormProvider (props) {
-  const { selectedAreaId, currentZones } = useContext(ExploreContext);
+  const { selectedAreaId, selectedResource, currentZones } = useContext(ExploreContext);
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
+
+  const [showSelectAreaModal, setShowSelectAreaModal] = useState(
+    !selectedAreaId
+  );
+  const [showSelectResourceModal, setShowSelectResourceModal] = useState(
+    !selectedResource
+  );
 
   const [filtersList, dispatchFiltersList] = useReducer(
     filtersReducer,
@@ -39,6 +46,12 @@ export function FormProvider (props) {
     lcoeReducer,
     initialApiRequestState
   );
+
+  // Show modals based on selection
+  useEffect(() => {
+    setShowSelectAreaModal(!selectedAreaId);
+    setShowSelectResourceModal(!selectedResource);
+  }, [selectedAreaId, selectedResource]);
 
   useEffect(() => {
     if (!filtersList.isReady()) {
@@ -94,7 +107,11 @@ export function FormProvider (props) {
             inputTouched,
             setInputTouched,
             zonesGenerated,
-            setZonesGenerated
+            setZonesGenerated,
+            showSelectAreaModal,
+            setShowSelectAreaModal,
+            showSelectResourceModal,
+            setShowSelectResourceModal
 
           }
         }
