@@ -139,13 +139,16 @@ const updateStateList = (list, i, updatedValue) => {
 };
 
 function QueryForm (props) {
-  const { updateFilteredLayer, filtersLists, filterRanges, presets } = useContext(ExploreContext);
 
   const {
     area,
     resource,
+    filtersLists,
     weightsList,
     lcoeList,
+    updateFilteredLayer,
+    filterRanges,
+    presets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,

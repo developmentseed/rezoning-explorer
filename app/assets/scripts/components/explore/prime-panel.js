@@ -5,6 +5,8 @@ import Panel from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import ExploreContext from '../../context/explore-context';
 import MapContext from '../../context/map-context';
+import FormContext from '../../context/form-context';
+
 
 import ModalSelect from './modal-select';
 import { ModalHeader } from '../common/modal';
@@ -75,12 +77,18 @@ function ExpMapPrimePanel (props) {
     setGridMode,
     gridSize, setGridSize,
     filteredLayerUrl,
+    maxZoneScore, setMaxZoneScore,
+
+    updateFilteredLayer
+    // maxLCOE, setMaxLCOE
+  } = useContext(ExploreContext);
+  const {
     filtersLists,
     weightsList,
     lcoeList,
-    maxZoneScore, setMaxZoneScore
-    // maxLCOE, setMaxLCOE
-  } = useContext(ExploreContext);
+    filterRanges,
+    presets
+  } = useContext(FormContext);
 
   const {
     map,
@@ -206,6 +214,10 @@ function ExpMapPrimePanel (props) {
               <QueryForm
                 area={selectedArea}
                 resource={selectedResource}
+                filtersLists={filtersLists}
+                filterRanges={filterRanges}
+                presets={presets}
+                updateFilteredLayer={updateFilteredLayer}
                 weightsList={weightsList}
                 lcoeList={lcoeList}
                 gridMode={gridMode}

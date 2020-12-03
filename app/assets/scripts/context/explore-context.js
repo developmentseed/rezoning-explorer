@@ -6,7 +6,7 @@ import bboxPolygon from '@turf/bbox-polygon';
 
 import { featureCollection } from '@turf/helpers';
 import useQsState from '../utils/qs-state-hook';
-import { randomRange } from '../utils/utils';
+// import { randomRange } from '../utils/utils';
 
 import config from '../config';
 
@@ -14,10 +14,10 @@ import areasJson from '../../data/areas.json';
 
 import { initialApiRequestState } from './contexeed';
 import { fetchZonesReducer, fetchZones } from './reducers/zones';
-import { fetchFilterRanges, filterRangesReducer } from './reducers/filter-ranges';
-import { fetchFilters, filtersReducer } from './reducers/filters';
-import { fetchWeights, weightsReducer } from './reducers/weights';
-import { fetchLcoe, lcoeReducer } from './reducers/lcoe';
+// import { fetchFilterRanges, filterRangesReducer } from './reducers/filter-ranges';
+// import { fetchFilters, filtersReducer } from './reducers/filters';
+// import { fetchWeights, weightsReducer } from './reducers/weights';
+// import { fetchLcoe, lcoeReducer } from './reducers/lcoe';
 
 // import { fetchInputLayers, inputLayersReducer } from './reducers/layers';
 
@@ -28,7 +28,7 @@ import {
 
 import {
   INPUT_CONSTANTS,
-  presets as defaultPresets,
+  // presets as defaultPresets,
   checkIncluded
 } from '../components/explore/panel-data';
 
@@ -36,7 +36,7 @@ const { GRID_OPTIONS, SLIDER, BOOL } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
-const presets = { ...defaultPresets };
+// const presets = { ...defaultPresets };
 
 export function ExploreProvider (props) {
   // const [mapLayers, setMapLayers] = useState([]);
@@ -72,6 +72,7 @@ export function ExploreProvider (props) {
   }); */
 
   // Init filters state
+  /*
   const [filtersList, dispatchFiltersList] = useReducer(
     filtersReducer,
     initialApiRequestState
@@ -89,7 +90,7 @@ export function ExploreProvider (props) {
   const [lcoeList, dispatchLcoeList] = useReducer(
     lcoeReducer,
     initialApiRequestState
-  );
+  ); */
 
   /* const [inputLayers, dispatchInputLayers] = useReducer(
     inputLayersReducer,
@@ -116,7 +117,7 @@ export function ExploreProvider (props) {
     setSelectedArea(areas.find((a) => a.id === selectedAreaId));
 
     // Update filter ranges for the selected area
-    fetchFilterRanges(selectedAreaId, dispatchFilterRanges);
+    // fetchFilterRanges(selectedAreaId, dispatchFilterRanges);
   }, [selectedAreaId]);
 
   const [selectedResource, setSelectedResource] = useQsState({
@@ -140,10 +141,10 @@ export function ExploreProvider (props) {
 
   const initAreasAndFilters = async () => {
     showGlobalLoading();
-    fetchFilters(dispatchFiltersList);
-    fetchWeights(dispatchWeightsList);
-    fetchLcoe(dispatchLcoeList);
-
+    //    fetchFilters(dispatchFiltersList);
+    //    fetchWeights(dispatchWeightsList);
+    //    fetchLcoe(dispatchLcoeList);
+    //
     // Parse region and country files into area list
     const eez = await fetch('public/zones/eez_v11.topojson').then((e) =>
       e.json()
@@ -280,6 +281,7 @@ export function ExploreProvider (props) {
     generateZones(filterString, weights, lcoe);
   }
 
+  /*
   useEffect(() => {
     if (!filtersList.isReady()) {
       return;
@@ -302,27 +304,24 @@ export function ExploreProvider (props) {
       }))
     };
   }, [filtersList]);
+  */
 
   return (
     <>
       <ExploreContext.Provider
         value={{
-          /* map context */
-          /* map,
-          setMapLayers,
-          setMap,
-          mapLayers,
-          inputLayers, */
-
           areas,
 
           /* form context */
 
+          /*
           filtersLists: (filtersList.isReady() && presets.filters) ? filtersList.getData() : null,
           weightsList: (weightsList.isReady() && presets.weights) ? weightsList.getData() : null,
           lcoeList: (lcoeList.isReady() && presets.lcoe) ? lcoeList.getData() : null,
           filterRanges,
           presets,
+
+*/
 
           inputTouched,
           setInputTouched,
@@ -336,6 +335,7 @@ export function ExploreProvider (props) {
           /* explore context */
 
           selectedArea,
+          selectedAreaId,
           setSelectedAreaId,
           selectedResource,
           setSelectedResource,
