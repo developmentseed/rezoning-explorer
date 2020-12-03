@@ -31,7 +31,7 @@ const PreAnalysisMessage = styled(Prose)`
 
 function ExpMapSecPanel (props) {
   const { onPanelChange } = props;
-  const { currentZones, inputTouched, zonesGenerated } = useContext(ExploreContext);
+  const { currentZones, inputTouched } = useContext(ExploreContext);
 
   return (
     <SecPanel
@@ -53,7 +53,6 @@ function ExpMapSecPanel (props) {
                   <ZoneAnalysisPanel
                     currentZones={currentZones.getData()}
                     inputTouched={inputTouched}
-                    zonesGenerated={zonesGenerated}
                   />) : (
                   <PreAnalysisMessage>{currentZones.fetching ? 'Loading...' : 'Please apply parameters (filters, weights & lcoe) via left panel to load zone analysis.'}</PreAnalysisMessage>
                 )}

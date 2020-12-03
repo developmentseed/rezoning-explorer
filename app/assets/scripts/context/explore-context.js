@@ -71,32 +71,6 @@ export function ExploreProvider (props) {
     dehydrator: v => v && `${v.min},${v.max}`
   }); */
 
-  // Init filters state
-  /*
-  const [filtersList, dispatchFiltersList] = useReducer(
-    filtersReducer,
-    initialApiRequestState
-  );
-  const [filterRanges, dispatchFilterRanges] = useReducer(
-    filterRangesReducer,
-    initialApiRequestState
-  );
-
-  const [weightsList, dispatchWeightsList] = useReducer(
-    weightsReducer,
-    initialApiRequestState
-  );
-
-  const [lcoeList, dispatchLcoeList] = useReducer(
-    lcoeReducer,
-    initialApiRequestState
-  ); */
-
-  /* const [inputLayers, dispatchInputLayers] = useReducer(
-    inputLayersReducer,
-    initialApiRequestState
-  ); */
-
   // Init areas state
   const [areas, setAreas] = useState([]);
   const [selectedArea, setSelectedArea] = useState(null);
@@ -115,9 +89,6 @@ export function ExploreProvider (props) {
 
     // Set area object to context
     setSelectedArea(areas.find((a) => a.id === selectedAreaId));
-
-    // Update filter ranges for the selected area
-    // fetchFilterRanges(selectedAreaId, dispatchFilterRanges);
   }, [selectedAreaId]);
 
   const [selectedResource, setSelectedResource] = useQsState({
@@ -141,10 +112,6 @@ export function ExploreProvider (props) {
 
   const initAreasAndFilters = async () => {
     showGlobalLoading();
-    //    fetchFilters(dispatchFiltersList);
-    //    fetchWeights(dispatchWeightsList);
-    //    fetchLcoe(dispatchLcoeList);
-    //
     // Parse region and country files into area list
     const eez = await fetch('public/zones/eez_v11.topojson').then((e) =>
       e.json()
@@ -281,54 +248,12 @@ export function ExploreProvider (props) {
     generateZones(filterString, weights, lcoe);
   }
 
-  /*
-  useEffect(() => {
-    if (!filtersList.isReady()) {
-      return;
-    }
-
-    // Apply a mock "Optimization" scenario to filter presets, just random numbers
-    presets.filters = {
-      Optimization: filtersList.getData().map(filter => ({
-        ...filter,
-        active: Math.random() > 0.5,
-        input: {
-          ...filter.input,
-          value: filter.input.type === SLIDER ? {
-            max: filter.range
-              ? randomRange(filter.range[0], filter.range[1])
-              : randomRange(0, 100),
-            min: filter.range ? filter.range[0] : 0
-          } : false
-        }
-      }))
-    };
-  }, [filtersList]);
-  */
-
   return (
     <>
       <ExploreContext.Provider
         value={{
-          /* map context */
-          /* map,
-          setMapLayers,
-          setMap,
-          mapLayers,
-          inputLayers, */
 
           areas,
-
-          /* form context */
-
-          /*
-          filtersLists: (filtersList.isReady() && presets.filters) ? filtersList.getData() : null,
-          weightsList: (weightsList.isReady() && presets.weights) ? weightsList.getData() : null,
-          lcoeList: (lcoeList.isReady() && presets.lcoe) ? lcoeList.getData() : null,
-          filterRanges,
-          presets,
-
-*/
 
           inputTouched,
           setInputTouched,
@@ -365,11 +290,7 @@ export function ExploreProvider (props) {
           lcoeLayerUrl,
           tourStep,
           setTourStep,
-
-          // unused
-          zonesGenerated,
           setZonesGenerated
-
         }}
       >
         {props.children}
