@@ -7,7 +7,6 @@ import ExploreContext from '../../context/explore-context';
 import MapContext from '../../context/map-context';
 import FormContext from '../../context/form-context';
 
-
 import ModalSelect from './modal-select';
 import { ModalHeader } from '../common/modal';
 import ModalSelectArea from './modal-select-area';
@@ -69,8 +68,6 @@ function ExpMapPrimePanel (props) {
     setShowSelectAreaModal,
     showSelectResourceModal,
     setShowSelectResourceModal,
-    setInputTouched,
-    setZonesGenerated,
     tourStep,
     setTourStep,
     gridMode,
@@ -83,6 +80,8 @@ function ExpMapPrimePanel (props) {
     // maxLCOE, setMaxLCOE
   } = useContext(ExploreContext);
   const {
+    setZonesGenerated,
+    setInputTouched,
     filtersLists,
     weightsList,
     lcoeList,
@@ -94,7 +93,6 @@ function ExpMapPrimePanel (props) {
     map,
     mapLayers, setMapLayers
   } = useContext(MapContext);
-
 
   const [showRasterPanel, setShowRasterPanel] = useState(false);
 

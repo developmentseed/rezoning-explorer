@@ -177,9 +177,6 @@ export function ExploreProvider (props) {
     localStorage.setItem('site-tour', tourStep);
   }, [tourStep]);
 
-  const [inputTouched, setInputTouched] = useState(true);
-  const [zonesGenerated, setZonesGenerated] = useState(false);
-
   const [currentZones, dispatchCurrentZones] = useReducer(
     fetchZonesReducer,
     initialApiRequestState
@@ -196,14 +193,6 @@ export function ExploreProvider (props) {
       dispatchCurrentZones
     );
   };
-
-  useEffect(() => {
-    if (currentZones.fetched) {
-      hideGlobalLoading();
-      !zonesGenerated && setZonesGenerated(true);
-      setInputTouched(false);
-    }
-  }, [currentZones]);
 
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
   const [lcoeLayerUrl, setLcoeLayerUrl] = useState(null);
@@ -255,9 +244,6 @@ export function ExploreProvider (props) {
 
           areas,
 
-          inputTouched,
-          setInputTouched,
-
           // output filters
           maxZoneScore,
           setMaxZoneScore,
@@ -289,8 +275,7 @@ export function ExploreProvider (props) {
           updateFilteredLayer,
           lcoeLayerUrl,
           tourStep,
-          setTourStep,
-          setZonesGenerated
+          setTourStep
         }}
       >
         {props.children}

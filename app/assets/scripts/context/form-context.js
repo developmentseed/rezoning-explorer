@@ -1,4 +1,4 @@
-import React, { useContext, createContext, useReducer, useEffect } from 'react';
+import React, { useContext, createContext, useReducer, useEffect, useState } from 'react';
 import T from 'prop-types';
 import { fetchFilterRanges, filterRangesReducer } from './reducers/filter-ranges';
 import { fetchFilters, filtersReducer } from './reducers/filters';
@@ -11,10 +11,15 @@ import {
 import ExploreContext from './explore-context';
 import { initialApiRequestState } from './contexeed';
 import { randomRange } from '../utils/utils';
+import {
+  hideGlobalLoading
+} from '../components/common/global-loading';
 
 const FormContext = createContext({});
 export function FormProvider (props) {
-  const { selectedAreaId } = useContext(ExploreContext);
+  const { selectedAreaId, currentZones } = useContext(ExploreContext);
+  const [inputTouched, setInputTouched] = useState(true);
+  const [zonesGenerated, setZonesGenerated] = useState(false);
 
   const [filtersList, dispatchFiltersList] = useReducer(
     filtersReducer,
@@ -68,6 +73,14 @@ export function FormProvider (props) {
     fetchLcoe(dispatchLcoeList);
   }, []);
 
+  useEffect(() => {
+    if (currentZones.fetched) {
+      hideGlobalLoading();
+      !zonesGenerated && setZonesGenerated(true);
+      setInputTouched(false);
+    }
+  }, [currentZones]);
+
   return (
     <>
       <FormContext.Provider
@@ -77,7 +90,11 @@ export function FormProvider (props) {
             weightsList: (weightsList.isReady() && presets.weights) ? weightsList.getData() : null,
             lcoeList: (lcoeList.isReady() && presets.lcoe) ? lcoeList.getData() : null,
             filterRanges,
-            presets
+            presets,
+            inputTouched,
+            setInputTouched,
+            zonesGenerated,
+            setZonesGenerated
 
           }
         }
