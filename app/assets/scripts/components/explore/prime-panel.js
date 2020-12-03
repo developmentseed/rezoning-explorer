@@ -19,9 +19,7 @@ import { ZONES_BOUNDARIES_LAYER_ID } from '../common/mb-map/mb-map';
 import { Subheading } from '../../styles/type/heading';
 
 import {
-  resourceList,
-  weightsList,
-  lcoeList
+  resourceList
 } from './panel-data';
 
 const PrimePanel = styled(Panel)`
@@ -76,6 +74,8 @@ function ExpMapPrimePanel (props) {
     gridSize, setGridSize,
     filteredLayerUrl,
     filtersLists,
+    weightsList,
+    lcoeList,
     map,
     mapLayers, setMapLayers,
     maxZoneScore, setMaxZoneScore
@@ -194,32 +194,35 @@ function ExpMapPrimePanel (props) {
         onPanelChange={onPanelChange}
         initialState={isLargeViewport()}
         bodyContent={
-          filtersLists ? (
-            <QueryForm
-              area={selectedArea}
-              resource={selectedResource}
-              weightsList={weightsList}
-              lcoeList={lcoeList}
-              gridMode={gridMode}
-              setGridMode={setGridMode}
-              gridSize={gridSize}
-              setGridSize={setGridSize}
-              maxZoneScore={maxZoneScore}
-              setMaxZoneScore={setMaxZoneScore}
-              // maxLCOE={maxLCOE}
-              // setMaxLCOE={setMaxLCOE}
-              onAreaEdit={() => setShowSelectAreaModal(true)}
-              onResourceEdit={() => setShowSelectResourceModal(true)}
-              onInputTouched={() => {
-                setInputTouched(true);
-              }}
-              onSelectionChange={() => {
-                setZonesGenerated(false);
-              }}
-            />
-          ) : (
-            <></>
-          )
+          (filtersLists &&
+            weightsList &&
+            lcoeList
+          ) ? (
+              <QueryForm
+                area={selectedArea}
+                resource={selectedResource}
+                weightsList={weightsList}
+                lcoeList={lcoeList}
+                gridMode={gridMode}
+                setGridMode={setGridMode}
+                gridSize={gridSize}
+                setGridSize={setGridSize}
+                maxZoneScore={maxZoneScore}
+                setMaxZoneScore={setMaxZoneScore}
+                // maxLCOE={maxLCOE}
+                // setMaxLCOE={setMaxLCOE}
+                onAreaEdit={() => setShowSelectAreaModal(true)}
+                onResourceEdit={() => setShowSelectResourceModal(true)}
+                onInputTouched={() => {
+                  setInputTouched(true);
+                }}
+                onSelectionChange={() => {
+                  setZonesGenerated(false);
+                }}
+              />
+            ) : (
+              <></>
+            )
         }
       />
       <ModalSelect

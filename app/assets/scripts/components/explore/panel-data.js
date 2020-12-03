@@ -37,7 +37,7 @@ const BOOL = 'boolean';
 const MULTI = 'multi-select';
 const TEXT = 'text';
 const DROPDOWN = 'dropdown';
-const GRID_OPTIONS = [9, 25, 50];
+const GRID_OPTIONS = [25, 50];
 const DEFAULT_RANGE = [0, 1000000];
 const DEFAULT_UNIT = '%';
 

@@ -46,7 +46,7 @@ export default function StressedFormGroupInput (props) {
   return (
     <FormGroup>
       <FormGroupHeader>
-        <FormLabel htmlFor={id}>{label}</FormLabel>
+        { label && <FormLabel htmlFor={id}>{label}</FormLabel>}
       </FormGroupHeader>
       <FormGroupBody>
         <StressedField

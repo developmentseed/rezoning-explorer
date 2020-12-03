@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
-import { themeVal, makeTitleCase } from '../../styles/utils/general';
+import { themeVal } from '../../styles/utils/general';
 import useQsState from '../../utils/qs-state-hook';
 
 import {
@@ -14,13 +14,8 @@ import Button from '../../styles/button/button';
 import SliderGroup from '../common/slider-group';
 import StressedFormGroupInput from '../common/stressed-form-group-input';
 import Heading, { Subheading } from '../../styles/type/heading';
-import { FormSwitch } from '../../styles/form/switch';
-import { glsp } from '../../styles/utils/theme-values';
-import collecticon from '../../styles/collecticons';
 import { validateRangeNum } from '../../utils/utils';
 
-import { Accordion, AccordionFold } from '../../components/accordion';
-import InfoButton from '../common/info-button';
 import GridSetter from './grid-setter';
 
 import ExploreContext from '../../context/explore-context';
@@ -28,7 +23,8 @@ import { round } from '../../utils/format';
 import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
 import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
-import FormLabel from '../../styles/form/label';
+import { HeadOption, HeadOptionHeadline } from './form/form';
+import { FiltersForm, WeightsForm, LCOEForm } from './form';
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
@@ -49,6 +45,7 @@ const maxZoneScoreO = {
     range: [0, 1]
   }
 };
+
 /*
 const maxLCOEO = {
   name: 'LCOE Range',
@@ -75,67 +72,9 @@ const castByFilterType = type => {
       return String;
   }
 };
-const PanelOption = styled.div`
-  ${({ hidden }) => hidden && 'display: none;'}
-  margin-bottom: 1.5rem;
-`;
-
-const PanelOptionTitle = styled.div`
-  font-weight: ${themeVal('type.base.weight')};
-  font-size: 0.875rem;
-`;
-const HeadOption = styled.div`
-  & ~ & {
-    padding-top: ${glsp(0.5)};
-  }
-  &:last-of-type {
-    box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
-    padding-bottom: ${glsp(0.5)};
-  }
-`;
-
-const HeadOptionHeadline = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-
-  & > :first-child {
-    min-width: 5rem;
-  }
-`;
 
 const Subheadingstrong = styled.strong`
   color: ${themeVal('color.base')};
-`;
-
-const OptionHeadline = styled(HeadOptionHeadline)`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  > ${FormSwitch} {
-    grid-column-start: 5;
-  }
-  > ${Button}.info-button {
-    grid-column-start: 4;
-  }
-`;
-
-const FormWrapper = styled.section`
-  ${({ active }) => {
-    if (!active) {
-      return 'display: none;';
-    }
-  }}
-`;
-
-const FormGroupWrapper = styled.div`
-  box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
-  padding: 1rem 0;
-
-  &:first-of-type {
-    padding-top: 0;
-  }
 `;
 
 export const EditButton = styled(Button).attrs({
@@ -146,28 +85,6 @@ export const EditButton = styled(Button).attrs({
 })`
   opacity: 50%;
   margin-left: auto;
-`;
-
-export const AccordionFoldTrigger = styled.a`
-  display: flex;
-  align-items: center;
-  margin: -${glsp(0.5)} -${glsp()};
-  padding: ${glsp(0.5)} ${glsp()};
-
-  &,
-  &:visited {
-    color: inherit;
-  }
-  &:active {
-    transform: none;
-  }
-  &:after {
-    ${collecticon('chevron-down--small')}
-    margin-left: auto;
-    transition: transform 240ms ease-in-out;
-    transform: ${({ isExpanded }) =>
-      isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
-  }
 `;
 
 const SubmissionSection = styled(PanelBlockFooter)`
@@ -408,7 +325,6 @@ function QueryForm (props) {
             disabled={option.readOnly}
             id={`${option.name}`}
             name={`${option.name}`}
-            label={option.name}
             value={option.input.value}
             validate={option.input.range ? validateRangeNum(option.input.range[0], option.input.range[1]) : () => true}
             errorMessage={errorMessage}
@@ -422,7 +338,6 @@ function QueryForm (props) {
       case DROPDOWN:
         return (
           <FormGroup>
-            <FormLabel htmlFor={option.name}>{option.name}</FormLabel>
             <FormSelect
               id={option.name}
               onChange={(e) => onChange(e.target.value)}
@@ -485,7 +400,7 @@ function QueryForm (props) {
   /* Reinitialize filters when new ranges are received */
 
   useEffect(() => {
-    if (firstLoad.current) {
+    if (firstLoad.current && filterRanges.isReady()) {
       firstLoad.current = false;
     } else {
       setFilters(initListToState(filtersLists));
@@ -550,7 +465,7 @@ function QueryForm (props) {
       </PanelBlockHeader>
 
       <TabbedBlockBody>
-        <FormWrapper
+        <FiltersForm
           name='filters'
           icon='filter'
           presets={presets.filters}
@@ -561,169 +476,25 @@ function QueryForm (props) {
               setFilters(initListToState(presets.filters[preset]));
             }
           }}
-        >
-
-          <Accordion
-            initialState={[
-              true,
-              ...filters.reduce((seen, filt) => {
-                if (!seen.includes(filt.category)) {
-                  seen.push(filt);
-                }
-                return seen;
-              }, [])
-                .slice(1)
-                .map((_) => false)
-            ]}
-            foldCount={Object.keys(filters).length + 1}
-            allowMultiple
-          >
-            {({ checkExpanded, setExpanded }) => (
-              <>
-                <AccordionFold
-                  forwardedAs={FormGroupWrapper}
-                  isFoldExpanded={checkExpanded(0)}
-                  setFoldExpanded={(v) => setExpanded(0, v)}
-                  renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                    <AccordionFoldTrigger
-                      isExpanded={isFoldExpanded}
-                      onClick={() => setFoldExpanded(!isFoldExpanded)}
-                    >
-                      <Heading size='small' variation='primary'>
-                        {makeTitleCase('Output Filters')}
-                      </Heading>
-                    </AccordionFoldTrigger>
-                  )}
-                  renderBody={({ isFoldExpanded }) => (
-                    <>
-                      <PanelOption hidden={!isFoldExpanded}>
-                        <OptionHeadline>
-                          <PanelOptionTitle>{maxZoneScoreO.name}</PanelOptionTitle>
-                          {maxZoneScoreO.info && (
-                            <InfoButton info={maxZoneScoreO.info} id={maxZoneScoreO.name}>
-                                Info
-                            </InfoButton>
-                          )}
-                        </OptionHeadline>
-                        {inputOfType({
-                          ...maxZoneScoreO,
-                          input: {
-                            ...maxZoneScoreO.input,
-                            value: maxZoneScore
-                          }
-                        }, ({ min, max }) => {
-                          setMaxZoneScore({ min: round(min), max: round(max) });
-                        })}
-                      </PanelOption>
-
-                      {/* <PanelOption hidden={!isFoldExpanded}>
-                        <OptionHeadline>
-                          <PanelOptionTitle>{maxLCOEO.name}</PanelOptionTitle>
-                          {maxLCOEO.info && (
-                            <InfoButton info={maxLCOEO.info} id={maxLCOEO.name}>
-                                Info
-                            </InfoButton>
-                          )}
-                        </OptionHeadline>
-                        {inputOfType({
-                          ...maxLCOEO,
-                          input: {
-                            ...maxLCOEO.input,
-                            value: maxLCOE
-                          }
-                        }, ({ min, max }) => {
-                          setMaxLCOE({ min: round(min), max: round(max) });
-                        })}
-                      </PanelOption> */}
-                    </>
-                  )}
-                />
-
-                {Object.entries(filters.reduce((accum, filt) => {
-                  if (!accum[filt.category]) {
-                    accum[filt.category] = [];
-                  }
-                  accum[filt.category].push(filt);
-                  return accum;
-                }, {}))
-                  .map(([group, list], idx) => {
-                    idx += 1;
-                    return (
-                      <AccordionFold
-                        key={group}
-                        forwardedAs={FormGroupWrapper}
-                        isFoldExpanded={checkExpanded(idx)}
-                        setFoldExpanded={(v) => setExpanded(idx, v)}
-                        renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                          <AccordionFoldTrigger
-                            isExpanded={isFoldExpanded}
-                            onClick={() => setFoldExpanded(!isFoldExpanded)}
-                          >
-                            <Heading size='small' variation='primary'>
-                              {makeTitleCase(group.replace(/_/g, ' '))}
-                            </Heading>
-                          </AccordionFoldTrigger>
-                        )}
-                        renderBody={({ isFoldExpanded }) =>
-                          list.map((filter, ind) => (
-                            checkIncluded(filter, resource) &&
-                        <PanelOption key={filter.name} hidden={!isFoldExpanded}>
-                          <OptionHeadline>
-                            <PanelOptionTitle>{`${filter.name}`.concat(filter.unit ? ` (${filter.unit})` : '')}</PanelOptionTitle>
-                            {filter.info && (
-                              <InfoButton info={filter.info} id={filter.name}>
-                                Info
-                              </InfoButton>
-                            )}
-                            <FormSwitch
-                              hideText
-                              name={`toggle-${filter.name.replace(/ /g, '-')}`}
-                              disabled={filter.disabled}
-                              checked={filter.active}
-                              onChange={() => {
-                                const ind = filters.findIndex(f => f.id === filter.id);
-                                setFilters(updateStateList(filters, ind, {
-                                  ...filter,
-                                  active: !filter.active,
-                                  input: {
-                                    ...filter.input,
-                                    value: filter.input.type === BOOL ? !filter.active : filter.input.value
-                                  }
-                                }));
-                              }}
-                            >
-                              Toggle filter
-                            </FormSwitch>
-                          </OptionHeadline>
-                          {
-                            inputOfType(filter, (value) => {
-                              if (filter.active) {
-                                const ind = filters.findIndex(f => f.id === filter.id);
-                                setFilters(updateStateList(filters, ind, {
-                                  ...filter,
-                                  input: {
-                                    ...filter.input,
-                                    value
-                                  }
-
-                                }));
-                              }
-                            })
-                          }
-
-                        </PanelOption>
-                          ))}
-                      />
-                    );
-                  })}
-              </>
-            )}
-          </Accordion>
-        </FormWrapper>
-
-        <FormWrapper
+          filters={filters}
+          inputOfType={inputOfType}
+          checkIncluded={checkIncluded}
+          resource={resource}
+          setFilters={setFilters}
+          updateStateList={updateStateList}
+          outputFilters={
+            [
+              [maxZoneScore, setMaxZoneScore, maxZoneScoreO]
+            ]
+          }
+        />
+        <WeightsForm
           name='weights'
           icon='sliders-horizontal'
+          weights={weights}
+          setWeights={setWeights}
+          inputOfType={inputOfType}
+          updateStateList={updateStateList}
           presets={presets.weights}
           setPreset={(preset) => {
             if (preset === 'reset') {
@@ -732,30 +503,15 @@ function QueryForm (props) {
               setWeights(initListToState(presets.weights[preset]));
             }
           }}
-        >
-          {weights.map((weight, ind) => (
-            <PanelOption key={weight.name}>
-              <PanelOptionTitle>{weight.name}</PanelOptionTitle>
-              {
-                inputOfType(weight, (value) => {
-                  setWeights(
-                    updateStateList(weights, ind, {
-                      ...weight,
-                      input: {
-                        ...weight.input,
-                        value
-                      }
-                    })
-                  );
-                })
-              }
-            </PanelOption>
-          ))}
-        </FormWrapper>
 
-        <FormWrapper
+        />
+        <LCOEForm
           name='lcoe'
           icon='disc-dollar'
+          lcoe={lcoe}
+          setLcoe={setLcoe}
+          inputOfType={inputOfType}
+          updateStateList={updateStateList}
           presets={presets.lcoe}
           setPreset={(preset) => {
             if (preset === 'reset') {
@@ -764,23 +520,9 @@ function QueryForm (props) {
               setLcoe(initListToState(presets.lcoe[preset]));
             }
           }}
-        >
-          {lcoe.map((cost, ind) => (
-            <PanelOption key={cost.name}>
-              {
-                inputOfType(cost, (v) => {
-                  setLcoe(updateStateList(lcoe, ind, {
-                    ...cost,
-                    input: {
-                      ...cost.input,
-                      value: v
-                    }
-                  }));
-                })
-              }
-            </PanelOption>
-          ))}
-        </FormWrapper>
+
+        />
+
       </TabbedBlockBody>
 
       <SubmissionSection>
@@ -806,12 +548,6 @@ function QueryForm (props) {
     </PanelBlock>
   );
 }
-
-FormWrapper.propTypes = {
-  setPreset: T.func.isRequired,
-  name: T.string,
-  icon: T.string
-};
 
 QueryForm.propTypes = {
   area: T.object,
