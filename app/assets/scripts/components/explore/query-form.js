@@ -401,7 +401,7 @@ function QueryForm (props) {
   /* Reinitialize filters when new ranges are received */
 
   useEffect(() => {
-    if (firstLoad.current) {
+    if (firstLoad.current && filterRanges.isReady()) {
       firstLoad.current = false;
     } else {
       setFilters(initListToState(filtersLists));
