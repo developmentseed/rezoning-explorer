@@ -159,10 +159,10 @@ function QueryForm (props) {
 
   const firstLoad = useRef(true);
 
-  const initListToState = (list) => {
+  const initListToState = (list, ranges) => {
     return list.map((obj) => ({
       ...obj,
-      input: initByType(obj, filterRanges.getData()),
+      input: initByType(obj, ranges || {}),
       active: obj.active === undefined ? true : obj.active
     }));
   };
@@ -206,7 +206,7 @@ function QueryForm (props) {
   const [filters, setFilters] = useQsState({
     key: 'filters',
     hydrator: v => {
-      let baseFilts = initListToState(filtersLists);
+      let baseFilts = initListToState(filtersLists, filterRanges.getData());
       if (v) {
         const qsValues = v.split('|').map((vals, i) => {
           const thisFilt = baseFilts[i];
@@ -299,10 +299,7 @@ function QueryForm (props) {
     }
 
     // Get filter range, if available
-    const filterRange = filterRanges.getData()[option.id];
-
-    if (option.id === 'lcoe-range') {
-    }
+    const filterRange = option.type === 'filter' ? filterRanges.getData()[option.id] : null;
 
     switch (option.input.type) {
       case SLIDER:
@@ -365,7 +362,7 @@ function QueryForm (props) {
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));
-    setFilters(initListToState(filtersLists));
+    setFilters(initListToState(filtersLists, filterRanges.getData()));
     setLcoe(initListToState(lcoeList));
   };
 
@@ -403,7 +400,7 @@ function QueryForm (props) {
     if (firstLoad.current && filterRanges.isReady()) {
       firstLoad.current = false;
     } else {
-      setFilters(initListToState(filtersLists));
+      setFilters(initListToState(filtersLists, filterRanges.getData()));
     }
   }, [filterRanges]);
 
@@ -471,9 +468,9 @@ function QueryForm (props) {
           presets={presets.filters}
           setPreset={(preset) => {
             if (preset === 'reset') {
-              setFilters(initListToState(filtersLists));
+              setFilters(initListToState(filtersLists, filterRanges.getData()));
             } else {
-              setFilters(initListToState(presets.filters[preset]));
+              setFilters(initListToState(presets.filters[preset], filterRanges.getData()));
             }
           }}
           filters={filters}
