@@ -310,6 +310,13 @@ export function ExploreProvider (props) {
     <>
       <ExploreContext.Provider
         value={{
+          /* map context */
+          /* map,
+          setMapLayers,
+          setMap,
+          mapLayers,
+          inputLayers, */
+
           areas,
 
           /* form context */
