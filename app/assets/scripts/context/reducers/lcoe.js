@@ -2,7 +2,7 @@ import { fetchJSON, makeAPIReducer } from './reduxeed';
 import config from '../../config';
 import { wrapLogReducer } from './../contexeed';
 import {
-  INPUT_CONSTANTS,
+  INPUT_CONSTANTS
 } from '../../components/explore/panel-data';
 
 const { apiEndpoint } = config;
