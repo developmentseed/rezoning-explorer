@@ -22,7 +22,7 @@ import { truncated } from '../../styles/helpers';
 
 import ExploreContext from '../../context/explore-context';
 import { round } from '../../utils/format';
-import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
+import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap } from './panel-data';
 import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
 import { HeadOption, HeadOptionHeadline } from './form/form';
@@ -106,9 +106,9 @@ const SubmissionSection = styled(PanelBlockFooter)`
   gap: 0rem 1rem;
 `;
 
-const initByType = (obj, ranges) => {
+const initByType = (obj, ranges, resource) => {
   const apiRange = ranges[obj.id];
-  const { input } = obj;
+  const { input, options } = obj;
 
   const range = (apiRange && [round(apiRange.min), round(apiRange.max)]) || obj.input.range || DEFAULT_RANGE;
 
@@ -143,7 +143,9 @@ const initByType = (obj, ranges) => {
     case DROPDOWN:
       return {
         ...input,
-        value: obj.value || (input.options && input.options[0]) || '',
+        value: obj.value || (
+          options[resource] && options[resource][0]) || '',
+        availableOptions: options[resource] || [],
         unit: null
       };
     default:
@@ -181,7 +183,7 @@ function QueryForm (props) {
   const initListToState = (list) => {
     return list.map((obj) => ({
       ...obj,
-      input: initByType(obj, filterRanges.getData()),
+      input: initByType(obj, filterRanges.getData(), apiResourceNameMap[resource]),
       active: obj.active === undefined ? true : obj.active
     }));
   };
@@ -299,10 +301,11 @@ function QueryForm (props) {
     hydrator: v => {
       let base = initListToState(lcoeList);
       if (v) {
-        const qsValues = v.split('|').map(vals => {
+        const qsValues = v.split('|').map((vals, i) => {
           const [value, active] = vals.split(',');
+          const thisCost = base[i];
           return {
-            value: Number(value),
+            value: castByFilterType(thisCost.input.type)(value),
             active: active === undefined
           };
         });
@@ -420,7 +423,7 @@ function QueryForm (props) {
               value={option.input.value}
             >
               {
-                option.input.options.map(o => {
+                option.input.availableOptions.map(o => {
                   return (
                     <option
                       value={o}
@@ -454,10 +457,10 @@ function QueryForm (props) {
         }), {});
 
     const lcoeValues = Object.values(lcoe)
-      .reduce((accum, weight) => (
+      .reduce((accum, cost) => (
         {
           ...accum,
-          [weight.id || weight.name]: Number(weight.input.value)
+          [cost.id || cost.name]: (cost.input.options ? String : Number)(cost.input.value)
         }), {});
     updateFilteredLayer(filters, weightsValues, lcoeValues);
   };
@@ -467,14 +470,13 @@ function QueryForm (props) {
 
   useEffect(() => {
     if (resource) {
-      /*
       try {
-        const turbineType = lcoe.find(cost => cost.id === 'turbine_type');
-        turbineType.input.range = turbineTypeMap[resource];
-        turbineType.input.value = turbineType.input.range[0];
+        const capacity = lcoe.find(cost => cost.id === 'capacity_factor');
+        capacity.input.availableOptions = capacity.input.options[apiResourceNameMap[resource]];
       } catch (err) {
+        /* eslint-disable-next-line */
         console.error(err);
-      } */
+      }
     }
   }, [resource]);
 

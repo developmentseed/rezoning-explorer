@@ -7,7 +7,7 @@ export const RESOURCES = {
   WIND, OFFSHORE, SOLAR
 };
 
-const apiResourceNameMap = {
+export const apiResourceNameMap = {
   [WIND]: 'wind',
   [SOLAR]: 'solar',
   [OFFSHORE]: 'offshore'

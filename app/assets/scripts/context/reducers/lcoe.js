@@ -2,7 +2,7 @@ import { fetchJSON, makeAPIReducer } from './reduxeed';
 import config from '../../config';
 import { wrapLogReducer } from './../contexeed';
 import {
-  INPUT_CONSTANTS
+  INPUT_CONSTANTS,
 } from '../../components/explore/panel-data';
 
 const { apiEndpoint } = config;
@@ -22,16 +22,24 @@ export async function fetchLcoe (dispatch) {
     const apiLcoe = Object.keys(lcoe)
       .map(id => {
         const cost = lcoe[id];
+
+        const type = cost.options ? INPUT_CONSTANTS.DROPDOWN : INPUT_CONSTANTS.TEXT;
+
+        const opts = cost.options ? {
+          options: cost.options
+        } : {};
         return ({
           ...cost,
           id,
           name: cost.title,
           info: cost.description,
           input: {
-            type: INPUT_CONSTANTS.TEXT,
+            type,
+            ...opts,
             // TODO add range if exists
             // range: [cost.gte, cost.lte],
             default: cost.default
+
           }
         });
       }
