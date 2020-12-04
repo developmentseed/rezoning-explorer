@@ -261,9 +261,10 @@ export function ExploreProvider (props) {
         } else if (input.type === BOOL) {
           return `${id}=${filter.input.value}`;
         } else if (input.type === DROPDOWN || input.type === MULTI) {
-          return `${id}=${filter.input.value.join(',')}`;
+          return `${id}=${filter.input.value.join(', ')}`;
         } else {
         // discard non-accepted filter types
+          /* eslint-disable-next-line */
           console.error(`Filter ${id} type not supported by api, discarding`);
           return null;
         }

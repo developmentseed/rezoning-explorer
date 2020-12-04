@@ -18,6 +18,7 @@ import Heading, { Subheading } from '../../styles/type/heading';
 import { validateRangeNum } from '../../utils/utils';
 
 import GridSetter from './grid-setter';
+import { truncated } from '../../styles/helpers';
 
 import ExploreContext from '../../context/explore-context';
 import { round } from '../../utils/format';
@@ -29,12 +30,6 @@ import { FiltersForm, WeightsForm, LCOEForm } from './form';
 import ShadowScrollbar from '../common/shadow-scrollbar';
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
-
-const turbineTypeMap = {
-  'Off-Shore Wind': [1, 3],
-  Wind: [1, 3],
-  'Solar PV': [0, 0]
-};
 
 const maxZoneScoreO = {
   name: 'Zone Score Range',
@@ -76,6 +71,10 @@ const castByFilterType = type => {
   }
 };
 
+const MultiSelectButton = styled(Button)`
+  width: 100%;
+  ${truncated()}
+`;
 const MultiOption = styled(FormCheckable)`
 `;
 const MultiWrapper = styled(ShadowScrollbar)`
@@ -135,7 +134,6 @@ const initByType = (obj, ranges) => {
         range: [true, false]
       };
     case MULTI:
-      console.log(input.value || [0]);
       return {
         ...input,
         // For multi select use first option as default value
@@ -378,7 +376,12 @@ function QueryForm (props) {
         return (
           <Dropdown
             triggerElement={
-              <Button> click </Button>
+              <MultiSelectButton
+                disabled={!option.active}
+              > {
+                  option.input.options.filter((e, i) => value.includes(i)).join(',')
+                }
+              </MultiSelectButton>
             }
             alignment='right'
           >
@@ -393,10 +396,9 @@ function QueryForm (props) {
                     checked={value.includes(i)}
                     onChange={() => {
                       if (value.includes(i)) {
-                        value.splice(value.indexOf(i), 1)
+                        value.splice(value.indexOf(i), 1);
                         onChange(value);
                       } else {
-                        console.log([...value, i])
                         onChange([...value, i]);
                       }
                     }}
