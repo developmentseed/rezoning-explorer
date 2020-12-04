@@ -47,6 +47,7 @@ export async function fetchFilters (dispatch) {
 
         return {
           ...filter,
+          type: 'filter',
           id: filter.id,
           name: filter.title,
           info: filter.description,
