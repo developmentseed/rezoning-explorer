@@ -1,7 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-
-import ExploreContext from '../../context/explore-context';
+import T from 'prop-types';
 
 import ModalSelect from './modal-select';
 import FormInput from '../../styles/form/input';
@@ -33,7 +32,7 @@ const HeadlineTabs = styled.div`
   margin-bottom: 1rem;
 `;
 
-function ModalSelectArea () {
+function ModalSelectArea (props) {
   const {
     areas,
     selectedResource,
@@ -41,12 +40,10 @@ function ModalSelectArea () {
     setShowSelectAreaModal,
     setSelectedAreaId
   //  areaTypeFilter
-  } = useContext(ExploreContext);
-  // const [areaType, setAreaType] = useState(areaTypeFilter[0]);
+  } = props;
+
   const [areaType, setAreaType] = useState('country');
   const [searchValue, setSearchValue] = useState('');
-
-  // useEffect(() => setAreaType(areaTypeFilter[0]), [areaTypeFilter]);
 
   return (
     <ModalSelect
@@ -104,6 +101,12 @@ function ModalSelectArea () {
   );
 }
 
-ModalSelectArea.propTypes = {};
+ModalSelectArea.propTypes = {
+  areas: T.array,
+  selectedResource: T.string,
+  showSelectAreaModal: T.bool,
+  setShowSelectAreaModal: T.func,
+  setSelectedAreaId: T.func
+};
 
 export default ModalSelectArea;

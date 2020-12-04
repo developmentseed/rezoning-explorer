@@ -6,20 +6,10 @@ import bboxPolygon from '@turf/bbox-polygon';
 
 import { featureCollection } from '@turf/helpers';
 import useQsState from '../utils/qs-state-hook';
-import { randomRange } from '../utils/utils';
-
 import config from '../config';
-
 import areasJson from '../../data/areas.json';
-
 import { initialApiRequestState } from './contexeed';
 import { fetchZonesReducer, fetchZones } from './reducers/zones';
-import { fetchFilterRanges, filterRangesReducer } from './reducers/filter-ranges';
-import { fetchFilters, filtersReducer } from './reducers/filters';
-import { fetchWeights, weightsReducer } from './reducers/weights';
-import { fetchLcoe, lcoeReducer } from './reducers/lcoe';
-
-import { fetchInputLayers, inputLayersReducer } from './reducers/layers';
 
 import {
   showGlobalLoading,
@@ -28,7 +18,6 @@ import {
 
 import {
   INPUT_CONSTANTS,
-  presets as defaultPresets,
   checkIncluded
 } from '../components/explore/panel-data';
 
@@ -36,10 +25,7 @@ const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
-const presets = { ...defaultPresets };
-
 export function ExploreProvider (props) {
-  const [mapLayers, setMapLayers] = useState([]);
   const [maxZoneScore, setMaxZoneScore] = useQsState({
     key: 'maxZoneScore',
     default: undefined,
@@ -71,82 +57,46 @@ export function ExploreProvider (props) {
     dehydrator: v => v && `${v.min},${v.max}`
   }); */
 
-  // Init filters state
-  const [filtersList, dispatchFiltersList] = useReducer(
-    filtersReducer,
-    initialApiRequestState
-  );
-  const [filterRanges, dispatchFilterRanges] = useReducer(
-    filterRangesReducer,
-    initialApiRequestState
-  );
-
-  const [weightsList, dispatchWeightsList] = useReducer(
-    weightsReducer,
-    initialApiRequestState
-  );
-
-  const [lcoeList, dispatchLcoeList] = useReducer(
-    lcoeReducer,
-    initialApiRequestState
-  );
-
-  const [inputLayers, dispatchInputLayers] = useReducer(
-    inputLayersReducer,
-    initialApiRequestState
-  );
-
   // Init areas state
   const [areas, setAreas] = useState([]);
   const [selectedArea, setSelectedArea] = useState(null);
+
   const [selectedAreaId, setSelectedAreaId] = useQsState({
     key: 'areaId',
     default: undefined
   });
-  const [showSelectAreaModal, setShowSelectAreaModal] = useState(
-    !selectedAreaId
-  );
-
-  // Init map state
-  const [map, setMap] = useState(null);
-
-  // Handle selected area id changes
-  useEffect(() => {
-    // Clear current zones
-    dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
-
-    // Set area object to context
-    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
-
-    // Update filter ranges for the selected area
-    fetchFilterRanges(selectedAreaId, dispatchFilterRanges);
-  }, [selectedAreaId]);
-
   const [selectedResource, setSelectedResource] = useQsState({
     key: 'resourceId',
     default: undefined
   });
-
-  const [showSelectResourceModal, setShowSelectResourceModal] = useState(
-    !selectedResource
-  );
-
-  useEffect(() => {
-    setShowSelectAreaModal(!selectedAreaId);
-    setShowSelectResourceModal(!selectedResource);
-  }, [selectedAreaId, selectedResource]);
 
   const [gridMode, setGridMode] = useState(false);
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
 
   const [tourStep, setTourStep] = useState(0);
 
+  const [currentZones, dispatchCurrentZones] = useReducer(
+    fetchZonesReducer,
+    initialApiRequestState
+  );
+
+  const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
+  const [lcoeLayerUrl, setLcoeLayerUrl] = useState(null);
+
+  // Executed on page mount
+  useEffect(() => {
+    const visited = localStorage.getItem('site-tour');
+    if (visited !== null) {
+      setTourStep(Number(visited));
+    }
+
+    initAreasAndFilters();
+    // fetchInputLayers(dispatchInputLayers);
+  }, []);
+
+  // Load eezs
   const initAreasAndFilters = async () => {
     showGlobalLoading();
-    fetchFilters(dispatchFiltersList);
-    fetchWeights(dispatchWeightsList);
-    fetchLcoe(dispatchLcoeList);
-
     // Parse region and country files into area list
     const eez = await fetch('public/zones/eez_v11.topojson').then((e) =>
       e.json()
@@ -167,7 +117,6 @@ export function ExploreProvider (props) {
           a.id = a.gid;
           a.eez = eezCountries.get(a.id);
         }
-
         // Parse bounds, if a string
         if (a.bounds && typeof a.bounds === 'string') {
           a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
@@ -179,6 +128,17 @@ export function ExploreProvider (props) {
     hideGlobalLoading();
   };
 
+  // Handle selected area id changes
+  useEffect(() => {
+    // Clear current zones
+    dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
+
+    // Set area object to context
+    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
+  }, [selectedAreaId]);
+
+  // Find selected area based on changes in id
+  // Change options based on energy type
   useEffect(() => {
     let nextArea = areas.find((a) => `${a.id}` === `${selectedAreaId}`);
 
@@ -197,28 +157,9 @@ export function ExploreProvider (props) {
     setSelectedArea(nextArea);
   }, [areas, selectedAreaId, selectedResource]);
 
-  // Executed on page mount
-  useEffect(() => {
-    const visited = localStorage.getItem('site-tour');
-    if (visited !== null) {
-      setTourStep(Number(visited));
-    }
-
-    initAreasAndFilters();
-    fetchInputLayers(dispatchInputLayers);
-  }, []);
-
   useEffect(() => {
     localStorage.setItem('site-tour', tourStep);
   }, [tourStep]);
-
-  const [inputTouched, setInputTouched] = useState(true);
-  const [zonesGenerated, setZonesGenerated] = useState(false);
-
-  const [currentZones, dispatchCurrentZones] = useReducer(
-    fetchZonesReducer,
-    initialApiRequestState
-  );
 
   const generateZones = async (filterString, weights, lcoe) => {
     showGlobalLoading();
@@ -232,18 +173,7 @@ export function ExploreProvider (props) {
     );
   };
 
-  useEffect(() => {
-    if (currentZones.fetched) {
-      hideGlobalLoading();
-      !zonesGenerated && setZonesGenerated(true);
-      setInputTouched(false);
-    }
-  }, [currentZones]);
-
-  const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
-  const [lcoeLayerUrl, setLcoeLayerUrl] = useState(null);
-
-  function updateFilteredLayer (filterValues, weights, lcoe) {
+  const updateFilteredLayer = (filterValues, weights, lcoe) => {
     // Prepare a query string to the API based from filter values
     const filterString = filterValues
       .map((filter) => {
@@ -287,73 +217,41 @@ export function ExploreProvider (props) {
     );
 
     generateZones(filterString, weights, lcoe);
-  }
-
-  useEffect(() => {
-    if (!filtersList.isReady()) {
-      return;
-    }
-
-    // Apply a mock "Optimization" scenario to filter presets, just random numbers
-    presets.filters = {
-      Optimization: filtersList.getData().map(filter => ({
-        ...filter,
-        active: Math.random() > 0.5,
-        input: {
-          ...filter.input,
-          value: filter.input.type === SLIDER ? {
-            max: filter.range
-              ? randomRange(filter.range[0], filter.range[1])
-              : randomRange(0, 100),
-            min: filter.range ? filter.range[0] : 0
-          } : false
-        }
-      }))
-    };
-  }, [filtersList]);
+  };
 
   return (
     <>
       <ExploreContext.Provider
         value={{
-          map,
-          inputLayers,
-          mapLayers,
-          setMapLayers,
-          setMap,
+
           areas,
-          filtersLists: (filtersList.isReady() && presets.filters) ? filtersList.getData() : null,
-          weightsList: (weightsList.isReady() && presets.weights) ? weightsList.getData() : null,
-          lcoeList: (lcoeList.isReady() && presets.lcoe) ? lcoeList.getData() : null,
-          filterRanges,
-          presets,
+
+          // output filters
+          maxZoneScore,
+          setMaxZoneScore,
+          /* maxLCOE,
+          setMaxLCOE */
+
+          /* explore context */
           selectedArea,
+          selectedAreaId,
           setSelectedAreaId,
           selectedResource,
           setSelectedResource,
-          showSelectAreaModal,
-          setShowSelectAreaModal,
-          showSelectResourceModal,
-          setShowSelectResourceModal,
+
           gridMode,
           setGridMode,
           gridSize,
           setGridSize,
+
           currentZones,
           generateZones,
-          inputTouched,
-          setInputTouched,
-          zonesGenerated,
-          setZonesGenerated,
+
           filteredLayerUrl,
           updateFilteredLayer,
           lcoeLayerUrl,
           tourStep,
-          setTourStep,
-          maxZoneScore,
-          setMaxZoneScore
-          /* maxLCOE,
-          setMaxLCOE */
+          setTourStep
         }}
       >
         {props.children}

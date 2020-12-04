@@ -4,6 +4,9 @@ import styled, { css } from 'styled-components';
 import Panel from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import ExploreContext from '../../context/explore-context';
+import MapContext from '../../context/map-context';
+import FormContext from '../../context/form-context';
+
 import ModalSelect from './modal-select';
 import { ModalHeader } from '../common/modal';
 import ModalSelectArea from './modal-select-area';
@@ -58,29 +61,38 @@ function ExpMapPrimePanel (props) {
    * Get Explore context values
    */
   const {
+    areas, setSelectedAreaId,
     selectedResource,
     selectedArea,
     setSelectedResource,
-    showSelectAreaModal,
-    setShowSelectAreaModal,
-    showSelectResourceModal,
-    setShowSelectResourceModal,
-    setInputTouched,
-    setZonesGenerated,
     tourStep,
     setTourStep,
     gridMode,
     setGridMode,
     gridSize, setGridSize,
     filteredLayerUrl,
+    maxZoneScore, setMaxZoneScore,
+    updateFilteredLayer
+    // maxLCOE, setMaxLCOE
+  } = useContext(ExploreContext);
+  const {
+    showSelectAreaModal,
+    setShowSelectAreaModal,
+    showSelectResourceModal,
+    setShowSelectResourceModal,
+    setZonesGenerated,
+    setInputTouched,
     filtersLists,
     weightsList,
     lcoeList,
+    filterRanges,
+    presets
+  } = useContext(FormContext);
+
+  const {
     map,
-    mapLayers, setMapLayers,
-    maxZoneScore, setMaxZoneScore
-    // maxLCOE, setMaxLCOE
-  } = useContext(ExploreContext);
+    mapLayers, setMapLayers
+  } = useContext(MapContext);
 
   const [showRasterPanel, setShowRasterPanel] = useState(false);
 
@@ -201,6 +213,10 @@ function ExpMapPrimePanel (props) {
               <QueryForm
                 area={selectedArea}
                 resource={selectedResource}
+                filtersLists={filtersLists}
+                filterRanges={filterRanges}
+                presets={presets}
+                updateFilteredLayer={updateFilteredLayer}
                 weightsList={weightsList}
                 lcoeList={lcoeList}
                 gridMode={gridMode}
@@ -256,7 +272,14 @@ function ExpMapPrimePanel (props) {
         nonScrolling
       />
 
-      <ModalSelectArea />
+      <ModalSelectArea
+        areas={areas}
+        selectedResource={selectedResource}
+        showSelectAreaModal={showSelectAreaModal}
+        setShowSelectAreaModal={setShowSelectAreaModal}
+        setSelectedAreaId={setSelectedAreaId}
+
+      />
     </>
   );
 }

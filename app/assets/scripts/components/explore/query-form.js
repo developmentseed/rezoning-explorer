@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useContext } from 'react';
+import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
@@ -20,7 +20,6 @@ import { validateRangeNum } from '../../utils/utils';
 import GridSetter from './grid-setter';
 import { truncated } from '../../styles/helpers';
 
-import ExploreContext from '../../context/explore-context';
 import { round } from '../../utils/format';
 import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap } from './panel-data';
 import FormSelect from '../../styles/form/select';
@@ -158,13 +157,15 @@ const updateStateList = (list, i, updatedValue) => {
 };
 
 function QueryForm (props) {
-  const { updateFilteredLayer, filtersLists, filterRanges, presets } = useContext(ExploreContext);
-
   const {
     area,
     resource,
+    filtersLists,
     weightsList,
     lcoeList,
+    updateFilteredLayer,
+    filterRanges,
+    presets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
@@ -638,8 +639,16 @@ function QueryForm (props) {
 QueryForm.propTypes = {
   area: T.object,
   resource: T.string,
+  filtersLists: T.array,
   weightsList: T.array,
   lcoeList: T.array,
+  updateFilteredLayer: T.func,
+  filterRanges: T.object,
+  presets: T.shape({
+    weights: T.object,
+    lcoe: T.object,
+    filters: T.object
+  }),
   onResourceEdit: T.func,
   onAreaEdit: T.func,
   onInputTouched: T.func,
