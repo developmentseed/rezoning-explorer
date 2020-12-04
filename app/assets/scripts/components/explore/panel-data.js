@@ -7,7 +7,7 @@ export const RESOURCES = {
   WIND, OFFSHORE, SOLAR
 };
 
-const apiResourceNameMap = {
+export const apiResourceNameMap = {
   [WIND]: 'wind',
   [SOLAR]: 'solar',
   [OFFSHORE]: 'offshore'
@@ -55,6 +55,7 @@ export const INPUT_CONSTANTS = {
 export const allowedTypes = new Map();
 allowedTypes.set('range_filter', SLIDER);
 allowedTypes.set('boolean', BOOL);
+allowedTypes.set('categorical_filter', MULTI);
 
 export const lcoeList = [
   {
