@@ -28,12 +28,6 @@ import { FiltersForm, WeightsForm, LCOEForm } from './form';
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
-const turbineTypeMap = {
-  'Off-Shore Wind': [1, 3],
-  Wind: [1, 3],
-  'Solar PV': [0, 0]
-};
-
 const maxZoneScoreO = {
   name: 'Zone Score Range',
   id: 'zone-score-range',
@@ -47,7 +41,7 @@ const maxZoneScoreO = {
 };
 
 /*
-const maxLCOEO = {
+const maxLCOE = {
   name: 'LCOE Range',
   id: 'lcoe-range',
   active: true,
