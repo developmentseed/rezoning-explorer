@@ -75,8 +75,6 @@ const MultiSelectButton = styled(Button)`
   width: 100%;
   ${truncated()}
 `;
-const MultiOption = styled(FormCheckable)`
-`;
 const MultiWrapper = styled(ShadowScrollbar)`
   height: 20rem;
   > .scroll-area {
@@ -391,7 +389,7 @@ function QueryForm (props) {
             <MultiWrapper>
               {
                 option.input.options.map((o, i) => (
-                  <MultiOption
+                  <FormCheckable
                     key={o}
                     name={o}
                     id={o}
@@ -406,7 +404,7 @@ function QueryForm (props) {
                       }
                     }}
                   >{o}
-                  </MultiOption>
+                  </FormCheckable>
                 ))
               }
             </MultiWrapper>
