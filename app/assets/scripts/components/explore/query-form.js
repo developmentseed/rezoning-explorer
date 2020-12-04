@@ -386,14 +386,6 @@ function QueryForm (props) {
   useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
 
-  useEffect(() => {
-    if (resource) {
-      const turbineType = lcoe.find(cost => cost.id === 'turbine_type');
-      turbineType.input.range = turbineTypeMap[resource];
-      turbineType.input.value = turbineType.input.range[0];
-    }
-  }, [resource]);
-
   /* Reinitialize filters when new ranges are received */
 
   useEffect(() => {
