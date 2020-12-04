@@ -32,7 +32,7 @@ import {
   checkIncluded
 } from '../components/explore/panel-data';
 
-const { GRID_OPTIONS, SLIDER, BOOL } = INPUT_CONSTANTS;
+const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
@@ -260,24 +260,30 @@ export function ExploreProvider (props) {
           return `${id}=${min},${max}`;
         } else if (input.type === BOOL) {
           return `${id}=${filter.input.value}`;
-        }
-
+        } else if (input.type === DROPDOWN || input.type === MULTI) {
+          return `${id}=${filter.input.value.join(', ')}`;
+        } else {
         // discard non-accepted filter types
-        return null;
+          /* eslint-disable-next-line */
+          console.error(`Filter ${id} type not supported by api, discarding`);
+          return null;
+        }
       })
       .filter((x) => x)
       .join('&');
 
+    // If area of country type, prepare path string to add to URL
+    const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
+
     // Apply filter querystring to the map
-    const basePath = selectedArea.type === 'country' ? `/filter/${selectedArea.id}` : '/filter';
     setFilteredLayerUrl(
-      `${config.apiEndpoint}${basePath}/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
+      `${config.apiEndpoint}/filter${countryPath}/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
     );
 
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
 
     setLcoeLayerUrl(
-      `${config.apiEndpoint}/lcoe/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=cool`
+      `${config.apiEndpoint}/lcoe${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=cool`
     );
 
     generateZones(filterString, weights, lcoe);
