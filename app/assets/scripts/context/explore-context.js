@@ -42,7 +42,6 @@ export function ExploreProvider (props) {
       return v && `${v.min},${v.max}`;
     }
   });
-  /*
   const [maxLCOE, setMaxLCOE] = useQsState({
     key: 'maxLCOE',
     default: undefined,
@@ -55,7 +54,7 @@ export function ExploreProvider (props) {
       }
     },
     dehydrator: v => v && `${v.min},${v.max}`
-  }); */
+  });
 
   // Init areas state
   const [areas, setAreas] = useState([]);
@@ -229,8 +228,8 @@ export function ExploreProvider (props) {
           // output filters
           maxZoneScore,
           setMaxZoneScore,
-          /* maxLCOE,
-          setMaxLCOE */
+          maxLCOE,
+          setMaxLCOE,
 
           /* explore context */
           selectedArea,

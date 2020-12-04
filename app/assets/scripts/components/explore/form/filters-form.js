@@ -98,28 +98,29 @@ function FiltersForm (props) {
               renderBody={({ isFoldExpanded }) => (
                 <>
                   {
-                    outputFilters.map(([val, setVal, filterObject]) => (
-                      <PanelOption key={filterObject.name} hidden={!isFoldExpanded}>
-                        <OptionHeadline>
-                          <PanelOptionTitle>{filterObject.name}</PanelOptionTitle>
-                          {filterObject.info && (
-                            <InfoButton info={filterObject.info} id={filterObject.name}>
+                    outputFilters.filter(([val, setVal, filterObject]) => filterObject.active)
+                      .map(([val, setVal, filterObject]) => (
+                        <PanelOption key={filterObject.name} hidden={!isFoldExpanded}>
+                          <OptionHeadline>
+                            <PanelOptionTitle>{filterObject.name}</PanelOptionTitle>
+                            {filterObject.info && (
+                              <InfoButton info={filterObject.info} id={filterObject.name}>
                                 Info
-                            </InfoButton>
-                          )}
-                        </OptionHeadline>
-                        {inputOfType({
-                          ...filterObject,
-                          input: {
-                            ...filterObject.input,
-                            value: val
-                          }
-                        }, ({ min, max }) => {
-                          setVal({ min: round(min), max: round(max) });
-                        })}
-                      </PanelOption>
+                              </InfoButton>
+                            )}
+                          </OptionHeadline>
+                          {inputOfType({
+                            ...filterObject,
+                            input: {
+                              ...filterObject.input,
+                              value: val
+                            }
+                          }, ({ min, max }) => {
+                            setVal({ min: round(min), max: round(max) });
+                          })}
+                        </PanelOption>
 
-                    ))
+                      ))
                   }
                 </>
               )}

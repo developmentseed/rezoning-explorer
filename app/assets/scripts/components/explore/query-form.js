@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
@@ -41,19 +41,6 @@ const maxZoneScoreO = {
     range: [0, 1]
   }
 };
-
-/*
-const maxLCOE = {
-  name: 'LCOE Range',
-  id: 'lcoe-range',
-  active: true,
-  isRange: true,
-  input: {
-    value: { min: 0, max: 1 },
-    type: SLIDER,
-    range: [0, 1]
-  }
-}; */
 
 const castByFilterType = type => {
   switch (type) {
@@ -173,9 +160,21 @@ function QueryForm (props) {
     gridMode,
     setGridMode,
     gridSize, setGridSize,
-    maxZoneScore, setMaxZoneScore
-    // maxLCOE, setMaxLCOE
+    maxZoneScore, setMaxZoneScore,
+    maxLCOE, setMaxLCOE
   } = props;
+
+  const [maxLCOEO, setMaxLCOEO] = useState({
+    name: 'LCOE Range',
+    id: 'lcoe-range',
+    active: true,
+    isRange: true,
+    input: {
+      value: { min: 0, max: 1 },
+      type: SLIDER,
+      range: [0, 1]
+    }
+  });
 
   const firstLoad = useRef(true);
 
@@ -484,6 +483,33 @@ function QueryForm (props) {
     }
   }, [resource]);
 
+  useEffect(() => {
+    if (filterRanges.isReady()) {
+      try {
+        const capfac = lcoe.find(f => f.id === 'capacity_factor').input.value;
+        const range = filterRanges.getData().f_lcoe[capfac].total;
+        setMaxLCOEO({
+          ...maxLCOEO,
+          active: true,
+          input: {
+            ...maxLCOEO.input,
+            range: [range.min, range.max]
+          }
+        });
+
+        setMaxLCOE(range);
+      } catch (err) {
+        setMaxLCOEO({
+          ...maxLCOEO,
+          active: false
+        });
+        setMaxLCOE(null);
+        /* eslint-disable-next-line */
+        console.warn('LCOE Filter not available for this country');
+      }
+    }
+  }, [lcoe.find(f => f.id === 'capacity_factor').input.value, filterRanges]);
+
   /* Reinitialize filters when new ranges are received */
 
   useEffect(() => {
@@ -571,7 +597,8 @@ function QueryForm (props) {
           updateStateList={updateStateList}
           outputFilters={
             [
-              [maxZoneScore, setMaxZoneScore, maxZoneScoreO]
+              [maxZoneScore, setMaxZoneScore, maxZoneScoreO],
+              [maxLCOE, setMaxLCOE, maxLCOEO]
             ]
           }
         />
@@ -658,9 +685,9 @@ QueryForm.propTypes = {
   gridSize: T.number,
   setGridSize: T.func,
   maxZoneScore: T.object,
-  setMaxZoneScore: T.func
-  /* maxLCOE: T.object,
-  setMaxLCOE: T.func */
+  setMaxZoneScore: T.func,
+  maxLCOE: T.object,
+  setMaxLCOE: T.func
 };
 
 export default QueryForm;
