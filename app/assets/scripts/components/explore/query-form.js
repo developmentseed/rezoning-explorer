@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
 import useQsState from '../../utils/qs-state-hook';
-
+import Dropdown from '../common/dropdown';
+import { FormCheckable } from '../../styles/form/checkable';
 import {
   PanelBlock,
   PanelBlockHeader,
@@ -25,6 +26,7 @@ import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
 import { HeadOption, HeadOptionHeadline } from './form/form';
 import { FiltersForm, WeightsForm, LCOEForm } from './form';
+import ShadowScrollbar from '../common/shadow-scrollbar';
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
@@ -64,6 +66,7 @@ const castByFilterType = type => {
     case BOOL:
       return Boolean;
     case DROPDOWN:
+    case MULTI:
     case TEXT:
       return String;
     case SLIDER:
@@ -73,6 +76,17 @@ const castByFilterType = type => {
   }
 };
 
+const MultiOption = styled(FormCheckable)`
+`;
+const MultiWrapper = styled(ShadowScrollbar)`
+  height: 20rem;
+  > .scroll-area {
+    > div {
+      display: grid;
+      grid-template-rows: repeat(auto-fill, minmax(1.5rem, 1fr));
+    }
+  }
+`;
 const Subheadingstrong = styled.strong`
   color: ${themeVal('color.base')};
 `;
@@ -116,15 +130,22 @@ const initByType = (obj, ranges) => {
       };
     case BOOL:
       return {
-        ...obj,
+        ...input,
         value: false,
         range: [true, false]
       };
     case MULTI:
+      console.log(input.value || [0]);
+      return {
+        ...input,
+        // For multi select use first option as default value
+        value: input.value || [0],
+        unit: null
+      };
     case DROPDOWN:
       return {
-        ...obj,
-        value: obj.value || (obj.options && obj.options[0]) || '',
+        ...input,
+        value: obj.value || (input.options && input.options[0]) || '',
         unit: null
       };
     default:
@@ -219,6 +240,21 @@ function QueryForm (props) {
               },
               active: active === undefined
             };
+          } else if (thisFilt.input.options) {
+            // multi select or dropdown
+            vals = vals.split(',');
+            let active = true;
+            if (vals[vals.length - 1] === 'false') {
+              // remove active
+              vals = vals.slice(0, vals.length - 2).map(Number);
+              active = false;
+            } else {
+              vals = vals.map(Number);
+            }
+            return {
+              value: vals,
+              active
+            };
           } else {
             const [val, active] = vals.split(',');
             return {
@@ -244,7 +280,14 @@ function QueryForm (props) {
     dehydrator: v => {
       return v && v.map(f => {
         const { value } = f.input;
-        let shard = f.isRange ? `${value.min}, ${value.max}` : `${value}`;
+        let shard;
+        if (f.isRange) {
+          shard = `${value.min}, ${value.max}`;
+        } else if (f.input.options) {
+          shard = value.join(',');
+        } else {
+          shard = `${value}`;
+        }
         shard = f.active ? shard : `${shard},${false}`;
         return shard;
       }).filter(f => !f.excluded)
@@ -290,7 +333,7 @@ function QueryForm (props) {
   });
 
   const inputOfType = (option, onChange) => {
-    const { range } = option.input;
+    const { range, value } = option.input;
     let errorMessage;
     if (range) {
       errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${round(range[0])} - ${round(range[1])}`;
@@ -300,9 +343,6 @@ function QueryForm (props) {
 
     // Get filter range, if available
     const filterRange = filterRanges.getData()[option.id];
-
-    if (option.id === 'lcoe-range') {
-    }
 
     switch (option.input.type) {
       case SLIDER:
@@ -335,12 +375,46 @@ function QueryForm (props) {
       case BOOL:
         return null;
       case MULTI:
+        return (
+          <Dropdown
+            triggerElement={
+              <Button> click </Button>
+            }
+            alignment='right'
+          >
+            <MultiWrapper>
+              {
+                option.input.options.map((o, i) => (
+                  <MultiOption
+                    key={o}
+                    name={o}
+                    id={o}
+                    type='checkbox'
+                    checked={value.includes(i)}
+                    onChange={() => {
+                      if (value.includes(i)) {
+                        value.splice(value.indexOf(i), 1)
+                        onChange(value);
+                      } else {
+                        console.log([...value, i])
+                        onChange([...value, i]);
+                      }
+                    }}
+                  >{o}
+                  </MultiOption>
+                ))
+              }
+            </MultiWrapper>
+          </Dropdown>
+        );
       case DROPDOWN:
         return (
           <FormGroup>
             <FormSelect
               id={option.name}
-              onChange={(e) => onChange(e.target.value)}
+              onChange={(e) => {
+                onChange(e.target.value);
+              }}
               value={option.input.value}
             >
               {
@@ -391,9 +465,14 @@ function QueryForm (props) {
 
   useEffect(() => {
     if (resource) {
-      const turbineType = lcoe.find(cost => cost.id === 'turbine_type');
-      turbineType.input.range = turbineTypeMap[resource];
-      turbineType.input.value = turbineType.input.range[0];
+      /*
+      try {
+        const turbineType = lcoe.find(cost => cost.id === 'turbine_type');
+        turbineType.input.range = turbineTypeMap[resource];
+        turbineType.input.value = turbineType.input.range[0];
+      } catch (err) {
+        console.error(err);
+      } */
     }
   }, [resource]);
 

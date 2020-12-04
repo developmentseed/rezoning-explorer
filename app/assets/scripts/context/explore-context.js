@@ -32,7 +32,7 @@ import {
   checkIncluded
 } from '../components/explore/panel-data';
 
-const { GRID_OPTIONS, SLIDER, BOOL } = INPUT_CONSTANTS;
+const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
@@ -260,10 +260,13 @@ export function ExploreProvider (props) {
           return `${id}=${min},${max}`;
         } else if (input.type === BOOL) {
           return `${id}=${filter.input.value}`;
-        }
-
+        } else if (input.type === DROPDOWN || input.type === MULTI) {
+          return `${id}=${filter.input.value.join(',')}`;
+        } else {
         // discard non-accepted filter types
-        return null;
+          console.error(`Filter ${id} type not supported by api, discarding`);
+          return null;
+        }
       })
       .filter((x) => x)
       .join('&');

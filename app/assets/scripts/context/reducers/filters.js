@@ -44,6 +44,9 @@ export async function fetchFilters (dispatch) {
       )
       .map((filter) => {
         const isRange = filter.pattern === 'range_filter';
+        const opts = filter.pattern === 'categorical_filter' ? {
+          options: filter.options
+        } : {};
 
         return {
           ...filter,
@@ -56,7 +59,8 @@ export async function fetchFilters (dispatch) {
           isRange,
           input: {
             range: INPUT_CONSTANTS.DEFAULT_RANGE,
-            type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type)
+            type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type),
+            ...opts
           }
         };
       });
