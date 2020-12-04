@@ -61,6 +61,7 @@ function ExpMapPrimePanel (props) {
    * Get Explore context values
    */
   const {
+    areas, setSelectedAreaId,
     selectedResource,
     selectedArea,
     setSelectedResource,
@@ -71,7 +72,6 @@ function ExpMapPrimePanel (props) {
     gridSize, setGridSize,
     filteredLayerUrl,
     maxZoneScore, setMaxZoneScore,
-
     updateFilteredLayer
     // maxLCOE, setMaxLCOE
   } = useContext(ExploreContext);
@@ -272,7 +272,14 @@ function ExpMapPrimePanel (props) {
         nonScrolling
       />
 
-      <ModalSelectArea />
+      <ModalSelectArea
+        areas={areas}
+        selectedResource={selectedResource}
+        showSelectAreaModal={showSelectAreaModal}
+        setShowSelectAreaModal={setShowSelectAreaModal}
+        setSelectedAreaId={setSelectedAreaId}
+
+      />
     </>
   );
 }
