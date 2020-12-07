@@ -11,6 +11,7 @@ export function MapProvider (props) {
   // Init map state
   const [map, setMap] = useState(null);
   const [mapLayers, setMapLayers] = useState([]);
+  const [focusZone, setFocusZone] = useState(null);
 
   const [inputLayers, dispatchInputLayers] = useReducer(
     inputLayersReducer,
@@ -32,7 +33,10 @@ export function MapProvider (props) {
             setMapLayers,
             setMap,
             mapLayers,
-            inputLayers
+            inputLayers,
+
+            focusZone,
+            setFocusZone
 
           }
         }
