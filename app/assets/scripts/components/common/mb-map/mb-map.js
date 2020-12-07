@@ -365,11 +365,9 @@ function MbMap (props) {
     if (!map) return;
 
     map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeature || null }, { hover: true });
-    // setHoveredFeature(hoveredFeature);
 
     return () => {
       map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeature || null }, { hover: false });
-      // setHoveredFeature(null);
     };
   }, [hoveredFeature]);
 

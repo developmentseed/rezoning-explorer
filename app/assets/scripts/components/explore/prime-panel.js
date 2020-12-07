@@ -149,7 +149,13 @@ function ExpMapPrimePanel (props) {
                       layer.id,
                       'fill-opacity'
                     );
-                    paintProperty[2] = knob.value / 100;
+
+                    // Zone boundaries layer uses a feature-state conditional
+                    // to detect hovering.
+                    // Here set the 3rd element of the array, which is the
+                    // non-hovered state value
+                    // to be the value of the knob
+                    paintProperty[3] = knob.value / 100;
                     map.setPaintProperty(
                       layer.id,
                       'fill-opacity',
