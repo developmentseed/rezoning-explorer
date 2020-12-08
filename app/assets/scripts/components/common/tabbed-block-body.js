@@ -162,53 +162,56 @@ function TabbedBlock (props) {
                   <TabControlBar
                     active={active}
                   >
-                    <Subheading>Preset Priority</Subheading>
-                    <Dropdown
-                      alignment='left'
-                      triggerElement={
-                        <Button
-                          size='small'
-                          className='drop-trigger'
-                          variation='primary-plain'
-                          useIcon={['chevron-down--small', 'after']}
-                        >
-                          {presetValue[i]}
-                        </Button>
-                      }
-                    >
-                      <PresetMenu>
-                        {
-                          Object.keys(activeContent.props.presets).map(preset => (
-                            <DropMenuItem
-                              key={preset}
-                              onClick={() => {
-                                activeContent.props.setPreset(preset);
-                                presetValue[i] = preset;
-                                setPresetValue(presetValue);
-                                Dropdown.closeAll();
-                              }}
-                            >
-                              {preset}
-                            </DropMenuItem>
-                          ))
+                    { activeContent.props.presets &&
+                    <>
+                      <Subheading>Preset Priority</Subheading>
+                      <Dropdown
+                        alignment='left'
+                        triggerElement={
+                          <Button
+                            size='small'
+                            className='drop-trigger'
+                            variation='primary-plain'
+                            useIcon={['chevron-down--small', 'after']}
+                          >
+                            {presetValue[i]}
+                          </Button>
                         }
-                      </PresetMenu>
-                    </Dropdown>
+                      >
+                        <PresetMenu>
+                          {
+                            Object.keys(activeContent.props.presets).map(preset => (
+                              <DropMenuItem
+                                key={preset}
+                                onClick={() => {
+                                  activeContent.props.setPreset(preset);
+                                  presetValue[i] = preset;
+                                  setPresetValue(presetValue);
+                                  Dropdown.closeAll();
+                                }}
+                              >
+                                {preset}
+                              </DropMenuItem>
+                            ))
+                          }
+                        </PresetMenu>
+                      </Dropdown>
 
-                    <Button
-                      type='reset'
-                      size='small'
-                      className='preset-reset'
-                      onClick={() => {
-                        activeContent.props.setPreset('reset');
-                        presetValue[i] = 'Select';
-                        setPresetValue(presetValue);
-                      }}
-                      variation='base-raised-light'
-                      useIcon='arrow-loop'
-                    >
-                        Reset
-                    </Button>
+                      <Button
+                        type='reset'
+                        size='small'
+                        className='preset-reset'
+                        onClick={() => {
+                          activeContent.props.setPreset('reset');
+                          presetValue[i] = 'Select';
+                          setPresetValue(presetValue);
+                        }}
+                        variation='base-raised-light'
+                        useIcon='arrow-loop'
+                      >
+                          Reset
+                      </Button>
+                    </>}
                   </TabControlBar>
 
                   {React.cloneElement(child, { active: active })}
