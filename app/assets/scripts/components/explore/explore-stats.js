@@ -15,6 +15,10 @@ const StatsWrapper = styled.section`
   }
   dt {
     font-size: 0.875rem;
+
+    span {
+      display: block;
+    }
   }
   ${({ active }) =>
     active &&
@@ -82,12 +86,17 @@ function ExploreStats (props) {
         title='Summary'
         data={statData}
         dimension={[2, 2]}
-        gap={1}
+        gap={0.5}
         renderCell={(datum) => (
           <dl>
             <dd>{datum.data || '--'}</dd>
-            <dt>{datum.label}</dt>
-            <dt>{datum.unit}</dt>
+            <dt>
+              {datum.label}
+              {
+                datum.unit &&
+                <span>({datum.unit})</span>
+              }
+            </dt>
           </dl>
         )}
       />
