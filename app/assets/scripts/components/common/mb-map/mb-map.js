@@ -202,7 +202,6 @@ const initializeMap = ({
       }
     });
 
-
     map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features) {
         setHoveredFeature(e.features ? e.features[0].properties.id : null);
