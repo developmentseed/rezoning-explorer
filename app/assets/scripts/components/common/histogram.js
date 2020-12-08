@@ -87,7 +87,7 @@ function Histogram (props) {
   const [xProp, setXProp] = useState(xPropOptions[0]);
   const initChart = () => {
     if (!container.current) return;
-    const margin = { top: 5, right: 15, bottom: 20, left: 35 };
+    const margin = { top: 5, right: 15, bottom: 20, left: 45 };
     const width = container.current.clientWidth - margin.left - margin.right;
     const height = container.current.clientHeight - margin.top - margin.bottom;
 
@@ -142,6 +142,7 @@ function Histogram (props) {
       .attr('fill', d => {
         return d.color;
       })
+      .attr('class', 'bar')
       .attr('opacity', 0.7)
       .on('click', (e, d) => onBarClick(d))
       .on('mouseover', function (e, d) {
@@ -154,7 +155,6 @@ function Histogram (props) {
           .attr('opacity', 0.7);
         onBarMouseOut();
       })
-
     ;
 
     svg.append('text')
@@ -194,6 +194,7 @@ function Histogram (props) {
         return d.id === hoveredBar ? 1 : 0.7;
       });
   };
+
   useEffect(initChart, [container, xProp]);
   useEffect(setHovered, [hoveredBar]);
 

@@ -2,7 +2,7 @@ import React from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 
-import { FormWrapper, FormGroupWrapper, PanelOption, OptionHeadline, PanelOptionTitle } from './form';
+import { FormWrapper, FormGroupWrapper, PanelOption, OptionHeadline, PanelOptionTitle, InactiveMessage } from './form';
 import { Accordion, AccordionFold } from '../../../components/accordion';
 import collecticon from '../../../styles/collecticons';
 import { glsp } from '../../../styles/utils/theme-values';
@@ -11,7 +11,6 @@ import { makeTitleCase } from '../../../styles/utils/general';
 
 import InfoButton from '../../common/info-button';
 import { FormSwitch } from '../../../styles/form/switch';
-import { round } from '../../../utils/format';
 import { INPUT_CONSTANTS } from '../panel-data';
 const { BOOL } = INPUT_CONSTANTS;
 
@@ -98,28 +97,32 @@ function FiltersForm (props) {
               renderBody={({ isFoldExpanded }) => (
                 <>
                   {
-                    outputFilters.map(([val, setVal, filterObject]) => (
-                      <PanelOption key={filterObject.name} hidden={!isFoldExpanded}>
-                        <OptionHeadline>
-                          <PanelOptionTitle>{filterObject.name}</PanelOptionTitle>
-                          {filterObject.info && (
-                            <InfoButton info={filterObject.info} id={filterObject.name}>
+                    outputFilters
+                      .map(([filterObject, setFilterObject, inactiveMessage]) => (
+                        <PanelOption key={filterObject.name} hidden={!isFoldExpanded}>
+                          <OptionHeadline>
+                            <PanelOptionTitle>{`${filterObject.name}`.concat(filterObject.unit ? ` (${filterObject.unit})` : '')}</PanelOptionTitle>
+                            {filterObject.info && (
+                              <InfoButton info={filterObject.info} id={filterObject.name}>
                                 Info
-                            </InfoButton>
-                          )}
-                        </OptionHeadline>
-                        {inputOfType({
-                          ...filterObject,
-                          input: {
-                            ...filterObject.input,
-                            value: val
-                          }
-                        }, ({ min, max }) => {
-                          setVal({ min: round(min), max: round(max) });
-                        })}
-                      </PanelOption>
+                              </InfoButton>
+                            )}
+                          </OptionHeadline>
+                          {filterObject.active ? inputOfType(
+                            filterObject,
+                            (value) => {
+                              setFilterObject({
+                                ...filterObject,
+                                input: {
+                                  ...filterObject.input,
+                                  value
+                                }
+                              }
+                              );
+                            }) : <InactiveMessage>{inactiveMessage}</InactiveMessage>}
+                        </PanelOption>
 
-                    ))
+                      ))
                   }
                 </>
               )}

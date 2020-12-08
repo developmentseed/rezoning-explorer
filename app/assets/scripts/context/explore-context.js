@@ -21,7 +21,7 @@ import {
   checkIncluded
 } from '../components/explore/panel-data';
 
-const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI } = INPUT_CONSTANTS;
+const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
@@ -30,32 +30,44 @@ export function ExploreProvider (props) {
     key: 'maxZoneScore',
     default: undefined,
     hydrator: v => {
-      if (v) {
-        const [min, max] = v.split(',').map(Number);
-        return { min, max };
-      } else {
-        return { min: 0, max: 1 };
-      }
-    },
+      const range = v ? v.split(',').map(Number) : null;
 
-    dehydrator: v => {
-      return v && `${v.min},${v.max}`;
-    }
+      return {
+        name: 'Zone Score Range',
+        id: 'zone-score-range',
+        active: true,
+        isRange: true,
+        input: {
+          value: range ? { min: range[0], max: range[1] } : { min: 0, max: 1 },
+          type: SLIDER,
+          range: [0, 1]
+        }
+      };
+    },
+    dehydrator: v => v.active && `${v.input.value.min},${v.input.value.max}`
   });
-  /*
+
   const [maxLCOE, setMaxLCOE] = useQsState({
     key: 'maxLCOE',
     default: undefined,
     hydrator: v => {
-      if (v) {
-        const [min, max] = v.split(',').map(Number);
-        return { min, max };
-      } else {
-        return { min: 0, max: 1 };
-      }
+      const range = v ? v.split(',').map(Number) : null;
+
+      return {
+        name: 'LCOE Range',
+        id: 'lcoe-range',
+        active: range && true,
+        isRange: true,
+        unit: 'USD/MwH',
+        input: {
+          value: range ? { min: range[0], max: range[1] } : null,
+          type: SLIDER,
+          range: range || DEFAULT_RANGE
+        }
+      };
     },
-    dehydrator: v => v && `${v.min},${v.max}`
-  }); */
+    dehydrator: v => v.active && `${v.input.value.min},${v.input.value.max}`
+  });
 
   // Init areas state
   const [areas, setAreas] = useState([]);
@@ -219,6 +231,31 @@ export function ExploreProvider (props) {
     generateZones(filterString, weights, lcoe);
   };
 
+  useEffect(() => {
+    if (currentZones.isReady()) {
+      const zones = currentZones.getData();
+      const value = zones.reduce((acc, z) => ({
+        min: z.properties.summary.lcoe < acc.min ? z.properties.summary.lcoe : acc.min,
+        max: z.properties.summary.lcoe > acc.max ? z.properties.summary.lcoe : acc.max
+      }), { min: Infinity, max: 0 });
+
+      setMaxLCOE({
+        ...maxLCOE,
+        active: true,
+        input: {
+          ...maxLCOE.input,
+          value,
+          range: [value.min, value.max]
+        }
+      });
+    } else {
+      setMaxLCOE({
+        ...maxLCOE,
+        active: false
+      });
+    }
+  }, [currentZones]);
+
   return (
     <>
       <ExploreContext.Provider
@@ -229,8 +266,8 @@ export function ExploreProvider (props) {
           // output filters
           maxZoneScore,
           setMaxZoneScore,
-          /* maxLCOE,
-          setMaxLCOE */
+          maxLCOE,
+          setMaxLCOE,
 
           /* explore context */
           selectedArea,
