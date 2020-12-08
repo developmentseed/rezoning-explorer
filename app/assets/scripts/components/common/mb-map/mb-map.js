@@ -92,7 +92,8 @@ const initializeMap = ({
   selectedArea,
   setMap,
   mapContainer,
-  setHoveredFeature
+  setHoveredFeature,
+  setFocusZone
 }) => {
   const map = new mapboxgl.Map({
     container: mapContainer.current,
@@ -207,6 +208,22 @@ const initializeMap = ({
       }
     });
 
+    // Set the focused zone to build the zone details panel
+    // when map zone bound is clicked
+    // This is cleared from the explore-zones component
+    map.on('click', ZONES_BOUNDARIES_LAYER_ID, (e) => {
+      if (e.features) {
+        const ft = e.features[0];
+        setFocusZone({
+          ...ft,
+          properties: {
+            ...ft.properties,
+            summary: JSON.parse(ft.properties.summary)
+          }
+        });
+      }
+    });
+
     map.resize();
   });
 };
@@ -251,14 +268,14 @@ function MbMap (props) {
     hoveredFeature, setHoveredFeature,
     map, setMap,
     inputLayers,
-    setMapLayers
-
+    setMapLayers,
+    setFocusZone
   } = useContext(MapContext);
 
   // Initialize map on mount
   useEffect(() => {
     if (!map) {
-      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeature });
+      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeature, setFocusZone });
       return;
     }
 
