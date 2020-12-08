@@ -11,7 +11,6 @@ import { makeTitleCase } from '../../../styles/utils/general';
 
 import InfoButton from '../../common/info-button';
 import { FormSwitch } from '../../../styles/form/switch';
-import { round } from '../../../utils/format';
 import { INPUT_CONSTANTS } from '../panel-data';
 const { BOOL } = INPUT_CONSTANTS;
 
@@ -98,8 +97,8 @@ function FiltersForm (props) {
               renderBody={({ isFoldExpanded }) => (
                 <>
                   {
-                    outputFilters.filter(([val, setVal, filterObject]) => filterObject.active)
-                      .map(([val, setVal, filterObject]) => (
+                    outputFilters.filter(([filterObject, setFilterObject]) => filterObject.active)
+                      .map(([filterObject, setFilterObject]) => (
                         <PanelOption key={filterObject.name} hidden={!isFoldExpanded}>
                           <OptionHeadline>
                             <PanelOptionTitle>{`${filterObject.name}`.concat(filterObject.unit ? ` (${filterObject.unit})` : '')}</PanelOptionTitle>
@@ -109,15 +108,18 @@ function FiltersForm (props) {
                               </InfoButton>
                             )}
                           </OptionHeadline>
-                          {inputOfType({
-                            ...filterObject,
-                            input: {
-                              ...filterObject.input,
-                              value: val
-                            }
-                          }, ({ min, max }) => {
-                            setVal({ min: round(min), max: round(max) });
-                          })}
+                          {inputOfType(
+                            filterObject,
+                            (value) => {
+                              setFilterObject({
+                                ...filterObject,
+                                input: {
+                                  ...filterObject.input,
+                                  value
+                                }
+                              }
+                              );
+                            })}
                         </PanelOption>
 
                       ))

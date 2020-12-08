@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
@@ -29,18 +29,6 @@ import { FiltersForm, WeightsForm, LCOEForm } from './form';
 import ShadowScrollbar from '../common/shadow-scrollbar';
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
-
-const maxZoneScoreO = {
-  name: 'Zone Score Range',
-  id: 'zone-score-range',
-  active: true,
-  isRange: true,
-  input: {
-    value: { min: 0, max: 1 },
-    type: SLIDER,
-    range: [0, 1]
-  }
-};
 
 const castByFilterType = type => {
   switch (type) {
@@ -164,18 +152,19 @@ function QueryForm (props) {
     maxLCOE, setMaxLCOE
   } = props;
 
+  /*
   const [maxLCOEO, setMaxLCOEO] = useState({
     name: 'LCOE Range',
     id: 'lcoe-range',
-    active: true,
+    active: maxLCOE && true,
     isRange: true,
     unit: 'USD/MwH',
     input: {
-      value: { min: 0, max: 1 },
+      value: maxLCOE,
       type: SLIDER,
-      range: [0, 1]
+      range: maxLCOE ? [maxLCOE.min, maxLCOE.max] : DEFAULT_RANGE
     }
-  });
+  }); */
 
   const firstLoad = useRef(true);
 
@@ -483,7 +472,7 @@ function QueryForm (props) {
       }
     }
   }, [resource]);
-
+  /*
   useEffect(() => {
     if (filterRanges.isReady()) {
       try {
@@ -505,11 +494,11 @@ function QueryForm (props) {
           active: false
         });
         setMaxLCOE(null);
-        /* eslint-disable-next-line */
         console.warn('LCOE Filter not available for this country');
       }
     }
   }, [lcoe.find(f => f.id === 'capacity_factor').input.value, filterRanges]);
+*/
 
   /* Reinitialize filters when new ranges are received */
 
@@ -598,8 +587,8 @@ function QueryForm (props) {
           updateStateList={updateStateList}
           outputFilters={
             [
-              [maxZoneScore, setMaxZoneScore, maxZoneScoreO],
-              [maxLCOE, setMaxLCOE, maxLCOEO]
+              [maxZoneScore, setMaxZoneScore],
+              [maxLCOE, setMaxLCOE]
             ]
           }
         />
