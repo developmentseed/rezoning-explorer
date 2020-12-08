@@ -307,12 +307,9 @@ function MbMap (props) {
   // Update view port on area change
   useEffect(() => {
     // Map must be loaded
-    console.log(selectedArea);
     if (!map) return;
-    console.log('map loaded');
 
     if (selectedArea && selectedArea.bounds) {
-      console.log('fit bounds');
       map.fitBounds(selectedArea.bounds, fitBoundsOptions);
     }
   }, [selectedArea, map]);
