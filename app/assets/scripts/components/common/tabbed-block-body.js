@@ -159,6 +159,8 @@ function TabbedBlock (props) {
               const active = i === activeTab;
               return (
                 <>
+                  {activeContent.props.presets &&
+
                   <TabControlBar
                     active={active}
                   >
@@ -209,7 +211,7 @@ function TabbedBlock (props) {
                     >
                         Reset
                     </Button>
-                  </TabControlBar>
+                  </TabControlBar>}
 
                   {React.cloneElement(child, { active: active })}
                 </>

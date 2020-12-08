@@ -5,12 +5,10 @@ import { fetchFilters, filtersReducer } from './reducers/filters';
 import { fetchWeights, weightsReducer } from './reducers/weights';
 import { fetchLcoe, lcoeReducer } from './reducers/lcoe';
 import {
-  presets,
-  INPUT_CONSTANTS
+  presets
 } from '../components/explore/panel-data';
 import ExploreContext from './explore-context';
 import { initialApiRequestState } from './contexeed';
-import { randomRange } from '../utils/utils';
 import {
   hideGlobalLoading
 } from '../components/common/global-loading';
@@ -54,27 +52,21 @@ export function FormProvider (props) {
   }, [selectedAreaId, selectedResource]);
 
   useEffect(() => {
-    if (!filtersList.isReady()) {
+    if (!lcoeList.isReady()) {
       return;
     }
 
-    // Apply a mock "Optimization" scenario to filter presets, just random numbers
-    presets.filters = {
-      Optimization: filtersList.getData().map(filter => ({
-        ...filter,
-        active: Math.random() > 0.5,
-        input: {
-          ...filter.input,
-          value: filter.input.type === INPUT_CONSTANTS.SLIDER ? {
-            max: filter.range
-              ? randomRange(filter.range[0], filter.range[1])
-              : randomRange(0, 100),
-            min: filter.range ? filter.range[0] : 0
-          } : false
-        }
-      }))
+    presets.lcoe = {
+      Default: lcoeList.getData()
+        .map(cost => ({
+          ...cost,
+          input: {
+            ...cost.input,
+            value: cost.default || 1
+          }
+        }))
     };
-  }, [filtersList]);
+  }, [lcoeList]);
 
   useEffect(() => {
     fetchFilterRanges(selectedAreaId, dispatchFilterRanges);
@@ -99,8 +91,8 @@ export function FormProvider (props) {
       <FormContext.Provider
         value={
           {
-            filtersLists: (filtersList.isReady() && presets.filters) ? filtersList.getData() : null,
-            weightsList: (weightsList.isReady() && presets.weights) ? weightsList.getData() : null,
+            filtersLists: filtersList.isReady() ? filtersList.getData() : null,
+            weightsList: weightsList.isReady() ? weightsList.getData() : null,
             lcoeList: (lcoeList.isReady() && presets.lcoe) ? lcoeList.getData() : null,
             filterRanges,
             presets,

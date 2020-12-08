@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
@@ -165,7 +165,7 @@ function QueryForm (props) {
     lcoeList,
     updateFilteredLayer,
     filterRanges,
-    presets,
+    presets: defaultPresets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
@@ -178,11 +178,12 @@ function QueryForm (props) {
   } = props;
 
   const firstLoad = useRef(true);
+  const [presets, setPresets] = useState(defaultPresets);
 
   const initListToState = (list, ranges) => {
     return list.map((obj) => ({
       ...obj,
-      input: initByType(obj, filterRanges.getData(), apiResourceNameMap[resource]),
+      input: initByType(obj, ranges || {}, apiResourceNameMap[resource]),
       active: obj.active === undefined ? true : obj.active
     }));
   };
@@ -474,9 +475,22 @@ function QueryForm (props) {
         const ind = lcoe.findIndex(cost => cost.id === 'capacity_factor');
         capacity.input.availableOptions = capacity.input.options[apiResourceNameMap[resource]];
         capacity.input.value = capacity.input.availableOptions[0];
+        capacity.input.default = capacity.input.availableOptions[0];
 
         lcoe.splice(ind, 1, capacity);
         setLcoe(lcoe);
+
+        Object.keys(presets.lcoe)
+          .forEach(pre => {
+            presets.lcoe[pre] = presets.lcoe[pre].map(cost => {
+              if (cost.id === 'capacity_factor') {
+                return capacity;
+              } else {
+                return cost;
+              }
+            });
+          });
+        setPresets(presets);
       } catch (err) {
         /* eslint-disable-next-line */
         console.error(err);
@@ -555,7 +569,6 @@ function QueryForm (props) {
         <FiltersForm
           name='filters'
           icon='filter'
-          presets={presets.filters}
           setPreset={(preset) => {
             if (preset === 'reset') {
               setFilters(initListToState(filtersLists, filterRanges.getData()));
@@ -582,7 +595,6 @@ function QueryForm (props) {
           setWeights={setWeights}
           inputOfType={inputOfType}
           updateStateList={updateStateList}
-          presets={presets.weights}
           setPreset={(preset) => {
             if (preset === 'reset') {
               setWeights(initListToState(weightsList));
@@ -604,7 +616,7 @@ function QueryForm (props) {
             if (preset === 'reset') {
               setLcoe(initListToState(lcoeList));
             } else {
-              setLcoe(initListToState(presets.lcoe[preset]));
+              setLcoe(presets.lcoe[preset]);
             }
           }}
 
