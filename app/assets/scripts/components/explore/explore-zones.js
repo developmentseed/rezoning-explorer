@@ -100,10 +100,7 @@ const Detail = styled(Dl)`
 function ExploreZones (props) {
   const { active, currentZones } = props;
 
-  // const { currentZones } = useContext(ExploreContext);
-  const { hoveredFeature, setHoveredFeature } = useContext(MapContext);
-
-  const [focusZone, setFocusZone] = useState(null);
+  const { hoveredFeature, setHoveredFeature, focusZone, setFocusZone } = useContext(MapContext);
 
   const [selectedZones, setSelectedZones] = useState(currentZones.reduce((accum, zone) => ({ ...accum, [zone.id]: false }), {}));
 
@@ -115,6 +112,15 @@ function ExploreZones (props) {
         return formatThousands(value, { forceDecimals: true, decimals: 5 });
       default:
         return formatThousands(value);
+    }
+  };
+
+  const formatLabel = function (id) {
+    switch (id) {
+      case 'lcoe':
+        return `${id.replace(/_/g, ' ')} [USD/MwH]`;
+      default:
+        return id.replace(/_/g, ' ');
     }
   };
 
@@ -162,7 +168,7 @@ function ExploreZones (props) {
                       .filter(([label, value]) => FILTERED_PROPERTIES[label])
                       .map(([label, value]) => (
                         <Detail key={`${data.id}-${label}`}>
-                          <dt>{label.replace(/_/g, ' ')}</dt>
+                          <dt>{formatLabel(label)}</dt>
                           <dd>{formatIndicator(label, value)}</dd>
                         </Detail>
                       )
