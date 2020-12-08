@@ -102,7 +102,7 @@ function FiltersForm (props) {
                       .map(([val, setVal, filterObject]) => (
                         <PanelOption key={filterObject.name} hidden={!isFoldExpanded}>
                           <OptionHeadline>
-                            <PanelOptionTitle>{filterObject.name}</PanelOptionTitle>
+                            <PanelOptionTitle>{`${filterObject.name}`.concat(filterObject.unit ? ` (${filterObject.unit})` : '')}</PanelOptionTitle>
                             {filterObject.info && (
                               <InfoButton info={filterObject.info} id={filterObject.name}>
                                 Info

@@ -169,6 +169,7 @@ function QueryForm (props) {
     id: 'lcoe-range',
     active: true,
     isRange: true,
+    unit: 'USD/MwH',
     input: {
       value: { min: 0, max: 1 },
       type: SLIDER,

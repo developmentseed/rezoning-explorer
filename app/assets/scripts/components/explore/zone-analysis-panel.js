@@ -20,7 +20,7 @@ function ZoneAnalysisPanel (props) {
     /* eslint-disable camelcase */
     const { zone_score, lcoe } = z.properties.summary;
     const zs = zone_score >= maxZoneScore.min && zone_score <= maxZoneScore.max;
-    const zl = lcoe ? (lcoe >= maxLCOE.min && lcoe <= maxLCOE.max) : true;
+    const zl = maxLCOE ? (lcoe >= maxLCOE.min && lcoe <= maxLCOE.max) : true;
     return zs && zl;
   });
 
