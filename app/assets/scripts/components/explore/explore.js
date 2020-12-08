@@ -27,6 +27,7 @@ const ExploreCanvas = styled.div`
   grid-template-columns: min-content 1fr min-content;
   overflow: hidden;
   ${media.mediumDown`
+    max-width: 100vw;
     ${({ panelPrime, panelSec }) => {
       if (panelPrime && !panelSec) {
         return 'grid-template-columns: min-content 0 0;';
