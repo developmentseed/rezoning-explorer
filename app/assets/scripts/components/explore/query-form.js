@@ -582,14 +582,14 @@ function QueryForm (props) {
           setWeights={setWeights}
           inputOfType={inputOfType}
           updateStateList={updateStateList}
-          presets={presets.weights}
-          setPreset={(preset) => {
-            if (preset === 'reset') {
-              setWeights(initListToState(weightsList));
-            } else {
-              setWeights(initListToState(presets.weights[preset]));
-            }
-          }}
+          // presets={presets.weights}
+          // setPreset={(preset) => {
+          //   if (preset === 'reset') {
+          //     setWeights(initListToState(weightsList));
+          //   } else {
+          //     setWeights(initListToState(presets.weights[preset]));
+          //   }
+          // }}
 
         />
         <LCOEForm
