@@ -26,8 +26,16 @@ const ZONES_BOUNDARIES_SOURCE_ID = 'ZONES_BOUNDARIES_SOURCE_ID';
 export const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
 const EEZ_BOUNDARIES_SOURCE_ID = 'EEZ_BOUNDARIES_SOURCE_ID';
 const EEZ_BOUNDARIES_LAYER_ID = 'EEZ_BOUNDARIES_LAYER_ID';
+const SATELLITE = 'satellite';
 
 export const outputLayers = [
+  {
+    id: SATELLITE,
+    name: 'Satellite',
+    type: 'raster',
+    nonexclusive: true,
+    visible: true
+  },
   {
     id: FILTERED_LAYER_ID,
     name: 'Selected Area',
