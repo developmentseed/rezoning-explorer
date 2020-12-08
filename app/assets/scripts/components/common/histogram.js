@@ -87,7 +87,7 @@ function Histogram (props) {
   const [xProp, setXProp] = useState(xPropOptions[0]);
   const initChart = () => {
     if (!container.current) return;
-    const margin = { top: 5, right: 15, bottom: 20, left: 35 };
+    const margin = { top: 5, right: 15, bottom: 20, left: 45 };
     const width = container.current.clientWidth - margin.left - margin.right;
     const height = container.current.clientHeight - margin.top - margin.bottom;
 

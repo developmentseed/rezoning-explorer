@@ -244,7 +244,8 @@ function MbMap (props) {
     filteredLayerUrl,
     currentZones,
     lcoeLayerUrl,
-    maxZoneScore
+    maxZoneScore,
+    maxLCOE
   } = useContext(ExploreContext);
 
   const {
@@ -380,7 +381,11 @@ function MbMap (props) {
     map.setFilter(ZONES_BOUNDARIES_LAYER_ID, [
       'all',
       ['>=', ['get', 'zone_score'], maxZoneScore.min],
-      ['<=', ['get', 'zone_score'], maxZoneScore.max]
+      ['<=', ['get', 'zone_score'], maxZoneScore.max],
+      ...(maxLCOE ? [
+        ['>=', ['get', 'lcoe'], maxLCOE.min],
+        ['<=', ['get', 'lcoe'], maxLCOE.max]
+      ] : [])
     ]
     );
   }, [maxZoneScore, currentZones]);
