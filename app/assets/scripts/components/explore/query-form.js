@@ -569,7 +569,6 @@ function QueryForm (props) {
         <FiltersForm
           name='filters'
           icon='filter'
-          presets={presets.filters}
           setPreset={(preset) => {
             if (preset === 'reset') {
               setFilters(initListToState(filtersLists, filterRanges.getData()));
@@ -596,7 +595,6 @@ function QueryForm (props) {
           setWeights={setWeights}
           inputOfType={inputOfType}
           updateStateList={updateStateList}
-          presets={presets.weights}
           setPreset={(preset) => {
             if (preset === 'reset') {
               setWeights(initListToState(weightsList));
