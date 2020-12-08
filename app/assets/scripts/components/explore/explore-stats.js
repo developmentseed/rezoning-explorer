@@ -9,7 +9,6 @@ const StatsWrapper = styled.section`
   display: grid;
   /*grid-template-rows: 1.5fr 1fr;*/
   dd {
-    font-family: ${themeVal('type.mono.family')};
     font-size: 1.25rem;
     line-height: 1;
     color: ${themeVal('color.primary')};
