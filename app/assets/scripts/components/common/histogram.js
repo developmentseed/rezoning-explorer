@@ -142,6 +142,7 @@ function Histogram (props) {
       .attr('fill', d => {
         return d.color;
       })
+      .attr('class', 'bar')
       .attr('opacity', 0.7)
       .on('click', (e, d) => onBarClick(d))
       .on('mouseover', function (e, d) {
@@ -154,7 +155,6 @@ function Histogram (props) {
           .attr('opacity', 0.7);
         onBarMouseOut();
       })
-
     ;
 
     svg.append('text')
@@ -194,6 +194,7 @@ function Histogram (props) {
         return d.id === hoveredBar ? 1 : 0.7;
       });
   };
+
   useEffect(initChart, [container, xProp]);
   useEffect(setHovered, [hoveredBar]);
 

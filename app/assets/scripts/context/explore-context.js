@@ -66,7 +66,7 @@ export function ExploreProvider (props) {
         }
       };
     },
-    dehydrator: v => v.active && `${v.input.value.min},${v.input.valuemax}`
+    dehydrator: v => v.active && `${v.input.value.min},${v.input.value.max}`
   });
 
   // Init areas state
