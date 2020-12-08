@@ -153,32 +153,6 @@ const initializeMap = ({
       maxzoom: 22
     });
     //
-    // Zone boundaries source
-    map.addSource(ZONES_BOUNDARIES_SOURCE_ID, {
-      type: 'geojson',
-      data: {
-        type: 'FeatureCollection',
-        features: []
-      },
-      promoteId: 'id'
-    });
-
-    // Zone boundaries source
-    map.addLayer({
-      id: ZONES_BOUNDARIES_LAYER_ID,
-      type: 'fill',
-      source: ZONES_BOUNDARIES_SOURCE_ID,
-      layout: {},
-      paint: {
-        'fill-color': ['get', 'color'],
-        'fill-opacity': [
-          'case',
-          ['boolean', ['feature-state', 'hover'], false],
-          0.5,
-          0.2
-        ]
-      }
-    });
 
     map.addSource(EEZ_BOUNDARIES_SOURCE_ID, {
       type: 'geojson',
@@ -200,6 +174,34 @@ const initializeMap = ({
         'fill-outline-color': '#232323'
       }
     });
+
+    // Zone boundaries source
+    map.addSource(ZONES_BOUNDARIES_SOURCE_ID, {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: []
+      },
+      promoteId: 'id'
+    });
+
+    // Zone boundaries layer
+    map.addLayer({
+      id: ZONES_BOUNDARIES_LAYER_ID,
+      type: 'fill',
+      source: ZONES_BOUNDARIES_SOURCE_ID,
+      layout: {},
+      paint: {
+        'fill-color': ['get', 'color'],
+        'fill-opacity': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          0.5,
+          0.2
+        ]
+      }
+    });
+
 
     map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features) {
@@ -230,7 +232,7 @@ const addInputLayersToMap = (map, layers) => {
       },
       minzoom: 0,
       maxzoom: 22
-    });
+    }, ZONES_BOUNDARIES_LAYER_ID);
   });
 };
 
