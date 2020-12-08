@@ -92,7 +92,6 @@ const Detail = styled(Dl)`
   }
   dd {
     text-align: right;
-    font-family: ${themeVal('type.mono.family')};
     color: ${themeVal('color.primary')};
   }
 `;

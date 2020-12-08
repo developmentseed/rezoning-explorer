@@ -9,13 +9,16 @@ const StatsWrapper = styled.section`
   display: grid;
   /*grid-template-rows: 1.5fr 1fr;*/
   dd {
-    font-family: ${themeVal('type.mono.family')};
     font-size: 1.25rem;
     line-height: 1;
     color: ${themeVal('color.primary')};
   }
   dt {
     font-size: 0.875rem;
+
+    span {
+      display: block;
+    }
   }
   ${({ active }) =>
     active &&
@@ -83,12 +86,17 @@ function ExploreStats (props) {
         title='Summary'
         data={statData}
         dimension={[2, 2]}
-        gap={1}
+        gap={0.5}
         renderCell={(datum) => (
           <dl>
             <dd>{datum.data || '--'}</dd>
-            <dt>{datum.label}</dt>
-            <dt>{datum.unit}</dt>
+            <dt>
+              {datum.label}
+              {
+                datum.unit &&
+                <span>({datum.unit})</span>
+              }
+            </dt>
           </dl>
         )}
       />
