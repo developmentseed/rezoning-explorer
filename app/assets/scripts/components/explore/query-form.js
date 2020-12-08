@@ -152,20 +152,6 @@ function QueryForm (props) {
     maxLCOE, setMaxLCOE
   } = props;
 
-  /*
-  const [maxLCOEO, setMaxLCOEO] = useState({
-    name: 'LCOE Range',
-    id: 'lcoe-range',
-    active: maxLCOE && true,
-    isRange: true,
-    unit: 'USD/MwH',
-    input: {
-      value: maxLCOE,
-      type: SLIDER,
-      range: maxLCOE ? [maxLCOE.min, maxLCOE.max] : DEFAULT_RANGE
-    }
-  }); */
-
   const firstLoad = useRef(true);
 
   const initListToState = (list, ranges) => {
@@ -587,8 +573,8 @@ function QueryForm (props) {
           updateStateList={updateStateList}
           outputFilters={
             [
-              [maxZoneScore, setMaxZoneScore],
-              [maxLCOE, setMaxLCOE]
+              [maxZoneScore, setMaxZoneScore, 'Run analysis to filter on zone score'],
+              [maxLCOE, setMaxLCOE, 'Run analysis to filter on LCOE']
             ]
           }
         />

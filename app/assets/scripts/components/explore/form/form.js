@@ -62,3 +62,8 @@ export const OptionHeadline = styled(HeadOptionHeadline)`
     grid-column-start: 4;
   }
 `;
+export const InactiveMessage = styled.div`
+  padding: 0.5rem 0;
+  font-size: 0.75rem;
+  font-style: italic;
+`;

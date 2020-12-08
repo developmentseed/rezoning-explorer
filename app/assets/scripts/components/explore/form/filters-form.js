@@ -2,7 +2,7 @@ import React from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 
-import { FormWrapper, FormGroupWrapper, PanelOption, OptionHeadline, PanelOptionTitle } from './form';
+import { FormWrapper, FormGroupWrapper, PanelOption, OptionHeadline, PanelOptionTitle, InactiveMessage } from './form';
 import { Accordion, AccordionFold } from '../../../components/accordion';
 import collecticon from '../../../styles/collecticons';
 import { glsp } from '../../../styles/utils/theme-values';
@@ -97,8 +97,8 @@ function FiltersForm (props) {
               renderBody={({ isFoldExpanded }) => (
                 <>
                   {
-                    outputFilters.filter(([filterObject, setFilterObject]) => filterObject.active)
-                      .map(([filterObject, setFilterObject]) => (
+                    outputFilters
+                      .map(([filterObject, setFilterObject, inactiveMessage]) => (
                         <PanelOption key={filterObject.name} hidden={!isFoldExpanded}>
                           <OptionHeadline>
                             <PanelOptionTitle>{`${filterObject.name}`.concat(filterObject.unit ? ` (${filterObject.unit})` : '')}</PanelOptionTitle>
@@ -108,7 +108,7 @@ function FiltersForm (props) {
                               </InfoButton>
                             )}
                           </OptionHeadline>
-                          {inputOfType(
+                          {filterObject.active ? inputOfType(
                             filterObject,
                             (value) => {
                               setFilterObject({
@@ -119,7 +119,7 @@ function FiltersForm (props) {
                                 }
                               }
                               );
-                            })}
+                            }) : <InactiveMessage>{inactiveMessage}</InactiveMessage>}
                         </PanelOption>
 
                       ))
