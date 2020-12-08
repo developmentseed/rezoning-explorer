@@ -47,7 +47,7 @@ function ExpMapSecPanel (props) {
           <PanelBlock>
             <PanelBlockHeader>
               <Heading size='large'>
-                National
+                Zone Analysis
               </Heading>
             </PanelBlockHeader>
             <PanelBlockBody>
@@ -57,7 +57,7 @@ function ExpMapSecPanel (props) {
                     currentZones={currentZones.getData()}
                     inputTouched={inputTouched}
                   />) : (
-                  <PreAnalysisMessage>{currentZones.fetching ? 'Loading...' : 'Please apply parameters (filters, weights & lcoe) via left panel to load zone analysis.'}</PreAnalysisMessage>
+                  <PreAnalysisMessage>{currentZones.fetching ? 'Loading...' : 'Please apply parameters (filters, weights & LCOE) via left panel to load zone analysis.'}</PreAnalysisMessage>
                 )}
             </PanelBlockBody>
           </PanelBlock>
