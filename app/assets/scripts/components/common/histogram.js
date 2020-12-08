@@ -79,7 +79,7 @@ const SortToggle = styled.div`
   }
 `;
 function Histogram (props) {
-  const { data, yProp } = props;
+  const { data, yProp, hoveredBar, onBarClick, onBarMouseOver, onBarMouseOut } = props;
   const container = useRef();
 
   const xPropOptions = Array.isArray(props.xProp) ? props.xProp : [props.xProp];
@@ -141,7 +141,21 @@ function Histogram (props) {
       .attr('height', function (d) { return height - y(d.lcoe); })
       .attr('fill', d => {
         return d.color;
-      });
+      })
+      .attr('opacity', 0.7)
+      .on('click', (e, d) => onBarClick(d))
+      .on('mouseover', function (e, d) {
+        onBarMouseOver(d);
+        d3.select(this)
+          .attr('opacity', 1);
+      })
+      .on('mouseout', function () {
+        d3.select(this)
+          .attr('opacity', 0.7);
+        onBarMouseOut();
+      })
+
+    ;
 
     svg.append('text')
       .attr('transform',
@@ -170,7 +184,18 @@ function Histogram (props) {
       );
   };
 
+  const setHovered = () => {
+    if (!container.current) {
+      return;
+    }
+    const svg = d3.select(container.current);
+    svg.selectAll('rect')
+      .attr('opacity', (d) => {
+        return d.id === hoveredBar ? 1 : 0.7;
+      });
+  };
   useEffect(initChart, [container, xProp]);
+  useEffect(setHovered, [hoveredBar]);
 
   return (
     <HistogramWrapper
@@ -203,7 +228,11 @@ function Histogram (props) {
 Histogram.propTypes = {
   xProp: T.oneOfType([T.string, T.array]).isRequired,
   data: T.array.isRequired,
-  yProp: T.string.isRequired
+  yProp: T.string.isRequired,
+  hoveredBar: T.string,
+  onBarClick: T.func,
+  onBarMouseOver: T.func,
+  onBarMouseOut: T.func
 };
 
 export default Histogram;

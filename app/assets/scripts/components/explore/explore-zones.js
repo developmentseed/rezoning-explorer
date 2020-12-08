@@ -100,9 +100,7 @@ const Detail = styled(Dl)`
 function ExploreZones (props) {
   const { active, currentZones } = props;
 
-  const { hoveredFeature, setHoveredFeature } = useContext(MapContext);
-
-  const [focusZone, setFocusZone] = useState(null);
+  const { hoveredFeature, setHoveredFeature, focusZone, setFocusZone } = useContext(MapContext);
 
   const [selectedZones, setSelectedZones] = useState(currentZones.reduce((accum, zone) => ({ ...accum, [zone.id]: false }), {}));
 

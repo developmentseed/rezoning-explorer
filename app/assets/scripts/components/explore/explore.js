@@ -10,18 +10,16 @@ import {
   InpageBody
 } from '../../styles/inpage';
 import media from '../../styles/utils/media-queries';
-import { themeVal } from '../../styles/utils/general';
 
 import PrimePanel from './prime-panel';
 import SecPanel from './sec-panel';
-import MbMap from '../common/mb-map/mb-map';
 
 import ExploreContext from '../../context/explore-context';
 import Tour from '../common/tour';
 import { MapProvider } from '../../context/map-context';
 import { FormProvider } from '../../context/form-context';
 
-import Histogram from '../common/histogram';
+import ExploreCarto from './explore-carto.js';
 
 const ExploreCanvas = styled.div`
   display: grid;
@@ -41,16 +39,6 @@ const ExploreCanvas = styled.div`
   > * {
     grid-row: 1;
   }
-`;
-
-const ExploreCarto = styled.section`
-  position: relative;
-  height: 100%;
-  background: ${themeVal('color.baseAlphaA')};
-  display: grid;
-  grid-template-rows: 1fr auto;
-  min-width: 0;
-  overflow: hidden;
 `;
 
 function Explore () {
@@ -85,18 +73,10 @@ function Explore () {
                   }}
                 />
 
-                <ExploreCarto>
-                  <MbMap
-                    triggerResize={triggerResize}
-                  />
-                  { zoneData && (
-                    <Histogram
-                      yProp='lcoe'
-                      xProp={['zone_output', 'lcoe']}
-                      data={zoneData.map(datum => ({ ...datum.properties.summary, color: datum.properties.color }))}
-                    />
-                  )}
-                </ExploreCarto>
+                <ExploreCarto
+                  triggerResize={triggerResize}
+                  zoneData={zoneData}
+                />
 
                 <SecPanel
                   onPanelChange={() => {
