@@ -137,7 +137,7 @@ function ExpMapPrimePanel (props) {
               </InfoButton>
               <Subheading>Contextual Layers</Subheading>
 
-              <RasterTray
+              { filteredLayerUrl && <RasterTray
                 show={showRasterPanel}
                 className='raster-tray'
                 layers={mapLayers}
@@ -203,7 +203,7 @@ function ExpMapPrimePanel (props) {
                     ]);
                   }
                 }}
-              />
+              />}
             </RasterTrayWrapper>
 
           ]

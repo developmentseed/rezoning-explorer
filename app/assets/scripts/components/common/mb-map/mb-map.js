@@ -277,17 +277,13 @@ function MbMap (props) {
   useEffect(() => {
     if (!map) {
       initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeature, setFocusZone });
-      return;
-    }
-
-    if (selectedArea && selectedArea.bounds) {
-      map.fitBounds(selectedArea.bounds, fitBoundsOptions);
     }
   }, [map]);
 
   useEffect(() => {
     if (map && inputLayers.isReady()) {
       const layers = inputLayers.getData();
+
       setMapLayers([
         ...outputLayers,
         ...layers.map(l => ({
@@ -301,6 +297,7 @@ function MbMap (props) {
   }, [map, inputLayers]);
 
   // Watch window size changes
+
   useEffect(() => {
     if (map) {
       resizeMap(map);
@@ -310,9 +307,12 @@ function MbMap (props) {
   // Update view port on area change
   useEffect(() => {
     // Map must be loaded
+    console.log(selectedArea);
     if (!map) return;
+    console.log('map loaded');
 
     if (selectedArea && selectedArea.bounds) {
+      console.log('fit bounds');
       map.fitBounds(selectedArea.bounds, fitBoundsOptions);
     }
   }, [selectedArea, map]);
@@ -364,6 +364,7 @@ function MbMap (props) {
   }, [lcoeLayerUrl]);
 
   // Update zone boundaries on change
+
   useEffect(() => {
     if (!map || !currentZones.isReady()) return;
     // Update GeoJSON source, applying hover effect if any
