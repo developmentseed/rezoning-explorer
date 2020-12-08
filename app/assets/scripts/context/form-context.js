@@ -5,8 +5,8 @@ import { fetchFilters, filtersReducer } from './reducers/filters';
 import { fetchWeights, weightsReducer } from './reducers/weights';
 import { fetchLcoe, lcoeReducer } from './reducers/lcoe';
 import {
-  presets,
-  INPUT_CONSTANTS
+  INPUT_CONSTANTS,
+  presets
 } from '../components/explore/panel-data';
 import ExploreContext from './explore-context';
 import { initialApiRequestState } from './contexeed';
@@ -75,6 +75,39 @@ export function FormProvider (props) {
       }))
     };
   }, [filtersList]);
+
+  useEffect(() => {
+    if (!weightsList.isReady()) {
+      return;
+    }
+
+    presets.weights = {
+      'Power Output': weightsList.getData().map(weight => ({
+        ...weight,
+        input: {
+          ...weight.input,
+          value: weight.input.range ? randomRange(...weight.input.range) : randomRange(0, 1)
+        }
+      }))
+    };
+  }, [weightsList]);
+
+  useEffect(() => {
+    if (!lcoeList.isReady()) {
+      return;
+    }
+
+    presets.lcoe = {
+      Default: lcoeList.getData()
+        .map(cost => ({
+          ...cost,
+          input: {
+            ...cost.input,
+            value: cost.default || 1
+          }
+        }))
+    };
+  }, [lcoeList]);
 
   useEffect(() => {
     fetchFilterRanges(selectedAreaId, dispatchFilterRanges);
