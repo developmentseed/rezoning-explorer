@@ -66,6 +66,7 @@ const type = {
 };
 
 const shape = {
+  square: 0,
   rounded: '0.125rem',
   ellipsoid: '320rem'
 };

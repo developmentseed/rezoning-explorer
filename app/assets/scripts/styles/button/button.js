@@ -465,13 +465,13 @@ function renderButtonRadius (props) {
       return css`
         border-radius: ${themeVal('shape.ellipsoid')};
       `;
-    case 'rounded':
+    case 'square':
       return css`
-        border-radius: ${themeVal('shape.rounded')};
+        border-radius: ${themeVal('shape.square')};
       `;
     default:
       return css`
-        border-radius: 0;
+        border-radius: ${themeVal('shape.rounded')};
       `;
   }
 }
