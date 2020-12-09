@@ -20,7 +20,10 @@ const FILTERED_LAYER_SOURCE = 'FILTERED_LAYER_SOURCE';
 const FILTERED_LAYER_ID = 'FILTERED_LAYER_ID';
 
 const LCOE_LAYER_SOURCE_ID = 'LCOE_LAYER_SOURCE_ID';
-const LCOE_LAYER_LAYER_ID = 'LCOE_LAYER_LAYERE_ID';
+const LCOE_LAYER_LAYER_ID = 'LCOE_LAYER_LAYER_ID';
+
+const ZONE_SCORE_SOURCE_ID = 'ZONE_SCORE_SOURCE_ID';
+const ZONE_SCORE_LAYER_ID = 'ZONE_SCORE_LAYER_ID';
 
 const ZONES_BOUNDARIES_SOURCE_ID = 'ZONES_BOUNDARIES_SOURCE_ID';
 export const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
@@ -39,7 +42,11 @@ export const outputLayers = [
     name: 'LCOE Tiles',
     type: 'raster'
   },
-
+  {
+    id: ZONE_SCORE_LAYER_ID,
+    name: 'Zone Score',
+    type: 'raster'
+  },
   {
     id: ZONES_BOUNDARIES_LAYER_ID,
     name: 'Zone Boundaries',
@@ -154,6 +161,24 @@ const initializeMap = ({
       maxzoom: 22
     });
     //
+    map.addSource(ZONE_SCORE_SOURCE_ID, {
+      type: 'raster',
+      tiles: ['https://placeholder.url/{z}/{x}/{y}.png'],
+      tileSize: 256
+    });
+    map.addLayer({
+      id: ZONE_SCORE_LAYER_ID,
+      type: 'raster',
+      source: ZONE_SCORE_SOURCE_ID,
+      layout: {
+        visibility: 'none'
+      },
+      paint: {
+        'raster-opacity': 0.5
+      },
+      minzoom: 0,
+      maxzoom: 22
+    });
 
     map.addSource(EEZ_BOUNDARIES_SOURCE_ID, {
       type: 'geojson',
@@ -261,7 +286,7 @@ function MbMap (props) {
     selectedResource,
     filteredLayerUrl,
     currentZones,
-    lcoeLayerUrl,
+    outputLayerUrl,
     maxZoneScore,
     maxLCOE
   } = useContext(ExploreContext);
@@ -348,7 +373,7 @@ function MbMap (props) {
   }, [filteredLayerUrl]);
 
   useEffect(() => {
-    if (!lcoeLayerUrl || !map) return;
+    if (!outputLayerUrl || !map) return;
 
     const style = map.getStyle();
 
@@ -358,11 +383,16 @@ function MbMap (props) {
         ...style.sources,
         [LCOE_LAYER_SOURCE_ID]: {
           ...style.sources[LCOE_LAYER_SOURCE_ID],
-          tiles: [lcoeLayerUrl]
+          tiles: [`${config.apiEndpoint}/lcoe/${outputLayerUrl}`]
+        },
+        [ZONE_SCORE_SOURCE_ID]: {
+          ...style.sources[ZONE_SCORE_SOURCE_ID],
+          tiles: [`${config.apiEndpoint}/score/${outputLayerUrl}`]
         }
+
       }
     });
-  }, [lcoeLayerUrl]);
+  }, [outputLayerUrl]);
 
   // Update zone boundaries on change
   useEffect(() => {
