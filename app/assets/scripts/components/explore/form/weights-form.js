@@ -50,7 +50,6 @@ WeightsForm.propTypes = {
   setPreset: T.func,
   weights: T.array,
   setWeights: T.func,
-  updateStateList: T.func,
   active: T.bool
 };
 
