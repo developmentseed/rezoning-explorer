@@ -4,6 +4,9 @@ import styled, { css } from 'styled-components';
 import Panel from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import ExploreContext from '../../context/explore-context';
+import MapContext from '../../context/map-context';
+import FormContext from '../../context/form-context';
+
 import ModalSelect from './modal-select';
 import { ModalHeader } from '../common/modal';
 import ModalSelectArea from './modal-select-area';
@@ -19,9 +22,7 @@ import { ZONES_BOUNDARIES_LAYER_ID } from '../common/mb-map/mb-map';
 import { Subheading } from '../../styles/type/heading';
 
 import {
-  resourceList,
-  weightsList,
-  lcoeList
+  resourceList
 } from './panel-data';
 
 const PrimePanel = styled(Panel)`
@@ -60,27 +61,38 @@ function ExpMapPrimePanel (props) {
    * Get Explore context values
    */
   const {
+    areas, setSelectedAreaId,
     selectedResource,
     selectedArea,
     setSelectedResource,
-    showSelectAreaModal,
-    setShowSelectAreaModal,
-    showSelectResourceModal,
-    setShowSelectResourceModal,
-    setInputTouched,
-    setZonesGenerated,
     tourStep,
     setTourStep,
     gridMode,
     setGridMode,
     gridSize, setGridSize,
     filteredLayerUrl,
-    filtersLists,
-    map,
-    mapLayers, setMapLayers,
-    maxZoneScore, setMaxZoneScore
-    // maxLCOE, setMaxLCOE
+    maxZoneScore, setMaxZoneScore,
+    updateFilteredLayer,
+    maxLCOE, setMaxLCOE
   } = useContext(ExploreContext);
+  const {
+    showSelectAreaModal,
+    setShowSelectAreaModal,
+    showSelectResourceModal,
+    setShowSelectResourceModal,
+    setZonesGenerated,
+    setInputTouched,
+    filtersLists,
+    weightsList,
+    lcoeList,
+    filterRanges,
+    presets
+  } = useContext(FormContext);
+
+  const {
+    map,
+    mapLayers, setMapLayers
+  } = useContext(MapContext);
 
   const [showRasterPanel, setShowRasterPanel] = useState(false);
 
@@ -137,7 +149,13 @@ function ExpMapPrimePanel (props) {
                       layer.id,
                       'fill-opacity'
                     );
-                    paintProperty[2] = knob.value / 100;
+
+                    // Zone boundaries layer uses a feature-state conditional
+                    // to detect hovering.
+                    // Here set the 3rd element of the array, which is the
+                    // non-hovered state value
+                    // to be the value of the knob
+                    paintProperty[3] = knob.value / 100;
                     map.setPaintProperty(
                       layer.id,
                       'fill-opacity',
@@ -153,9 +171,9 @@ function ExpMapPrimePanel (props) {
                 }}
                 onVisibilityToggle={(layer, visible) => {
                   if (visible) {
-                    if (layer.type === 'raster') {
+                    if (layer.type === 'raster' && !layer.nonexclusive) {
                       const ml = mapLayers.map(l => {
-                        if (l.type === 'raster') {
+                        if (l.type === 'raster' && !l.nonexclusive) {
                           map.setLayoutProperty(l.id, 'visibility', l.id === layer.id ? 'visible' : 'none');
                           l.visible = l.id === layer.id;
                         }
@@ -194,32 +212,39 @@ function ExpMapPrimePanel (props) {
         onPanelChange={onPanelChange}
         initialState={isLargeViewport()}
         bodyContent={
-          filtersLists ? (
-            <QueryForm
-              area={selectedArea}
-              resource={selectedResource}
-              weightsList={weightsList}
-              lcoeList={lcoeList}
-              gridMode={gridMode}
-              setGridMode={setGridMode}
-              gridSize={gridSize}
-              setGridSize={setGridSize}
-              maxZoneScore={maxZoneScore}
-              setMaxZoneScore={setMaxZoneScore}
-              // maxLCOE={maxLCOE}
-              // setMaxLCOE={setMaxLCOE}
-              onAreaEdit={() => setShowSelectAreaModal(true)}
-              onResourceEdit={() => setShowSelectResourceModal(true)}
-              onInputTouched={() => {
-                setInputTouched(true);
-              }}
-              onSelectionChange={() => {
-                setZonesGenerated(false);
-              }}
-            />
-          ) : (
-            <></>
-          )
+          (filtersLists &&
+            weightsList &&
+            lcoeList
+          ) ? (
+              <QueryForm
+                area={selectedArea}
+                resource={selectedResource}
+                filtersLists={filtersLists}
+                filterRanges={filterRanges}
+                presets={presets}
+                updateFilteredLayer={updateFilteredLayer}
+                weightsList={weightsList}
+                lcoeList={lcoeList}
+                gridMode={gridMode}
+                setGridMode={setGridMode}
+                gridSize={gridSize}
+                setGridSize={setGridSize}
+                maxZoneScore={maxZoneScore}
+                setMaxZoneScore={setMaxZoneScore}
+                maxLCOE={maxLCOE}
+                setMaxLCOE={setMaxLCOE}
+                onAreaEdit={() => setShowSelectAreaModal(true)}
+                onResourceEdit={() => setShowSelectResourceModal(true)}
+                onInputTouched={() => {
+                  setInputTouched(true);
+                }}
+                onSelectionChange={() => {
+                  setZonesGenerated(false);
+                }}
+              />
+            ) : (
+              <></>
+            )
         }
       />
       <ModalSelect
@@ -253,7 +278,14 @@ function ExpMapPrimePanel (props) {
         nonScrolling
       />
 
-      <ModalSelectArea />
+      <ModalSelectArea
+        areas={areas}
+        selectedResource={selectedResource}
+        showSelectAreaModal={showSelectAreaModal}
+        setShowSelectAreaModal={setShowSelectAreaModal}
+        setSelectedAreaId={setSelectedAreaId}
+
+      />
     </>
   );
 }

@@ -3,7 +3,8 @@ import { rgba } from 'polished';
 let color = {
   baseLight: '#FFFFFF',
   baseDark: '#374863',
-  primary: '#23A6F5'
+  primary: '#23A6F5',
+  secondary: '#05377a'
 };
 
 color = {
@@ -66,6 +67,7 @@ const type = {
 };
 
 const shape = {
+  square: 0,
   rounded: '0.125rem',
   ellipsoid: '320rem'
 };

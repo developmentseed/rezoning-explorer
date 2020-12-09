@@ -14,6 +14,7 @@ export const CardWrapper = styled.article`
   justify-content: start;
   align-items: center;
   border: 1px solid ${themeVal('color.baseAlphaC')};
+  border-radius: ${themeVal('shape.rounded')};
 
   box-shadow: 0 0 16px 2px ${themeVal('color.baseAlphaA')},
     0 8px 24px -16px ${themeVal('color.baseAlphaB')};

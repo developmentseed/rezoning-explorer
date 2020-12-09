@@ -15,6 +15,8 @@ import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import Prose from '../../styles/type/prose';
 
 import ExploreContext from '../../context/explore-context';
+import FormContext from '../../context/form-context';
+
 import ZoneAnalysisPanel from './zone-analysis-panel';
 
 const SecPanel = styled(Panel)`
@@ -26,12 +28,14 @@ const SecPanel = styled(Panel)`
   `}
 `;
 const PreAnalysisMessage = styled(Prose)`
-  padding: 1rem;
+  padding: 1rem 1.5rem;
+  text-align: center;
 `;
 
 function ExpMapSecPanel (props) {
   const { onPanelChange } = props;
-  const { currentZones, inputTouched, zonesGenerated } = useContext(ExploreContext);
+  const { currentZones } = useContext(ExploreContext);
+  const { inputTouched } = useContext(FormContext);
 
   return (
     <SecPanel
@@ -43,8 +47,8 @@ function ExpMapSecPanel (props) {
         <>
           <PanelBlock>
             <PanelBlockHeader>
-              <Heading size='large'>
-                National
+              <Heading>
+                Zone Analysis
               </Heading>
             </PanelBlockHeader>
             <PanelBlockBody>
@@ -53,9 +57,8 @@ function ExpMapSecPanel (props) {
                   <ZoneAnalysisPanel
                     currentZones={currentZones.getData()}
                     inputTouched={inputTouched}
-                    zonesGenerated={zonesGenerated}
                   />) : (
-                  <PreAnalysisMessage>{currentZones.fetching ? 'Loading...' : 'Please apply parameters (filters, weights & lcoe) via left panel to load zone analysis.'}</PreAnalysisMessage>
+                  <PreAnalysisMessage>{currentZones.fetching ? 'Loading...' : 'Please apply parameters (filters, weights & LCOE) to load zone analysis.'}</PreAnalysisMessage>
                 )}
             </PanelBlockBody>
           </PanelBlock>

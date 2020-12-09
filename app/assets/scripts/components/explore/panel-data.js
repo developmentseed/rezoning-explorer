@@ -1,4 +1,3 @@
-import { randomRange } from '../../utils/utils';
 
 const WIND = 'Wind';
 const OFFSHORE = 'Off-Shore Wind';
@@ -7,7 +6,7 @@ export const RESOURCES = {
   WIND, OFFSHORE, SOLAR
 };
 
-const apiResourceNameMap = {
+export const apiResourceNameMap = {
   [WIND]: 'wind',
   [SOLAR]: 'solar',
   [OFFSHORE]: 'offshore'
@@ -37,7 +36,7 @@ const BOOL = 'boolean';
 const MULTI = 'multi-select';
 const TEXT = 'text';
 const DROPDOWN = 'dropdown';
-const GRID_OPTIONS = [9, 25, 50];
+const GRID_OPTIONS = [25, 50];
 const DEFAULT_RANGE = [0, 1000000];
 const DEFAULT_UNIT = '%';
 
@@ -55,6 +54,7 @@ export const INPUT_CONSTANTS = {
 export const allowedTypes = new Map();
 allowedTypes.set('range_filter', SLIDER);
 allowedTypes.set('boolean', BOOL);
+allowedTypes.set('categorical_filter', MULTI);
 
 export const lcoeList = [
   {
@@ -265,41 +265,4 @@ export const weightsList = [
   }
 ];
 
-const LCOE_PRESETS = {
-  default: {
-    turbine_type: 0,
-    crf: 1,
-    cg: 2000,
-    omfg: 50000,
-    omvg: 4,
-    ct: 1000,
-    omft: 0,
-    cs: 70000,
-    cr: 400000,
-    omfr: 1,
-    decom: 1,
-    i: 0.2,
-    n: 25
-  }
-};
-
-export const presets = {
-  weights: {
-    'Power Output': weightsList.map(weight => ({
-      ...weight,
-      input: {
-        ...weight.input,
-        value: weight.input.range ? randomRange(...weight.input.range) : randomRange(0, 1)
-      }
-    }))
-  },
-  lcoe: {
-    Default: lcoeList.map(lcoe => ({
-      ...lcoe,
-      input: {
-        ...lcoe.input,
-        value: LCOE_PRESETS.default[lcoe.id] || lcoe.input.default
-      }
-    }))
-  }
-};
+export const presets = {};

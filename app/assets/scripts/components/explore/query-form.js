@@ -1,9 +1,10 @@
-import React, { useRef, useEffect, useContext } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
-import { themeVal, makeTitleCase } from '../../styles/utils/general';
+import { themeVal } from '../../styles/utils/general';
 import useQsState from '../../utils/qs-state-hook';
-
+import Dropdown from '../common/dropdown';
+import { FormCheckable } from '../../styles/form/checkable';
 import {
   PanelBlock,
   PanelBlockHeader,
@@ -14,59 +15,27 @@ import Button from '../../styles/button/button';
 import SliderGroup from '../common/slider-group';
 import StressedFormGroupInput from '../common/stressed-form-group-input';
 import Heading, { Subheading } from '../../styles/type/heading';
-import { FormSwitch } from '../../styles/form/switch';
-import { glsp } from '../../styles/utils/theme-values';
-import collecticon from '../../styles/collecticons';
 import { validateRangeNum } from '../../utils/utils';
 
-import { Accordion, AccordionFold } from '../../components/accordion';
-import InfoButton from '../common/info-button';
 import GridSetter from './grid-setter';
+import { truncated } from '../../styles/helpers';
 
-import ExploreContext from '../../context/explore-context';
 import { round } from '../../utils/format';
-import { INPUT_CONSTANTS, checkIncluded } from './panel-data';
+import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap } from './panel-data';
 import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
-import FormLabel from '../../styles/form/label';
+import { HeadOption, HeadOptionHeadline } from './form/form';
+import { FiltersForm, WeightsForm, LCOEForm } from './form';
+import ShadowScrollbar from '../common/shadow-scrollbar';
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
-
-const turbineTypeMap = {
-  'Off-Shore Wind': [1, 3],
-  Wind: [1, 3],
-  'Solar PV': [0, 0]
-};
-
-const maxZoneScoreO = {
-  name: 'Zone Score Range',
-  id: 'zone-score-range',
-  active: true,
-  isRange: true,
-  input: {
-    value: { min: 0, max: 1 },
-    type: SLIDER,
-    range: [0, 1]
-  }
-};
-/*
-const maxLCOEO = {
-  name: 'LCOE Range',
-  id: 'lcoe-range',
-  active: true,
-  isRange: true,
-  input: {
-    value: { min: 0, max: 1 },
-    type: SLIDER,
-    range: [0, 1]
-  }
-}; */
 
 const castByFilterType = type => {
   switch (type) {
     case BOOL:
       return Boolean;
     case DROPDOWN:
+    case MULTI:
     case TEXT:
       return String;
     case SLIDER:
@@ -75,67 +44,22 @@ const castByFilterType = type => {
       return String;
   }
 };
-const PanelOption = styled.div`
-  ${({ hidden }) => hidden && 'display: none;'}
-  margin-bottom: 1.5rem;
-`;
 
-const PanelOptionTitle = styled.div`
-  font-weight: ${themeVal('type.base.weight')};
-  font-size: 0.875rem;
+const MultiSelectButton = styled(Button)`
+  width: 100%;
+  ${truncated()}
 `;
-const HeadOption = styled.div`
-  & ~ & {
-    padding-top: ${glsp(0.5)};
-  }
-  &:last-of-type {
-    box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
-    padding-bottom: ${glsp(0.5)};
+const MultiWrapper = styled(ShadowScrollbar)`
+  height: 20rem;
+  > .scroll-area {
+    > div {
+      display: grid;
+      grid-template-rows: repeat(auto-fill, minmax(1.5rem, 1fr));
+    }
   }
 `;
-
-const HeadOptionHeadline = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-
-  & > :first-child {
-    min-width: 5rem;
-  }
-`;
-
 const Subheadingstrong = styled.strong`
   color: ${themeVal('color.base')};
-`;
-
-const OptionHeadline = styled(HeadOptionHeadline)`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  > ${FormSwitch} {
-    grid-column-start: 5;
-  }
-  > ${Button}.info-button {
-    grid-column-start: 4;
-  }
-`;
-
-const FormWrapper = styled.section`
-  ${({ active }) => {
-    if (!active) {
-      return 'display: none;';
-    }
-  }}
-`;
-
-const FormGroupWrapper = styled.div`
-  box-shadow: 0px 1px 0px 0px ${themeVal('color.baseAlphaB')};
-  padding: 1rem 0;
-
-  &:first-of-type {
-    padding-top: 0;
-  }
 `;
 
 export const EditButton = styled(Button).attrs({
@@ -148,37 +72,15 @@ export const EditButton = styled(Button).attrs({
   margin-left: auto;
 `;
 
-export const AccordionFoldTrigger = styled.a`
-  display: flex;
-  align-items: center;
-  margin: -${glsp(0.5)} -${glsp()};
-  padding: ${glsp(0.5)} ${glsp()};
-
-  &,
-  &:visited {
-    color: inherit;
-  }
-  &:active {
-    transform: none;
-  }
-  &:after {
-    ${collecticon('chevron-down--small')}
-    margin-left: auto;
-    transition: transform 240ms ease-in-out;
-    transform: ${({ isExpanded }) =>
-      isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
-  }
-`;
-
 const SubmissionSection = styled(PanelBlockFooter)`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0rem 1rem;
 `;
 
-const initByType = (obj, ranges) => {
+const initByType = (obj, ranges, resource) => {
   const apiRange = ranges[obj.id];
-  const { input } = obj;
+  const { input, options } = obj;
 
   const range = (apiRange && [round(apiRange.min), round(apiRange.max)]) || obj.input.range || DEFAULT_RANGE;
 
@@ -199,15 +101,23 @@ const initByType = (obj, ranges) => {
       };
     case BOOL:
       return {
-        ...obj,
+        ...input,
         value: false,
         range: [true, false]
       };
     case MULTI:
+      return {
+        ...input,
+        // For multi select use first option as default value
+        value: input.value || [0],
+        unit: null
+      };
     case DROPDOWN:
       return {
-        ...obj,
-        value: obj.value || (obj.options && obj.options[0]) || '',
+        ...input,
+        value: obj.value || (
+          options[resource] && options[resource][0]) || '',
+        availableOptions: options[resource] || [],
         unit: null
       };
     default:
@@ -222,13 +132,15 @@ const updateStateList = (list, i, updatedValue) => {
 };
 
 function QueryForm (props) {
-  const { updateFilteredLayer, filtersLists, filterRanges, presets } = useContext(ExploreContext);
-
   const {
     area,
     resource,
+    filtersLists,
     weightsList,
     lcoeList,
+    updateFilteredLayer,
+    filterRanges,
+    presets: defaultPresets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
@@ -236,16 +148,17 @@ function QueryForm (props) {
     gridMode,
     setGridMode,
     gridSize, setGridSize,
-    maxZoneScore, setMaxZoneScore
-    // maxLCOE, setMaxLCOE
+    maxZoneScore, setMaxZoneScore,
+    maxLCOE, setMaxLCOE
   } = props;
 
   const firstLoad = useRef(true);
+  const [presets, setPresets] = useState(defaultPresets);
 
-  const initListToState = (list) => {
+  const initListToState = (list, ranges) => {
     return list.map((obj) => ({
       ...obj,
-      input: initByType(obj, filterRanges.getData()),
+      input: initByType(obj, ranges || {}, apiResourceNameMap[resource]),
       active: obj.active === undefined ? true : obj.active
     }));
   };
@@ -289,7 +202,7 @@ function QueryForm (props) {
   const [filters, setFilters] = useQsState({
     key: 'filters',
     hydrator: v => {
-      let baseFilts = initListToState(filtersLists);
+      let baseFilts = initListToState(filtersLists, filterRanges.getData());
       if (v) {
         const qsValues = v.split('|').map((vals, i) => {
           const thisFilt = baseFilts[i];
@@ -301,6 +214,21 @@ function QueryForm (props) {
                 max: Number(max)
               },
               active: active === undefined
+            };
+          } else if (thisFilt.input.options) {
+            // multi select or dropdown
+            vals = vals.split(',');
+            let active = true;
+            if (vals[vals.length - 1] === 'false') {
+              // remove active
+              vals = vals.slice(0, vals.length - 2).map(Number);
+              active = false;
+            } else {
+              vals = vals.map(Number);
+            }
+            return {
+              value: vals,
+              active
             };
           } else {
             const [val, active] = vals.split(',');
@@ -327,7 +255,14 @@ function QueryForm (props) {
     dehydrator: v => {
       return v && v.map(f => {
         const { value } = f.input;
-        let shard = f.isRange ? `${value.min}, ${value.max}` : `${value}`;
+        let shard;
+        if (f.isRange) {
+          shard = `${value.min}, ${value.max}`;
+        } else if (f.input.options) {
+          shard = value.join(',');
+        } else {
+          shard = `${value}`;
+        }
         shard = f.active ? shard : `${shard},${false}`;
         return shard;
       }).filter(f => !f.excluded)
@@ -341,10 +276,11 @@ function QueryForm (props) {
     hydrator: v => {
       let base = initListToState(lcoeList);
       if (v) {
-        const qsValues = v.split('|').map(vals => {
+        const qsValues = v.split('|').map((vals, i) => {
           const [value, active] = vals.split(',');
+          const thisCost = base[i];
           return {
-            value: Number(value),
+            value: castByFilterType(thisCost.input.type)(value),
             active: active === undefined
           };
         });
@@ -373,7 +309,7 @@ function QueryForm (props) {
   });
 
   const inputOfType = (option, onChange) => {
-    const { range } = option.input;
+    const { range, value } = option.input;
     let errorMessage;
     if (range) {
       errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${round(range[0])} - ${round(range[1])}`;
@@ -382,10 +318,7 @@ function QueryForm (props) {
     }
 
     // Get filter range, if available
-    const filterRange = filterRanges.getData()[option.id];
-
-    if (option.id === 'lcoe-range') {
-    }
+    const filterRange = option.type === 'filter' ? filterRanges.getData()[option.id] : null;
 
     switch (option.input.type) {
       case SLIDER:
@@ -408,7 +341,6 @@ function QueryForm (props) {
             disabled={option.readOnly}
             id={`${option.name}`}
             name={`${option.name}`}
-            label={option.name}
             value={option.input.value}
             validate={option.input.range ? validateRangeNum(option.input.range[0], option.input.range[1]) : () => true}
             errorMessage={errorMessage}
@@ -419,17 +351,54 @@ function QueryForm (props) {
       case BOOL:
         return null;
       case MULTI:
+        return (
+          <Dropdown
+            triggerElement={
+              <MultiSelectButton
+                disabled={!option.active}
+              > {
+                  option.input.options.filter((e, i) => value.includes(i)).join(',')
+                }
+              </MultiSelectButton>
+            }
+            alignment='right'
+          >
+            <MultiWrapper>
+              {
+                option.input.options.map((o, i) => (
+                  <FormCheckable
+                    key={o}
+                    name={o}
+                    id={o}
+                    type='checkbox'
+                    checked={value.includes(i)}
+                    onChange={() => {
+                      if (value.includes(i)) {
+                        value.splice(value.indexOf(i), 1);
+                        onChange(value);
+                      } else {
+                        onChange([...value, i]);
+                      }
+                    }}
+                  >{o}
+                  </FormCheckable>
+                ))
+              }
+            </MultiWrapper>
+          </Dropdown>
+        );
       case DROPDOWN:
         return (
           <FormGroup>
-            <FormLabel htmlFor={option.name}>{option.name}</FormLabel>
             <FormSelect
               id={option.name}
-              onChange={(e) => onChange(e.target.value)}
+              onChange={(e) => {
+                onChange(e.target.value);
+              }}
               value={option.input.value}
             >
               {
-                option.input.options.map(o => {
+                option.input.availableOptions.map(o => {
                   return (
                     <option
                       value={o}
@@ -450,7 +419,7 @@ function QueryForm (props) {
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));
-    setFilters(initListToState(filtersLists));
+    setFilters(initListToState(filtersLists, filterRanges.getData()));
     setLcoe(initListToState(lcoeList));
   };
 
@@ -463,10 +432,10 @@ function QueryForm (props) {
         }), {});
 
     const lcoeValues = Object.values(lcoe)
-      .reduce((accum, weight) => (
+      .reduce((accum, cost) => (
         {
           ...accum,
-          [weight.id || weight.name]: Number(weight.input.value)
+          [cost.id || cost.name]: (cost.input.options ? String : Number)(cost.input.value)
         }), {});
     updateFilteredLayer(filters, weightsValues, lcoeValues);
   };
@@ -476,19 +445,68 @@ function QueryForm (props) {
 
   useEffect(() => {
     if (resource) {
-      const turbineType = lcoe.find(cost => cost.id === 'turbine_type');
-      turbineType.input.range = turbineTypeMap[resource];
-      turbineType.input.value = turbineType.input.range[0];
+      try {
+        const capacity = lcoe.find(cost => cost.id === 'capacity_factor');
+        const ind = lcoe.findIndex(cost => cost.id === 'capacity_factor');
+        capacity.input.availableOptions = capacity.input.options[apiResourceNameMap[resource]];
+        capacity.input.value = capacity.input.availableOptions[0];
+        capacity.input.default = capacity.input.availableOptions[0];
+
+        lcoe.splice(ind, 1, capacity);
+        setLcoe(lcoe);
+
+        Object.keys(presets.lcoe)
+          .forEach(pre => {
+            presets.lcoe[pre] = presets.lcoe[pre].map(cost => {
+              if (cost.id === 'capacity_factor') {
+                return capacity;
+              } else {
+                return cost;
+              }
+            });
+          });
+        setPresets(presets);
+      } catch (err) {
+        /* eslint-disable-next-line */
+        console.error(err);
+      }
     }
   }, [resource]);
+  /*
+  useEffect(() => {
+    if (filterRanges.isReady()) {
+      try {
+        const capfac = lcoe.find(f => f.id === 'capacity_factor').input.value;
+        const range = filterRanges.getData().f_lcoe[capfac].total;
+        setMaxLCOEO({
+          ...maxLCOEO,
+          active: true,
+          input: {
+            ...maxLCOEO.input,
+            range: [range.min, range.max]
+          }
+        });
+
+        setMaxLCOE(range);
+      } catch (err) {
+        setMaxLCOEO({
+          ...maxLCOEO,
+          active: false
+        });
+        setMaxLCOE(null);
+        console.warn('LCOE Filter not available for this country');
+      }
+    }
+  }, [lcoe.find(f => f.id === 'capacity_factor').input.value, filterRanges]);
+*/
 
   /* Reinitialize filters when new ranges are received */
 
   useEffect(() => {
-    if (firstLoad.current) {
+    if (firstLoad.current && filterRanges.isReady()) {
       firstLoad.current = false;
     } else {
-      setFilters(initListToState(filtersLists));
+      setFilters(initListToState(filtersLists, filterRanges.getData()));
     }
   }, [filterRanges]);
 
@@ -550,181 +568,36 @@ function QueryForm (props) {
       </PanelBlockHeader>
 
       <TabbedBlockBody>
-        <FormWrapper
+        <FiltersForm
           name='filters'
           icon='filter'
-          presets={presets.filters}
           setPreset={(preset) => {
             if (preset === 'reset') {
-              setFilters(initListToState(filtersLists));
+              setFilters(initListToState(filtersLists, filterRanges.getData()));
             } else {
-              setFilters(initListToState(presets.filters[preset]));
+              setFilters(initListToState(presets.filters[preset], filterRanges.getData()));
             }
           }}
-        >
-
-          <Accordion
-            initialState={[
-              true,
-              ...filters.reduce((seen, filt) => {
-                if (!seen.includes(filt.category)) {
-                  seen.push(filt);
-                }
-                return seen;
-              }, [])
-                .slice(1)
-                .map((_) => false)
-            ]}
-            foldCount={Object.keys(filters).length + 1}
-            allowMultiple
-          >
-            {({ checkExpanded, setExpanded }) => (
-              <>
-                <AccordionFold
-                  forwardedAs={FormGroupWrapper}
-                  isFoldExpanded={checkExpanded(0)}
-                  setFoldExpanded={(v) => setExpanded(0, v)}
-                  renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                    <AccordionFoldTrigger
-                      isExpanded={isFoldExpanded}
-                      onClick={() => setFoldExpanded(!isFoldExpanded)}
-                    >
-                      <Heading size='small' variation='primary'>
-                        {makeTitleCase('Output Filters')}
-                      </Heading>
-                    </AccordionFoldTrigger>
-                  )}
-                  renderBody={({ isFoldExpanded }) => (
-                    <>
-                      <PanelOption hidden={!isFoldExpanded}>
-                        <OptionHeadline>
-                          <PanelOptionTitle>{maxZoneScoreO.name}</PanelOptionTitle>
-                          {maxZoneScoreO.info && (
-                            <InfoButton info={maxZoneScoreO.info} id={maxZoneScoreO.name}>
-                                Info
-                            </InfoButton>
-                          )}
-                        </OptionHeadline>
-                        {inputOfType({
-                          ...maxZoneScoreO,
-                          input: {
-                            ...maxZoneScoreO.input,
-                            value: maxZoneScore
-                          }
-                        }, ({ min, max }) => {
-                          setMaxZoneScore({ min: round(min), max: round(max) });
-                        })}
-                      </PanelOption>
-
-                      {/* <PanelOption hidden={!isFoldExpanded}>
-                        <OptionHeadline>
-                          <PanelOptionTitle>{maxLCOEO.name}</PanelOptionTitle>
-                          {maxLCOEO.info && (
-                            <InfoButton info={maxLCOEO.info} id={maxLCOEO.name}>
-                                Info
-                            </InfoButton>
-                          )}
-                        </OptionHeadline>
-                        {inputOfType({
-                          ...maxLCOEO,
-                          input: {
-                            ...maxLCOEO.input,
-                            value: maxLCOE
-                          }
-                        }, ({ min, max }) => {
-                          setMaxLCOE({ min: round(min), max: round(max) });
-                        })}
-                      </PanelOption> */}
-                    </>
-                  )}
-                />
-
-                {Object.entries(filters.reduce((accum, filt) => {
-                  if (!accum[filt.category]) {
-                    accum[filt.category] = [];
-                  }
-                  accum[filt.category].push(filt);
-                  return accum;
-                }, {}))
-                  .map(([group, list], idx) => {
-                    idx += 1;
-                    return (
-                      <AccordionFold
-                        key={group}
-                        forwardedAs={FormGroupWrapper}
-                        isFoldExpanded={checkExpanded(idx)}
-                        setFoldExpanded={(v) => setExpanded(idx, v)}
-                        renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                          <AccordionFoldTrigger
-                            isExpanded={isFoldExpanded}
-                            onClick={() => setFoldExpanded(!isFoldExpanded)}
-                          >
-                            <Heading size='small' variation='primary'>
-                              {makeTitleCase(group.replace(/_/g, ' '))}
-                            </Heading>
-                          </AccordionFoldTrigger>
-                        )}
-                        renderBody={({ isFoldExpanded }) =>
-                          list.map((filter, ind) => (
-                            checkIncluded(filter, resource) &&
-                        <PanelOption key={filter.name} hidden={!isFoldExpanded}>
-                          <OptionHeadline>
-                            <PanelOptionTitle>{`${filter.name}`.concat(filter.unit ? ` (${filter.unit})` : '')}</PanelOptionTitle>
-                            {filter.info && (
-                              <InfoButton info={filter.info} id={filter.name}>
-                                Info
-                              </InfoButton>
-                            )}
-                            <FormSwitch
-                              hideText
-                              name={`toggle-${filter.name.replace(/ /g, '-')}`}
-                              disabled={filter.disabled}
-                              checked={filter.active}
-                              onChange={() => {
-                                const ind = filters.findIndex(f => f.id === filter.id);
-                                setFilters(updateStateList(filters, ind, {
-                                  ...filter,
-                                  active: !filter.active,
-                                  input: {
-                                    ...filter.input,
-                                    value: filter.input.type === BOOL ? !filter.active : filter.input.value
-                                  }
-                                }));
-                              }}
-                            >
-                              Toggle filter
-                            </FormSwitch>
-                          </OptionHeadline>
-                          {
-                            inputOfType(filter, (value) => {
-                              if (filter.active) {
-                                const ind = filters.findIndex(f => f.id === filter.id);
-                                setFilters(updateStateList(filters, ind, {
-                                  ...filter,
-                                  input: {
-                                    ...filter.input,
-                                    value
-                                  }
-
-                                }));
-                              }
-                            })
-                          }
-
-                        </PanelOption>
-                          ))}
-                      />
-                    );
-                  })}
-              </>
-            )}
-          </Accordion>
-        </FormWrapper>
-
-        <FormWrapper
+          filters={filters}
+          inputOfType={inputOfType}
+          checkIncluded={checkIncluded}
+          resource={resource}
+          setFilters={setFilters}
+          updateStateList={updateStateList}
+          outputFilters={
+            [
+              [maxZoneScore, setMaxZoneScore, 'Run analysis to filter on zone score'],
+              [maxLCOE, setMaxLCOE, 'Run analysis to filter on LCOE']
+            ]
+          }
+        />
+        <WeightsForm
           name='weights'
           icon='sliders-horizontal'
-          presets={presets.weights}
+          weights={weights}
+          setWeights={setWeights}
+          inputOfType={inputOfType}
+          updateStateList={updateStateList}
           setPreset={(preset) => {
             if (preset === 'reset') {
               setWeights(initListToState(weightsList));
@@ -732,55 +605,26 @@ function QueryForm (props) {
               setWeights(initListToState(presets.weights[preset]));
             }
           }}
-        >
-          {weights.map((weight, ind) => (
-            <PanelOption key={weight.name}>
-              <PanelOptionTitle>{weight.name}</PanelOptionTitle>
-              {
-                inputOfType(weight, (value) => {
-                  setWeights(
-                    updateStateList(weights, ind, {
-                      ...weight,
-                      input: {
-                        ...weight.input,
-                        value
-                      }
-                    })
-                  );
-                })
-              }
-            </PanelOption>
-          ))}
-        </FormWrapper>
 
-        <FormWrapper
+        />
+        <LCOEForm
           name='lcoe'
           icon='disc-dollar'
+          lcoe={lcoe}
+          setLcoe={setLcoe}
+          inputOfType={inputOfType}
+          updateStateList={updateStateList}
           presets={presets.lcoe}
           setPreset={(preset) => {
             if (preset === 'reset') {
               setLcoe(initListToState(lcoeList));
             } else {
-              setLcoe(initListToState(presets.lcoe[preset]));
+              setLcoe(presets.lcoe[preset]);
             }
           }}
-        >
-          {lcoe.map((cost, ind) => (
-            <PanelOption key={cost.name}>
-              {
-                inputOfType(cost, (v) => {
-                  setLcoe(updateStateList(lcoe, ind, {
-                    ...cost,
-                    input: {
-                      ...cost.input,
-                      value: v
-                    }
-                  }));
-                })
-              }
-            </PanelOption>
-          ))}
-        </FormWrapper>
+
+        />
+
       </TabbedBlockBody>
 
       <SubmissionSection>
@@ -807,17 +651,19 @@ function QueryForm (props) {
   );
 }
 
-FormWrapper.propTypes = {
-  setPreset: T.func.isRequired,
-  name: T.string,
-  icon: T.string
-};
-
 QueryForm.propTypes = {
   area: T.object,
   resource: T.string,
+  filtersLists: T.array,
   weightsList: T.array,
   lcoeList: T.array,
+  updateFilteredLayer: T.func,
+  filterRanges: T.object,
+  presets: T.shape({
+    weights: T.object,
+    lcoe: T.object,
+    filters: T.object
+  }),
   onResourceEdit: T.func,
   onAreaEdit: T.func,
   onInputTouched: T.func,
@@ -827,9 +673,9 @@ QueryForm.propTypes = {
   gridSize: T.number,
   setGridSize: T.func,
   maxZoneScore: T.object,
-  setMaxZoneScore: T.func
-  /* maxLCOE: T.object,
-  setMaxLCOE: T.func */
+  setMaxZoneScore: T.func,
+  maxLCOE: T.object,
+  setMaxLCOE: T.func
 };
 
 export default QueryForm;

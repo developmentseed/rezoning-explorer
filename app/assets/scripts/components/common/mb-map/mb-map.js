@@ -20,14 +20,25 @@ const FILTERED_LAYER_SOURCE = 'FILTERED_LAYER_SOURCE';
 const FILTERED_LAYER_ID = 'FILTERED_LAYER_ID';
 
 const LCOE_LAYER_SOURCE_ID = 'LCOE_LAYER_SOURCE_ID';
-const LCOE_LAYER_LAYER_ID = 'LCOE_LAYER_LAYERE_ID';
+const LCOE_LAYER_LAYER_ID = 'LCOE_LAYER_LAYER_ID';
+
+const ZONE_SCORE_SOURCE_ID = 'ZONE_SCORE_SOURCE_ID';
+const ZONE_SCORE_LAYER_ID = 'ZONE_SCORE_LAYER_ID';
 
 const ZONES_BOUNDARIES_SOURCE_ID = 'ZONES_BOUNDARIES_SOURCE_ID';
 export const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
 const EEZ_BOUNDARIES_SOURCE_ID = 'EEZ_BOUNDARIES_SOURCE_ID';
 const EEZ_BOUNDARIES_LAYER_ID = 'EEZ_BOUNDARIES_LAYER_ID';
+const SATELLITE = 'satellite';
 
 export const outputLayers = [
+  {
+    id: SATELLITE,
+    name: 'Satellite',
+    type: 'raster',
+    nonexclusive: true,
+    visible: true
+  },
   {
     id: FILTERED_LAYER_ID,
     name: 'Selected Area',
@@ -39,7 +50,11 @@ export const outputLayers = [
     name: 'LCOE Tiles',
     type: 'raster'
   },
-
+  {
+    id: ZONE_SCORE_LAYER_ID,
+    name: 'Zone Score',
+    type: 'raster'
+  },
   {
     id: ZONES_BOUNDARIES_LAYER_ID,
     name: 'Zone Boundaries',
@@ -92,11 +107,12 @@ const initializeMap = ({
   selectedArea,
   setMap,
   mapContainer,
-  setHoveredFeature
+  setHoveredFeature,
+  setFocusZone
 }) => {
   const map = new mapboxgl.Map({
     container: mapContainer.current,
-    style: 'mapbox://styles/mapbox/light-v10',
+    style: 'mapbox://styles/wbg-cdrp/ckhwwisf207qz1ap9hl2vlulj',
     center: [0, 0],
     zoom: 5,
     bounds: selectedArea && selectedArea.bounds,
@@ -105,6 +121,10 @@ const initializeMap = ({
 
   map.on('load', () => {
     setMap(map);
+    // This map style has a 'background' layer underneath the satellite layer
+    // which is completely black. Was not able to remove this via mapbox studio
+    // so removing it on load.
+    map.removeLayer('background');
 
     /*
      * Resize map on window size change
@@ -115,11 +135,15 @@ const initializeMap = ({
      * Add placeholder map source and a hidden layer for the filtered layer,
      * which will be displayed on "Apply" click
      */
+
+    map.setPaintProperty('land', 'background-opacity', 0.7);
+
     map.addSource(FILTERED_LAYER_SOURCE, {
       type: 'raster',
       tiles: ['https://placeholder.url/{z}/{x}/{y}.png'],
       tileSize: 256
     });
+
     map.addLayer({
       id: FILTERED_LAYER_ID,
       type: 'raster',
@@ -128,7 +152,7 @@ const initializeMap = ({
         visibility: 'none'
       },
       paint: {
-        'raster-opacity': 0.5
+        'raster-opacity': 0.7
       },
       minzoom: 0,
       maxzoom: 22
@@ -153,31 +177,23 @@ const initializeMap = ({
       maxzoom: 22
     });
     //
-    // Zone boundaries source
-    map.addSource(ZONES_BOUNDARIES_SOURCE_ID, {
-      type: 'geojson',
-      data: {
-        type: 'FeatureCollection',
-        features: []
-      },
-      promoteId: 'id'
+    map.addSource(ZONE_SCORE_SOURCE_ID, {
+      type: 'raster',
+      tiles: ['https://placeholder.url/{z}/{x}/{y}.png'],
+      tileSize: 256
     });
-
-    // Zone boundaries source
     map.addLayer({
-      id: ZONES_BOUNDARIES_LAYER_ID,
-      type: 'fill',
-      source: ZONES_BOUNDARIES_SOURCE_ID,
-      layout: {},
+      id: ZONE_SCORE_LAYER_ID,
+      type: 'raster',
+      source: ZONE_SCORE_SOURCE_ID,
+      layout: {
+        visibility: 'none'
+      },
       paint: {
-        'fill-color': ['get', 'color'],
-        'fill-opacity': [
-          'case',
-          ['boolean', ['feature-state', 'hover'], false],
-          0.5,
-          0.2
-        ]
-      }
+        'raster-opacity': 0.5
+      },
+      minzoom: 0,
+      maxzoom: 22
     });
 
     map.addSource(EEZ_BOUNDARIES_SOURCE_ID, {
@@ -201,9 +217,52 @@ const initializeMap = ({
       }
     });
 
+    // Zone boundaries source
+    map.addSource(ZONES_BOUNDARIES_SOURCE_ID, {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: []
+      },
+      promoteId: 'id'
+    });
+
+    // Zone boundaries layer
+    map.addLayer({
+      id: ZONES_BOUNDARIES_LAYER_ID,
+      type: 'fill',
+      source: ZONES_BOUNDARIES_SOURCE_ID,
+      layout: {},
+      paint: {
+        'fill-color': ['get', 'color'],
+        'fill-opacity': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          0.5,
+          0.2
+        ]
+      }
+    });
+
     map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features) {
         setHoveredFeature(e.features ? e.features[0].properties.id : null);
+      }
+    });
+
+    // Set the focused zone to build the zone details panel
+    // when map zone bound is clicked
+    // This is cleared from the explore-zones component
+    map.on('click', ZONES_BOUNDARIES_LAYER_ID, (e) => {
+      if (e.features) {
+        const ft = e.features[0];
+        setFocusZone({
+          ...ft,
+          properties: {
+            ...ft.properties,
+            summary: JSON.parse(ft.properties.summary)
+          }
+        });
       }
     });
 
@@ -230,7 +289,7 @@ const addInputLayersToMap = (map, layers) => {
       },
       minzoom: 0,
       maxzoom: 22
-    });
+    }, ZONES_BOUNDARIES_LAYER_ID);
   });
 };
 
@@ -243,19 +302,23 @@ function MbMap (props) {
     selectedResource,
     filteredLayerUrl,
     currentZones,
+    outputLayerUrl,
+    maxZoneScore,
+    maxLCOE
+  } = useContext(ExploreContext);
+
+  const {
+    hoveredFeature, setHoveredFeature,
     map, setMap,
     inputLayers,
     setMapLayers,
-    lcoeLayerUrl,
-    maxZoneScore
-  } = useContext(ExploreContext);
-
-  const { hoveredFeature, setHoveredFeature } = useContext(MapContext);
+    setFocusZone
+  } = useContext(MapContext);
 
   // Initialize map on mount
   useEffect(() => {
     if (!map) {
-      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeature });
+      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeature, setFocusZone });
       return;
     }
 
@@ -326,7 +389,7 @@ function MbMap (props) {
   }, [filteredLayerUrl]);
 
   useEffect(() => {
-    if (!lcoeLayerUrl || !map) return;
+    if (!outputLayerUrl || !map) return;
 
     const style = map.getStyle();
 
@@ -336,11 +399,16 @@ function MbMap (props) {
         ...style.sources,
         [LCOE_LAYER_SOURCE_ID]: {
           ...style.sources[LCOE_LAYER_SOURCE_ID],
-          tiles: [lcoeLayerUrl]
+          tiles: [`${config.apiEndpoint}/lcoe/${outputLayerUrl}`]
+        },
+        [ZONE_SCORE_SOURCE_ID]: {
+          ...style.sources[ZONE_SCORE_SOURCE_ID],
+          tiles: [`${config.apiEndpoint}/score/${outputLayerUrl}`]
         }
+
       }
     });
-  }, [lcoeLayerUrl]);
+  }, [outputLayerUrl]);
 
   // Update zone boundaries on change
   useEffect(() => {
@@ -362,11 +430,9 @@ function MbMap (props) {
     if (!map) return;
 
     map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeature || null }, { hover: true });
-    // setHoveredFeature(hoveredFeature);
 
     return () => {
       map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeature || null }, { hover: false });
-      // setHoveredFeature(null);
     };
   }, [hoveredFeature]);
 
@@ -376,11 +442,15 @@ function MbMap (props) {
     // Update filter expression for boundaries layer
     map.setFilter(ZONES_BOUNDARIES_LAYER_ID, [
       'all',
-      ['>=', ['get', 'zone_score'], maxZoneScore.min],
-      ['<=', ['get', 'zone_score'], maxZoneScore.max]
+      ['>=', ['get', 'zone_score'], maxZoneScore.input.value.min],
+      ['<=', ['get', 'zone_score'], maxZoneScore.input.value.max],
+      ...(maxLCOE.active ? [
+        ['>=', ['get', 'lcoe'], maxLCOE.input.value.min],
+        ['<=', ['get', 'lcoe'], maxLCOE.input.value.max]
+      ] : [])
     ]
     );
-  }, [maxZoneScore, currentZones]);
+  }, [maxZoneScore, maxLCOE, currentZones]);
 
   return (
     <MapsContainer>

@@ -4,6 +4,6 @@ export default {
   environment: 'production',
   appTitle: 'REZoning Web',
   appShortTitle: 'REZ',
-  mbToken: 'pk.eyJ1IjoiZGV2c2VlZCIsImEiOiJja2MyYzVsNjAxNXd2MnFwOWV0bHBjaWxsIn0.mJzFaMqKKSOkwfXCt00cww',
+  mbToken: 'pk.eyJ1Ijoid2JnLWNkcnAiLCJhIjoiY2l1Z3pxZDVwMDBxcDMzcDJjYmRpYnBicSJ9.hjlLP5TEVhqbTwzhFA1rZw',
   apiEndpoint: 'https://cb1d9tl7ve.execute-api.us-east-2.amazonaws.com/v1'
 };
