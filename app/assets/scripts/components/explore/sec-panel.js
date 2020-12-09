@@ -28,7 +28,8 @@ const SecPanel = styled(Panel)`
   `}
 `;
 const PreAnalysisMessage = styled(Prose)`
-  padding: 1rem;
+  padding: 1rem 1.5rem;
+  text-align: center;
 `;
 
 function ExpMapSecPanel (props) {
@@ -46,7 +47,7 @@ function ExpMapSecPanel (props) {
         <>
           <PanelBlock>
             <PanelBlockHeader>
-              <Heading size='large'>
+              <Heading>
                 Zone Analysis
               </Heading>
             </PanelBlockHeader>
@@ -57,7 +58,7 @@ function ExpMapSecPanel (props) {
                     currentZones={currentZones.getData()}
                     inputTouched={inputTouched}
                   />) : (
-                  <PreAnalysisMessage>{currentZones.fetching ? 'Loading...' : 'Please apply parameters (filters, weights & LCOE) via left panel to load zone analysis.'}</PreAnalysisMessage>
+                  <PreAnalysisMessage>{currentZones.fetching ? 'Loading...' : 'Please apply parameters (filters, weights & LCOE) to load zone analysis.'}</PreAnalysisMessage>
                 )}
             </PanelBlockBody>
           </PanelBlock>
