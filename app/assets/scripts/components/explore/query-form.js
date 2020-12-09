@@ -89,8 +89,14 @@ const initByType = (obj, ranges, resource) => {
       return {
         ...input,
         range,
-        unit: input.unit,
-        value: input.value || input.default || (obj.isRange ? { min: round(range[0]), max: round(range[1]) } : range[0])
+        // unit: input.unit,
+        unit: input.unit === 'm' ? 'km' : input.unit,
+        value: input.value || input.default || (obj.isRange
+          ? input.unit === 'm'
+            ? { min: round(range[0] / 1000), max: round(range[1] / 1000) }
+            : { min: round(range[0]), max: round(range[1]) }
+          : range[0])
+        // value: input.value || input.default || (obj.isRange ? { min: round(range[0]), max: round(range[1]) } : range[0])
       };
     case TEXT:
       return {
@@ -208,6 +214,15 @@ function QueryForm (props) {
           const thisFilt = baseFilts[i];
           if (thisFilt.isRange) {
             const [min, max, active] = vals.split(',');
+            if (thisFilt.isRange && thisFilt.unit === 'm') {
+              return {
+                value: {
+                  min: Number(min / 1000),
+                  max: Number(max / 1000)
+                },
+                active: active === undefined
+              };
+            }
             return {
               value: {
                 min: Number(min),
