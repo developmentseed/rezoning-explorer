@@ -20,9 +20,10 @@ function LCOEForm (props) {
           <OptionHeadline>
             <PanelOptionTitle>{cost.name}</PanelOptionTitle>
 
-            <InfoButton info='Placeholder text' id={cost.name}>
+            {cost.info &&
+              <InfoButton info={cost.info} id={cost.name}>
                 Info
-            </InfoButton>
+              </InfoButton>}
           </OptionHeadline>
 
           {

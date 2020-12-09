@@ -18,6 +18,7 @@ export async function fetchLcoe (dispatch) {
     const { body: lcoe } = await fetchJSON(
       `${apiEndpoint}/lcoe/schema`
     );
+    console.log(lcoe)
 
     const apiLcoe = Object.keys(lcoe)
       .map(id => {
