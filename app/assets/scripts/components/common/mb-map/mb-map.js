@@ -29,8 +29,16 @@ const ZONES_BOUNDARIES_SOURCE_ID = 'ZONES_BOUNDARIES_SOURCE_ID';
 export const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
 const EEZ_BOUNDARIES_SOURCE_ID = 'EEZ_BOUNDARIES_SOURCE_ID';
 const EEZ_BOUNDARIES_LAYER_ID = 'EEZ_BOUNDARIES_LAYER_ID';
+const SATELLITE = 'satellite';
 
 export const outputLayers = [
+  {
+    id: SATELLITE,
+    name: 'Satellite',
+    type: 'raster',
+    nonexclusive: true,
+    visible: true
+  },
   {
     id: FILTERED_LAYER_ID,
     name: 'Selected Area',
@@ -104,7 +112,7 @@ const initializeMap = ({
 }) => {
   const map = new mapboxgl.Map({
     container: mapContainer.current,
-    style: 'mapbox://styles/mapbox/light-v10',
+    style: 'mapbox://styles/wbg-cdrp/ckhwwisf207qz1ap9hl2vlulj',
     center: [0, 0],
     zoom: 5,
     bounds: selectedArea && selectedArea.bounds,
@@ -113,6 +121,10 @@ const initializeMap = ({
 
   map.on('load', () => {
     setMap(map);
+    // This map style has a 'background' layer underneath the satellite layer
+    // which is completely black. Was not able to remove this via mapbox studio
+    // so removing it on load.
+    map.removeLayer('background');
 
     /*
      * Resize map on window size change
@@ -123,11 +135,15 @@ const initializeMap = ({
      * Add placeholder map source and a hidden layer for the filtered layer,
      * which will be displayed on "Apply" click
      */
+
+    map.setPaintProperty('land', 'background-opacity', 0.7);
+
     map.addSource(FILTERED_LAYER_SOURCE, {
       type: 'raster',
       tiles: ['https://placeholder.url/{z}/{x}/{y}.png'],
       tileSize: 256
     });
+
     map.addLayer({
       id: FILTERED_LAYER_ID,
       type: 'raster',
@@ -136,7 +152,7 @@ const initializeMap = ({
         visibility: 'none'
       },
       paint: {
-        'raster-opacity': 0.5
+        'raster-opacity': 0.7
       },
       minzoom: 0,
       maxzoom: 22

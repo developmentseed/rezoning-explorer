@@ -171,9 +171,9 @@ function ExpMapPrimePanel (props) {
                 }}
                 onVisibilityToggle={(layer, visible) => {
                   if (visible) {
-                    if (layer.type === 'raster') {
+                    if (layer.type === 'raster' && !layer.nonexclusive) {
                       const ml = mapLayers.map(l => {
-                        if (l.type === 'raster') {
+                        if (l.type === 'raster' && !l.nonexclusive) {
                           map.setLayoutProperty(l.id, 'visibility', l.id === layer.id ? 'visible' : 'none');
                           l.visible = l.id === layer.id;
                         }
