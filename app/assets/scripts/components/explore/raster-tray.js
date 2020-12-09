@@ -28,6 +28,9 @@ const ControlTools = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(1.5rem, 1fr));
   justify-content: end;
   grid-gap: 0.75rem;
+  #layer-visibility {
+    grid-column: end;
+  }
 `;
 const Legend = styled.div`
   display: grid;
