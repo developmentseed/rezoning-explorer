@@ -1,4 +1,5 @@
 import '@babel/polyfill';
+import './wdyr';
 import React, { useEffect, useContext } from 'react';
 import { render } from 'react-dom';
 import { Router, Route, Switch } from 'react-router-dom';
