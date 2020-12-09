@@ -439,7 +439,7 @@ function QueryForm (props) {
       </PanelBlockHeader>
 
       <TabbedBlockBody>
-        <FiltersForm
+        {/* <FiltersForm
           name='filters'
           icon='filter'
           presets={presets.filters}
@@ -459,7 +459,7 @@ function QueryForm (props) {
               [maxZoneScore, setMaxZoneScore, maxZoneScoreO]
             ]
           }
-        />
+        /> */}
         <WeightsForm
           name='weights'
           icon='sliders-horizontal'
@@ -475,7 +475,7 @@ function QueryForm (props) {
           }}
 
         />
-        <LCOEForm
+        {/* <LCOEForm
           name='lcoe'
           icon='disc-dollar'
           lcoe={lcoe}
@@ -489,7 +489,7 @@ function QueryForm (props) {
             }
           }}
 
-        />
+        /> */}
 
       </TabbedBlockBody>
 
