@@ -24,8 +24,6 @@ const TableList = styled.ul`
 `;
 
 const TableCell = styled.li`
-  text-align: center;
-
 `;
 
 function Table (props) {

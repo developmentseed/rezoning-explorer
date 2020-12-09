@@ -9,7 +9,8 @@ const StatsWrapper = styled.section`
   display: grid;
   /*grid-template-rows: 1.5fr 1fr;*/
   dd {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
+    font-weight: ${themeVal('type.heading.weight')};
     line-height: 1;
     color: ${themeVal('color.primary')};
   }
@@ -17,7 +18,7 @@ const StatsWrapper = styled.section`
     font-size: 0.875rem;
 
     span {
-      display: block;
+      margin-left: 2px;
     }
   }
   ${({ active }) =>
@@ -85,7 +86,7 @@ function ExploreStats (props) {
       <StatSummary
         title='Summary'
         data={statData}
-        dimension={[2, 2]}
+        dimension={[2, 0]}
         gap={0.5}
         renderCell={(datum) => (
           <dl>
