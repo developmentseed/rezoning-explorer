@@ -150,11 +150,7 @@ const initByType = (obj, ranges, resource) => {
   }
 };
 
-const updateStateList = (list, i, updatedValue) => {
-  const updated = list.slice();
-  updated[i] = updatedValue;
-  return updated;
-};
+
 
 function QueryForm (props) {
   const {
@@ -332,115 +328,6 @@ function QueryForm (props) {
     default: undefined
   });
 
-  const inputOfType = (option, onChange) => {
-    const { range, value } = option.input;
-    let errorMessage;
-    if (range) {
-      errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${round(range[0])} - ${round(range[1])}`;
-    } else {
-      errorMessage = 'Value not accepted';
-    }
-
-    // Get filter range, if available
-    const filterRange = option.type === 'filter' ? filterRanges.getData()[option.id] : null;
-
-    switch (option.input.type) {
-      case SLIDER:
-        return (
-          <SliderGroup
-            unit={option.input.unit || '%'}
-            range={filterRange ? [round(filterRange.min), round(filterRange.max)] : option.input.range}
-            id={option.name}
-            value={option.input.value}
-            isRange={option.isRange}
-            disabled={!option.active}
-            onChange={onChange}
-          />
-        );
-      case TEXT:
-        return (
-          <StressedFormGroupInput
-            inputType='number'
-            inputSize='small'
-            disabled={option.readOnly}
-            id={`${option.name}`}
-            name={`${option.name}`}
-            value={option.input.value}
-            validate={option.input.range ? validateRangeNum(option.input.range[0], option.input.range[1]) : () => true}
-            errorMessage={errorMessage}
-            onChange={onChange}
-            validationTimeout={1500}
-          />
-        );
-      case BOOL:
-        return null;
-      case MULTI:
-        return (
-          <Dropdown
-            triggerElement={
-              <MultiSelectButton
-                disabled={!option.active}
-              > {
-                  option.input.options.filter((e, i) => value.includes(i)).join(',')
-                }
-              </MultiSelectButton>
-            }
-            alignment='right'
-          >
-            <MultiWrapper>
-              {
-                option.input.options.map((o, i) => (
-                  <FormCheckable
-                    key={o}
-                    name={o}
-                    id={o}
-                    type='checkbox'
-                    checked={value.includes(i)}
-                    onChange={() => {
-                      if (value.includes(i)) {
-                        value.splice(value.indexOf(i), 1);
-                        onChange(value);
-                      } else {
-                        onChange([...value, i]);
-                      }
-                    }}
-                  >{o}
-                  </FormCheckable>
-                ))
-              }
-            </MultiWrapper>
-          </Dropdown>
-        );
-      case DROPDOWN:
-        return (
-          <FormGroup>
-            <FormSelect
-              id={option.name}
-              onChange={(e) => {
-                onChange(e.target.value);
-              }}
-              value={option.input.value}
-            >
-              {
-                option.input.availableOptions.map(o => {
-                  return (
-                    <option
-                      value={o}
-                      key={o}
-                    >
-                      {o}
-                    </option>
-                  );
-                })
-              }
-            </FormSelect>
-          </FormGroup>
-        );
-      default:
-        return null;
-    }
-  };
-
   const resetClick = () => {
     setWeights(initListToState(weightsList));
     setFilters(initListToState(filtersLists, filterRanges.getData()));
@@ -552,7 +439,7 @@ function QueryForm (props) {
       </PanelBlockHeader>
 
       <TabbedBlockBody>
-        <FiltersForm
+        {/* <FiltersForm
           name='filters'
           icon='filter'
           presets={presets.filters}
@@ -564,24 +451,20 @@ function QueryForm (props) {
             }
           }}
           filters={filters}
-          inputOfType={inputOfType}
           checkIncluded={checkIncluded}
           resource={resource}
           setFilters={setFilters}
-          updateStateList={updateStateList}
           outputFilters={
             [
               [maxZoneScore, setMaxZoneScore, maxZoneScoreO]
             ]
           }
-        />
+        /> */}
         <WeightsForm
           name='weights'
           icon='sliders-horizontal'
           weights={weights}
           setWeights={setWeights}
-          inputOfType={inputOfType}
-          updateStateList={updateStateList}
           presets={presets.weights}
           setPreset={(preset) => {
             if (preset === 'reset') {
@@ -592,13 +475,11 @@ function QueryForm (props) {
           }}
 
         />
-        <LCOEForm
+        {/* <LCOEForm
           name='lcoe'
           icon='disc-dollar'
           lcoe={lcoe}
           setLcoe={setLcoe}
-          inputOfType={inputOfType}
-          updateStateList={updateStateList}
           presets={presets.lcoe}
           setPreset={(preset) => {
             if (preset === 'reset') {
@@ -608,7 +489,7 @@ function QueryForm (props) {
             }
           }}
 
-        />
+        /> */}
 
       </TabbedBlockBody>
 

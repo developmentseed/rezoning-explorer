@@ -1,33 +1,32 @@
 import React from 'react';
 import T from 'prop-types';
-import { FormWrapper, PanelOption, PanelOptionTitle, OptionHeadline } from './form';
+import {
+  FormWrapper,
+  PanelOption,
+  PanelOptionTitle,
+  OptionHeadline
+} from './form';
 import InfoButton from '../../common/info-button';
+import FormInput from '../form/form-input';
+import updateArrayIndex from '../../../utils/update-array-index';
 
 function WeightsForm (props) {
-  const {
-    weights,
-    setWeights,
-    inputOfType,
-    updateStateList,
-    active
-  } = props;
+  const { weights, setWeights, active } = props;
   return (
-    <FormWrapper
-      active={active}
-    >
+    <FormWrapper active={active}>
       {weights.map((weight, ind) => (
         <PanelOption key={weight.name}>
           <OptionHeadline>
             <PanelOptionTitle>{weight.name}</PanelOptionTitle>
             <InfoButton info={weight.info} id={weight.name}>
-                Info
+              Info
             </InfoButton>
           </OptionHeadline>
-
-          {
-            inputOfType(weight, (value) => {
+          <FormInput
+            option={weight}
+            onChange={(value) => {
               setWeights(
-                updateStateList(weights, ind, {
+                updateArrayIndex(weights, ind, {
                   ...weight,
                   input: {
                     ...weight.input,
@@ -35,12 +34,11 @@ function WeightsForm (props) {
                   }
                 })
               );
-            })
-          }
+            }}
+          />
         </PanelOption>
       ))}
     </FormWrapper>
-
   );
 }
 
@@ -52,8 +50,6 @@ WeightsForm.propTypes = {
   setPreset: T.func,
   weights: T.array,
   setWeights: T.func,
-  inputOfType: T.func,
-  updateStateList: T.func,
   active: T.bool
 };
 
