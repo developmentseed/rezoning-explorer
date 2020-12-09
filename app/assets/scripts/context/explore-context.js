@@ -93,7 +93,7 @@ export function ExploreProvider (props) {
   );
 
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
-  const [lcoeLayerUrl, setLcoeLayerUrl] = useState(null);
+  const [outputLayerUrl, setOutputLayerUrl] = useState(null);
 
   // Executed on page mount
   useEffect(() => {
@@ -215,7 +215,7 @@ export function ExploreProvider (props) {
       .join('&');
 
     // If area of country type, prepare path string to add to URL
-    const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
+    const countryPath = selectedArea.type === 'country' ? `${selectedArea.id}` : '';
 
     // Apply filter querystring to the map
     setFilteredLayerUrl(
@@ -224,8 +224,8 @@ export function ExploreProvider (props) {
 
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
 
-    setLcoeLayerUrl(
-      `${config.apiEndpoint}/lcoe${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=cool`
+    setOutputLayerUrl(
+      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=cool`
     );
 
     generateZones(filterString, weights, lcoe);
@@ -286,7 +286,7 @@ export function ExploreProvider (props) {
 
           filteredLayerUrl,
           updateFilteredLayer,
-          lcoeLayerUrl,
+          outputLayerUrl,
           tourStep,
           setTourStep
         }}
