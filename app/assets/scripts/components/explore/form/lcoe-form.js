@@ -8,9 +8,10 @@ import {
 } from './form';
 import InfoButton from '../../common/info-button';
 import FormInput from '../form/form-input';
+import updateArrayIndex from '../../../utils/update-array-index';
 
 function LCOEForm (props) {
-  const { lcoe, setLcoe, updateStateList, active } = props;
+  const { lcoe, setLcoe, active } = props;
   return (
     <FormWrapper active={active}>
       {lcoe.map((cost, ind) => (
@@ -27,7 +28,7 @@ function LCOEForm (props) {
             option={cost}
             onChange={(v) =>
               setLcoe(
-                updateStateList(lcoe, ind, {
+                updateArrayIndex(lcoe, ind, {
                   ...cost,
                   input: {
                     ...cost.input,
@@ -50,7 +51,6 @@ LCOEForm.propTypes = {
   setPreset: T.func,
   lcoe: T.array,
   setLcoe: T.func,
-  updateStateList: T.func,
   active: T.bool
 };
 

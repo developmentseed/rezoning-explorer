@@ -150,11 +150,7 @@ const initByType = (obj, ranges, resource) => {
   }
 };
 
-const updateStateList = (list, i, updatedValue) => {
-  const updated = list.slice();
-  updated[i] = updatedValue;
-  return updated;
-};
+
 
 function QueryForm (props) {
   const {
@@ -458,7 +454,6 @@ function QueryForm (props) {
           checkIncluded={checkIncluded}
           resource={resource}
           setFilters={setFilters}
-          updateStateList={updateStateList}
           outputFilters={
             [
               [maxZoneScore, setMaxZoneScore, maxZoneScoreO]
@@ -470,7 +465,6 @@ function QueryForm (props) {
           icon='sliders-horizontal'
           weights={weights}
           setWeights={setWeights}
-          updateStateList={updateStateList}
           presets={presets.weights}
           setPreset={(preset) => {
             if (preset === 'reset') {
@@ -486,7 +480,6 @@ function QueryForm (props) {
           icon='disc-dollar'
           lcoe={lcoe}
           setLcoe={setLcoe}
-          updateStateList={updateStateList}
           presets={presets.lcoe}
           setPreset={(preset) => {
             if (preset === 'reset') {

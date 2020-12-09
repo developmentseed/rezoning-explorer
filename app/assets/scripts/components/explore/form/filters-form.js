@@ -18,6 +18,7 @@ import { makeTitleCase } from '../../../styles/utils/general';
 import InfoButton from '../../common/info-button';
 import { FormSwitch } from '../../../styles/form/switch';
 import { round } from '../../../utils/format';
+import updateArrayIndex from '../../../utils/update-array-index';
 import { INPUT_CONSTANTS } from '../panel-data';
 
 import FormInput from './form-input';
@@ -61,7 +62,6 @@ function FiltersForm (props) {
     checkIncluded,
     resource,
     setFilters,
-    updateStateList,
     outputFilters,
     active
   } = props;
@@ -196,7 +196,7 @@ function FiltersForm (props) {
                                     (f) => f.id === filter.id
                                   );
                                   setFilters(
-                                    updateStateList(filters, ind, {
+                                    updateArrayIndex(filters, ind, {
                                       ...filter,
                                       active: !filter.active,
                                       input: {
@@ -221,7 +221,7 @@ function FiltersForm (props) {
                                     (f) => f.id === filter.id
                                   );
                                   setFilters(
-                                    updateStateList(filters, ind, {
+                                    updateArrayIndex(filters, ind, {
                                       ...filter,
                                       input: {
                                         ...filter.input,
@@ -234,8 +234,7 @@ function FiltersForm (props) {
                             />
                           </PanelOption>
                         )
-                    )
-                  }
+                    )}
                 />
               );
             })}
@@ -255,7 +254,6 @@ FiltersForm.propTypes = {
   filters: T.array,
   resource: T.string,
   setFilters: T.func,
-  updateStateList: T.func,
   outputFilters: T.array,
   checkIncluded: T.func,
   active: T.bool

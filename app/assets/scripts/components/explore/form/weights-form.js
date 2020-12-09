@@ -8,9 +8,10 @@ import {
 } from './form';
 import InfoButton from '../../common/info-button';
 import FormInput from '../form/form-input';
+import updateArrayIndex from '../../../utils/update-array-index';
 
 function WeightsForm (props) {
-  const { weights, setWeights, updateStateList, active } = props;
+  const { weights, setWeights, active } = props;
   return (
     <FormWrapper active={active}>
       {weights.map((weight, ind) => (
@@ -25,7 +26,7 @@ function WeightsForm (props) {
             option={weight}
             onChange={(value) => {
               setWeights(
-                updateStateList(weights, ind, {
+                updateArrayIndex(weights, ind, {
                   ...weight,
                   input: {
                     ...weight.input,
