@@ -114,6 +114,10 @@ const initializeMap = ({
 
   map.on('load', () => {
     setMap(map);
+    // This map style has a 'background' layer underneath the satellite layer
+    // which is completely black. Was not able to remove this via mapbox studio
+    // so removing it on load.
+    map.removeLayer('background');
 
     /*
      * Resize map on window size change
