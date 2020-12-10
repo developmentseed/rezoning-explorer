@@ -72,25 +72,25 @@ const FormInput = ({ option, onChange }) => {
           onChange={onChange}
         />
       );
-    // case TEXT:
-    //   return (
-    //     <StressedFormGroupInput
-    //       inputType='number'
-    //       inputSize='small'
-    //       disabled={option.readOnly}
-    //       id={`${option.name}`}
-    //       name={`${option.name}`}
-    //       value={option.input.value}
-    //       validate={
-    //         option.input.range
-    //           ? validateRangeNum(option.input.range[0], option.input.range[1])
-    //           : () => true
-    //       }
-    //       errorMessage={errorMessage}
-    //       onChange={onChange}
-    //       validationTimeout={1500}
-    //     />
-    //   );
+     case TEXT:
+       return (
+         <StressedFormGroupInput
+           inputType='number'
+           inputSize='small'
+           disabled={option.readOnly}
+           id={`${option.name}`}
+           name={`${option.name}`}
+           value={option.input.value}
+           validate={
+             option.input.range
+               ? validateRangeNum(option.input.range[0], option.input.range[1])
+               : () => true
+           }
+           errorMessage={errorMessage}
+           onChange={onChange}
+           validationTimeout={1500}
+         />
+       );
     // case BOOL:
     //   return null;
     // case MULTI:

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import T from 'prop-types';
 import {
   FormWrapper,
@@ -8,37 +8,40 @@ import {
 } from './form';
 import InfoButton from '../../common/info-button';
 import FormInput from '../form/form-input';
-import updateArrayIndex from '../../../utils/update-array-index';
+// import updateArrayIndex from '../../../utils/update-array-index';
 
 function LCOEForm (props) {
-  const { lcoe, setLcoe, active } = props;
+  const { lcoe, active } = props;
   return (
     <FormWrapper active={active}>
-      {lcoe.map((cost, ind) => (
-        <PanelOption key={cost.name}>
-          <OptionHeadline>
-            <PanelOptionTitle>{cost.name}</PanelOptionTitle>
+      {lcoe.map(([cost, setCost], ind) => {
+        const onChange = useCallback(
+          (v) => setCost({
+            ...cost,
+            input: {
+              ...cost.input,
+              value: v
+            }
+          })
 
-            <InfoButton info='Placeholder text' id={cost.name}>
+        );
+        return (
+          <PanelOption key={cost.name}>
+            <OptionHeadline>
+              <PanelOptionTitle>{cost.name}</PanelOptionTitle>
+
+              <InfoButton info='Placeholder text' id={cost.name}>
               Info
-            </InfoButton>
-          </OptionHeadline>
+              </InfoButton>
+            </OptionHeadline>
 
-          <FormInput
-            option={cost}
-            onChange={(v) =>
-              setLcoe(
-                updateArrayIndex(lcoe, ind, {
-                  ...cost,
-                  input: {
-                    ...cost.input,
-                    value: v
-                  }
-                })
-              )}
-          />
-        </PanelOption>
-      ))}
+            <FormInput
+              option={cost}
+              onChange={onChange}
+            />
+          </PanelOption>
+        );
+      })}
     </FormWrapper>
   );
 }

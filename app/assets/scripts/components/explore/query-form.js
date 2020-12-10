@@ -181,43 +181,6 @@ function QueryForm (props) {
     }));
   };
 
-  /*
-  const [weights, setWeights] = useQsState({
-    key: 'weights',
-    hydrator: v => {
-      let base = initListToState(weightsList);
-      if (v) {
-        const qsValues = v.split('|').map(vals => {
-          const [value, active] = vals.split(',');
-          return {
-            value: Number(value),
-            active: active === undefined
-          };
-        });
-        base = base.map((weight, i) => (
-          {
-            ...weight,
-            active: qsValues[i].active,
-            input: {
-              ...weight.input,
-              value: qsValues[i].value || weight.input.value
-            }
-          }
-        ));
-      }
-      return base;
-    },
-    dehydrator: v => {
-      return v && v.map(w => {
-        const { value } = w.input;
-        let shard = `${value}`;
-        shard = w.active ? shard : `${shard},${false}`;
-        return shard;
-      }).join('|');
-    },
-    default: undefined
-  }); */
-
   const weightsInd = weightsList.map(w => {
     const [weight, setWeight] = useQsState({
       key: w.id,
@@ -350,6 +313,44 @@ function QueryForm (props) {
 
   useEffect(initializeFilters, [filterRanges, resource]);
 
+  const lcoeInd = lcoeList.map(c => {
+    const [cost, setCost] = useQsState({
+      key: c.id,
+      default: undefined,
+      hydrator: v => {
+        const base = {
+          ...c,
+          input: initByType(c, {}, apiResourceNameMap[resource]),
+          active: c.active === undefined ? true : c.active
+        };
+        let inputUpdate = {};
+        if (v) {
+          const [value, active] = v.split(',');
+          inputUpdate = {
+            value: castByFilterType(base.input.type)(value),
+            active: active === undefined
+          };
+        }
+        return {
+          ...base,
+          active: inputUpdate.active === undefined ? base.active : inputUpdate.active,
+          input: {
+            ...base.input,
+            value: inputUpdate.value || base.input.value
+          }
+        };
+      },
+      dehydrator: c => {
+        const { value } = c.input;
+        let shard = `${value}`;
+        shard = c.active ? shard : `${shard},${false}`;
+        return shard;
+      }
+    });
+    return [cost, setCost];
+  });
+
+  /*
   const [lcoe, setLcoe] = useQsState({
     key: 'lcoe',
     hydrator: v => {
@@ -386,16 +387,18 @@ function QueryForm (props) {
     },
     default: undefined
   });
+  */
 
+  // TODO update
   const resetClick = () => {
-    setWeights(initListToState(weightsList));
+    // setWeights(initListToState(weightsList));
     // setFilters(initListToState(filtersLists, filterRanges.getData()));
-
-    setLcoe(initListToState(lcoeList));
+    // setLcoe(initListToState(lcoeList));
 
     initializeFilters();
   };
 
+  // TODO update this
   const applyClick = () => {
     const weightsValues = Object.values(weights)
       .reduce((accum, weight) => (
@@ -415,19 +418,20 @@ function QueryForm (props) {
   };
 
   // TODO check this
-  useEffect(onInputTouched, [area, resource, weightsInd, filtersInd, lcoe]);
+  useEffect(onInputTouched, [area, resource, weightsInd, filtersInd, lcoeInd]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
 
   useEffect(() => {
     if (resource) {
       try {
-        const capacity = lcoe.find(cost => cost.id === 'capacity_factor');
-        const ind = lcoe.findIndex(cost => cost.id === 'capacity_factor');
+        const [capacity, setCapacity] = lcoeInd.find(([cost, _]) => cost.id === 'capacity_factor');
+        // const ind = lcoe.findIndex(cost => cost.id === 'capacity_factor');
         capacity.input.availableOptions = capacity.input.options[apiResourceNameMap[resource]];
         capacity.input.value = capacity.input.availableOptions[0];
 
-        lcoe.splice(ind, 1, capacity);
-        setLcoe(lcoe);
+        // lcoe.splice(ind, 1, capacity);
+        // setLcoe(lcoe);
+        setCapacity(capacity);
       } catch (err) {
         /* eslint-disable-next-line */
         console.error(err);
@@ -543,21 +547,22 @@ function QueryForm (props) {
           }}
 
         />
-        {/* <LCOEForm
+        <LCOEForm
           name='lcoe'
           icon='disc-dollar'
-          lcoe={lcoe}
-          setLcoe={setLcoe}
+          lcoe={lcoeInd}
+          // setLcoe={setLcoe}
           presets={presets.lcoe}
           setPreset={(preset) => {
             if (preset === 'reset') {
-              setLcoe(initListToState(lcoeList));
+              // TODO
+              // setLcoe(initListToState(lcoeList));
             } else {
-              setLcoe(initListToState(presets.lcoe[preset]));
+              // setLcoe(initListToState(presets.lcoe[preset]));
             }
           }}
 
-        /> */}
+        />
 
       </TabbedBlockBody>
 
