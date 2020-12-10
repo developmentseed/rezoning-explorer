@@ -11,20 +11,20 @@ import FormInput from '../form/form-input';
 import updateArrayIndex from '../../../utils/update-array-index';
 
 function WeightsForm (props) {
-  const { weights, setWeights, active } = props;
+  const { weights, active } = props;
   return (
     <FormWrapper active={active}>
-      {weights.map((weight, ind) => {
+      {weights.map(([weight, setWeight], ind) => {
         const onChange = useCallback(
           (value) => {
-            setWeights(
-              updateArrayIndex(weights, ind, {
+            setWeight(
+              {
                 ...weight,
                 input: {
                   ...weight.input,
                   value
                 }
-              })
+              }
             );
           }
           , [weights]);

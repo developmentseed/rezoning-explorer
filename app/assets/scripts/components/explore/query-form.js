@@ -150,8 +150,6 @@ const initByType = (obj, ranges, resource) => {
   }
 };
 
-
-
 function QueryForm (props) {
   const {
     area,
@@ -183,6 +181,7 @@ function QueryForm (props) {
     }));
   };
 
+  /*
   const [weights, setWeights] = useQsState({
     key: 'weights',
     hydrator: v => {
@@ -217,63 +216,99 @@ function QueryForm (props) {
       }).join('|');
     },
     default: undefined
+  }); */
+
+  const weightsInd = weightsList.map(w => {
+    const [weight, setWeight] = useQsState({
+      key: w.id,
+      hydrator: v => {
+        const base = {
+          ...w,
+          input: initByType(w, {}),
+          active: w.active === undefined ? true : w.active
+        };
+        let inputUpdate = {};
+        if (v) {
+          const [value, active] = v.split(',');
+          inputUpdate = {
+            value: Number(value),
+            active: active === undefined
+          };
+        }
+        return {
+          ...base,
+          active: inputUpdate.active === undefined ? base.active : inputUpdate.active,
+          input: {
+            ...base.input,
+            value: inputUpdate.value || base.input.value
+          }
+        };
+      },
+      dehydrator: w => {
+        const { value } = w.input;
+        let shard = `${value}`;
+        shard = w.active ? shard : `${shard},${false}`;
+        return shard;
+      }
+    });
+    return [weight, setWeight];
   });
 
-  const [filters, setFilters] = useQsState({
-    key: 'filters',
-    hydrator: v => {
-      let baseFilts = initListToState(filtersLists, filterRanges.getData());
-      if (v) {
-        const qsValues = v.split('|').map((vals, i) => {
-          const thisFilt = baseFilts[i];
-          if (thisFilt.isRange) {
-            const [min, max, active] = vals.split(',');
-            return {
+  const filtersInd = filtersLists.map(f => {
+    const [filt, setFilt] = useQsState({
+      key: f.id,
+      default: undefined,
+      hydrator: v => {
+        const base = {
+          ...f,
+          input: initByType(f, filterRanges.getData(), apiResourceNameMap[resource]),
+          active: f.active === undefined ? true : f.active
+        };
+
+        let inputUpdate;
+        if (v) {
+          if (base.isRange) {
+            const [min, max, active] = v.split(',');
+            inputUpdate = {
               value: {
                 min: Number(min),
                 max: Number(max)
               },
               active: active === undefined
             };
-          } else if (thisFilt.input.options) {
-            // multi select or dropdown
-            vals = vals.split(',');
+          } else if (base.input.options) {
+            v = v.split(',');
             let active = true;
-            if (vals[vals.length - 1] === 'false') {
+            if (v[v.length - 1] === 'false') {
               // remove active
-              vals = vals.slice(0, vals.length - 2).map(Number);
+              v = v.slice(0, v.length - 2).map(Number);
               active = false;
             } else {
-              vals = vals.map(Number);
+              v = v.map(Number);
             }
-            return {
-              value: vals,
+            inputUpdate = {
+              value: v,
               active
             };
           } else {
-            const [val, active] = vals.split(',');
-            return {
-              value: castByFilterType(thisFilt.input.type)(val),
+            const [val, active] = v.split(',');
+            inputUpdate = {
+              value: castByFilterType(base.input.type)(val),
               active: active === undefined
             };
           }
-        });
 
-        baseFilts = baseFilts.map((filt, i) => (
-          {
-            ...filt,
-            active: qsValues[i].active,
+          return {
+            ...base,
+            active: inputUpdate.active,
             input: {
-              ...filt.input,
-              value: qsValues[i].value || filt.input.value
+              ...base.input,
+              value: inputUpdate.value || base.input.value
             }
-          }
-        ));
-      }
-      return baseFilts;
-    },
-    dehydrator: v => {
-      return v && v.map(f => {
+          };
+        }
+      },
+      dehydrator: f => {
         const { value } = f.input;
         let shard;
         if (f.isRange) {
@@ -285,11 +320,35 @@ function QueryForm (props) {
         }
         shard = f.active ? shard : `${shard},${false}`;
         return shard;
-      }).filter(f => !f.excluded)
-        .join('|');
-    },
-    default: undefined
+      }
+    });
+    return [filt, setFilt];
   });
+
+  const initializeFilters = () => {
+    if (firstLoad.current && filterRanges.isReady()) {
+      firstLoad.current = false;
+    }
+    filtersLists.forEach((filtObject, ind) => {
+      const [filt, setFilt] = filtersInd[ind];
+      if (filt) {
+        // This filter has been set via the url
+        // Does not need to be initialized
+        return;
+      }
+
+      // Initialize the filter with default values
+      setFilt({
+        ...filtObject,
+        input: {
+          ...initByType(filtObject, filterRanges.getData(), apiResourceNameMap[resource])
+        },
+        active: filtObject.active === undefined ? true : filtObject.active
+      });
+    });
+  };
+
+  useEffect(initializeFilters, [filterRanges, resource]);
 
   const [lcoe, setLcoe] = useQsState({
     key: 'lcoe',
@@ -330,8 +389,11 @@ function QueryForm (props) {
 
   const resetClick = () => {
     setWeights(initListToState(weightsList));
-    setFilters(initListToState(filtersLists, filterRanges.getData()));
+    // setFilters(initListToState(filtersLists, filterRanges.getData()));
+
     setLcoe(initListToState(lcoeList));
+
+    initializeFilters();
   };
 
   const applyClick = () => {
@@ -348,10 +410,12 @@ function QueryForm (props) {
           ...accum,
           [cost.id || cost.name]: (cost.input.options ? String : Number)(cost.input.value)
         }), {});
-    updateFilteredLayer(filters, weightsValues, lcoeValues);
+    // TODO fix this
+    updateFilteredLayer(filtersInd, weightsValues, lcoeValues);
   };
 
-  useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
+  // TODO check this
+  useEffect(onInputTouched, [area, resource, weightsInd, filtersInd, lcoe]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
 
   useEffect(() => {
@@ -373,13 +437,17 @@ function QueryForm (props) {
 
   /* Reinitialize filters when new ranges are received */
 
+  /*
   useEffect(() => {
     if (firstLoad.current && filterRanges.isReady()) {
       firstLoad.current = false;
     } else {
       setFilters(initListToState(filtersLists, filterRanges.getData()));
     }
-  }, [filterRanges]);
+  }, [filterRanges]); */
+  if (firstLoad.current) {
+    return null;
+  }
 
   return (
     <PanelBlock>
@@ -445,15 +513,15 @@ function QueryForm (props) {
           presets={presets.filters}
           setPreset={(preset) => {
             if (preset === 'reset') {
-              setFilters(initListToState(filtersLists, filterRanges.getData()));
+              // setFilters(initListToState(filtersLists, filterRanges.getData()));
             } else {
-              setFilters(initListToState(presets.filters[preset], filterRanges.getData()));
+              // setFilters(initListToState(presets.filters[preset], filterRanges.getData()));
             }
           }}
-          filters={filters}
+          filters={filtersInd}
           checkIncluded={checkIncluded}
           resource={resource}
-          setFilters={setFilters}
+          // setFilters={setFilters}
           outputFilters={
             [
               [maxZoneScore, setMaxZoneScore, maxZoneScoreO]
@@ -463,14 +531,14 @@ function QueryForm (props) {
         <WeightsForm
           name='weights'
           icon='sliders-horizontal'
-          weights={weights}
-          setWeights={setWeights}
+          weights={weightsInd}
+          // setWeights={setWeights}
           presets={presets.weights}
           setPreset={(preset) => {
             if (preset === 'reset') {
-              setWeights(initListToState(weightsList));
+              // setWeights(initListToState(weightsList));
             } else {
-              setWeights(initListToState(presets.weights[preset]));
+              // setWeights(initListToState(presets.weights[preset]));
             }
           }}
 

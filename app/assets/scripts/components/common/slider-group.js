@@ -23,24 +23,24 @@ function SliderGroup (props) {
 
   const validateTop = useCallback(
     validateRangeNum(value.min || range[0], range[1])
-    , [value]);
+    , [value.min]);
 
   const fgTopOnChange = useCallback((val) => {
-    const update = isRange ? { ...value, max: val } : val;
+    const update = isRange ? { ...value, max: Number(val) } : Number(val);
     onChange(update);
-  }, [value]);
+  }, [value.min, value.max]);
 
   const validateLow = useCallback(
     validateRangeNum(range[0], value.max)
-    , [value]);
+    , [value.max]);
 
   const fgBottomOnChange = useCallback((val) => {
-    onChange({ ...value, min: val });
-  }, [value]);
+    onChange({ ...value, min: Number(val) });
+  }, [value.max, value.min]);
 
   return (
     <FormSliderGroup isRange={isRange}>
-      {isRange &&
+      { isRange &&
       <StressedFormGroupInput
         inputType='number'
         inputSize='small'

@@ -72,7 +72,7 @@ function FiltersForm (props) {
         initialState={[
           true,
           ...filters
-            .reduce((seen, filt) => {
+            .reduce((seen, [filt, setFilt]) => {
               if (!seen.includes(filt.category)) {
                 seen.push(filt);
               }
@@ -81,7 +81,7 @@ function FiltersForm (props) {
             .slice(1)
             .map((_) => false)
         ]}
-        foldCount={Object.keys(filters).length + 1}
+        // foldCount={Object.keys(filters).length + 1}
         allowMultiple
       >
         {({ checkExpanded, setExpanded }) => (
@@ -108,7 +108,6 @@ function FiltersForm (props) {
                       ({ min, max }) => {
                         setVal({ min: round(min), max: round(max) });
                       }
-
                       , [outputFilters]);
                     return (
                       <PanelOption
@@ -145,10 +144,11 @@ function FiltersForm (props) {
 
             {Object.entries(
               filters.reduce((accum, filt) => {
-                if (!accum[filt.category]) {
-                  accum[filt.category] = [];
+                const [get, set] = filt;
+                if (!accum[get.category]) {
+                  accum[get.category] = [];
                 }
-                accum[filt.category].push(filt);
+                accum[get.category].push(filt);
                 return accum;
               }, {})
             ).map(([group, list], idx) => {
@@ -172,8 +172,39 @@ function FiltersForm (props) {
                   )}
                   renderBody={({ isFoldExpanded }) =>
                     list.map(
-                      (filter, ind) =>
-                        checkIncluded(filter, resource) && (
+                      ([filter, setFilter], ind) => {
+                        const inputOnChange = useCallback(
+
+                          (value) => {
+                            if (filter.active) {
+                              setFilter({
+                                ...filter,
+                                input: {
+                                  ...filter.input,
+                                  value
+                                }
+                              }
+                              );
+                            }
+                          }
+
+                          , [JSON.stringify(filters)]);
+
+                        const switchOnChange = useCallback(
+                          () => {
+                            setFilter({
+                              ...filter,
+                              active: !filter.active,
+                              input: {
+                                ...filter.input,
+                                value: filter.input.type === BOOL
+                                  ? !filter.active
+                                  : filter.input.value
+                              }
+                            });
+                          }
+                          , [JSON.stringify(filters)]);
+                        return (checkIncluded(filter, resource) && (
                           <PanelOption
                             key={filter.name}
                             hidden={!isFoldExpanded}
@@ -189,7 +220,6 @@ function FiltersForm (props) {
                                   Info
                                 </InfoButton>
                               )}
-                              {/*
                               <FormSwitch
                                 hideText
                                 name={`toggle-${filter.name.replace(
@@ -198,51 +228,19 @@ function FiltersForm (props) {
                                 )}`}
                                 disabled={filter.disabled}
                                 checked={filter.active}
-                                onChange={() => {
-                                  const ind = filters.findIndex(
-                                    (f) => f.id === filter.id
-                                  );
-                                  setFilters(
-                                    updateArrayIndex(filters, ind, {
-                                      ...filter,
-                                      active: !filter.active,
-                                      input: {
-                                        ...filter.input,
-                                        value:
-                                          filter.input.type === BOOL
-                                            ? !filter.active
-                                            : filter.input.value
-                                      }
-                                    })
-                                  );
-                                }}
+                                onChange={switchOnChange}
                               >
                                 Toggle filter
-                              </FormSwitch>*/}
+                              </FormSwitch>
                             </OptionHeadline>
-                          {/*
                             <FormInput
                               option={filter}
-                              onChange={(value) => {
-                                if (filter.active) {
-                                  const ind = filters.findIndex(
-                                    (f) => f.id === filter.id
-                                  );
-                                  setFilters(
-                                    updateArrayIndex(filters, ind, {
-                                      ...filter,
-                                      input: {
-                                        ...filter.input,
-                                        value
-                                      }
-                                    })
-                                  );
-                                }
-                              }}
-                            />*/}
+                              onChange={inputOnChange}
+                            />
                           </PanelOption>
                         )
-                    )}
+                        );
+                      })}
                 />
               );
             })}
