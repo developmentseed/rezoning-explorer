@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { PropTypes as T } from 'prop-types';
 
 import FormInput from '../../styles/form/input';
@@ -43,6 +43,35 @@ export default function StressedFormGroupInput (props) {
     validationTimeout
   } = props;
 
+  const render = useCallback(
+    ({
+      ref,
+      errored,
+      value,
+      onChangeHandler,
+      onBlurHandler
+    }) => (
+      <>
+        <FormInput
+          ref={ref}
+          type={inputType}
+          variation={inputVariation}
+          readOnly={disabled}
+          name={name}
+          id={id}
+          invalid={errored}
+          stressed={errored}
+          size={inputSize}
+          value={value}
+          onBlur={onBlurHandler}
+          onChange={onChangeHandler}
+          placeholder={placeholder}
+          title={title}
+        />
+        {errored && (<ErrorMessage>{errorMessage}</ErrorMessage>)}
+      </>
+    )
+    , []);
   return (
     <FormGroup>
       <FormGroupHeader>
@@ -54,33 +83,7 @@ export default function StressedFormGroupInput (props) {
           validate={validate}
           onChange={onChange}
           validationTimeout={validationTimeout}
-          render={({
-            ref,
-            errored,
-            value,
-            onChangeHandler,
-            onBlurHandler
-          }) => (
-            <>
-              <FormInput
-                ref={ref}
-                type={inputType}
-                variation={inputVariation}
-                readOnly={disabled}
-                name={name}
-                id={id}
-                invalid={errored}
-                stressed={errored}
-                size={inputSize}
-                value={value}
-                onBlur={onBlurHandler}
-                onChange={onChangeHandler}
-                placeholder={placeholder}
-                title={title}
-              />
-              {errored && (<ErrorMessage>{errorMessage}</ErrorMessage>)}
-            </>
-          )}
+          render={render}
         />
       </FormGroupBody>
     </FormGroup>

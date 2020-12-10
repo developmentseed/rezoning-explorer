@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import T from 'prop-types';
 import {
   FormWrapper,
@@ -14,30 +14,36 @@ function WeightsForm (props) {
   const { weights, setWeights, active } = props;
   return (
     <FormWrapper active={active}>
-      {weights.map((weight, ind) => (
-        <PanelOption key={weight.name}>
-          <OptionHeadline>
-            <PanelOptionTitle>{weight.name}</PanelOptionTitle>
-            <InfoButton info={weight.info} id={weight.name}>
+      {weights.map((weight, ind) => {
+        const onChange = useCallback(
+          (value) => {
+            setWeights(
+              updateArrayIndex(weights, ind, {
+                ...weight,
+                input: {
+                  ...weight.input,
+                  value
+                }
+              })
+            );
+          }
+          , [weights]);
+
+        return (
+          <PanelOption key={weight.name}>
+            <OptionHeadline>
+              <PanelOptionTitle>{weight.name}</PanelOptionTitle>
+              <InfoButton info={weight.info} id={weight.name}>
               Info
-            </InfoButton>
-          </OptionHeadline>
-          <FormInput
-            option={weight}
-            onChange={(value) => {
-              setWeights(
-                updateArrayIndex(weights, ind, {
-                  ...weight,
-                  input: {
-                    ...weight.input,
-                    value
-                  }
-                })
-              );
-            }}
-          />
-        </PanelOption>
-      ))}
+              </InfoButton>
+            </OptionHeadline>
+            <FormInput
+              option={weight}
+              onChange={onChange}
+            />
+          </PanelOption>
+        );
+      })}
     </FormWrapper>
   );
 }

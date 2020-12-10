@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import InputRange from 'react-input-range';
 import styled from 'styled-components';
 import T from 'prop-types';
@@ -20,6 +20,15 @@ const FormSliderGroup = styled.div`
 
 function SliderGroup (props) {
   const { range, id, value, onChange, disabled, isRange } = props;
+
+  const validateTop = useCallback(
+    validateRangeNum(value.min || range[0], range[1])
+    , [value]);
+
+  const fgTopOnChange = useCallback((val) => {
+    const update = isRange ? { ...value, max: val } : val;
+    onChange(update);
+  }, []);
 
   return (
     <FormSliderGroup isRange={isRange}>
@@ -56,11 +65,8 @@ function SliderGroup (props) {
         label='Max value'
         value={truncateDecimals(value.max || value)}
         disabled={disabled}
-        validate={validateRangeNum(value.min || range[0], range[1])}
-        onChange={(val) => {
-          const update = isRange ? { ...value, max: val } : val;
-          onChange(update);
-        }}
+        validate={validateTop}
+        onChange={fgTopOnChange}
         title={disabled ? 'Enable this input to interact' : ''}
       />
     </FormSliderGroup>
