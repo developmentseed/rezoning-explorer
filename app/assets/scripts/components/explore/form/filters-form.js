@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 
@@ -103,36 +103,42 @@ function FiltersForm (props) {
               )}
               renderBody={({ isFoldExpanded }) => (
                 <>
-                  {outputFilters.map(([val, setVal, filterObject]) => (
-                    <PanelOption
-                      key={filterObject.name}
-                      hidden={!isFoldExpanded}
-                    >
-                      <OptionHeadline>
-                        <PanelOptionTitle>{filterObject.name}</PanelOptionTitle>
-                        {filterObject.info && (
-                          <InfoButton
-                            info={filterObject.info}
-                            id={filterObject.name}
-                          >
+                  {outputFilters.map(([val, setVal, filterObject]) => {
+                    const onChange = useCallback(
+                      ({ min, max }) => {
+                        setVal({ min: round(min), max: round(max) });
+                      }
+
+                      , [outputFilters]);
+                    return (
+                      <PanelOption
+                        key={filterObject.name}
+                        hidden={!isFoldExpanded}
+                      >
+                        <OptionHeadline>
+                          <PanelOptionTitle>{filterObject.name}</PanelOptionTitle>
+                          {filterObject.info && (
+                            <InfoButton
+                              info={filterObject.info}
+                              id={filterObject.name}
+                            >
                             Info
-                          </InfoButton>
-                        )}
-                      </OptionHeadline>
-                      <FormInput
-                        option={{
-                          ...filterObject,
-                          input: {
-                            ...filterObject.input,
-                            value: val
-                          }
-                        }}
-                        onChange={({ min, max }) => {
-                          setVal({ min: round(min), max: round(max) });
-                        }}
-                      />
-                    </PanelOption>
-                  ))}
+                            </InfoButton>
+                          )}
+                        </OptionHeadline>
+                        <FormInput
+                          option={{
+                            ...filterObject,
+                            input: {
+                              ...filterObject.input,
+                              value: val
+                            }
+                          }}
+                          onChange={onChange}
+                        />
+                      </PanelOption>
+                    );
+                  })}
                 </>
               )}
             />
@@ -183,6 +189,7 @@ function FiltersForm (props) {
                                   Info
                                 </InfoButton>
                               )}
+                              {/*
                               <FormSwitch
                                 hideText
                                 name={`toggle-${filter.name.replace(
@@ -211,8 +218,9 @@ function FiltersForm (props) {
                                 }}
                               >
                                 Toggle filter
-                              </FormSwitch>
+                              </FormSwitch>*/}
                             </OptionHeadline>
+                          {/*
                             <FormInput
                               option={filter}
                               onChange={(value) => {
@@ -231,7 +239,7 @@ function FiltersForm (props) {
                                   );
                                 }
                               }}
-                            />
+                            />*/}
                           </PanelOption>
                         )
                     )}

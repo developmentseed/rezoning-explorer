@@ -28,7 +28,15 @@ function SliderGroup (props) {
   const fgTopOnChange = useCallback((val) => {
     const update = isRange ? { ...value, max: val } : val;
     onChange(update);
-  }, []);
+  }, [value]);
+
+  const validateLow = useCallback(
+    validateRangeNum(range[0], value.max)
+    , [value]);
+
+  const fgBottomOnChange = useCallback((val) => {
+    onChange({ ...value, min: val });
+  }, [value]);
 
   return (
     <FormSliderGroup isRange={isRange}>
@@ -41,10 +49,8 @@ function SliderGroup (props) {
         label='Min value'
         value={truncateDecimals(value.min)}
         disabled={disabled}
-        validate={validateRangeNum(range[0], value.max)}
-        onChange={(val) => {
-          onChange({ ...value, min: val });
-        }}
+        validate={validateLow}
+        onChange={fgBottomOnChange}
         title={disabled ? 'Enable this input to interact' : ''}
       />}
 
