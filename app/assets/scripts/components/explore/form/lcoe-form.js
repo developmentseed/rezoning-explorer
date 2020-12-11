@@ -1,6 +1,6 @@
 import React from 'react';
 import T from 'prop-types';
-import { FormWrapper, PanelOption, PanelOptionTitle, OptionHeadline } from './form';
+import { FormWrapper, FormHeader, PanelOption, PanelOptionTitle, OptionHeadline } from './form';
 import InfoButton from '../../common/info-button';
 
 function LCOEForm (props) {
@@ -15,6 +15,17 @@ function LCOEForm (props) {
     <FormWrapper
       active={active}
     >
+      <FormHeader>
+        <h4>
+          Economic Parameters
+        </h4>
+        <details>
+          <summary>
+          Set economic parameters to...
+          </summary>
+          <p>o change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.</p>
+        </details>
+      </FormHeader>
       {lcoe.map((cost, ind) => (
         <PanelOption key={cost.name}>
           <OptionHeadline>

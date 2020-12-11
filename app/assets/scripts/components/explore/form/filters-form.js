@@ -2,7 +2,7 @@ import React from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 
-import { FormWrapper, FormGroupWrapper, PanelOption, OptionHeadline, PanelOptionTitle, InactiveMessage } from './form';
+import { FormWrapper, FormGroupWrapper, FormHeader, PanelOption, OptionHeadline, PanelOptionTitle, InactiveMessage } from './form';
 import { Accordion, AccordionFold } from '../../../components/accordion';
 import collecticon from '../../../styles/collecticons';
 import { glsp } from '../../../styles/utils/theme-values';
@@ -61,7 +61,17 @@ function FiltersForm (props) {
     <FormWrapper
       active={active}
     >
-
+      <FormHeader>
+        <h4>
+          Spatial Exclusion Filters
+        </h4>
+        <details>
+          <summary>
+          Set spatial exclusion filters to...
+          </summary>
+          <p>limit the areas included for zone weighting and LCOE analysis. Range sliders can have a minimum and maximum value. Any location in your selected area with values under the minimum or over the maximum allowed values for that filter will not be included in analysis. Areas with toggle-only filters are included by default; activate the filter to mask out these areas from analysis.</p>
+        </details>
+      </FormHeader>
       <Accordion
         initialState={[
           true,

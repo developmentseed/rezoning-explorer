@@ -21,6 +21,15 @@ export const FormGroupWrapper = styled.div`
   }
 `;
 
+export const FormHeader = styled.div`
+  margin-bottom: ${glsp(0.5)};
+  h4 {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    color: ${themeVal('color.baseAlpha')};
+  }
+`;
+
 export const PanelOption = styled.div`
   ${({ hidden }) => hidden && 'display: none;'}
   margin-bottom: 1.5rem;
@@ -64,6 +73,6 @@ export const OptionHeadline = styled(HeadOptionHeadline)`
 `;
 export const InactiveMessage = styled.div`
   padding: 0.5rem 0;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-style: italic;
 `;

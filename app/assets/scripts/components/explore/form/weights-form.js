@@ -1,6 +1,6 @@
 import React from 'react';
 import T from 'prop-types';
-import { FormWrapper, PanelOption, PanelOptionTitle, OptionHeadline } from './form';
+import { FormWrapper, FormHeader, PanelOption, PanelOptionTitle, OptionHeadline } from './form';
 import InfoButton from '../../common/info-button';
 
 function WeightsForm (props) {
@@ -15,6 +15,17 @@ function WeightsForm (props) {
     <FormWrapper
       active={active}
     >
+      <FormHeader>
+        <h4>
+          Zone Weighting Criteria
+        </h4>
+        <details>
+          <summary>
+          Adjusting the weights of...
+          </summary>
+          <p>parameters to change the calculated aggregated zone scores.</p>
+        </details>
+      </FormHeader>
       {weights.map((weight, ind) => (
         <PanelOption key={weight.name}>
           <OptionHeadline>
