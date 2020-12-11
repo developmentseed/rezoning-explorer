@@ -175,6 +175,7 @@ export function ExploreProvider (props) {
 
   const updateFilteredLayer = (filterValues, weights, lcoe) => {
     // Prepare a query string to the API based from filter values
+    //
     const filterString = filterValues
       .map((filter) => {
         const { id, active, input } = filter;

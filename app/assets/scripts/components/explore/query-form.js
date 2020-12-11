@@ -42,19 +42,6 @@ const maxZoneScoreO = {
   }
 };
 
-/*
-const maxLCOE = {
-  name: 'LCOE Range',
-  id: 'lcoe-range',
-  active: true,
-  isRange: true,
-  input: {
-    value: { min: 0, max: 1 },
-    type: SLIDER,
-    range: [0, 1]
-  }
-}; */
-
 const castByFilterType = type => {
   switch (type) {
     case BOOL:
@@ -70,19 +57,6 @@ const castByFilterType = type => {
   }
 };
 
-const MultiSelectButton = styled(Button)`
-  width: 100%;
-  ${truncated()}
-`;
-const MultiWrapper = styled(ShadowScrollbar)`
-  height: 20rem;
-  > .scroll-area {
-    > div {
-      display: grid;
-      grid-template-rows: repeat(auto-fill, minmax(1.5rem, 1fr));
-    }
-  }
-`;
 const Subheadingstrong = styled.strong`
   color: ${themeVal('color.base')};
 `;
@@ -173,14 +147,8 @@ function QueryForm (props) {
 
   const firstLoad = useRef(true);
 
-  const initListToState = (list, ranges) => {
-    return list.map((obj) => ({
-      ...obj,
-      input: initByType(obj, filterRanges.getData(), apiResourceNameMap[resource]),
-      active: obj.active === undefined ? true : obj.active
-    }));
-  };
-
+  /* Generate weights qs state variables
+  */
   const weightsInd = weightsList.map(w => {
     const [weight, setWeight] = useQsState({
       key: w.id,
@@ -194,7 +162,7 @@ function QueryForm (props) {
         if (v) {
           const [value, active] = v.split(',');
           inputUpdate = {
-            value: Number(value),
+            value: castByFilterType(base.input.type)(value),
             active: active === undefined
           };
         }
@@ -217,6 +185,7 @@ function QueryForm (props) {
     return [weight, setWeight];
   });
 
+  /* Generate filters qs state variables */
   const filtersInd = filtersLists.map(f => {
     const [filt, setFilt] = useQsState({
       key: f.id,
@@ -288,30 +257,31 @@ function QueryForm (props) {
     return [filt, setFilt];
   });
 
-  const initializeFilters = () => {
+  const initialize = (baseList, destList, options) => {
+    const { reset, apiRange } = options || {};
     if (firstLoad.current && filterRanges.isReady()) {
       firstLoad.current = false;
     }
-    filtersLists.forEach((filtObject, ind) => {
-      const [filt, setFilt] = filtersInd[ind];
-      if (filt) {
+    baseList.forEach((base, ind) => {
+      const [object, setObject] = destList[ind];
+      if (object && !reset) {
         // This filter has been set via the url
         // Does not need to be initialized
         return;
       }
 
       // Initialize the filter with default values
-      setFilt({
-        ...filtObject,
+      setObject({
+        ...base,
         input: {
-          ...initByType(filtObject, filterRanges.getData(), apiResourceNameMap[resource])
+          ...initByType(base,
+            apiRange || {},
+            apiResourceNameMap[resource])
         },
-        active: filtObject.active === undefined ? true : filtObject.active
+        active: base.active === undefined ? true : base.active
       });
     });
   };
-
-  useEffect(initializeFilters, [filterRanges, resource]);
 
   const lcoeInd = lcoeList.map(c => {
     const [cost, setCost] = useQsState({
@@ -350,87 +320,51 @@ function QueryForm (props) {
     return [cost, setCost];
   });
 
-  /*
-  const [lcoe, setLcoe] = useQsState({
-    key: 'lcoe',
-    hydrator: v => {
-      let base = initListToState(lcoeList);
-      if (v) {
-        const qsValues = v.split('|').map((vals, i) => {
-          const [value, active] = vals.split(',');
-          const thisCost = base[i];
-          return {
-            value: castByFilterType(thisCost.input.type)(value),
-            active: active === undefined
-          };
-        });
-        base = base.map((cost, i) => (
-          {
-            ...cost,
-            active: qsValues[i].active,
-            input: {
-              ...cost.input,
-              value: qsValues[i].value || cost.input.value
-            }
-          }
-        ));
-      }
-      return base;
-    },
-    dehydrator: v => {
-      return v && v.map(w => {
-        const { value } = w.input;
-        let shard = `${value}`;
-        shard = w.active ? shard : `${shard},${false}`;
-        return shard;
-      }).join('|');
-    },
-    default: undefined
-  });
-  */
-
   // TODO update
   const resetClick = () => {
     // setWeights(initListToState(weightsList));
     // setFilters(initListToState(filtersLists, filterRanges.getData()));
     // setLcoe(initListToState(lcoeList));
 
-    initializeFilters();
+    // initializeFilters();
   };
 
   // TODO update this
   const applyClick = () => {
-    const weightsValues = Object.values(weights)
-      .reduce((accum, weight) => (
-        {
-          ...accum,
-          [weight.id || weight.name]: Number(weight.input.value)
-        }), {});
+    const weightsValues = weightsInd.reduce((accum, [weight, _]) => ({
+      ...accum,
+      [weight.id || weight.name]: castByFilterType(weight.input.type)(weight.input.value)
+    }), {});
 
-    const lcoeValues = Object.values(lcoe)
-      .reduce((accum, cost) => (
-        {
-          ...accum,
-          [cost.id || cost.name]: (cost.input.options ? String : Number)(cost.input.value)
-        }), {});
-    // TODO fix this
-    updateFilteredLayer(filtersInd, weightsValues, lcoeValues);
+    const lcoeValues = lcoeInd.reduce((accum, [cost, _]) => ({
+      ...accum,
+      [cost.id || cost.name]: castByFilterType(cost.input.type)(cost.input.value)
+    }), {});
+
+    // Get filters and discard setting functions
+    const filters = filtersInd.map(([filter, _]) => filter);
+
+    updateFilteredLayer(filters, weightsValues, lcoeValues);
   };
+  useEffect(() => {
+    initialize(filtersLists, filtersInd, {
+      reset: false,
+      apiRange: filterRanges.getData()
+    });
+  }, [filterRanges, resource]);
 
-  // TODO check this
-  useEffect(onInputTouched, [area, resource, weightsInd, filtersInd, lcoeInd]);
+  useEffect(onInputTouched, [area, resource, ...weightsInd.map(([w, _]) => w), ...filtersInd.map(([f, _]) => f), lcoeInd]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
 
+  /* Update capacity factor options based on
+   * what the current resource is
+   */
   useEffect(() => {
     if (resource) {
       try {
         const [capacity, setCapacity] = lcoeInd.find(([cost, _]) => cost.id === 'capacity_factor');
-        // const ind = lcoe.findIndex(cost => cost.id === 'capacity_factor');
         capacity.input.availableOptions = capacity.input.options[apiResourceNameMap[resource]];
         capacity.input.value = capacity.input.availableOptions[0];
-
-        // lcoe.splice(ind, 1, capacity);
-        // setLcoe(lcoe);
         setCapacity(capacity);
       } catch (err) {
         /* eslint-disable-next-line */
@@ -439,16 +373,7 @@ function QueryForm (props) {
     }
   }, [resource]);
 
-  /* Reinitialize filters when new ranges are received */
-
-  /*
-  useEffect(() => {
-    if (firstLoad.current && filterRanges.isReady()) {
-      firstLoad.current = false;
-    } else {
-      setFilters(initListToState(filtersLists, filterRanges.getData()));
-    }
-  }, [filterRanges]); */
+  /* Wait until elements have mounted and been parsed to render the query form */
   if (firstLoad.current) {
     return null;
   }
@@ -517,15 +442,20 @@ function QueryForm (props) {
           presets={presets.filters}
           setPreset={(preset) => {
             if (preset === 'reset') {
-              // setFilters(initListToState(filtersLists, filterRanges.getData()));
+              initialize(filtersLists, filtersInd, {
+                reset: true,
+                apiRange: filterRanges.getData()
+              });
             } else {
-              // setFilters(initListToState(presets.filters[preset], filterRanges.getData()));
+              initialize(presets.filters[preset], filtersInd, {
+                reset: true,
+                apiRange: filterRanges.getData()
+              });
             }
           }}
           filters={filtersInd}
           checkIncluded={checkIncluded}
           resource={resource}
-          // setFilters={setFilters}
           outputFilters={
             [
               [maxZoneScore, setMaxZoneScore, maxZoneScoreO]
@@ -536,13 +466,16 @@ function QueryForm (props) {
           name='weights'
           icon='sliders-horizontal'
           weights={weightsInd}
-          // setWeights={setWeights}
           presets={presets.weights}
           setPreset={(preset) => {
             if (preset === 'reset') {
-              // setWeights(initListToState(weightsList));
+              initialize(weightsList, weightsInd, {
+                reset: true
+              });
             } else {
-              // setWeights(initListToState(presets.weights[preset]));
+              initialize(presets.weights[preset], weightsInd, {
+                reset: true
+              });
             }
           }}
 
@@ -555,10 +488,13 @@ function QueryForm (props) {
           presets={presets.lcoe}
           setPreset={(preset) => {
             if (preset === 'reset') {
-              // TODO
-              // setLcoe(initListToState(lcoeList));
+              initialize(lcoeList, lcoeInd, {
+                reset: true
+              });
             } else {
-              // setLcoe(initListToState(presets.lcoe[preset]));
+              initialize(presets.lcoe[preset], lcoeInd, {
+                reset: true
+              });
             }
           }}
 
