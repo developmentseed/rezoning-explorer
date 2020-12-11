@@ -21,7 +21,7 @@ import GridSetter from './grid-setter';
 import { truncated } from '../../styles/helpers';
 
 import { round } from '../../utils/format';
-import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap } from './panel-data';
+import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap, setRangeByUnit } from './panel-data';
 import FormSelect from '../../styles/form/select';
 import { FormGroup } from '../../styles/form/group';
 import { HeadOption, HeadOptionHeadline } from './form/form';
@@ -82,21 +82,19 @@ const initByType = (obj, ranges, resource) => {
   const apiRange = ranges[obj.id];
   const { input, options } = obj;
 
-  const range = (apiRange && [round(apiRange.min), round(apiRange.max)]) || obj.input.range || DEFAULT_RANGE;
+  const range = setRangeByUnit(
+    (apiRange &&
+      [round(apiRange.min), round(apiRange.max)]) ||
+      obj.input.range || DEFAULT_RANGE,
+    obj.unit);
 
   switch (input.type) {
     case SLIDER:
       return {
         ...input,
         range,
-        // unit: input.unit,
-        unit: input.unit === 'm' ? 'km' : input.unit,
-        value: input.value || input.default || (obj.isRange
-          ? input.unit === 'm'
-            ? { min: round(range[0] / 1000), max: round(range[1] / 1000) }
-            : { min: round(range[0]), max: round(range[1]) }
-          : range[0])
-        // value: input.value || input.default || (obj.isRange ? { min: round(range[0]), max: round(range[1]) } : range[0])
+        unit: input.unit,
+        value: input.value || input.default || (obj.isRange ? { min: round(range[0]), max: round(range[1]) } : range[0])
       };
     case TEXT:
       return {
@@ -214,15 +212,6 @@ function QueryForm (props) {
           const thisFilt = baseFilts[i];
           if (thisFilt.isRange) {
             const [min, max, active] = vals.split(',');
-            if (thisFilt.isRange && thisFilt.unit === 'm') {
-              return {
-                value: {
-                  min: Number(min / 1000),
-                  max: Number(max / 1000)
-                },
-                active: active === undefined
-              };
-            }
             return {
               value: {
                 min: Number(min),
@@ -332,15 +321,11 @@ function QueryForm (props) {
       errorMessage = 'Value not accepted';
     }
 
-    // Get filter range, if available
-    const filterRange = option.type === 'filter' ? filterRanges.getData()[option.id] : null;
-
     switch (option.input.type) {
       case SLIDER:
         return (
           <SliderGroup
-            unit={option.input.unit || '%'}
-            range={filterRange ? [round(filterRange.min), round(filterRange.max)] : option.input.range}
+            range={range}
             id={option.name}
             value={option.input.value}
             isRange={option.isRange}

@@ -18,7 +18,8 @@ import {
 
 import {
   INPUT_CONSTANTS,
-  checkIncluded
+  checkIncluded,
+  getMultiplierByUnit
 } from '../components/explore/panel-data';
 
 const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI, DEFAULT_RANGE } = INPUT_CONSTANTS;
@@ -199,7 +200,10 @@ export function ExploreProvider (props) {
           const {
             value: { min, max }
           } = filter.input;
-          return `${id}=${min},${max}`;
+
+          // App uses km but api expects values in meters
+          const multiplier = getMultiplierByUnit(filter.unit);
+          return `${id}=${min * multiplier},${max * multiplier}`;
         } else if (input.type === BOOL) {
           return `${id}=${filter.input.value}`;
         } else if (input.type === DROPDOWN || input.type === MULTI) {
