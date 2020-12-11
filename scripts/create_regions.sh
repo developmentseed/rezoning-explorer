@@ -20,7 +20,7 @@ mkdir -p $REGIONS_PATH/quantized
 mkdir -p $PUBLIC_ZONES_PATH/region # output dir
 
 # Download original file, if not already downloaded
-# wget -c https://biogeo.ucdavis.edu/data/gadm3.6/gadm36_levels_shp.zip -P $GADM_PATH
+wget -c https://biogeo.ucdavis.edu/data/gadm3.6/gadm36_levels_shp.zip -P $GADM_PATH
 
 # Expand
 unzip -o $GADM_PATH/gadm36_levels_shp.zip -d $GEO_PATH/gadm_unzipped 
