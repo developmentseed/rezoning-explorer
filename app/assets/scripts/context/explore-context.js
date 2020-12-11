@@ -21,7 +21,7 @@ import {
   checkIncluded
 } from '../components/explore/panel-data';
 
-const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI } = INPUT_CONSTANTS;
+const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
 const ExploreContext = createContext({});
 
@@ -30,32 +30,44 @@ export function ExploreProvider (props) {
     key: 'maxZoneScore',
     default: undefined,
     hydrator: v => {
-      if (v) {
-        const [min, max] = v.split(',').map(Number);
-        return { min, max };
-      } else {
-        return { min: 0, max: 1 };
-      }
-    },
+      const range = v ? v.split(',').map(Number) : null;
 
-    dehydrator: v => {
-      return v && `${v.min},${v.max}`;
-    }
+      return {
+        name: 'Zone Score Range',
+        id: 'zone-score-range',
+        active: true,
+        isRange: true,
+        input: {
+          value: range ? { min: range[0], max: range[1] } : { min: 0, max: 1 },
+          type: SLIDER,
+          range: [0, 1]
+        }
+      };
+    },
+    dehydrator: v => v.active && `${v.input.value.min},${v.input.value.max}`
   });
-  /*
+
   const [maxLCOE, setMaxLCOE] = useQsState({
     key: 'maxLCOE',
     default: undefined,
     hydrator: v => {
-      if (v) {
-        const [min, max] = v.split(',').map(Number);
-        return { min, max };
-      } else {
-        return { min: 0, max: 1 };
-      }
+      const range = v ? v.split(',').map(Number) : null;
+
+      return {
+        name: 'LCOE Range',
+        id: 'lcoe-range',
+        active: range && true,
+        isRange: true,
+        unit: 'USD/MwH',
+        input: {
+          value: range ? { min: range[0], max: range[1] } : null,
+          type: SLIDER,
+          range: range || DEFAULT_RANGE
+        }
+      };
     },
-    dehydrator: v => v && `${v.min},${v.max}`
-  }); */
+    dehydrator: v => v.active && `${v.input.value.min},${v.input.value.max}`
+  });
 
   // Init areas state
   const [areas, setAreas] = useState([]);
@@ -81,7 +93,7 @@ export function ExploreProvider (props) {
   );
 
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
-  const [lcoeLayerUrl, setLcoeLayerUrl] = useState(null);
+  const [outputLayerUrl, setOutputLayerUrl] = useState(null);
 
   // Executed on page mount
   useEffect(() => {
@@ -112,18 +124,31 @@ export function ExploreProvider (props) {
     }, new Map());
 
     setAreas(
-      areasJson.map((a) => {
-        if (a.type === 'country') {
-          a.id = a.gid;
-          a.eez = eezCountries.get(a.id);
-        }
-        // Parse bounds, if a string
-        if (a.bounds && typeof a.bounds === 'string') {
-          a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
-        }
+      areasJson
+        .map((a) => {
+          if (a.type === 'country') {
+            a.id = a.gid;
+            a.eez = eezCountries.get(a.id);
+          }
+          // Parse bounds, if a string
+          if (a.bounds && typeof a.bounds === 'string') {
+            a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
+          }
 
-        return a;
-      })
+          return a;
+        })
+        .sort(function (a, b) {
+          var nameA = a.name.toUpperCase();
+          var nameB = b.name.toUpperCase();
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+          // names must be equal
+          return 0;
+        })
     );
     hideGlobalLoading();
   };
@@ -204,21 +229,46 @@ export function ExploreProvider (props) {
       .join('&');
 
     // If area of country type, prepare path string to add to URL
-    const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
+    const countryPath = selectedArea.type === 'country' ? `${selectedArea.id}` : '';
 
     // Apply filter querystring to the map
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter${countryPath}/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
+      `${config.apiEndpoint}/filter/${countryPath}/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
     );
 
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
 
-    setLcoeLayerUrl(
-      `${config.apiEndpoint}/lcoe${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=cool`
+    setOutputLayerUrl(
+      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=cool`
     );
 
     generateZones(filterString, weights, lcoe);
   };
+
+  useEffect(() => {
+    if (currentZones.isReady()) {
+      const zones = currentZones.getData();
+      const value = zones.reduce((acc, z) => ({
+        min: z.properties.summary.lcoe < acc.min ? z.properties.summary.lcoe : acc.min,
+        max: z.properties.summary.lcoe > acc.max ? z.properties.summary.lcoe : acc.max
+      }), { min: Infinity, max: 0 });
+
+      setMaxLCOE({
+        ...maxLCOE,
+        active: true,
+        input: {
+          ...maxLCOE.input,
+          value,
+          range: [value.min, value.max]
+        }
+      });
+    } else {
+      setMaxLCOE({
+        ...maxLCOE,
+        active: false
+      });
+    }
+  }, [currentZones]);
 
   return (
     <>
@@ -230,8 +280,8 @@ export function ExploreProvider (props) {
           // output filters
           maxZoneScore,
           setMaxZoneScore,
-          /* maxLCOE,
-          setMaxLCOE */
+          maxLCOE,
+          setMaxLCOE,
 
           /* explore context */
           selectedArea,
@@ -250,7 +300,7 @@ export function ExploreProvider (props) {
 
           filteredLayerUrl,
           updateFilteredLayer,
-          lcoeLayerUrl,
+          outputLayerUrl,
           tourStep,
           setTourStep
         }}

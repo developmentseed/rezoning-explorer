@@ -59,7 +59,7 @@ const CTAButtons = styled.div`
 
 const HomeTitle = styled(InpageTitle)`
   span {
-    font-size: 1.25rem;
+    font-size: 1rem;
     text-transform: uppercase;
     display: block;
   }
@@ -67,7 +67,6 @@ const HomeTitle = styled(InpageTitle)`
     font-size: 3.5rem;
     line-height: 4rem;
   `}
-
 `;
 
 const Lead = styled(Prose)`
@@ -109,8 +108,8 @@ function Home () {
           <InpageHeaderInner>
             <InpageHeadline>
               <HomeTitle size='xlarge'>
-                <span>Welcome to </span>
-                Rezoning
+                REZoning
+                <span>The Renewable Energy Zoning Tool</span>
               </HomeTitle>
             </InpageHeadline>
           </InpageHeaderInner>

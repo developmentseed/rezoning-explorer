@@ -25,8 +25,12 @@ const ControlHeadline = styled.div`
 `;
 const ControlTools = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(1.5rem, 1fr));
+  justify-content: end;
   grid-gap: 0.75rem;
+  #layer-visibility {
+    grid-column: end;
+  }
 `;
 const Legend = styled.div`
   display: grid;
@@ -61,13 +65,14 @@ function LayerControl (props) {
       <ControlHeadline>
         <Prose>{name}</Prose>
         <ControlTools>
-          <InfoButton
-            id='layer-info'
-            info={props.info || null}
-            disabled={!props.info}
-          >
-            <span>Open Tour</span>
-          </InfoButton>
+          {props.info &&
+            <InfoButton
+              id='layer-info'
+              info={props.info || null}
+              disabled={!props.info}
+            >
+              <span>Open Tour</span>
+            </InfoButton>}
           <Button
             id='layer-visibility'
             variation='base-plain'

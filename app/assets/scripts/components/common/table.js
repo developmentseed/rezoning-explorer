@@ -13,7 +13,6 @@ const TableHeader = styled.div`
 
 const TableBody = styled.div`
   /* stylelint-enable */
-
 `;
 
 const TableList = styled.ul`
@@ -24,8 +23,7 @@ const TableList = styled.ul`
 `;
 
 const TableCell = styled.li`
-  text-align: center;
-
+  /* stylelint-disable-next-ine */
 `;
 
 function Table (props) {

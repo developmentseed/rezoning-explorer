@@ -7,7 +7,8 @@ import {
   FormGroupWrapper,
   PanelOption,
   OptionHeadline,
-  PanelOptionTitle
+  PanelOptionTitle,
+  InactiveMessage
 } from './form';
 import { Accordion, AccordionFold } from '../../../components/accordion';
 import collecticon from '../../../styles/collecticons';
@@ -17,8 +18,6 @@ import { makeTitleCase } from '../../../styles/utils/general';
 
 import InfoButton from '../../common/info-button';
 import { FormSwitch } from '../../../styles/form/switch';
-import { round } from '../../../utils/format';
-import updateArrayIndex from '../../../utils/update-array-index';
 import { INPUT_CONSTANTS } from '../panel-data';
 
 import FormInput from './form-input';
@@ -103,41 +102,40 @@ function FiltersForm (props) {
               )}
               renderBody={({ isFoldExpanded }) => (
                 <>
-                  {outputFilters.map(([val, setVal, filterObject]) => {
-                    const onChange = useCallback(
-                      ({ min, max }) => {
-                        setVal({ min: round(min), max: round(max) });
-                      }
-                      , [outputFilters]);
-                    return (
-                      <PanelOption
-                        key={filterObject.name}
-                        hidden={!isFoldExpanded}
-                      >
-                        <OptionHeadline>
-                          <PanelOptionTitle>{filterObject.name}</PanelOptionTitle>
-                          {filterObject.info && (
-                            <InfoButton
-                              info={filterObject.info}
-                              id={filterObject.name}
-                            >
-                            Info
-                            </InfoButton>
-                          )}
-                        </OptionHeadline>
-                        <FormInput
-                          option={{
-                            ...filterObject,
-                            input: {
-                              ...filterObject.input,
-                              value: val
+                  {
+                    outputFilters
+                      .map(([filterObject, setFilterObject, inactiveMessage]) => {
+                        const onChange = useCallback(
+                          (value) => {
+                            setFilterObject({
+                              ...filterObject,
+                              input: {
+                                ...filterObject.input,
+                                value
+                              }
                             }
-                          }}
-                          onChange={onChange}
-                        />
-                      </PanelOption>
-                    );
-                  })}
+                            );
+                          }, [filterObject]);
+                        return (
+                          <PanelOption key={filterObject.name} hidden={!isFoldExpanded}>
+                            <OptionHeadline>
+                              <PanelOptionTitle>{`${filterObject.name}`.concat(filterObject.unit ? ` (${filterObject.unit})` : '')}</PanelOptionTitle>
+                              {filterObject.info && (
+                                <InfoButton info={filterObject.info} id={filterObject.name}>
+                                Info
+                                </InfoButton>
+                              )}
+                            </OptionHeadline>
+                            {filterObject.active
+                              ? <FormInput
+                                option={filterObject}
+                                onChange={onChange}
+                                /> : <InactiveMessage>{inactiveMessage}</InactiveMessage>}
+                          </PanelOption>
+
+                        );
+                      })
+                  }
                 </>
               )}
             />

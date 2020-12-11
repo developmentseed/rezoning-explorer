@@ -29,10 +29,10 @@ function LCOEForm (props) {
           <PanelOption key={cost.name}>
             <OptionHeadline>
               <PanelOptionTitle>{cost.name}</PanelOptionTitle>
-
-              <InfoButton info='Placeholder text' id={cost.name}>
-              Info
-              </InfoButton>
+              {cost.info &&
+              <InfoButton info={cost.info} id={cost.name}>
+                Info
+              </InfoButton>}
             </OptionHeadline>
 
             <FormInput

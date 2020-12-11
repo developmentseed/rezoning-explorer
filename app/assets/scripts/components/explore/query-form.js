@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
@@ -29,18 +29,6 @@ import { FiltersForm, WeightsForm, LCOEForm } from './form';
 import ShadowScrollbar from '../common/shadow-scrollbar';
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
-
-const maxZoneScoreO = {
-  name: 'Zone Score Range',
-  id: 'zone-score-range',
-  active: true,
-  isRange: true,
-  input: {
-    value: { min: 0, max: 1 },
-    type: SLIDER,
-    range: [0, 1]
-  }
-};
 
 const castByFilterType = type => {
   switch (type) {
@@ -133,7 +121,7 @@ function QueryForm (props) {
     lcoeList,
     updateFilteredLayer,
     filterRanges,
-    presets,
+    presets: defaultPresets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
@@ -141,11 +129,12 @@ function QueryForm (props) {
     gridMode,
     setGridMode,
     gridSize, setGridSize,
-    maxZoneScore, setMaxZoneScore
-    // maxLCOE, setMaxLCOE
+    maxZoneScore, setMaxZoneScore,
+    maxLCOE, setMaxLCOE
   } = props;
 
   const firstLoad = useRef(true);
+  const [presets, setPresets] = useState(defaultPresets);
 
   /* Generate weights qs state variables
   */
@@ -372,6 +361,33 @@ function QueryForm (props) {
       }
     }
   }, [resource]);
+  /*
+  useEffect(() => {
+    if (filterRanges.isReady()) {
+      try {
+        const capfac = lcoe.find(f => f.id === 'capacity_factor').input.value;
+        const range = filterRanges.getData().f_lcoe[capfac].total;
+        setMaxLCOEO({
+          ...maxLCOEO,
+          active: true,
+          input: {
+            ...maxLCOEO.input,
+            range: [range.min, range.max]
+          }
+        });
+
+        setMaxLCOE(range);
+      } catch (err) {
+        setMaxLCOEO({
+          ...maxLCOEO,
+          active: false
+        });
+        setMaxLCOE(null);
+        console.warn('LCOE Filter not available for this country');
+      }
+    }
+  }, [lcoe.find(f => f.id === 'capacity_factor').input.value, filterRanges]);
+*/
 
   /* Wait until elements have mounted and been parsed to render the query form */
   if (firstLoad.current) {
@@ -439,7 +455,6 @@ function QueryForm (props) {
         <FiltersForm
           name='filters'
           icon='filter'
-          presets={presets.filters}
           setPreset={(preset) => {
             if (preset === 'reset') {
               initialize(filtersLists, filtersInd, {
@@ -458,7 +473,8 @@ function QueryForm (props) {
           resource={resource}
           outputFilters={
             [
-              [maxZoneScore, setMaxZoneScore, maxZoneScoreO]
+              [maxZoneScore, setMaxZoneScore, 'Run analysis to filter on zone score'],
+              [maxLCOE, setMaxLCOE, 'Run analysis to filter on LCOE']
             ]
           }
         />
@@ -548,9 +564,9 @@ QueryForm.propTypes = {
   gridSize: T.number,
   setGridSize: T.func,
   maxZoneScore: T.object,
-  setMaxZoneScore: T.func
-  /* maxLCOE: T.object,
-  setMaxLCOE: T.func */
+  setMaxZoneScore: T.func,
+  maxLCOE: T.object,
+  setMaxLCOE: T.func
 };
 
 export default QueryForm;

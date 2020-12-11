@@ -20,14 +20,25 @@ const FILTERED_LAYER_SOURCE = 'FILTERED_LAYER_SOURCE';
 const FILTERED_LAYER_ID = 'FILTERED_LAYER_ID';
 
 const LCOE_LAYER_SOURCE_ID = 'LCOE_LAYER_SOURCE_ID';
-const LCOE_LAYER_LAYER_ID = 'LCOE_LAYER_LAYERE_ID';
+const LCOE_LAYER_LAYER_ID = 'LCOE_LAYER_LAYER_ID';
+
+const ZONE_SCORE_SOURCE_ID = 'ZONE_SCORE_SOURCE_ID';
+const ZONE_SCORE_LAYER_ID = 'ZONE_SCORE_LAYER_ID';
 
 const ZONES_BOUNDARIES_SOURCE_ID = 'ZONES_BOUNDARIES_SOURCE_ID';
 export const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
 const EEZ_BOUNDARIES_SOURCE_ID = 'EEZ_BOUNDARIES_SOURCE_ID';
 const EEZ_BOUNDARIES_LAYER_ID = 'EEZ_BOUNDARIES_LAYER_ID';
+const SATELLITE = 'satellite';
 
 export const outputLayers = [
+  {
+    id: SATELLITE,
+    name: 'Satellite',
+    type: 'raster',
+    nonexclusive: true,
+    visible: true
+  },
   {
     id: FILTERED_LAYER_ID,
     name: 'Selected Area',
@@ -39,7 +50,11 @@ export const outputLayers = [
     name: 'LCOE Tiles',
     type: 'raster'
   },
-
+  {
+    id: ZONE_SCORE_LAYER_ID,
+    name: 'Zone Score',
+    type: 'raster'
+  },
   {
     id: ZONES_BOUNDARIES_LAYER_ID,
     name: 'Zone Boundaries',
@@ -97,7 +112,7 @@ const initializeMap = ({
 }) => {
   const map = new mapboxgl.Map({
     container: mapContainer.current,
-    style: 'mapbox://styles/mapbox/light-v10',
+    style: 'mapbox://styles/wbg-cdrp/ckhwwisf207qz1ap9hl2vlulj',
     center: [0, 0],
     zoom: 5,
     bounds: selectedArea && selectedArea.bounds,
@@ -106,6 +121,10 @@ const initializeMap = ({
 
   map.on('load', () => {
     setMap(map);
+    // This map style has a 'background' layer underneath the satellite layer
+    // which is completely black. Was not able to remove this via mapbox studio
+    // so removing it on load.
+    map.removeLayer('background');
 
     /*
      * Resize map on window size change
@@ -116,11 +135,15 @@ const initializeMap = ({
      * Add placeholder map source and a hidden layer for the filtered layer,
      * which will be displayed on "Apply" click
      */
+
+    map.setPaintProperty('land', 'background-opacity', 0.7);
+
     map.addSource(FILTERED_LAYER_SOURCE, {
       type: 'raster',
       tiles: ['https://placeholder.url/{z}/{x}/{y}.png'],
       tileSize: 256
     });
+
     map.addLayer({
       id: FILTERED_LAYER_ID,
       type: 'raster',
@@ -129,7 +152,7 @@ const initializeMap = ({
         visibility: 'none'
       },
       paint: {
-        'raster-opacity': 0.5
+        'raster-opacity': 0.7
       },
       minzoom: 0,
       maxzoom: 22
@@ -154,6 +177,24 @@ const initializeMap = ({
       maxzoom: 22
     });
     //
+    map.addSource(ZONE_SCORE_SOURCE_ID, {
+      type: 'raster',
+      tiles: ['https://placeholder.url/{z}/{x}/{y}.png'],
+      tileSize: 256
+    });
+    map.addLayer({
+      id: ZONE_SCORE_LAYER_ID,
+      type: 'raster',
+      source: ZONE_SCORE_SOURCE_ID,
+      layout: {
+        visibility: 'none'
+      },
+      paint: {
+        'raster-opacity': 0.5
+      },
+      minzoom: 0,
+      maxzoom: 22
+    });
 
     map.addSource(EEZ_BOUNDARIES_SOURCE_ID, {
       type: 'geojson',
@@ -261,8 +302,9 @@ function MbMap (props) {
     selectedResource,
     filteredLayerUrl,
     currentZones,
-    lcoeLayerUrl,
-    maxZoneScore
+    outputLayerUrl,
+    maxZoneScore,
+    maxLCOE
   } = useContext(ExploreContext);
 
   const {
@@ -344,7 +386,7 @@ function MbMap (props) {
   }, [filteredLayerUrl]);
 
   useEffect(() => {
-    if (!lcoeLayerUrl || !map) return;
+    if (!outputLayerUrl || !map) return;
 
     const style = map.getStyle();
 
@@ -354,11 +396,16 @@ function MbMap (props) {
         ...style.sources,
         [LCOE_LAYER_SOURCE_ID]: {
           ...style.sources[LCOE_LAYER_SOURCE_ID],
-          tiles: [lcoeLayerUrl]
+          tiles: [`${config.apiEndpoint}/lcoe/${outputLayerUrl}`]
+        },
+        [ZONE_SCORE_SOURCE_ID]: {
+          ...style.sources[ZONE_SCORE_SOURCE_ID],
+          tiles: [`${config.apiEndpoint}/score/${outputLayerUrl}`]
         }
+
       }
     });
-  }, [lcoeLayerUrl]);
+  }, [outputLayerUrl]);
 
   // Update zone boundaries on change
 
@@ -393,11 +440,15 @@ function MbMap (props) {
     // Update filter expression for boundaries layer
     map.setFilter(ZONES_BOUNDARIES_LAYER_ID, [
       'all',
-      ['>=', ['get', 'zone_score'], maxZoneScore.min],
-      ['<=', ['get', 'zone_score'], maxZoneScore.max]
+      ['>=', ['get', 'zone_score'], maxZoneScore.input.value.min],
+      ['<=', ['get', 'zone_score'], maxZoneScore.input.value.max],
+      ...(maxLCOE.active ? [
+        ['>=', ['get', 'lcoe'], maxLCOE.input.value.min],
+        ['<=', ['get', 'lcoe'], maxLCOE.input.value.max]
+      ] : [])
     ]
     );
-  }, [maxZoneScore, currentZones]);
+  }, [maxZoneScore, maxLCOE, currentZones]);
 
   return (
     <MapsContainer>

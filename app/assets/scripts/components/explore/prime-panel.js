@@ -72,8 +72,8 @@ function ExpMapPrimePanel (props) {
     gridSize, setGridSize,
     filteredLayerUrl,
     maxZoneScore, setMaxZoneScore,
-    updateFilteredLayer
-    // maxLCOE, setMaxLCOE
+    updateFilteredLayer,
+    maxLCOE, setMaxLCOE
   } = useContext(ExploreContext);
   const {
     showSelectAreaModal,
@@ -172,9 +172,9 @@ function ExpMapPrimePanel (props) {
                   }}
                   onVisibilityToggle={(layer, visible) => {
                     if (visible) {
-                      if (layer.type === 'raster') {
+                      if (layer.type === 'raster' && !layer.nonexclusive) {
                         const ml = mapLayers.map(l => {
-                          if (l.type === 'raster') {
+                          if (l.type === 'raster' && !l.nonexclusive) {
                             map.setLayoutProperty(l.id, 'visibility', l.id === layer.id ? 'visible' : 'none');
                             l.visible = l.id === layer.id;
                           }
@@ -182,26 +182,16 @@ function ExpMapPrimePanel (props) {
                         });
                         setMapLayers(ml);
                       } else {
-                        map.setLayoutProperty(layer.id, 'visibility', 'visible');
+                        map.setLayoutProperty(layer.id, 'visibility', 'none');
                         const ind = mapLayers.findIndex(l => l.id === layer.id);
                         setMapLayers([...mapLayers.slice(0, ind),
                           {
                             ...layer,
-                            visible: true
+                            visible: false
                           },
                           ...mapLayers.slice(ind + 1)
                         ]);
                       }
-                    } else {
-                      map.setLayoutProperty(layer.id, 'visibility', 'none');
-                      const ind = mapLayers.findIndex(l => l.id === layer.id);
-                      setMapLayers([...mapLayers.slice(0, ind),
-                        {
-                          ...layer,
-                          visible: false
-                        },
-                        ...mapLayers.slice(ind + 1)
-                      ]);
                     }
                   }}
                 />}
@@ -231,8 +221,8 @@ function ExpMapPrimePanel (props) {
                 setGridSize={setGridSize}
                 maxZoneScore={maxZoneScore}
                 setMaxZoneScore={setMaxZoneScore}
-                // maxLCOE={maxLCOE}
-                // setMaxLCOE={setMaxLCOE}
+                maxLCOE={maxLCOE}
+                setMaxLCOE={setMaxLCOE}
                 onAreaEdit={() => setShowSelectAreaModal(true)}
                 onResourceEdit={() => setShowSelectResourceModal(true)}
                 onInputTouched={() => {

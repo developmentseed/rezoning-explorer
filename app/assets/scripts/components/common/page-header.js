@@ -68,7 +68,7 @@ const GlobalMenu = styled.ul`
   display: flex;
   flex: 1;
   flex-flow: row nowrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   margin: 0;
   list-style: none;
@@ -80,13 +80,14 @@ const GlobalMenu = styled.ul`
     margin-right: auto;
   }
   > *:last-child > * {
-    width: 4rem;
+    width: 3rem;
     height: 3rem;
     text-align: center;
   }
 
   ${media.mediumUp`
     flex-flow: column nowrap;
+    justify-content: center;
   `}
 
 
@@ -136,24 +137,32 @@ const GlobalMenuLink = styled.a`
   height: 3rem;
   line-height: 3rem;
   text-align: center;
+  border-radius: ${themeVal('shape.rounded')};
   transition: all 0.24s ease 0s;
+  margin-right: ${multiply(themeVal('layout.space'), 0.5)};
   ${media.mediumUp`
-    width: 4rem;
+    margin-right: 0;
+    margin-bottom: ${multiply(themeVal('layout.space'), 0.5)};
   `}
   &::before {
     ${({ useIcon }) => collecticon(useIcon)}
-    font-size: 1.25rem
+    font-size: 1.125rem
   }
 
   &,
   &:visited {
     color: inherit;
   }
+  
+  &:hover {
+    opacity: 1;
+    background: ${_rgba(themeVal('color.baseLight'), 0.08)};
+  }
 
   &.active {
     color: ${themeVal('color.baseLight')};
     opacity: 1;
-    background: ${_rgba(themeVal('color.baseLight'), 0.08)};
+    background: ${_rgba(themeVal('color.baseLight'), 0.16)};
   }
 
   span {
