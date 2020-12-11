@@ -164,7 +164,7 @@ function TabbedBlock (props) {
                   <TabControlBar
                     active={active}
                   >
-                    <Subheading>Preset Priority</Subheading>
+                    <Subheading>Preset</Subheading>
                     <Dropdown
                       alignment='left'
                       triggerElement={
