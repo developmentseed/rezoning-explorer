@@ -88,64 +88,64 @@ const FormInput = ({ option, onChange }) => {
           validationTimeout={1500}
         />
       );
-    // case BOOL:
-    //   return null;
-    // case MULTI:
-    //   return (
-    //     <Dropdown
-    //       triggerElement={
-    //         <MultiSelectButton disabled={!option.active}>
-    //           {' '}
-    //           {option.input.options
-    //             .filter((e, i) => value.includes(i))
-    //             .join(',')}
-    //         </MultiSelectButton>
-    //       }
-    //       alignment='right'
-    //     >
-    //       <MultiWrapper>
-    //         {option.input.options.map((o, i) => (
-    //           <FormCheckable
-    //             key={o}
-    //             name={o}
-    //             id={o}
-    //             type='checkbox'
-    //             checked={value.includes(i)}
-    //             onChange={() => {
-    //               if (value.includes(i)) {
-    //                 value.splice(value.indexOf(i), 1);
-    //                 onChange(value);
-    //               } else {
-    //                 onChange([...value, i]);
-    //               }
-    //             }}
-    //           >
-    //             {o}
-    //           </FormCheckable>
-    //         ))}
-    //       </MultiWrapper>
-    //     </Dropdown>
-    //   );
-    // case DROPDOWN:
-    //   return (
-    //     <FormGroup>
-    //       <FormSelect
-    //         id={option.name}
-    //         onChange={(e) => {
-    //           onChange(e.target.value);
-    //         }}
-    //         value={option.input.value}
-    //       >
-    //         {option.input.availableOptions.map((o) => {
-    //           return (
-    //             <option value={o} key={o}>
-    //               {o}
-    //             </option>
-    //           );
-    //         })}
-    //       </FormSelect>
-    //     </FormGroup>
-    //   );
+    case BOOL:
+      return null;
+    case MULTI:
+      return (
+        <Dropdown
+          triggerElement={
+            <MultiSelectButton disabled={!option.active}>
+              {' '}
+              {option.input.options
+                .filter((e, i) => value.includes(i))
+                .join(',')}
+            </MultiSelectButton>
+          }
+          alignment='right'
+        >
+          <MultiWrapper>
+            {option.input.options.map((o, i) => (
+              <FormCheckable
+                key={o}
+                name={o}
+                id={o}
+                type='checkbox'
+                checked={value.includes(i)}
+                onChange={() => {
+                  if (value.includes(i)) {
+                    value.splice(value.indexOf(i), 1);
+                    onChange(value);
+                  } else {
+                    onChange([...value, i]);
+                  }
+                }}
+              >
+                {o}
+              </FormCheckable>
+            ))}
+          </MultiWrapper>
+        </Dropdown>
+      );
+    case DROPDOWN:
+      return (
+        <FormGroup>
+          <FormSelect
+            id={option.name}
+            onChange={(e) => {
+              onChange(e.target.value);
+            }}
+            value={option.input.value}
+          >
+            {option.input.availableOptions.map((o) => {
+              return (
+                <option value={o} key={o}>
+                  {o}
+                </option>
+              );
+            })}
+          </FormSelect>
+        </FormGroup>
+      );
     default:
       return null;
   }
