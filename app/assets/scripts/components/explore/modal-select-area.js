@@ -39,7 +39,6 @@ function ModalSelectArea (props) {
     showSelectAreaModal,
     setShowSelectAreaModal,
     setSelectedAreaId
-  //  areaTypeFilter
   } = props;
 
   const [areaType, setAreaType] = useState('country');
@@ -56,19 +55,16 @@ function ModalSelectArea (props) {
       data={areas.filter((a) => a.type === areaType)}
       renderHeader={() => (
         <HeaderWrapper id='select-area-modal-header'>
-          <HeadlineTabs>{
-            // areaTypeFilter.map(t => (
-            ['country', 'region'].map(t => (
+          <HeadlineTabs>
+            {['country', 'region'].map((t) => (
               <Headline
                 key={t}
                 disabled={areaType !== t}
                 onClick={() => setAreaType(t)}
               >
-              Select {t[0].toUpperCase() + t.slice(1)}
+                Select {t[0].toUpperCase() + t.slice(1)}
               </Headline>
-
-            ))
-          }
+            ))}
           </HeadlineTabs>
           <SearchBar
             type='text'
