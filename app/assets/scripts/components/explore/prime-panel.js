@@ -156,7 +156,7 @@ function ExpMapPrimePanel (props) {
                       // Here set the 3rd element of the array, which is the
                       // non-hovered state value
                       // to be the value of the knob
-                      paintProperty[3] = knob.value / 100;
+                      paintProperty[3] = knob / 100;
                       map.setPaintProperty(
                         layer.id,
                         'fill-opacity',
@@ -166,7 +166,7 @@ function ExpMapPrimePanel (props) {
                       map.setPaintProperty(
                         layer.id,
                         layer.type === 'vector' ? 'fill-opacity' : 'raster-opacity',
-                        knob.value / 100
+                        knob / 100
                       );
                     }
                   }}
@@ -182,16 +182,26 @@ function ExpMapPrimePanel (props) {
                         });
                         setMapLayers(ml);
                       } else {
-                        map.setLayoutProperty(layer.id, 'visibility', 'none');
+                        map.setLayoutProperty(layer.id, 'visibility', 'visible');
                         const ind = mapLayers.findIndex(l => l.id === layer.id);
                         setMapLayers([...mapLayers.slice(0, ind),
                           {
                             ...layer,
-                            visible: false
+                            visible: true
                           },
                           ...mapLayers.slice(ind + 1)
                         ]);
                       }
+                    } else {
+                      map.setLayoutProperty(layer.id, 'visibility', 'none');
+                      const ind = mapLayers.findIndex(l => l.id === layer.id);
+                      setMapLayers([...mapLayers.slice(0, ind),
+                        {
+                          ...layer,
+                          visible: false
+                        },
+                        ...mapLayers.slice(ind + 1)
+                      ]);
                     }
                   }}
                 />}

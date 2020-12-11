@@ -8,7 +8,6 @@ import {
 } from './form';
 import InfoButton from '../../common/info-button';
 import FormInput from '../form/form-input';
-import updateArrayIndex from '../../../utils/update-array-index';
 
 function WeightsForm (props) {
   const { weights, active } = props;

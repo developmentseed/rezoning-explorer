@@ -60,7 +60,6 @@ function FiltersForm (props) {
     filters,
     checkIncluded,
     resource,
-    setFilters,
     outputFilters,
     active
   } = props;
@@ -127,10 +126,11 @@ function FiltersForm (props) {
                               )}
                             </OptionHeadline>
                             {filterObject.active
-                              ? <FormInput
-                                option={filterObject}
-                                onChange={onChange}
-                                /> : <InactiveMessage>{inactiveMessage}</InactiveMessage>}
+                              ? (
+                                <FormInput
+                                  option={filterObject}
+                                  onChange={onChange}
+                                />) : <InactiveMessage>{inactiveMessage}</InactiveMessage>}
                           </PanelOption>
 
                         );
@@ -142,7 +142,7 @@ function FiltersForm (props) {
 
             {Object.entries(
               filters.reduce((accum, filt) => {
-                const [get, set] = filt;
+                const [get] = filt;
                 if (!accum[get.category]) {
                   accum[get.category] = [];
                 }

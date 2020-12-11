@@ -71,8 +71,10 @@ const FormInput = ({ option, onChange }) => {
         />
       );
     case TEXT:
+      /* eslint-disable no-case-declarations */
       const validate = useCallback(option.input.range ? validateRangeNum(option.input.range[0], option.input.range[1]) : () => true, [option.input.range[0], option.input.range[1]]);
       const up = useCallback(onChange, []);
+      /* eslint-enable no-case-declarations */
 
       return (
         <StressedFormGroupInput

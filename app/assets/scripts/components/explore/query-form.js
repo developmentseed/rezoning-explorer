@@ -1,10 +1,8 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
 import useQsState from '../../utils/qs-state-hook';
-import Dropdown from '../common/dropdown';
-import { FormCheckable } from '../../styles/form/checkable';
 import {
   PanelBlock,
   PanelBlockHeader,
@@ -12,21 +10,14 @@ import {
 } from '../common/panel-block';
 import TabbedBlockBody from '../common/tabbed-block-body';
 import Button from '../../styles/button/button';
-import SliderGroup from '../common/slider-group';
-import StressedFormGroupInput from '../common/stressed-form-group-input';
 import Heading, { Subheading } from '../../styles/type/heading';
-import { validateRangeNum } from '../../utils/utils';
 
 import GridSetter from './grid-setter';
-import { truncated } from '../../styles/helpers';
 
 import { round } from '../../utils/format';
 import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap } from './panel-data';
-import FormSelect from '../../styles/form/select';
-import { FormGroup } from '../../styles/form/group';
 import { HeadOption, HeadOptionHeadline } from './form/form';
 import { FiltersForm, WeightsForm, LCOEForm } from './form';
-import ShadowScrollbar from '../common/shadow-scrollbar';
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
@@ -121,7 +112,7 @@ function QueryForm (props) {
     lcoeList,
     updateFilteredLayer,
     filterRanges,
-    presets: defaultPresets,
+    presets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
@@ -134,7 +125,6 @@ function QueryForm (props) {
   } = props;
 
   const firstLoad = useRef(true);
-  const [presets, setPresets] = useState(defaultPresets);
 
   /* Generate weights qs state variables
   */
