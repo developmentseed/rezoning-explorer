@@ -9,7 +9,7 @@ import { themeVal } from '../../styles/utils/general';
 
 const steps = [
   {
-    title: 'Apply Filters',
+    title: 'Apply Spatial Exclusion Filters',
     target: '#filters-tab',
     content: 'First, set filters to exclude undesired areas. Filters allow you to specify lower and upper thresholds for natural, infrastructure, environmental.',
     disableBeacon: true,
@@ -17,7 +17,7 @@ const steps = [
     spotlightClicks: true
   },
   {
-    title: 'Set Weights',
+    title: 'Set Zone Weighting Criteria',
     target: '#weights-tab',
     content: 'Next, set weights to score zones accordingly. Adjusting the weights of parameters will change the calculated aggregated zone scores.',
     disableBeacon: true,
@@ -25,7 +25,7 @@ const steps = [
     spotlightClicks: true
   },
   {
-    title: 'Adjust LCOE Inputs',
+    title: 'Adjust Economic Inputs (LCOE)',
     target: '#lcoe-tab',
     content: 'Adjust LCOE input as needed to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.',
     disableBeacon: true,
