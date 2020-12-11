@@ -12,7 +12,7 @@ import { initialApiRequestState } from './contexeed';
 import { fetchZonesReducer, fetchZones } from './reducers/zones';
 
 import {
-  showGlobalLoading,
+  showGlobalLoadingMessage,
   hideGlobalLoading
 } from '../components/common/global-loading';
 
@@ -108,7 +108,7 @@ export function ExploreProvider (props) {
 
   // Load eezs
   const initAreasAndFilters = async () => {
-    showGlobalLoading();
+    showGlobalLoadingMessage('Initializing application...');
     // Parse region and country files into area list
     const eez = await fetch('public/zones/eez_v11.topojson').then((e) =>
       e.json()
@@ -187,7 +187,7 @@ export function ExploreProvider (props) {
   }, [tourStep]);
 
   const generateZones = async (filterString, weights, lcoe) => {
-    showGlobalLoading();
+    showGlobalLoadingMessage(`Generating zones for ${selectedArea.name}, this may take a few minutes...`);
     fetchZones(
       gridMode && gridSize,
       selectedArea,
