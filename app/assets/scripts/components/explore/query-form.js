@@ -571,13 +571,6 @@ function QueryForm (props) {
         <FiltersForm
           name='filters'
           icon='filter'
-          setPreset={(preset) => {
-            if (preset === 'reset') {
-              setFilters(initListToState(filtersLists, filterRanges.getData()));
-            } else {
-              setFilters(initListToState(presets.filters[preset], filterRanges.getData()));
-            }
-          }}
           filters={filters}
           inputOfType={inputOfType}
           checkIncluded={checkIncluded}
@@ -598,13 +591,6 @@ function QueryForm (props) {
           setWeights={setWeights}
           inputOfType={inputOfType}
           updateStateList={updateStateList}
-          setPreset={(preset) => {
-            if (preset === 'reset') {
-              setWeights(initListToState(weightsList));
-            } else {
-              setWeights(initListToState(presets.weights[preset]));
-            }
-          }}
 
         />
         <LCOEForm
