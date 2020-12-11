@@ -332,7 +332,8 @@ function QueryForm (props) {
     });
   }, [filterRanges, resource]);
 
-  useEffect(onInputTouched, [area, resource, ...weightsInd.map(([w, _]) => w), ...filtersInd.map(([f, _]) => f), lcoeInd]);
+  // TODO set input touched on any change rather than just area and resource
+  useEffect(onInputTouched, [area, resource]);//, ...weightsInd.map(([w, _]) => w), ...filtersInd.map(([f, _]) => f), lcoeInd]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
 
   /* Update capacity factor options based on

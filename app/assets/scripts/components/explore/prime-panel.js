@@ -235,7 +235,7 @@ function ExpMapPrimePanel (props) {
                 setMaxLCOE={setMaxLCOE}
                 onAreaEdit={() => setShowSelectAreaModal(true)}
                 onResourceEdit={() => setShowSelectResourceModal(true)}
-                onInputTouched={() => {
+                onInputTouched={(status) => {
                   setInputTouched(true);
                 }}
                 onSelectionChange={() => {
