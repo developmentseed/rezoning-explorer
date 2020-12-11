@@ -124,18 +124,31 @@ export function ExploreProvider (props) {
     }, new Map());
 
     setAreas(
-      areasJson.map((a) => {
-        if (a.type === 'country') {
-          a.id = a.gid;
-          a.eez = eezCountries.get(a.id);
-        }
-        // Parse bounds, if a string
-        if (a.bounds && typeof a.bounds === 'string') {
-          a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
-        }
+      areasJson
+        .map((a) => {
+          if (a.type === 'country') {
+            a.id = a.gid;
+            a.eez = eezCountries.get(a.id);
+          }
+          // Parse bounds, if a string
+          if (a.bounds && typeof a.bounds === 'string') {
+            a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
+          }
 
-        return a;
-      })
+          return a;
+        })
+        .sort(function (a, b) {
+          var nameA = a.name.toUpperCase();
+          var nameB = b.name.toUpperCase();
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+          // names must be equal
+          return 0;
+        })
     );
     hideGlobalLoading();
   };
