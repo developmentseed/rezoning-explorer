@@ -9,7 +9,8 @@ import {
 const abbreviateUnit = unit => {
   switch (unit) {
     case 'meters':
-      return 'm';
+      // Convert meters to km
+      return 'km';
     default:
       return unit;
   }
