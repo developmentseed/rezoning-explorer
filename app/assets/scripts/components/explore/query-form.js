@@ -1,10 +1,8 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
 import useQsState from '../../utils/qs-state-hook';
-import Dropdown from '../common/dropdown';
-import { FormCheckable } from '../../styles/form/checkable';
 import {
   PanelBlock,
   PanelBlockHeader,
@@ -12,21 +10,14 @@ import {
 } from '../common/panel-block';
 import TabbedBlockBody from '../common/tabbed-block-body';
 import Button from '../../styles/button/button';
-import SliderGroup from '../common/slider-group';
-import StressedFormGroupInput from '../common/stressed-form-group-input';
 import Heading, { Subheading } from '../../styles/type/heading';
-import { validateRangeNum } from '../../utils/utils';
 
 import GridSetter from './grid-setter';
-import { truncated } from '../../styles/helpers';
 
 import { round } from '../../utils/format';
 import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap, setRangeByUnit } from './panel-data';
-import FormSelect from '../../styles/form/select';
-import { FormGroup } from '../../styles/form/group';
 import { HeadOption, HeadOptionHeadline } from './form/form';
 import { FiltersForm, WeightsForm, LCOEForm } from './form';
-import ShadowScrollbar from '../common/shadow-scrollbar';
 
 const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, GRID_OPTIONS, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
@@ -45,19 +36,6 @@ const castByFilterType = type => {
   }
 };
 
-const MultiSelectButton = styled(Button)`
-  width: 100%;
-  ${truncated()}
-`;
-const MultiWrapper = styled(ShadowScrollbar)`
-  height: 20rem;
-  > .scroll-area {
-    > div {
-      display: grid;
-      grid-template-rows: repeat(auto-fill, minmax(1.5rem, 1fr));
-    }
-  }
-`;
 const Subheadingstrong = styled.strong`
   color: ${themeVal('color.base')};
 `;
@@ -129,12 +107,6 @@ const initByType = (obj, ranges, resource) => {
   }
 };
 
-const updateStateList = (list, i, updatedValue) => {
-  const updated = list.slice();
-  updated[i] = updatedValue;
-  return updated;
-};
-
 function QueryForm (props) {
   const {
     area,
@@ -144,7 +116,7 @@ function QueryForm (props) {
     lcoeList,
     updateFilteredLayer,
     filterRanges,
-    presets: defaultPresets,
+    presets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
@@ -157,107 +129,101 @@ function QueryForm (props) {
   } = props;
 
   const firstLoad = useRef(true);
-  const [presets, setPresets] = useState(defaultPresets);
 
-  const initListToState = (list, ranges) => {
-    return list.map((obj) => ({
-      ...obj,
-      input: initByType(obj, ranges || {}, apiResourceNameMap[resource]),
-      active: obj.active === undefined ? true : obj.active
-    }));
-  };
-
-  const [weights, setWeights] = useQsState({
-    key: 'weights',
-    hydrator: v => {
-      let base = initListToState(weightsList);
-      if (v) {
-        const qsValues = v.split('|').map(vals => {
-          const [value, active] = vals.split(',');
-          return {
-            value: Number(value),
+  /* Generate weights qs state variables
+  */
+  const weightsInd = weightsList.map(w => {
+    const [weight, setWeight] = useQsState({
+      key: w.id,
+      hydrator: v => {
+        const base = {
+          ...w,
+          input: initByType(w, {}),
+          active: w.active === undefined ? true : w.active
+        };
+        let inputUpdate = {};
+        if (v) {
+          const [value, active] = v.split(',');
+          inputUpdate = {
+            value: castByFilterType(base.input.type)(value),
             active: active === undefined
           };
-        });
-        base = base.map((weight, i) => (
-          {
-            ...weight,
-            active: qsValues[i].active,
-            input: {
-              ...weight.input,
-              value: qsValues[i].value || weight.input.value
-            }
+        }
+        return {
+          ...base,
+          active: inputUpdate.active === undefined ? base.active : inputUpdate.active,
+          input: {
+            ...base.input,
+            value: inputUpdate.value || base.input.value
           }
-        ));
-      }
-      return base;
-    },
-    dehydrator: v => {
-      return v && v.map(w => {
+        };
+      },
+      dehydrator: w => {
         const { value } = w.input;
         let shard = `${value}`;
         shard = w.active ? shard : `${shard},${false}`;
         return shard;
-      }).join('|');
-    },
-    default: undefined
+      }
+    });
+    return [weight, setWeight];
   });
 
-  const [filters, setFilters] = useQsState({
-    key: 'filters',
-    hydrator: v => {
-      let baseFilts = initListToState(filtersLists, filterRanges.getData());
-      if (v) {
-        const qsValues = v.split('|').map((vals, i) => {
-          const thisFilt = baseFilts[i];
-          if (thisFilt.isRange) {
-            const [min, max, active] = vals.split(',');
-            return {
+  /* Generate filters qs state variables */
+  const filtersInd = filtersLists.map(f => {
+    const [filt, setFilt] = useQsState({
+      key: f.id,
+      default: undefined,
+      hydrator: v => {
+        const base = {
+          ...f,
+          input: initByType(f, filterRanges.getData(), apiResourceNameMap[resource]),
+          active: f.active === undefined ? true : f.active
+        };
+
+        let inputUpdate;
+        if (v) {
+          if (base.isRange) {
+            const [min, max, active] = v.split(',');
+            inputUpdate = {
               value: {
                 min: Number(min),
                 max: Number(max)
               },
               active: active === undefined
             };
-          } else if (thisFilt.input.options) {
-            // multi select or dropdown
-            vals = vals.split(',');
+          } else if (base.input.options) {
+            v = v.split(',');
             let active = true;
-            if (vals[vals.length - 1] === 'false') {
+            if (v[v.length - 1] === 'false') {
               // remove active
-              vals = vals.slice(0, vals.length - 2).map(Number);
+              v = v.slice(0, v.length - 2).map(Number);
               active = false;
             } else {
-              vals = vals.map(Number);
+              v = v.map(Number);
             }
-            return {
-              value: vals,
+            inputUpdate = {
+              value: v,
               active
             };
           } else {
-            const [val, active] = vals.split(',');
-            return {
-              value: castByFilterType(thisFilt.input.type)(val),
+            const [val, active] = v.split(',');
+            inputUpdate = {
+              value: castByFilterType(base.input.type)(val),
               active: active === undefined
             };
           }
-        });
 
-        baseFilts = baseFilts.map((filt, i) => (
-          {
-            ...filt,
-            active: qsValues[i].active,
+          return {
+            ...base,
+            active: inputUpdate.active,
             input: {
-              ...filt.input,
-              value: qsValues[i].value || filt.input.value
+              ...base.input,
+              value: inputUpdate.value || base.input.value
             }
-          }
-        ));
-      }
-      return baseFilts;
-    },
-    dehydrator: v => {
-      return v && v.map(f => {
+          };
+        }
+      },
+      dehydrator: f => {
         const { value } = f.input;
         let shard;
         if (f.isRange) {
@@ -269,246 +235,130 @@ function QueryForm (props) {
         }
         shard = f.active ? shard : `${shard},${false}`;
         return shard;
-      }).filter(f => !f.excluded)
-        .join('|');
-    },
-    default: undefined
+      }
+    });
+    return [filt, setFilt];
   });
 
-  const [lcoe, setLcoe] = useQsState({
-    key: 'lcoe',
-    hydrator: v => {
-      let base = initListToState(lcoeList);
-      if (v) {
-        const qsValues = v.split('|').map((vals, i) => {
-          const [value, active] = vals.split(',');
-          const thisCost = base[i];
-          return {
-            value: castByFilterType(thisCost.input.type)(value),
+  const initialize = (baseList, destList, options) => {
+    const { reset, apiRange } = options || {};
+    if (firstLoad.current && filterRanges.isReady()) {
+      firstLoad.current = false;
+    }
+    baseList.forEach((base, ind) => {
+      const [object, setObject] = destList[ind];
+      if (object && !reset) {
+        // This filter has been set via the url
+        // Does not need to be initialized
+        return;
+      }
+
+      // Initialize the filter with default values
+      setObject({
+        ...base,
+        input: {
+          ...initByType(base,
+            apiRange || {},
+            apiResourceNameMap[resource])
+        },
+        active: base.active === undefined ? true : base.active
+      });
+    });
+  };
+
+  const lcoeInd = lcoeList.map(c => {
+    const [cost, setCost] = useQsState({
+      key: c.id,
+      default: undefined,
+      hydrator: v => {
+        const base = {
+          ...c,
+          input: initByType(c, {}, apiResourceNameMap[resource]),
+          active: c.active === undefined ? true : c.active
+        };
+        let inputUpdate = {};
+        if (v) {
+          const [value, active] = v.split(',');
+          inputUpdate = {
+            value: castByFilterType(base.input.type)(value),
             active: active === undefined
           };
-        });
-        base = base.map((cost, i) => (
-          {
-            ...cost,
-            active: qsValues[i].active,
-            input: {
-              ...cost.input,
-              value: qsValues[i].value || cost.input.value
-            }
+        }
+        return {
+          ...base,
+          active: inputUpdate.active === undefined ? base.active : inputUpdate.active,
+          input: {
+            ...base.input,
+            value: inputUpdate.value || base.input.value
           }
-        ));
-      }
-      return base;
-    },
-    dehydrator: v => {
-      return v && v.map(w => {
-        const { value } = w.input;
+        };
+      },
+      dehydrator: c => {
+        const { value } = c.input;
         let shard = `${value}`;
-        shard = w.active ? shard : `${shard},${false}`;
+        shard = c.active ? shard : `${shard},${false}`;
         return shard;
-      }).join('|');
-    },
-    default: undefined
+      }
+    });
+    return [cost, setCost];
   });
 
-  const inputOfType = (option, onChange) => {
-    const { range, value } = option.input;
-    let errorMessage;
-    if (range) {
-      errorMessage = range[1] - range[0] === 0 ? `Allowed value is ${range[0]}` : `Allowed range is ${round(range[0])} - ${round(range[1])}`;
-    } else {
-      errorMessage = 'Value not accepted';
-    }
-
-    switch (option.input.type) {
-      case SLIDER:
-        return (
-          <SliderGroup
-            range={range}
-            id={option.name}
-            value={option.input.value}
-            isRange={option.isRange}
-            disabled={!option.active}
-            onChange={onChange}
-          />
-        );
-      case TEXT:
-        return (
-          <StressedFormGroupInput
-            inputType='number'
-            inputSize='small'
-            disabled={option.readOnly}
-            id={`${option.name}`}
-            name={`${option.name}`}
-            value={option.input.value}
-            validate={option.input.range ? validateRangeNum(option.input.range[0], option.input.range[1]) : () => true}
-            errorMessage={errorMessage}
-            onChange={onChange}
-            validationTimeout={1500}
-          />
-        );
-      case BOOL:
-        return null;
-      case MULTI:
-        return (
-          <Dropdown
-            triggerElement={
-              <MultiSelectButton
-                disabled={!option.active}
-              > {
-                  option.input.options.filter((e, i) => value.includes(i)).join(',')
-                }
-              </MultiSelectButton>
-            }
-            alignment='right'
-          >
-            <MultiWrapper>
-              {
-                option.input.options.map((o, i) => (
-                  <FormCheckable
-                    key={o}
-                    name={o}
-                    id={o}
-                    type='checkbox'
-                    checked={value.includes(i)}
-                    onChange={() => {
-                      if (value.includes(i)) {
-                        value.splice(value.indexOf(i), 1);
-                        onChange(value);
-                      } else {
-                        onChange([...value, i]);
-                      }
-                    }}
-                  >{o}
-                  </FormCheckable>
-                ))
-              }
-            </MultiWrapper>
-          </Dropdown>
-        );
-      case DROPDOWN:
-        return (
-          <FormGroup>
-            <FormSelect
-              id={option.name}
-              onChange={(e) => {
-                onChange(e.target.value);
-              }}
-              value={option.input.value}
-            >
-              {
-                option.input.availableOptions.map(o => {
-                  return (
-                    <option
-                      value={o}
-                      key={o}
-                    >
-                      {o}
-                    </option>
-                  );
-                })
-              }
-            </FormSelect>
-          </FormGroup>
-        );
-      default:
-        return null;
-    }
-  };
-
   const resetClick = () => {
-    setWeights(initListToState(weightsList));
-    setFilters(initListToState(filtersLists, filterRanges.getData()));
-    setLcoe(initListToState(lcoeList));
+    initialize(filtersLists, filtersInd, { reset: true });
+    initialize(weightsList, weightsInd, { reset: true });
+    initialize(lcoeList, lcoeInd, { reset: true });
   };
 
+  /* Reduce filters, weights, and lcoe
+   * Call function to send values to api
+   */
   const applyClick = () => {
-    const weightsValues = Object.values(weights)
-      .reduce((accum, weight) => (
-        {
-          ...accum,
-          [weight.id || weight.name]: Number(weight.input.value)
-        }), {});
+    const weightsValues = weightsInd.reduce((accum, [weight, _]) => ({
+      ...accum,
+      [weight.id || weight.name]: castByFilterType(weight.input.type)(weight.input.value)
+    }), {});
 
-    const lcoeValues = Object.values(lcoe)
-      .reduce((accum, cost) => (
-        {
-          ...accum,
-          [cost.id || cost.name]: (cost.input.options ? String : Number)(cost.input.value)
-        }), {});
+    const lcoeValues = lcoeInd.reduce((accum, [cost, _]) => ({
+      ...accum,
+      [cost.id || cost.name]: castByFilterType(cost.input.type)(cost.input.value)
+    }), {});
+
+    // Get filters and discard setting functions
+    const filters = filtersInd.map(([filter, _]) => filter);
+
     updateFilteredLayer(filters, weightsValues, lcoeValues);
   };
+  useEffect(() => {
+    initialize(filtersLists, filtersInd, {
+      reset: false,
+      apiRange: filterRanges.getData()
+    });
+  }, [filterRanges, resource]);
 
-  useEffect(onInputTouched, [area, resource, weights, filters, lcoe]);
+  useEffect(onInputTouched, [area, resource]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
 
+  /* Update capacity factor options based on
+   * what the current resource is
+   */
   useEffect(() => {
     if (resource) {
       try {
-        const capacity = lcoe.find(cost => cost.id === 'capacity_factor');
-        const ind = lcoe.findIndex(cost => cost.id === 'capacity_factor');
+        const [capacity, setCapacity] = lcoeInd.find(([cost, _]) => cost.id === 'capacity_factor');
         capacity.input.availableOptions = capacity.input.options[apiResourceNameMap[resource]];
         capacity.input.value = capacity.input.availableOptions[0];
-        capacity.input.default = capacity.input.availableOptions[0];
-
-        lcoe.splice(ind, 1, capacity);
-        setLcoe(lcoe);
-
-        Object.keys(presets.lcoe)
-          .forEach(pre => {
-            presets.lcoe[pre] = presets.lcoe[pre].map(cost => {
-              if (cost.id === 'capacity_factor') {
-                return capacity;
-              } else {
-                return cost;
-              }
-            });
-          });
-        setPresets(presets);
+        setCapacity(capacity);
       } catch (err) {
         /* eslint-disable-next-line */
         console.error(err);
       }
     }
   }, [resource]);
-  /*
-  useEffect(() => {
-    if (filterRanges.isReady()) {
-      try {
-        const capfac = lcoe.find(f => f.id === 'capacity_factor').input.value;
-        const range = filterRanges.getData().f_lcoe[capfac].total;
-        setMaxLCOEO({
-          ...maxLCOEO,
-          active: true,
-          input: {
-            ...maxLCOEO.input,
-            range: [range.min, range.max]
-          }
-        });
 
-        setMaxLCOE(range);
-      } catch (err) {
-        setMaxLCOEO({
-          ...maxLCOEO,
-          active: false
-        });
-        setMaxLCOE(null);
-        console.warn('LCOE Filter not available for this country');
-      }
-    }
-  }, [lcoe.find(f => f.id === 'capacity_factor').input.value, filterRanges]);
-*/
-
-  /* Reinitialize filters when new ranges are received */
-
-  useEffect(() => {
-    if (firstLoad.current && filterRanges.isReady()) {
-      firstLoad.current = false;
-    } else {
-      setFilters(initListToState(filtersLists, filterRanges.getData()));
-    }
-  }, [filterRanges]);
+  /* Wait until elements have mounted and been parsed to render the query form */
+  if (firstLoad.current) {
+    return null;
+  }
 
   return (
     <PanelBlock>
@@ -573,17 +423,20 @@ function QueryForm (props) {
           icon='filter'
           setPreset={(preset) => {
             if (preset === 'reset') {
-              setFilters(initListToState(filtersLists, filterRanges.getData()));
+              initialize(filtersLists, filtersInd, {
+                reset: true,
+                apiRange: filterRanges.getData()
+              });
             } else {
-              setFilters(initListToState(presets.filters[preset], filterRanges.getData()));
+              initialize(presets.filters[preset], filtersInd, {
+                reset: true,
+                apiRange: filterRanges.getData()
+              });
             }
           }}
-          filters={filters}
-          inputOfType={inputOfType}
+          filters={filtersInd}
           checkIncluded={checkIncluded}
           resource={resource}
-          setFilters={setFilters}
-          updateStateList={updateStateList}
           outputFilters={
             [
               [maxZoneScore, setMaxZoneScore, 'Run analysis to filter on zone score'],
@@ -594,15 +447,17 @@ function QueryForm (props) {
         <WeightsForm
           name='weights'
           icon='sliders-horizontal'
-          weights={weights}
-          setWeights={setWeights}
-          inputOfType={inputOfType}
-          updateStateList={updateStateList}
+          weights={weightsInd}
+          presets={presets.weights}
           setPreset={(preset) => {
             if (preset === 'reset') {
-              setWeights(initListToState(weightsList));
+              initialize(weightsList, weightsInd, {
+                reset: true
+              });
             } else {
-              setWeights(initListToState(presets.weights[preset]));
+              initialize(presets.weights[preset], weightsInd, {
+                reset: true
+              });
             }
           }}
 
@@ -610,16 +465,18 @@ function QueryForm (props) {
         <LCOEForm
           name='lcoe'
           icon='disc-dollar'
-          lcoe={lcoe}
-          setLcoe={setLcoe}
-          inputOfType={inputOfType}
-          updateStateList={updateStateList}
+          lcoe={lcoeInd}
+          // setLcoe={setLcoe}
           presets={presets.lcoe}
           setPreset={(preset) => {
             if (preset === 'reset') {
-              setLcoe(initListToState(lcoeList));
+              initialize(lcoeList, lcoeInd, {
+                reset: true
+              });
             } else {
-              setLcoe(presets.lcoe[preset]);
+              initialize(presets.lcoe[preset], lcoeInd, {
+                reset: true
+              });
             }
           }}
 
