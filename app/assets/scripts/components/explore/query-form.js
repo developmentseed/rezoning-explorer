@@ -299,16 +299,15 @@ function QueryForm (props) {
     return [cost, setCost];
   });
 
-  // TODO update
   const resetClick = () => {
-    // setWeights(initListToState(weightsList));
-    // setFilters(initListToState(filtersLists, filterRanges.getData()));
-    // setLcoe(initListToState(lcoeList));
-
-    // initializeFilters();
+    initialize(filtersLists, filtersInd, { reset: true });
+    initialize(weightsList, weightsInd, { reset: true });
+    initialize(lcoeList, lcoeInd, { reset: true });
   };
 
-  // TODO update this
+  /* Reduce filters, weights, and lcoe
+   * Call function to send values to api
+   */
   const applyClick = () => {
     const weightsValues = weightsInd.reduce((accum, [weight, _]) => ({
       ...accum,
@@ -332,8 +331,7 @@ function QueryForm (props) {
     });
   }, [filterRanges, resource]);
 
-  // TODO set input touched on any change rather than just area and resource
-  useEffect(onInputTouched, [area, resource]);//, ...weightsInd.map(([w, _]) => w), ...filtersInd.map(([f, _]) => f), lcoeInd]);
+  useEffect(onInputTouched, [area, resource]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
 
   /* Update capacity factor options based on
@@ -352,33 +350,6 @@ function QueryForm (props) {
       }
     }
   }, [resource]);
-  /*
-  useEffect(() => {
-    if (filterRanges.isReady()) {
-      try {
-        const capfac = lcoe.find(f => f.id === 'capacity_factor').input.value;
-        const range = filterRanges.getData().f_lcoe[capfac].total;
-        setMaxLCOEO({
-          ...maxLCOEO,
-          active: true,
-          input: {
-            ...maxLCOEO.input,
-            range: [range.min, range.max]
-          }
-        });
-
-        setMaxLCOE(range);
-      } catch (err) {
-        setMaxLCOEO({
-          ...maxLCOEO,
-          active: false
-        });
-        setMaxLCOE(null);
-        console.warn('LCOE Filter not available for this country');
-      }
-    }
-  }, [lcoe.find(f => f.id === 'capacity_factor').input.value, filterRanges]);
-*/
 
   /* Wait until elements have mounted and been parsed to render the query form */
   if (firstLoad.current) {
