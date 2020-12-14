@@ -36,8 +36,6 @@ const MultiWrapper = styled(ShadowScrollbar)`
 `;
 
 const FormInput = ({ option, onChange }) => {
-  const { filterRanges } = useContext(FormContext);
-
   const { range, value } = option.input;
   let errorMessage;
   if (range) {
@@ -49,20 +47,12 @@ const FormInput = ({ option, onChange }) => {
     errorMessage = 'Value not accepted';
   }
 
-  // Get filter range, if available
-  const filterRange =
-    option.type === 'filter' ? filterRanges.getData()[option.id] : null;
-
   switch (option.input.type) {
     case SLIDER:
       return (
         <SliderGroup
           unit={option.input.unit || '%'}
-          range={
-            filterRange
-              ? [round(filterRange.min), round(filterRange.max)]
-              : option.input.range
-          }
+          range={range}
           id={option.name}
           value={option.input.value}
           isRange={option.isRange}
