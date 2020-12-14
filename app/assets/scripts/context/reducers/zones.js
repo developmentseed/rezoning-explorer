@@ -79,7 +79,8 @@ export async function fetchZones (
           zonesTopoJSON.objects[areaId].geometries
         );
 
-        const areaGrid = squareGrid(areaLimits, grid, {
+        const areaGrid = squareGrid(selectedArea.bounds, grid, {
+          mask: areaLimits,
           units: 'kilometers'
         });
 
