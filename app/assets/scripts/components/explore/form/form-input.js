@@ -1,7 +1,6 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import { round } from '../../../utils/format';
-import FormContext from '../../../context/form-context';
 import T from 'prop-types';
 
 import Dropdown from '../../common/dropdown';
