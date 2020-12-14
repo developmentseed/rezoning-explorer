@@ -192,6 +192,7 @@ export function ExploreProvider (props) {
     fetchZones(
       gridMode && gridSize,
       selectedArea,
+      selectedResource,
       filterString,
       weights,
       lcoe,
