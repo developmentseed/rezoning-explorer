@@ -15,7 +15,7 @@ import Heading, { Subheading } from '../../styles/type/heading';
 import GridSetter from './grid-setter';
 
 import { round } from '../../utils/format';
-import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap } from './panel-data';
+import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap, setRangeByUnit } from './panel-data';
 import { HeadOption, HeadOptionHeadline } from './form/form';
 import { FiltersForm, WeightsForm, LCOEForm } from './form';
 
@@ -60,7 +60,11 @@ const initByType = (obj, ranges, resource) => {
   const apiRange = ranges[obj.id];
   const { input, options } = obj;
 
-  const range = (apiRange && [round(apiRange.min), round(apiRange.max)]) || obj.input.range || DEFAULT_RANGE;
+  const range = setRangeByUnit(
+    (apiRange &&
+      [round(apiRange.min), round(apiRange.max)]) ||
+      obj.input.range || DEFAULT_RANGE,
+    obj.unit);
 
   switch (input.type) {
     case SLIDER:

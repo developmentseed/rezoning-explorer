@@ -1,9 +1,26 @@
-
 const WIND = 'Wind';
 const OFFSHORE = 'Off-Shore Wind';
 const SOLAR = 'Solar PV';
 export const RESOURCES = {
   WIND, OFFSHORE, SOLAR
+};
+
+export const setRangeByUnit = ([min, max], unit) => {
+  switch (unit) {
+    case 'km':
+      return [min / 1000, max / 1000];
+    default:
+      return [min, max];
+  }
+};
+
+export const getMultiplierByUnit = unit => {
+  switch (unit) {
+    case 'km':
+      return 1000;
+    default:
+      return 1;
+  }
 };
 
 export const apiResourceNameMap = {

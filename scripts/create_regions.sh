@@ -1,28 +1,29 @@
 #!/bin/zsh
 
 # Set path references
-TMP_PATH=.tmp
-GADM_PATH=$TMP_PATH/gadm
-GADM_UNZIPPED_PATH=$TMP_PATH/gadm_unzipped
-COUNTRIES_PATH=$TMP_PATH/countries
-REGIONS_PATH=$TMP_PATH/regions
+GEO_PATH=./.geo
+GADM_PATH=$GEO_PATH/gadm
+GADM_UNZIPPED_PATH=$GEO_PATH/gadm_unzipped
+COUNTRIES_PATH=$GEO_PATH/country
+REGIONS_PATH=$GEO_PATH/region
 PUBLIC_ZONES_PATH=app/public/zones
 
 # Create diretories
 
+mkdir -p $GEO_PATH
 mkdir -p $COUNTRIES_PATH/simplified
 mkdir -p $COUNTRIES_PATH/quantized
-mkdir -p $PUBLIC_ZONES_PATH/countries # output dir
+mkdir -p $PUBLIC_ZONES_PATH/country # output dir
 
 mkdir -p $REGIONS_PATH/simplified
 mkdir -p $REGIONS_PATH/quantized
-mkdir -p $PUBLIC_ZONES_PATH/regions # output dir
+mkdir -p $PUBLIC_ZONES_PATH/region # output dir
 
 # Download original file, if not already downloaded
 wget -c https://biogeo.ucdavis.edu/data/gadm3.6/gadm36_levels_shp.zip -P $GADM_PATH
 
 # Expand
-unzip -o $GADM_PATH/gadm36_levels_shp.zip -d $TMP_PATH/gadm_unzipped 
+unzip -o $GADM_PATH/gadm36_levels_shp.zip -d $GEO_PATH/gadm_unzipped 
 
 ################### 
 # PROCESS REGIONS
@@ -43,7 +44,7 @@ for region in $REGIONS_PATH/*.geojson; do
   cat $region | ./node_modules/.bin/simplify-geojson -t 0.01 > $REGIONS_PATH/simplified/${regioncode}.geojson
   ./node_modules/.bin/geo2topo $REGIONS_PATH/simplified/${regioncode}.geojson > $REGIONS_PATH/simplified/${regioncode}.topojson
   ./node_modules/.bin/topoquantize 1e5 < $REGIONS_PATH/simplified/${regioncode}.topojson > $REGIONS_PATH/quantized/${regioncode}.topojson
-  cp $REGIONS_PATH/quantized/${regioncode}.topojson $PUBLIC_ZONES_PATH/regions
+  cp $REGIONS_PATH/quantized/${regioncode}.topojson $PUBLIC_ZONES_PATH/region
 ;done
 
 #####################
@@ -65,7 +66,7 @@ for country in $COUNTRIES_PATH/*.geojson; do
   cat $country | ./node_modules/.bin/simplify-geojson -t 0.01 > $COUNTRIES_PATH/simplified/${countrycode}.geojson
   ./node_modules/.bin/geo2topo $COUNTRIES_PATH/simplified/${countrycode}.geojson > $COUNTRIES_PATH/simplified/${countrycode}.topojson
   ./node_modules/.bin/topoquantize 1e5 < $COUNTRIES_PATH/simplified/${countrycode}.topojson > $COUNTRIES_PATH/quantized/${countrycode}.topojson
-  cp $COUNTRIES_PATH/quantized/${countrycode}.topojson $PUBLIC_ZONES_PATH/countries
+  cp $COUNTRIES_PATH/quantized/${countrycode}.topojson $PUBLIC_ZONES_PATH/country
 ;done
 
 # Clear temporary folder (uncomment to execute)
