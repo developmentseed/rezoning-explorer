@@ -64,7 +64,11 @@ export async function fetchZones (
     if (selectedResource === 'Off-Shore Wind') {
       // if offshore wind, we are already in grid and bounds are eez bounds
       features = squareGrid(selectedArea.bounds, grid, {
-        units: 'kilometers'
+        units: 'kilometers',
+        mask: {
+          type: 'FeatureCollection',
+          features: selectedArea.eez
+        }
       }).features.map((ft, i) => ({ ...ft, properties: { id: i } }));
     } else {
       // Get area topojson
