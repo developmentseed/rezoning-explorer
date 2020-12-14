@@ -79,7 +79,9 @@ const SubmissionSection = styled(PanelBlockFooter)`
 `;
 
 const initByType = (obj, ranges, resource) => {
-  const apiRange = ranges[obj.id];
+  // Api filter schema includes layer property
+  // Use to resolve correct range from api /filter/{country}/layers
+  const apiRange = ranges[obj.layer];
   const { input, options } = obj;
 
   const range = setRangeByUnit(
