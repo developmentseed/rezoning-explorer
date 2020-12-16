@@ -13,6 +13,7 @@ import MapContext from '../../context/map-context';
 
 import { FormCheckable } from '../../styles/form/checkable';
 
+import ExportButton from './export';
 import ColorScale from '../common/color-scale';
 import zoneScoreColor from '../../styles/zoneScoreColors';
 
@@ -217,9 +218,7 @@ const ExportWrapper = styled.div`
 const ExportZonesButton = ({ onExport, small, usePadding }) => {
   return (
     <ExportWrapper usePadding={usePadding}>
-      <Button as='a' useIcon='download' variation='primary-raised-dark' size='small'>
-        {small ? 'Export' : 'Export Selected Zones'}
-      </Button>
+      <ExportButton />
     </ExportWrapper>
   );
 };
