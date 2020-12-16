@@ -23,7 +23,7 @@ import {
 } from '../components/explore/panel-data';
 
 const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI, DEFAULT_RANGE } = INPUT_CONSTANTS;
-const maskTypes = [BOOL, MULTI];
+const maskTypes = [BOOL];
 const ExploreContext = createContext({});
 
 export function ExploreProvider (props) {
@@ -212,9 +212,10 @@ export function ExploreProvider (props) {
         // Bypass inactive filters
         if (!maskTypes.includes(input.type) &&
             (!active || !checkIncluded(filter, selectedResource))) {
+          // Skip filters that are NOT mask and are inactive
           return null;
         } else if (maskTypes.includes(input.type) && active) {
-          console.log(filter)
+          // If this is an 'active' mask filter, we don't need to send to the api. Active here means include these areas
           return null;
         }
 
