@@ -86,7 +86,7 @@ const initByType = (obj, ranges, resource) => {
     case BOOL:
       return {
         ...input,
-        value: false,
+        value: obj.active,
         range: [true, false]
       };
     case MULTI:

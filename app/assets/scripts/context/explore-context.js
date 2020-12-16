@@ -23,7 +23,7 @@ import {
 } from '../components/explore/panel-data';
 
 const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI, DEFAULT_RANGE } = INPUT_CONSTANTS;
-
+const maskTypes = [BOOL, MULTI];
 const ExploreContext = createContext({});
 
 export function ExploreProvider (props) {
@@ -210,7 +210,13 @@ export function ExploreProvider (props) {
         const { id, active, input } = filter;
 
         // Bypass inactive filters
-        if (!active || !checkIncluded(filter, selectedResource)) return null;
+        if (!maskTypes.includes(input.type) &&
+            (!active || !checkIncluded(filter, selectedResource))) {
+          return null;
+        } else if (maskTypes.includes(input.type) && active) {
+          console.log(filter)
+          return null;
+        }
 
         // Add accepted filter types to the query
         if (input.type === SLIDER) {
