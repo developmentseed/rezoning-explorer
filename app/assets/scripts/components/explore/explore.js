@@ -10,7 +10,7 @@ import {
   InpageBody
 } from '../../styles/inpage';
 import media from '../../styles/utils/media-queries';
-import exportPDF from './download/pdf';
+import exportPDF from './export/pdf';
 
 import PrimePanel from './prime-panel';
 import SecPanel from './sec-panel';
