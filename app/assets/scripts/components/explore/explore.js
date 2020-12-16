@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import App from '../common/app';
 import {
@@ -10,6 +10,7 @@ import {
   InpageBody
 } from '../../styles/inpage';
 import media from '../../styles/utils/media-queries';
+import exportPDF from './download/pdf';
 
 import PrimePanel from './prime-panel';
 import SecPanel from './sec-panel';
@@ -46,6 +47,10 @@ function Explore () {
   const [triggerResize, setTriggerResize] = useState(true);
   const { selectedArea, selectedResource, tourStep, setTourStep, currentZones } = useContext(ExploreContext);
   const zoneData = currentZones.isReady() ? currentZones.getData() : null;
+
+  useEffect(() => {
+    exportPDF();
+  }, []);
   return (
     <App
       pageTitle='Explore'
