@@ -35,9 +35,14 @@ const ZonesWrapper = styled.section`
     `}
 `;
 
-const ZonesHeader = styled(Subheading)`
+const ZonesHeader = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   margin: 1rem 0rem;
-
+  a {
+    text-align: right;
+    color: ${themeVal('color.primary')}
+  }
   ${Button} {
     font-size: 0.875rem;
     text-align: left;
@@ -45,10 +50,14 @@ const ZonesHeader = styled(Subheading)`
     padding: 0.25rem 1.5rem;
     width: 150%;
     font-weight: 400;
+    grid-column: span 5;
   }
 `;
 
 const Card = styled(CardWrapper)`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-content: space-between;
   height: auto;
   box-shadow: none;
   border: none;
@@ -63,6 +72,7 @@ const Card = styled(CardWrapper)`
   }
   ${FormCheckable} {
     padding: 0 1rem;
+    justify-self: end;
   }
 `;
 
@@ -81,20 +91,12 @@ const CardIcon = styled.div`
 `;
 
 const CardDetails = styled.ul`
-  display: flex;
-  flex-flow: column nowrap;
-  flex: 1;
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   font-size: 0.875rem;
 `;
 const Detail = styled(Dl)`
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-
-  & ~ & {
-    padding-top: 0.125rem;
-  }
-
   dt,
   dd {
     margin: 0;
@@ -123,15 +125,6 @@ function ExploreZones (props) {
     }
   };
 
-  const formatLabel = function (id) {
-    switch (id) {
-      case 'lcoe':
-        return `${id.replace(/_/g, ' ')} [USD/MwH]`;
-      default:
-        return id.replace(/_/g, ' ');
-    }
-  };
-
   const onRowHoverEvent = (event, row) => {
     setHoveredFeature(event === 'enter' ? row : null);
   };
@@ -146,7 +139,11 @@ function ExploreZones (props) {
           </Button>
         </ZonesHeader>
       ) : (
-        <ZonesHeader>All Zones</ZonesHeader>
+        <ZonesHeader>
+          <Subheading>All Zones</Subheading>
+          <Subheading as='a'>LCOE [USD/MwH]</Subheading>
+          <Subheading as='a'>Score</Subheading>
+        </ZonesHeader>
       )}
 
       {focusZone ? (
@@ -183,7 +180,6 @@ function ExploreZones (props) {
                       .filter(([label, value]) => FILTERED_PROPERTIES[label])
                       .map(([label, value]) => (
                         <Detail key={`${data.id}-${label}`}>
-                          <dt>{formatLabel(label)}</dt>
                           <dd>{formatIndicator(label, value)}</dd>
                         </Detail>
                       )
