@@ -5,6 +5,9 @@ import { format } from 'date-fns';
 import { zonesSummary } from '../explore-stats';
 import config from '../../../config';
 import get from 'lodash.get';
+import groupBy from 'lodash.groupby';
+import { toTitleCase } from '../../../utils/utils';
+import { formatThousands } from '../../../utils/format.js';
 
 // Helper function to generate a formatted timestamp
 const timestamp = () => format(Date.now(), 'yyyyMMdd-hhmmss');
@@ -166,7 +169,7 @@ function drawHeader (doc, { area }) {
 /**
  * Draw Area Summary
  */
-function drawAreaSummary (doc, zones) {
+function drawAreaSummary (doc, { zones }) {
   const stats = zonesSummary(zones);
 
   // Title
@@ -189,11 +192,14 @@ function drawAreaSummary (doc, zones) {
   stats.forEach((line) => {
     const startY = doc.y;
 
-    const value = line.unit ? `${line.data} ${line.unit}` : `${line.data}`;
+    let title = line.label;
+    if (line.unit) {
+      title = `${title} (${line.unit})`;
+    }
 
-    addText(doc, 'p', line.label, { align: 'left' });
+    addText(doc, 'p', title, { align: 'left' });
     doc.y = startY;
-    addText(doc, 'p', value, { align: 'right' });
+    addText(doc, 'p', line.data, { align: 'right' });
 
     doc
       .moveTo(startX, startY + rowHeight)
@@ -209,22 +215,42 @@ function drawAreaSummary (doc, zones) {
 /**
  * Draw Analysis Input
  */
-function drawAnalysisInput (doc, { filters }) {
+function drawAnalysisInput (doc, data) {
   addText(doc, 'h1', 'Area summary');
+
+  const { filtersLists } = data;
+  const filterRanges = data.filterRanges.getData();
 
   const usableWidth = doc.page.width - options.margin;
   const startX = doc.page.margins.left;
   const rowHeight = styles.p.fontSize + options.tables.rowSpacing;
 
-  Object.keys(filters).forEach((filterId) => {
-    addText(doc, 'h2', filterId);
+  // Add filters (ranges must be available)
+  const categories = groupBy(filtersLists, 'category');
+  Object.keys(categories).forEach((category) => {
+    addText(doc, 'h2', toTitleCase(category));
 
-    filters[filterId].forEach((line) => {
+    categories[category].forEach((filter) => {
       const startY = doc.y;
 
-      addText(doc, 'p', line.title, { align: 'left' });
+      let title = filter.title;
+      if (filter.unit) {
+        title = `${title} (${filter.unit})`;
+      }
+
+      let value;
+      if (filter.isRange) {
+        const range = filterRanges[filter.layer];
+        value = range
+          ? `${formatThousands(range.min)} - ${formatThousands(range.max)}`
+          : 'To be added';
+      } else {
+        value = get(filter, 'input.value', 'To be added');
+      }
+
+      addText(doc, 'p', title, { align: 'left' });
       doc.y = startY;
-      addText(doc, 'p', line.value, { align: 'right' });
+      addText(doc, 'p', value, { align: 'right' });
 
       doc
         .moveTo(startX, startY + rowHeight)
@@ -250,7 +276,7 @@ export default async function exportPDF (data) {
 
   // Add sections
   drawHeader(doc, data);
-  drawAreaSummary(doc, data.zones);
+  drawAreaSummary(doc, data);
   drawAnalysisInput(doc, data);
 
   // Finalize PDF file
