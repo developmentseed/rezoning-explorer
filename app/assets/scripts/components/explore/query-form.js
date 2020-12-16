@@ -109,11 +109,6 @@ const initByType = (obj, ranges, resource) => {
   }
 };
 
-/* Validate that a range objects value is within its range */
-const validateRange = (object, range) => {
-
-};
-
 function QueryForm (props) {
   const {
     area,
@@ -342,7 +337,6 @@ function QueryForm (props) {
     updateFilteredLayer(filters, weightsValues, lcoeValues);
   };
   useEffect(() => {
-
     /* When filter ranges update we should reset to match ranges */
     initialize(filtersLists, filtersInd, {
       // On first load, we do not reset. Set values from url
@@ -354,7 +348,6 @@ function QueryForm (props) {
     if (firstLoad.current && filterRanges.isReady()) {
       firstLoad.current = false;
     }
-
   }, [filterRanges, resource]);
 
   useEffect(onInputTouched, [area, resource]);

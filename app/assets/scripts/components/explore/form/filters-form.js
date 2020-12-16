@@ -220,18 +220,19 @@ function FiltersForm (props) {
                                 </InfoButton>
                               )}
 
-                              <FormSwitch
-                                hideText
-                                name={`toggle-${filter.name.replace(
+                              {!filter.isRange && (
+                                <FormSwitch
+                                  hideText
+                                  name={`toggle-${filter.name.replace(
                                   / /g,
                                   '-'
                                 )}`}
-                                disabled={filter.disabled}
-                                checked={filter.active}
-                                onChange={switchOnChange}
-                              >
+                                  disabled={filter.disabled}
+                                  checked={filter.active}
+                                  onChange={switchOnChange}
+                                >
                                 Toggle filter
-                              </FormSwitch>
+                                </FormSwitch>)}
                             </OptionHeadline>
                             <FormInput
                               option={filter}
