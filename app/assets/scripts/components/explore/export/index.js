@@ -80,7 +80,7 @@ const ExportZonesButton = () => {
           <DropMenuItem useIcon='page-label' onClick={() => exportPDF(data)}>
             PDF Report
           </DropMenuItem>
-          <DropMenuItem useIcon='map' onClick={() => exportMapImage()}>
+          <DropMenuItem useIcon='picture' onClick={() => exportMapImage()}>
             Map (.png)
           </DropMenuItem>
         </DropMenu>

@@ -584,6 +584,13 @@ export const DropMenuItem = styled.a`
       text-align: center;
     }
   }
+  ${({ useIcon }) =>
+    useIcon &&
+    css`
+      &:before {
+        ${collecticon(useIcon)};
+      }
+    `}
 `;
 
 export const DropInset = styled.div`
