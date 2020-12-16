@@ -4,10 +4,8 @@ import styled from 'styled-components';
 import Button from '../../styles/button/button';
 import InfoButton from '../common/info-button';
 import Prose from '../../styles/type/prose';
-import GradientChart from '../common/gradient-legend-chart/chart';
-import theme from '../../styles/theme/theme';
-import { rgba } from 'polished';
 import ShadowScrollbar from '../common/shadow-scrollbar';
+import SliderGroup from '../common/slider-group';
 
 const TrayWrapper = styled(ShadowScrollbar)`
   padding: 0.25rem;
@@ -51,13 +49,8 @@ const LayersWrapper = styled.div`
   transition: opacity .16s ease 0s;
 `;
 
-const defaultStops = [
-  rgba(theme.main.color.primary, 0),
-  rgba(theme.main.color.primary, 1)
-];
-
 function LayerControl (props) {
-  const { id, name, min, max, stops, onLayerKnobChange, onVisibilityToggle, visible } = props;
+  const { id, name, onLayerKnobChange, onVisibilityToggle, visible } = props;
   const [knobPos, setKnobPos] = useState(50);
 
   return (
@@ -88,18 +81,16 @@ function LayerControl (props) {
         </ControlTools>
       </ControlHeadline>
       <Legend>
-        <GradientChart
-          stops={stops || defaultStops}
-          knobPos={knobPos}
+        <SliderGroup
           id={id}
-          onAction={(a, p) => {
-            onLayerKnobChange(props, p);
-            setKnobPos(p.value);
+          value={knobPos}
+          onChange={(val) => {
+            setKnobPos(val);
+            onLayerKnobChange(props, val);
           }}
-          disableGradientScaling
+          range={[0, 100]}
+          disabled={!visible}
         />
-        <Prose size='small' className='grad-min'>{min || 0}</Prose>
-        <Prose size='small' className='grad-max'>{max || 1}</Prose>
       </Legend>
     </ControlWrapper>
   );
@@ -108,9 +99,6 @@ function LayerControl (props) {
 LayerControl.propTypes = {
   id: T.string,
   name: T.string,
-  min: T.number,
-  max: T.number,
-  stops: T.array,
   onLayerKnobChange: T.func,
   onVisibilityToggle: T.func,
   info: T.string,

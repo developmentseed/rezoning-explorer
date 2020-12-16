@@ -1,46 +1,48 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import T from 'prop-types';
-import { FormWrapper, PanelOption, PanelOptionTitle, OptionHeadline } from './form';
+import {
+  FormWrapper,
+  PanelOption,
+  PanelOptionTitle,
+  OptionHeadline
+} from './form';
 import InfoButton from '../../common/info-button';
+import FormInput from '../form/form-input';
+// import updateArrayIndex from '../../../utils/update-array-index';
 
 function LCOEForm (props) {
-  const {
-    lcoe,
-    setLcoe,
-    inputOfType,
-    updateStateList,
-    active
-  } = props;
+  const { lcoe, active } = props;
   return (
-    <FormWrapper
-      active={active}
-    >
-      {lcoe.map((cost, ind) => (
-        <PanelOption key={cost.name}>
-          <OptionHeadline>
-            <PanelOptionTitle>{cost.name}</PanelOptionTitle>
+    <FormWrapper active={active}>
+      {lcoe.map(([cost, setCost], ind) => {
+        const onChange = useCallback(
+          (v) => setCost({
+            ...cost,
+            input: {
+              ...cost.input,
+              value: v
+            }
+          })
 
-            {cost.info &&
+        );
+        return (
+          <PanelOption key={cost.name}>
+            <OptionHeadline>
+              <PanelOptionTitle>{cost.name}</PanelOptionTitle>
+              {cost.info &&
               <InfoButton info={cost.info} id={cost.name}>
                 Info
               </InfoButton>}
-          </OptionHeadline>
+            </OptionHeadline>
 
-          {
-            inputOfType(cost, (v) => {
-              setLcoe(updateStateList(lcoe, ind, {
-                ...cost,
-                input: {
-                  ...cost.input,
-                  value: v
-                }
-              }));
-            })
-          }
-        </PanelOption>
-      ))}
+            <FormInput
+              option={cost}
+              onChange={onChange}
+            />
+          </PanelOption>
+        );
+      })}
     </FormWrapper>
-
   );
 }
 
@@ -52,8 +54,6 @@ LCOEForm.propTypes = {
   setPreset: T.func,
   lcoe: T.array,
   setLcoe: T.func,
-  inputOfType: T.func,
-  updateStateList: T.func,
   active: T.bool
 };
 

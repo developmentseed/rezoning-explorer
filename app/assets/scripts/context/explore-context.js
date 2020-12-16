@@ -12,13 +12,14 @@ import { initialApiRequestState } from './contexeed';
 import { fetchZonesReducer, fetchZones } from './reducers/zones';
 
 import {
-  showGlobalLoading,
+  showGlobalLoadingMessage,
   hideGlobalLoading
 } from '../components/common/global-loading';
 
 import {
   INPUT_CONSTANTS,
-  checkIncluded
+  checkIncluded,
+  getMultiplierByUnit
 } from '../components/explore/panel-data';
 
 const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI, DEFAULT_RANGE } = INPUT_CONSTANTS;
@@ -108,7 +109,7 @@ export function ExploreProvider (props) {
 
   // Load eezs
   const initAreasAndFilters = async () => {
-    showGlobalLoading();
+    showGlobalLoadingMessage('Initializing application...');
     // Parse region and country files into area list
     const eez = await fetch('public/zones/eez_v11.topojson').then((e) =>
       e.json()
@@ -124,18 +125,31 @@ export function ExploreProvider (props) {
     }, new Map());
 
     setAreas(
-      areasJson.map((a) => {
-        if (a.type === 'country') {
-          a.id = a.gid;
-          a.eez = eezCountries.get(a.id);
-        }
-        // Parse bounds, if a string
-        if (a.bounds && typeof a.bounds === 'string') {
-          a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
-        }
+      areasJson
+        .map((a) => {
+          if (a.type === 'country') {
+            a.id = a.gid;
+            a.eez = eezCountries.get(a.id);
+          }
+          // Parse bounds, if a string
+          if (a.bounds && typeof a.bounds === 'string') {
+            a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
+          }
 
-        return a;
-      })
+          return a;
+        })
+        .sort(function (a, b) {
+          var nameA = a.name.toUpperCase();
+          var nameB = b.name.toUpperCase();
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+          // names must be equal
+          return 0;
+        })
     );
     hideGlobalLoading();
   };
@@ -174,10 +188,11 @@ export function ExploreProvider (props) {
   }, [tourStep]);
 
   const generateZones = async (filterString, weights, lcoe) => {
-    showGlobalLoading();
+    showGlobalLoadingMessage(`Generating zones for ${selectedArea.name}, this may take a few minutes...`);
     fetchZones(
       gridMode && gridSize,
       selectedArea,
+      selectedResource,
       filterString,
       weights,
       lcoe,
@@ -187,6 +202,7 @@ export function ExploreProvider (props) {
 
   const updateFilteredLayer = (filterValues, weights, lcoe) => {
     // Prepare a query string to the API based from filter values
+    //
     const filterString = filterValues
       .map((filter) => {
         const { id, active, input } = filter;
@@ -199,7 +215,10 @@ export function ExploreProvider (props) {
           const {
             value: { min, max }
           } = filter.input;
-          return `${id}=${min},${max}`;
+
+          // App uses km but api expects values in meters
+          const multiplier = getMultiplierByUnit(filter.unit);
+          return `${id}=${min * multiplier},${max * multiplier}`;
         } else if (input.type === BOOL) {
           return `${id}=${filter.input.value}`;
         } else if (input.type === DROPDOWN || input.type === MULTI) {
