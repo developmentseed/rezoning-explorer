@@ -16,14 +16,10 @@ const Details = styled.div`
     color: ${themeVal('color.primary')};
   }
 `;
-const LineChart = styled.div`
-/* stylelint-enable */
-
-`;
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-rows: 2rem auto 1fr;
+  grid-template-rows: 1fr;
   gap: 0.5rem;
   > ${Button} {
     text-align: left;
@@ -64,7 +60,7 @@ const formatLabel = function (id) {
 };
 
 function FocusZone (props) {
-  const { zone, unFocus, selected, onSelect } = props;
+  const { zone, selected, onSelect } = props;
   const { id } = zone.properties;
   /* eslint-disable-next-line */
   const detailsList = {
@@ -75,10 +71,6 @@ function FocusZone (props) {
   return (
 
     <Wrapper>
-      <Button onClick={unFocus} size='small' useIcon={['chevron-left--small', 'before']}>
-        See All Zones
-      </Button>
-      <LineChart title='Supply Curve' />
       <ShadowScrollbar>
         <Details>
           {Object.entries(detailsList).map(([label, data]) => (
@@ -111,7 +103,6 @@ function FocusZone (props) {
 
 FocusZone.propTypes = {
   zone: T.object.isRequired,
-  unFocus: T.func,
   selected: T.bool,
   onSelect: T.func
 };

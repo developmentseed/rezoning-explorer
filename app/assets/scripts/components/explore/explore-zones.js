@@ -36,7 +36,16 @@ const ZonesWrapper = styled.section`
 `;
 
 const ZonesHeader = styled(Subheading)`
-  padding: 1rem 0rem;
+  margin: 1rem 0rem;
+
+  ${Button} {
+    font-size: 0.875rem;
+    text-align: left;
+    margin: 0 -1.5rem;
+    padding: 0.25rem 1.5rem;
+    width: 150%;
+    font-weight: 400;
+  }
 `;
 
 const Card = styled(CardWrapper)`
@@ -130,12 +139,19 @@ function ExploreZones (props) {
   return (
     <ZonesWrapper active={active}>
       <ColorScale steps={10} heading='Weighted Zone Score' min={0} max={1} colorFunction={zoneScoreColor} />
-      <ZonesHeader>All Zones</ZonesHeader>
+      {focusZone ? (
+        <ZonesHeader>
+          <Button onClick={() => setFocusZone(null)} size='small' useIcon={['chevron-left--small', 'before']}>
+            See All Zones
+          </Button>
+        </ZonesHeader>
+      ) : (
+        <ZonesHeader>All Zones</ZonesHeader>
+      )}
 
       {focusZone ? (
         <FocusZone
           zone={focusZone}
-          unFocus={() => setFocusZone(null)}
           selected={selectedZones[focusZone.id] || false}
           onSelect={() =>
             setSelectedZones({
