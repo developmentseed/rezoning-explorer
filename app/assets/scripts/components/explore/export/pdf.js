@@ -2,6 +2,7 @@ import PDFDocument from 'pdfkit';
 import blobStream from 'blob-stream';
 import { saveAs } from 'file-saver';
 import { format } from 'date-fns';
+import { zonesSummary } from '../explore-stats';
 import config from '../../../config';
 import get from 'lodash.get';
 
@@ -165,7 +166,9 @@ function drawHeader (doc, { area }) {
 /**
  * Draw Area Summary
  */
-function drawAreaSummary (doc, { summary: lines }) {
+function drawAreaSummary (doc, zones) {
+  const stats = zonesSummary(zones);
+
   // Title
   addText(doc, 'h1', 'Area summary');
 
@@ -183,12 +186,14 @@ function drawAreaSummary (doc, { summary: lines }) {
   const startX = doc.page.margins.left;
   const rowHeight = styles.p.fontSize + options.tables.rowSpacing;
 
-  lines.forEach((line) => {
+  stats.forEach((line) => {
     const startY = doc.y;
 
-    addText(doc, 'p', line.title, { align: 'left' });
+    const value = line.unit ? `${line.data} ${line.unit}` : `${line.data}`;
+
+    addText(doc, 'p', line.label, { align: 'left' });
     doc.y = startY;
-    addText(doc, 'p', line.value, { align: 'right' });
+    addText(doc, 'p', value, { align: 'right' });
 
     doc
       .moveTo(startX, startY + rowHeight)
@@ -233,7 +238,7 @@ function drawAnalysisInput (doc, { filters }) {
   });
 }
 
-export default async function exportPDF () {
+export default async function exportPDF (data) {
   // Load styles
   await initStyles();
 
@@ -243,93 +248,9 @@ export default async function exportPDF () {
   // Create stream
   const stream = doc.pipe(blobStream());
 
-  // Placeholder data
-  const data = {
-    area: {
-      name: 'Afghanistan',
-      type: 'country'
-    },
-    summary: [
-      {
-        title: 'Matching zones',
-        value: '3 zones'
-      },
-      {
-        title: 'Output by year',
-        value: '42 GWh'
-      },
-      {
-        title: 'Total Area',
-        value: '200 km2'
-      },
-      {
-        title: 'Output density',
-        value: '300 MWh/km²'
-      }
-    ],
-    filters: {
-      Natural: [
-        {
-          title: 'Pop density',
-          value: '0 - 2000'
-        },
-        {
-          title: 'Slope',
-          value: '0 - 6'
-        },
-        {
-          title: 'Elevation',
-          value: '0 - 1000'
-        }
-      ],
-      Infrastructure: [
-        {
-          title: 'Pop density',
-          value: '0 - 2000'
-        },
-        {
-          title: 'Slope',
-          value: '0 - 6'
-        },
-        {
-          title: 'Elevation',
-          value: '0 - 1000'
-        }
-      ],
-      Environment: [
-        {
-          title: 'Pop density',
-          value: '0 - 2000'
-        },
-        {
-          title: 'Slope',
-          value: '0 - 6'
-        },
-        {
-          title: 'Elevation',
-          value: '0 - 1000'
-        }
-      ],
-      Cultural: [
-        {
-          title: 'Pop density',
-          value: '0 - 2000'
-        },
-        {
-          title: 'Slope',
-          value: '0 - 6'
-        },
-        {
-          title: 'Elevation',
-          value: '0 - 1000'
-        }
-      ]
-    }
-  };
-
   // Add sections
   drawHeader(doc, data);
-  drawAreaSummary(doc, data);
+  drawAreaSummary(doc, data.zones);
   drawAnalysisInput(doc, data);
 
   // Finalize PDF file
