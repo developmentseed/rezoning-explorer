@@ -15,7 +15,7 @@ const timestamp = () => format(Date.now(), 'yyyyMMdd-hhmmss');
 // Base PDF options
 const pdfDocumentOptions = {
   size: 'A4',
-  margin: 50,
+  margin: 40,
   bufferPages: true
 };
 
@@ -50,44 +50,44 @@ async function initStyles () {
 
   styles = {
     h1: {
-      fontSize: 25,
+      fontSize: 20,
       padding: 20,
       fillColor: options.baseFontColor,
       font: boldFont
     },
     h2: {
-      fontSize: 20,
-      padding: 10,
-      fillColor: options.baseFontColor,
-      font: boldFont
-    },
-    h3: {
       fontSize: 16,
       padding: 10,
       fillColor: options.baseFontColor,
       font: boldFont
     },
-    h4: {
+    h3: {
       fontSize: 14,
       padding: 10,
       fillColor: options.baseFontColor,
       font: boldFont
     },
-    h5: {
+    h4: {
       fontSize: 12,
       padding: 10,
       fillColor: options.baseFontColor,
       font: boldFont
     },
-    h6: {
+    h5: {
       fontSize: 11,
       padding: 10,
       fillColor: options.baseFontColor,
       font: boldFont
     },
+    h6: {
+      fontSize: 10,
+      padding: 10,
+      fillColor: options.baseFontColor,
+      font: boldFont
+    },
     p: {
-      fontSize: 15,
-      padding: 15,
+      fontSize: 10,
+      padding: 10,
       fillColor: options.baseFontColor,
       font: baseFont
     }
@@ -128,7 +128,7 @@ function drawHeader (doc, { area }) {
     .fillColor(options.secondaryFontColor)
     .font(baseFont)
     .fontSize(subTitleSize)
-    .text(area.type, options.margin, options.margin + 24);
+    .text(toTitleCase(area.type), options.margin, options.margin + 24);
 
   // Right Title
   doc
@@ -173,7 +173,7 @@ function drawAreaSummary (doc, { zones }) {
   const stats = zonesSummary(zones);
 
   // Title
-  addText(doc, 'h1', 'Area summary');
+  addText(doc, 'h2', 'Area summary');
 
   // Description
   addText(
@@ -204,8 +204,8 @@ function drawAreaSummary (doc, { zones }) {
     doc
       .moveTo(startX, startY + rowHeight)
       .lineTo(usableWidth, startY + rowHeight)
-      .lineWidth(1)
-      .opacity(0.7)
+      .lineWidth(2)
+      .opacity(0.08)
       .stroke()
       .opacity(1);
   });
@@ -216,7 +216,7 @@ function drawAreaSummary (doc, { zones }) {
  * Draw Analysis Input
  */
 function drawAnalysisInput (doc, data) {
-  addText(doc, 'h1', 'Area summary');
+  addText(doc, 'h2', 'Spatial Filters');
 
   const { filtersLists } = data;
   const filterRanges = data.filterRanges.getData();
@@ -228,7 +228,7 @@ function drawAnalysisInput (doc, data) {
   // Add filters (ranges must be available)
   const categories = groupBy(filtersLists, 'category');
   Object.keys(categories).forEach((category) => {
-    addText(doc, 'h2', toTitleCase(category));
+    addText(doc, 'h3', toTitleCase(category));
 
     categories[category].forEach((filter) => {
       const startY = doc.y;
@@ -255,8 +255,8 @@ function drawAnalysisInput (doc, data) {
       doc
         .moveTo(startX, startY + rowHeight)
         .lineTo(usableWidth, startY + rowHeight)
-        .lineWidth(1)
-        .opacity(0.7)
+        .lineWidth(2)
+        .opacity(0.08)
         .stroke()
         .opacity(1);
     });
