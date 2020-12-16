@@ -186,11 +186,12 @@ function FiltersForm (props) {
                             }
                           }
 
-                          , [JSON.stringify(filters)]);
+                          , [filter]);
 
                         const switchOnChange = useCallback(
                           () => {
                             setFilter({
+
                               ...filter,
                               active: !filter.active,
                               input: {
@@ -201,7 +202,7 @@ function FiltersForm (props) {
                               }
                             });
                           }
-                          , [JSON.stringify(filters)]);
+                          , [filter]);
                         return (checkIncluded(filter, resource) && (
                           <PanelOption
                             key={filter.name}
@@ -218,6 +219,7 @@ function FiltersForm (props) {
                                   Info
                                 </InfoButton>
                               )}
+
                               <FormSwitch
                                 hideText
                                 name={`toggle-${filter.name.replace(
