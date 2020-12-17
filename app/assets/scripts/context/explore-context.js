@@ -38,6 +38,7 @@ export function ExploreProvider (props) {
         id: 'zone-score-range',
         active: true,
         isRange: true,
+        info: 'Filter zones by calculated zone score',
         input: {
           value: range ? { min: range[0], max: range[1] } : { min: 0, max: 1 },
           type: SLIDER,
@@ -60,6 +61,7 @@ export function ExploreProvider (props) {
         active: range && true,
         isRange: true,
         unit: 'USD/MwH',
+        info: 'Filter zones by calculated LCOE',
         input: {
           value: range ? { min: range[0], max: range[1] } : null,
           type: SLIDER,
