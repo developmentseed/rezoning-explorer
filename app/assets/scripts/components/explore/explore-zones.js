@@ -48,7 +48,7 @@ const ZonesHeader = styled.div`
       useIcon &&
       css`
         &:after {
-          ${collecticon(useIcon)};
+          ${collecticon(useIcon)}
         }
       `}
   }
