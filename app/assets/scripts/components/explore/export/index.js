@@ -52,7 +52,8 @@ const ExportZonesButton = () => {
   } = useContext(FormContext);
 
   const data = {
-    area: selectedArea,
+    selectedResource,
+    selectedArea,
     zones: currentZones.getData() || [],
     filtersLists,
     weightsList,

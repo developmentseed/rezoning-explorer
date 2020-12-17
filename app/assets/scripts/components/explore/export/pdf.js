@@ -94,11 +94,23 @@ async function initStyles () {
   };
 }
 
+/**
+ * Apply defined styles to the current documento location
+ * @param {Object} doc The document object.
+ * @param {String} element Element type key, must be available in `styles` object.
+ */
 function setStyle (doc, element) {
   const { fillColor, font, fontSize } = styles[element];
   doc.fillColor(fillColor).font(font).fontSize(fontSize);
 }
 
+/**
+ * Add text to the document.
+ * @param {Object} doc The document object.
+ * @param {String} element Element type key, must be available in `styles` object.
+ * @param {String} text The text to be added.
+ * @param {String} options PDFkit options (optional).
+ */
 function addText (doc, element, text, options) {
   setStyle(doc, element);
   doc.text(text, options);
@@ -108,9 +120,34 @@ function addText (doc, element, text, options) {
 }
 
 /**
+ * Add a 2-cell table row to the document.
+ * @param {Object} doc The document object.
+ * @param {String} leftText Text to add in left cell.
+ * @param {String} rightText Text to add in right cell.
+ */
+function addTableRow (doc, leftText, rightText) {
+  const startX = doc.page.margins.left;
+  const startY = doc.y;
+  const usableWidth = doc.page.width - options.margin;
+  const rowHeight = styles.p.fontSize + options.tables.rowSpacing;
+
+  addText(doc, 'p', leftText, { align: 'left' });
+  doc.y = startY;
+  addText(doc, 'p', rightText, { align: 'right' });
+
+  doc
+    .moveTo(startX, startY + rowHeight)
+    .lineTo(usableWidth, startY + rowHeight)
+    .lineWidth(2)
+    .opacity(0.08)
+    .stroke()
+    .opacity(1);
+}
+
+/**
  * Draw Header
  */
-function drawHeader (doc, { area }) {
+function drawHeader (doc, { selectedArea }) {
   const leftTitleSize = 20;
   const rightTitleSize = 12;
   const subTitleSize = 8;
@@ -121,14 +158,14 @@ function drawHeader (doc, { area }) {
     .fillColor(options.baseFontColor)
     .font(boldFont)
     .fontSize(leftTitleSize)
-    .text(area.name, options.margin, options.margin);
+    .text(selectedArea.name, options.margin, options.margin);
 
   // Left Subtitle
   doc
     .fillColor(options.secondaryFontColor)
     .font(baseFont)
     .fontSize(subTitleSize)
-    .text(toTitleCase(area.type), options.margin, options.margin + 24);
+    .text(toTitleCase(selectedArea.type), options.margin, options.margin + 24);
 
   // Right Title
   doc
@@ -169,7 +206,7 @@ function drawHeader (doc, { area }) {
 /**
  * Draw Area Summary
  */
-function drawAreaSummary (doc, { zones }) {
+function drawAreaSummary (doc, { selectedResource, zones }) {
   const stats = zonesSummary(zones);
 
   // Title
@@ -182,32 +219,19 @@ function drawAreaSummary (doc, { zones }) {
     'Ut ut commodo consequat anim labore duis amet in id laborum. Ex amet voluptate deserunt sunt consequat consectetur dolor et tempor nisi cillum. Sint quis officia Lorem ea ad duis elit anim adipisicing. Voluptate cupidatat veniam sint officia aliqua incididunt minim pariatur tempor officia velit.'
   );
 
+  addTableRow(doc, 'Resource', selectedResource);
+
   /**
    * Summary table
    */
-  const usableWidth = doc.page.width - options.margin;
-  const startX = doc.page.margins.left;
-  const rowHeight = styles.p.fontSize + options.tables.rowSpacing;
 
   stats.forEach((line) => {
-    const startY = doc.y;
-
     let title = line.label;
     if (line.unit) {
       title = `${title} (${line.unit})`;
     }
 
-    addText(doc, 'p', title, { align: 'left' });
-    doc.y = startY;
-    addText(doc, 'p', line.data, { align: 'right' });
-
-    doc
-      .moveTo(startX, startY + rowHeight)
-      .lineTo(usableWidth, startY + rowHeight)
-      .lineWidth(2)
-      .opacity(0.08)
-      .stroke()
-      .opacity(1);
+    addTableRow(doc, title, line.data);
   });
   doc.y += get(options, 'tables.padding', 0);
 }
