@@ -216,7 +216,7 @@ function drawAreaSummary (doc, { selectedResource, zones }) {
   addText(
     doc,
     'p',
-    'Ut ut commodo consequat anim labore duis amet in id laborum. Ex amet voluptate deserunt sunt consequat consectetur dolor et tempor nisi cillum. Sint quis officia Lorem ea ad duis elit anim adipisicing. Voluptate cupidatat veniam sint officia aliqua incididunt minim pariatur tempor officia velit.'
+    'Dolor in qui nulla fugiat eu excepteur ex et amet est et veniam. Officia eu occaecat dolor nostrud sunt do consectetur nulla consequat laboris laboris eiusmod. Eu voluptate in consequat duis enim qui do commodo. Minim adipisicing commodo ullamco exercitation do nulla amet aliquip do duis tempor ex qui. Reprehenderit sit nostrud est dolor in eu ad in ut labore laborum voluptate amet. Voluptate proident culpa anim do.'
   );
 
   addTableRow(doc, 'Resource', selectedResource);
@@ -245,7 +245,7 @@ function drawAnalysisInput (doc, data) {
   const { filtersLists } = data;
   const filterRanges = data.filterRanges.getData();
 
-  // Add filters (ranges must be available)
+  // Add filters section (ranges must be available)
   const categories = groupBy(filtersLists, 'category');
   Object.keys(categories).forEach((category) => {
     addText(doc, 'h3', toTitleCase(category));
@@ -269,6 +269,17 @@ function drawAnalysisInput (doc, data) {
       addTableRow(doc, title, value);
     });
     doc.y += get(options, 'tables.padding', 0);
+  });
+
+  // Add weights section
+  addText(doc, 'h2', 'Weights');
+  addText(
+    doc,
+    'p',
+    'Laboris aliqua duis incididunt occaecat elit occaecat sunt deserunt est commodo deserunt tempor anim nostrud. Sit sint mollit incididunt in nisi adipisicing excepteur quis veniam occaecat irure. Quis cupidatat aliqua irure aliqua deserunt minim anim laboris nulla enim proident magna amet.'
+  );
+  data.weightsList.forEach((weight) => {
+    addTableRow(doc, weight.title, 'To be added');
   });
 }
 
