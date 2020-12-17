@@ -240,12 +240,14 @@ function drawAreaSummary (doc, { selectedResource, zones }) {
  * Draw Analysis Input
  */
 function drawAnalysisInput (doc, data) {
+  // Add filters section (ranges must be available)
+  doc.addPage();
   addText(doc, 'h2', 'Spatial Filters');
 
   const { filtersLists } = data;
   const filterRanges = data.filterRanges.getData();
-
-  // Add filters section (ranges must be available)
+  
+  // Add one table per category
   const categories = groupBy(filtersLists, 'category');
   Object.keys(categories).forEach((category) => {
     addText(doc, 'h3', toTitleCase(category));
@@ -272,6 +274,7 @@ function drawAnalysisInput (doc, data) {
   });
 
   // Add weights section
+  doc.addPage();
   addText(doc, 'h2', 'Weights');
   addText(
     doc,
@@ -280,6 +283,18 @@ function drawAnalysisInput (doc, data) {
   );
   data.weightsList.forEach((weight) => {
     addTableRow(doc, weight.title, 'To be added');
+  });
+
+  // Add LCOE section
+  doc.addPage();
+  addText(doc, 'h2', 'LCOE');
+  addText(
+    doc,
+    'p',
+    'Officia nostrud occaecat ipsum do proident duis. Veniam veniam sint reprehenderit ad sint officia aliquip voluptate enim et enim velit ea. Reprehenderit elit in quis et consequat irure sint laboris nisi cupidatat. Incididunt ea do quis sint qui commodo incididunt cillum ex et reprehenderit aute consequat. Lorem nulla exercitation proident cillum aute nulla. Anim do aute do quis consectetur fugiat minim minim anim anim consectetur nulla non.'
+  );
+  data.lcoeList.forEach((lcoe) => {
+    addTableRow(doc, lcoe.title, 'To be added');
   });
 }
 
