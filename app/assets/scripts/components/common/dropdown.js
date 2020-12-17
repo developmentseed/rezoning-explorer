@@ -588,7 +588,7 @@ export const DropMenuItem = styled.a`
     useIcon &&
     css`
       &:before {
-        ${collecticon(useIcon)};
+        ${collecticon(useIcon)}
       }
     `}
 `;
