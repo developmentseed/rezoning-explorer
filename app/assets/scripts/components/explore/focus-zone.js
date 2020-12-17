@@ -53,7 +53,11 @@ const formatIndicator = function (id, value) {
 const formatLabel = function (id) {
   switch (id) {
     case 'lcoe':
-      return `${id.replace(/_/g, ' ')} [USD/MwH]`;
+      return `${id.replace(/_/g, ' ')} (USD/MwH)`;
+    case 'zone_output':
+      return `${id.replace(/_/g, ' ')} (GwH)`;
+    case 'zone_output_density':
+      return `${id.replace(/_/g, ' ')} (MWh/km²)`;
     default:
       return id.replace(/_/g, ' ');
   }
