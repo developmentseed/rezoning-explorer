@@ -108,19 +108,29 @@ const Detail = styled(Dl)`
 const ZoneColumnHead = styled(Subheading)`
     text-align: right;
     color: ${themeVal('color.primary')};
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-end;
+    span {
+      order: 3;
+      flex: 1;
+    }
     ${({ asc, activelySorting }) => {
-      css`&:after {
-        vertical-align: bottom;
-      }`;
       if (activelySorting) {
         return css`
+        /* stylelint-disable */
           &:after {
+            order: 2;
+            vertical-align: bottom;
             ${collecticon(asc ? 'sort-asc' : 'sort-desc')}
           }
         `;
       } else {
           return css`
             &:after {
+            /* stylelint-enable */
+              order: 2;
+              vertical-align: bottom;
               ${collecticon('sort-none')}
             }
           `;
@@ -143,8 +153,8 @@ function ExploreZones (props) {
     switch (id) {
       case 'zone_score':
         return formatThousands(value, { forceDecimals: true, decimals: 3 });
-      case 'lcoe_density':
-        return formatThousands(value, { forceDecimals: true, decimals: 5 });
+      case 'lcoe':
+        return formatThousands(value, { forceDecimals: true, decimals: 2 });
       default:
         return formatThousands(value);
     }
@@ -174,7 +184,7 @@ function ExploreZones (props) {
               return (
                 <ZoneColumnHead
                   key={id}
-                  title='Sort by lcoe'
+                  title={`Sort by ${name}`}
                   as='a'
                   activelySorting={sortId === id}
                   asc={sortAsc}
@@ -184,6 +194,7 @@ function ExploreZones (props) {
                   }}
                 >
                   {name}
+                  {id === 'lcoe' && <span>(USD/MwH)</span>}
                 </ZoneColumnHead>
               );
             }
