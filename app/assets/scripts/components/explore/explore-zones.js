@@ -114,6 +114,8 @@ function ExploreZones (props) {
 
   const [selectedZones, setSelectedZones] = useState(currentZones.reduce((accum, zone) => ({ ...accum, [zone.id]: false }), {}));
 
+  const [sortedZones, setSortedZones] = useState(currentZones.sort((a, b) => parseFloat(b.properties.summary.lcoe) - parseFloat(a.properties.summary.lcoe)));
+
   const formatIndicator = function (id, value) {
     switch (id) {
       case 'zone_score':
@@ -160,7 +162,7 @@ function ExploreZones (props) {
         <>
           <CardList
             numColumns={1}
-            data={currentZones}
+            data={sortedZones}
             renderCard={(data) => (
               <Card
                 size='large'
