@@ -93,7 +93,7 @@ const initByType = (obj, ranges, resource) => {
       return {
         ...input,
         // For multi select use first option as default value
-        value: input.value || [0],
+        value: input.value || input.options.map((o, i) => i),
         unit: null
       };
     case DROPDOWN:

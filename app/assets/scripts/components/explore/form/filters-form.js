@@ -220,7 +220,7 @@ function FiltersForm (props) {
                                 </InfoButton>
                               )}
 
-                              {!filter.isRange && (
+                              {filter.input.type === BOOL && (
                                 <FormSwitch
                                   hideText
                                   name={`toggle-${filter.name.replace(
