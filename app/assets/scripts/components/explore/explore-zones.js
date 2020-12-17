@@ -105,36 +105,25 @@ const Detail = styled(Dl)`
   }
 `;
 
-const ZoneColumnHeading = styled(Subheading)`
-  text-align: right;
-  color: ${themeVal('color.primary')};
-  ${({ useIcon }) =>
-    useIcon &&
-    css`
-      &:after {
-        vertical-align: baseline;
-        ${collecticon(useIcon)}
+const ZoneColumnHead = styled(Subheading)`
+    text-align: right;
+    color: ${themeVal('color.primary')};
+    ${({ asc }) => css`
+        &:after {
+          ${collecticon(asc ? 'sort-asc' : 'sort-desc')};
       }
     `}
 `;
 
+/*
 function ZoneColumnHead (props) {
   const handleClick = () => {
     const { onClick, id } = props;
     onClick(id);
   };
-  const { value, sortDirection } = props;
-  return (
-    <ZoneColumnHeading
-      useIcon={sortDirection === 'asc' ? 'sort-asc' : 'sort-desc'}
-      as='a'
-      title={`Sort by ${value}`}
-      onClick={handleClick}
-    >
-      {value}
-    </ZoneColumnHeading>
-  );
-}
+  const { value } = props;
+  return <Subheading as='a' title={`Sort by ${value}`} onClick={handleClick}>{value}</Subheading>;
+} */
 
 ZoneColumnHead.propTypes = {
   value: T.string,
@@ -150,7 +139,7 @@ function ExploreZones (props) {
 
   const [selectedZones, setSelectedZones] = useState(currentZones.reduce((accum, zone) => ({ ...accum, [zone.id]: false }), {}));
 
-  const [sortedZones, setSortedZones] = useState([...currentZones].sort((a, b) => parseFloat(b.properties.summary.lcoe) - parseFloat(a.properties.summary.lcoe)));
+  // const [sortedZones, setSortedZones] = useState(currentZones.sort((a, b) => parseFloat(b.properties.summary.lcoe) - parseFloat(a.properties.summary.lcoe)));
 
   const [sortDirection, setSortDirection] = useState('desc');
 
@@ -169,15 +158,19 @@ function ExploreZones (props) {
     setHoveredFeature(event === 'enter' ? row : null);
   };
 
+  /*
   const sortZoneList = (id) => {
-    setSortedZones(sortedZones.sort((a, b) =>
+    console.log(id);
+    setSortedZones([...currentZones].sort((a, b) =>
       sortDirection === 'desc'
         ? parseFloat(a.properties.summary[id]) - parseFloat(b.properties.summary[id])
         : parseFloat(b.properties.summary[id]) - parseFloat(a.properties.summary[id])
     )
     );
     setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc');
-  };
+  }; */
+
+  const [sortId, setSortId] = useState('lcoe');
 
   return (
     <ZonesWrapper active={active}>
@@ -192,17 +185,25 @@ function ExploreZones (props) {
         <ZonesHeader>
           <Subheading>All Zones</Subheading>
           <ZoneColumnHead
-            id='lcoe'
-            value='LCOE'
-            onClick={(id) => sortZoneList(id)}
-            sortDirection={sortDirection}
-          />
+            title='Sort by lcoe'
+            as='a'
+            asc={sortDirection === 'asc'}
+            onClick={() => {
+              setSortId('lcoe');
+              setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc');
+            }}
+          >LCOE
+          </ZoneColumnHead>
           <ZoneColumnHead
-            id='zone_score'
-            value='Score'
-            onClick={(id) => sortZoneList(id)}
-            sortDirection={sortDirection}
-          />
+            as='a'
+            title='Sort by zone score'
+            asc={sortDirection === 'asc'}
+            onClick={(id) => {
+              setSortId('zone_score');
+              setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc');
+            }}
+          >SCORE
+          </ZoneColumnHead>
         </ZonesHeader>
       )}
 
@@ -220,7 +221,13 @@ function ExploreZones (props) {
         <>
           <CardList
             numColumns={1}
-            data={sortedZones}
+            data={
+              currentZones.sort((a, b) =>
+                sortDirection === 'desc'
+                  ? parseFloat(a.properties.summary[sortId]) - parseFloat(b.properties.summary[sortId])
+                  : parseFloat(b.properties.summary[sortId]) - parseFloat(a.properties.summary[sortId])
+              )
+            }
             renderCard={(data) => (
               <Card
                 size='large'
