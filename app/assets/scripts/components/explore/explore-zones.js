@@ -38,7 +38,7 @@ const ZonesWrapper = styled.section`
 
 const ZonesHeader = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr) 0.75fr;
   align-items: baseline;
   margin: 1rem 0rem;
   ${Button} {
@@ -109,16 +109,19 @@ const ZoneColumnHead = styled(Subheading)`
     text-align: right;
     color: ${themeVal('color.primary')};
     ${({ asc, activelySorting }) => {
+      css`&:after {
+        vertical-align: bottom;
+      }`;
       if (activelySorting) {
         return css`
           &:after {
-            ${collecticon(asc ? 'sort-asc' : 'sort-desc')};
+            ${collecticon(asc ? 'sort-asc' : 'sort-desc')}
           }
         `;
       } else {
           return css`
             &:after {
-              ${collecticon('sort-none')};
+              ${collecticon('sort-none')}
             }
           `;
       }
