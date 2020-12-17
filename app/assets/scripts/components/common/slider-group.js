@@ -6,11 +6,15 @@ import { visuallyHidden } from '../../styles/helpers';
 import { validateRangeNum } from '../../utils/utils';
 import { truncateDecimals } from '../../utils/format';
 import StressedFormGroupInput from './stressed-form-group-input';
-
+const InputLabel = styled.div`
+  text-align: ${({ align }) => align || 'left'};
+  grid-column: ${({ gridColumn }) => gridColumn || 'auto'};
+  font-size: 0.75rem;
+`;
 const FormSliderGroup = styled.div`
   display: grid;
   align-items: center;
-  grid-gap: 1rem;
+  grid-gap: 0 1rem;
   grid-template-columns: ${({ isRange }) => isRange ? '3rem 1fr 4rem' : '1fr 3rem'};
   
   label {
@@ -75,6 +79,11 @@ function SliderGroup (props) {
         onChange={fgTopOnChange}
         title={disabled ? 'Enable this input to interact' : ''}
       />
+      { isRange &&
+    <>
+      <InputLabel>From</InputLabel>
+      <InputLabel align='right' gridColumn='3'>To</InputLabel>
+    </>}
     </FormSliderGroup>
   );
 }

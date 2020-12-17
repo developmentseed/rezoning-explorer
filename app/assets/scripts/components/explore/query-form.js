@@ -244,14 +244,20 @@ function QueryForm (props) {
 
   const initialize = (baseList, destList, options) => {
     const { reset, apiRange } = options || {};
-    if (firstLoad.current && filterRanges.isReady()) {
-      firstLoad.current = false;
-    }
     baseList.forEach((base, ind) => {
       const [object, setObject] = destList[ind];
       if (object && !reset) {
         // This filter has been set via the url
         // Does not need to be initialized
+        const updated = {
+          ...object,
+          input: {
+            ...initByType(object,
+              apiRange || {},
+              apiResourceNameMap[resource])
+          }
+        };
+        setObject(updated);
         return;
       }
 
@@ -331,10 +337,17 @@ function QueryForm (props) {
     updateFilteredLayer(filters, weightsValues, lcoeValues);
   };
   useEffect(() => {
+    /* When filter ranges update we should reset to match ranges */
     initialize(filtersLists, filtersInd, {
-      reset: false,
+      // On first load, we do not reset. Set values from url
+      // On subsequent load, set values from range because ranges have changed
+      reset: !firstLoad.current,
       apiRange: filterRanges.getData()
     });
+
+    if (firstLoad.current && filterRanges.isReady()) {
+      firstLoad.current = false;
+    }
   }, [filterRanges, resource]);
 
   useEffect(onInputTouched, [area, resource]);
