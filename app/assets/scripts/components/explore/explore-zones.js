@@ -108,29 +108,24 @@ const Detail = styled(Dl)`
 const ZoneColumnHead = styled(Subheading)`
     text-align: right;
     color: ${themeVal('color.primary')};
-    ${({ asc }) => css`
-        &:after {
-          ${collecticon(asc ? 'sort-asc' : 'sort-desc')};
+    ${({ asc, activelySorting }) => {
+      if (activelySorting) {
+        return css`
+          &:after {
+            ${collecticon(asc ? 'sort-asc' : 'sort-desc')};
+          }
+        `;
+      } else {
+          return css`
+            &:after {
+              ${collecticon('sort-none')};
+            }
+          `;
       }
-    `}
+    }}
 `;
 
-/*
-function ZoneColumnHead (props) {
-  const handleClick = () => {
-    const { onClick, id } = props;
-    onClick(id);
-  };
-  const { value } = props;
-  return <Subheading as='a' title={`Sort by ${value}`} onClick={handleClick}>{value}</Subheading>;
-} */
-
-ZoneColumnHead.propTypes = {
-  value: T.string,
-  onClick: T.func,
-  id: T.string,
-  sortDirection: T.string
-};
+const columns = [{ id: 'lcoe', name: 'LCOE' }, { id: 'zone_score', name: 'SCORE' }];
 
 function ExploreZones (props) {
   const { active, currentZones } = props;
@@ -139,9 +134,7 @@ function ExploreZones (props) {
 
   const [selectedZones, setSelectedZones] = useState(currentZones.reduce((accum, zone) => ({ ...accum, [zone.id]: false }), {}));
 
-  // const [sortedZones, setSortedZones] = useState(currentZones.sort((a, b) => parseFloat(b.properties.summary.lcoe) - parseFloat(a.properties.summary.lcoe)));
-
-  const [sortDirection, setSortDirection] = useState('desc');
+  const [sortAsc, setSortAsc] = useState(false);
 
   const formatIndicator = function (id, value) {
     switch (id) {
@@ -158,18 +151,6 @@ function ExploreZones (props) {
     setHoveredFeature(event === 'enter' ? row : null);
   };
 
-  /*
-  const sortZoneList = (id) => {
-    console.log(id);
-    setSortedZones([...currentZones].sort((a, b) =>
-      sortDirection === 'desc'
-        ? parseFloat(a.properties.summary[id]) - parseFloat(b.properties.summary[id])
-        : parseFloat(b.properties.summary[id]) - parseFloat(a.properties.summary[id])
-    )
-    );
-    setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc');
-  }; */
-
   const [sortId, setSortId] = useState('lcoe');
 
   return (
@@ -184,26 +165,28 @@ function ExploreZones (props) {
       ) : (
         <ZonesHeader>
           <Subheading>All Zones</Subheading>
-          <ZoneColumnHead
-            title='Sort by lcoe'
-            as='a'
-            asc={sortDirection === 'asc'}
-            onClick={() => {
-              setSortId('lcoe');
-              setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc');
-            }}
-          >LCOE
-          </ZoneColumnHead>
-          <ZoneColumnHead
-            as='a'
-            title='Sort by zone score'
-            asc={sortDirection === 'asc'}
-            onClick={(id) => {
-              setSortId('zone_score');
-              setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc');
-            }}
-          >SCORE
-          </ZoneColumnHead>
+
+          {
+            columns.map(({ id, name }) => {
+              return (
+                <ZoneColumnHead
+                  key={id}
+                  title='Sort by lcoe'
+                  as='a'
+                  activelySorting={sortId === id}
+                  asc={sortAsc}
+                  onClick={() => {
+                    setSortId(id);
+                    setSortAsc(!sortAsc);
+                  }}
+                >
+                  {name}
+                </ZoneColumnHead>
+              );
+            }
+
+            )
+          }
         </ZonesHeader>
       )}
 
@@ -223,9 +206,9 @@ function ExploreZones (props) {
             numColumns={1}
             data={
               currentZones.sort((a, b) =>
-                sortDirection === 'desc'
-                  ? parseFloat(a.properties.summary[sortId]) - parseFloat(b.properties.summary[sortId])
-                  : parseFloat(b.properties.summary[sortId]) - parseFloat(a.properties.summary[sortId])
+                sortAsc
+                  ? parseFloat(b.properties.summary[sortId]) - parseFloat(a.properties.summary[sortId])
+                  : parseFloat(a.properties.summary[sortId]) - parseFloat(b.properties.summary[sortId])
               )
             }
             renderCard={(data) => (
