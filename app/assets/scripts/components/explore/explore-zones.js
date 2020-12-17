@@ -41,17 +41,6 @@ const ZonesHeader = styled.div`
   grid-template-columns: repeat(4, 1fr);
   align-items: baseline;
   margin: 1rem 0rem;
-  a {
-    text-align: right;
-    color: ${themeVal('color.primary')};
-    ${({ useIcon }) =>
-      useIcon &&
-      css`
-        &:after {
-          ${collecticon(useIcon)}
-        }
-      `}
-  }
   ${Button} {
     font-size: 0.875rem;
     text-align: left;
@@ -116,19 +105,42 @@ const Detail = styled(Dl)`
   }
 `;
 
+const ZoneColumnHeading = styled(Subheading)`
+  text-align: right;
+  color: ${themeVal('color.primary')};
+  ${({ useIcon }) =>
+    useIcon &&
+    css`
+      &:after {
+        vertical-align: baseline;
+        ${collecticon(useIcon)}
+      }
+    `}
+`;
+
 function ZoneColumnHead (props) {
   const handleClick = () => {
     const { onClick, id } = props;
     onClick(id);
   };
-  const { value } = props;
-  return <Subheading as='a' title={`Sort by ${value}`} onClick={handleClick}>{value}</Subheading>;
+  const { value, sortDirection } = props;
+  return (
+    <ZoneColumnHeading
+      useIcon={sortDirection === 'asc' ? 'sort-asc' : 'sort-desc'}
+      as='a'
+      title={`Sort by ${value}`}
+      onClick={handleClick}
+    >
+      {value}
+    </ZoneColumnHeading>
+  );
 }
 
 ZoneColumnHead.propTypes = {
   value: T.string,
   onClick: T.func,
-  id: T.string
+  id: T.string,
+  sortDirection: T.string
 };
 
 function ExploreZones (props) {
@@ -138,7 +150,7 @@ function ExploreZones (props) {
 
   const [selectedZones, setSelectedZones] = useState(currentZones.reduce((accum, zone) => ({ ...accum, [zone.id]: false }), {}));
 
-  const [sortedZones, setSortedZones] = useState(currentZones.sort((a, b) => parseFloat(b.properties.summary.lcoe) - parseFloat(a.properties.summary.lcoe)));
+  const [sortedZones, setSortedZones] = useState([...currentZones].sort((a, b) => parseFloat(b.properties.summary.lcoe) - parseFloat(a.properties.summary.lcoe)));
 
   const [sortDirection, setSortDirection] = useState('desc');
 
@@ -158,7 +170,7 @@ function ExploreZones (props) {
   };
 
   const sortZoneList = (id) => {
-    setSortedZones([...sortedZones].sort((a, b) =>
+    setSortedZones(sortedZones.sort((a, b) =>
       sortDirection === 'desc'
         ? parseFloat(a.properties.summary[id]) - parseFloat(b.properties.summary[id])
         : parseFloat(b.properties.summary[id]) - parseFloat(a.properties.summary[id])
@@ -180,16 +192,16 @@ function ExploreZones (props) {
         <ZonesHeader>
           <Subheading>All Zones</Subheading>
           <ZoneColumnHead
-            useIcon='house'
             id='lcoe'
-            value='LCOE (USD/MwH)'
+            value='LCOE'
             onClick={(id) => sortZoneList(id)}
+            sortDirection={sortDirection}
           />
           <ZoneColumnHead
-            useIcon='house'
             id='zone_score'
             value='Score'
             onClick={(id) => sortZoneList(id)}
+            sortDirection={sortDirection}
           />
         </ZonesHeader>
       )}
