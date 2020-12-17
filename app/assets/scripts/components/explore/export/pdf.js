@@ -6,8 +6,8 @@ import { zonesSummary } from '../explore-stats';
 import config from '../../../config';
 import get from 'lodash.get';
 import groupBy from 'lodash.groupby';
-import { toTitleCase } from '../../../utils/utils';
-import { formatThousands } from '../../../utils/format.js';
+import { formatThousands, toTitleCase } from '../../../utils/format';
+import { formatIndicator, formatLabel } from '../focus-zone';
 
 // Helper function to generate a formatted timestamp
 const timestamp = () => format(Date.now(), 'yyyyMMdd-hhmmss');
@@ -246,7 +246,7 @@ function drawAnalysisInput (doc, data) {
 
   const { filtersLists } = data;
   const filterRanges = data.filterRanges.getData();
-  
+
   // Add one table per category
   const categories = groupBy(filtersLists, 'category');
   Object.keys(categories).forEach((category) => {
@@ -298,6 +298,34 @@ function drawAnalysisInput (doc, data) {
   });
 }
 
+/**
+ * Add zones list to the document.
+ * @param {Object} doc The documento object.
+ * @param {Array} zones Array of zones to be included
+ */
+function drawZonesList (doc, zones) {
+  // Add filters section (ranges must be available)
+  doc.addPage();
+  addText(doc, 'h2', 'Zones');
+
+  zones.forEach(({ id, properties: { name, summary } }) => {
+    addText(doc, 'h3', name || id);
+
+    // If zone name was used in title, include zone id in table
+    if (name) {
+      addTableRow(doc, 'ID', id);
+    }
+
+    Object.keys(summary).forEach((indicator) => {
+      addTableRow(
+        doc,
+        formatLabel(indicator, true),
+        formatIndicator(indicator, summary[indicator])
+      );
+    });
+  });
+}
+
 export default async function exportPDF (data) {
   // Load styles
   await initStyles();
@@ -312,6 +340,7 @@ export default async function exportPDF (data) {
   drawHeader(doc, data);
   drawAreaSummary(doc, data);
   drawAnalysisInput(doc, data);
+  drawZonesList(doc, data.zones);
 
   // Finalize PDF file
   doc.end();

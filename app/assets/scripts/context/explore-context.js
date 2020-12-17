@@ -60,7 +60,7 @@ export function ExploreProvider (props) {
         id: 'lcoe-range',
         active: range && true,
         isRange: true,
-        unit: 'USD/MwH',
+        unit: 'USD/MWh',
         info: 'Filter zones by calculated LCOE',
         input: {
           value: range ? { min: range[0], max: range[1] } : null,

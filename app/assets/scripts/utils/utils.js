@@ -155,14 +155,3 @@ export const bisectByDate = (data, date, accessor = toDateAccessor) => {
 */
 
 export const randomRange = (min, max) => Math.random() * (max - min) + min;
-
-/**
- * Returns a title-cased version string passed
- *
- * @param {String} str String to make title-cased.
- */
-export function toTitleCase (str) {
-  return str.replace(/\w\S*/g, function (txt) {
-    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-  });
-}
