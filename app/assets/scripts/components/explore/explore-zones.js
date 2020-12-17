@@ -7,6 +7,7 @@ import { themeVal } from '../../styles/utils/general';
 import FocusZone from './focus-zone';
 import Dl from '../../styles/type/definition-list';
 import Button from '../../styles/button/button';
+import collecticon from '../../styles/collecticons';
 import { formatThousands } from '../../utils/format';
 import get from 'lodash.get';
 import MapContext from '../../context/map-context';
@@ -38,10 +39,18 @@ const ZonesWrapper = styled.section`
 const ZonesHeader = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  align-items: baseline;
   margin: 1rem 0rem;
   a {
     text-align: right;
-    color: ${themeVal('color.primary')}
+    color: ${themeVal('color.primary')};
+    ${({ useIcon }) =>
+      useIcon &&
+      css`
+        &:after {
+          ${collecticon(useIcon)};
+        }
+      `}
   }
   ${Button} {
     font-size: 0.875rem;
@@ -107,6 +116,21 @@ const Detail = styled(Dl)`
   }
 `;
 
+function ZoneColumnHead (props) {
+  const handleClick = () => {
+    const { onClick, id } = props;
+    onClick(id);
+  };
+  const { value } = props;
+  return <Subheading as='a' onClick={handleClick}>{value}</Subheading>;
+}
+
+ZoneColumnHead.propTypes = {
+  value: T.string,
+  onClick: T.func,
+  id: T.string
+};
+
 function ExploreZones (props) {
   const { active, currentZones } = props;
 
@@ -115,6 +139,8 @@ function ExploreZones (props) {
   const [selectedZones, setSelectedZones] = useState(currentZones.reduce((accum, zone) => ({ ...accum, [zone.id]: false }), {}));
 
   const [sortedZones, setSortedZones] = useState(currentZones.sort((a, b) => parseFloat(b.properties.summary.lcoe) - parseFloat(a.properties.summary.lcoe)));
+
+  const [sortDirection, setSortDirection] = useState('desc');
 
   const formatIndicator = function (id, value) {
     switch (id) {
@@ -131,6 +157,16 @@ function ExploreZones (props) {
     setHoveredFeature(event === 'enter' ? row : null);
   };
 
+  const sortZoneList = (id) => {
+    setSortedZones([...sortedZones].sort((a, b) =>
+      sortDirection === 'desc'
+        ? parseFloat(a.properties.summary[id]) - parseFloat(b.properties.summary[id])
+        : parseFloat(b.properties.summary[id]) - parseFloat(a.properties.summary[id])
+    )
+    );
+    setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc');
+  };
+
   return (
     <ZonesWrapper active={active}>
       <ColorScale steps={10} heading='Weighted Zone Score' min={0} max={1} colorFunction={zoneScoreColor} />
@@ -143,8 +179,22 @@ function ExploreZones (props) {
       ) : (
         <ZonesHeader>
           <Subheading>All Zones</Subheading>
-          <Subheading as='a'>LCOE [USD/MwH]</Subheading>
-          <Subheading as='a'>Score</Subheading>
+          <ZoneColumnHead
+            useIcon='house'
+            id='lcoe'
+            value='LCOE'
+            onClick={(id) => sortZoneList(id)}
+          >
+              LCOE
+          </ZoneColumnHead>
+          <ZoneColumnHead
+            useIcon='house'
+            id='zone_score'
+            value='Score'
+            onClick={(id) => sortZoneList(id)}
+          >
+              Score
+          </ZoneColumnHead>
         </ZonesHeader>
       )}
 
