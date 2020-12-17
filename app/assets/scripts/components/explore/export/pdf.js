@@ -245,18 +245,12 @@ function drawAnalysisInput (doc, data) {
   const { filtersLists } = data;
   const filterRanges = data.filterRanges.getData();
 
-  const usableWidth = doc.page.width - options.margin;
-  const startX = doc.page.margins.left;
-  const rowHeight = styles.p.fontSize + options.tables.rowSpacing;
-
   // Add filters (ranges must be available)
   const categories = groupBy(filtersLists, 'category');
   Object.keys(categories).forEach((category) => {
     addText(doc, 'h3', toTitleCase(category));
 
     categories[category].forEach((filter) => {
-      const startY = doc.y;
-
       let title = filter.title;
       if (filter.unit) {
         title = `${title} (${filter.unit})`;
@@ -266,23 +260,13 @@ function drawAnalysisInput (doc, data) {
       if (filter.isRange) {
         const range = filterRanges[filter.layer];
         value = range
-          ? `${formatThousands(range.min)} - ${formatThousands(range.max)}`
+          ? `${formatThousands(range.min)} to ${formatThousands(range.max)}`
           : 'To be added';
       } else {
         value = get(filter, 'input.value', 'To be added');
       }
 
-      addText(doc, 'p', title, { align: 'left' });
-      doc.y = startY;
-      addText(doc, 'p', value, { align: 'right' });
-
-      doc
-        .moveTo(startX, startY + rowHeight)
-        .lineTo(usableWidth, startY + rowHeight)
-        .lineWidth(2)
-        .opacity(0.08)
-        .stroke()
-        .opacity(1);
+      addTableRow(doc, title, value);
     });
     doc.y += get(options, 'tables.padding', 0);
   });
