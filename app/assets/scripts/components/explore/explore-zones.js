@@ -113,7 +113,7 @@ const ZoneColumnHead = styled(Subheading)`
     justify-content: flex-end;
     span {
       order: 3;
-      flex: 1;
+      flex: 100%;
     }
     ${({ asc, activelySorting }) => {
       if (activelySorting) {
