@@ -122,7 +122,7 @@ function ZoneColumnHead (props) {
     onClick(id);
   };
   const { value } = props;
-  return <Subheading as='a' onClick={handleClick}>{value}</Subheading>;
+  return <Subheading as='a' title={`Sort by ${value}`} onClick={handleClick}>{value}</Subheading>;
 }
 
 ZoneColumnHead.propTypes = {
@@ -182,19 +182,15 @@ function ExploreZones (props) {
           <ZoneColumnHead
             useIcon='house'
             id='lcoe'
-            value='LCOE'
+            value='LCOE (USD/MwH)'
             onClick={(id) => sortZoneList(id)}
-          >
-              LCOE
-          </ZoneColumnHead>
+          />
           <ZoneColumnHead
             useIcon='house'
             id='zone_score'
             value='Score'
             onClick={(id) => sortZoneList(id)}
-          >
-              Score
-          </ZoneColumnHead>
+          />
         </ZonesHeader>
       )}
 
