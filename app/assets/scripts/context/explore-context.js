@@ -224,11 +224,7 @@ export function ExploreProvider (props) {
         } else if (input.type === BOOL) {
           return `${id}=${filter.input.value}`;
         } else if (input.type === MULTI) {
-          const value = input.options
-            .map((e, i) => i)
-            .filter(i => !input.value.includes(i))
-            .join(',');
-          return value.length > 0 ? `${id}=${value}` : null;
+          return input.value.length === input.options.length ? null : `${id}=${input.value.join(',')}`;
         } else if (input.type === DROPDOWN || input.type === MULTI) {
           return `${id}=${filter.input.value.join(',')}`;
         } else {
