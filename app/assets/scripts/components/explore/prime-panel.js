@@ -124,7 +124,7 @@ function ExpMapPrimePanel (props) {
                 className='info-button'
                 variation='base-plain'
                 useIcon='iso-stack'
-                title='Toggle Raster Tray'
+                title={showRasterPanel ? 'Hide Contextual Layers' : 'Show Contextual Layers'}
                 info={filteredLayerUrl ? null : 'Apply search to load raster layers'}
                 width='20rem'
                 hideText
