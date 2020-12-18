@@ -1,4 +1,5 @@
-import { round } from '../utils/format';
+import { truncateDecimals, round } from '../utils/format';
+
 import {
   INPUT_CONSTANTS,
   setRangeByUnit,
@@ -40,7 +41,7 @@ export const initByType = (obj, ranges, resource) => {
       obj.input.range ||
       DEFAULT_RANGE,
     obj.unit
-  );
+  ).map(round);
 
   switch (input.type) {
     case SLIDER:
@@ -52,7 +53,7 @@ export const initByType = (obj, ranges, resource) => {
           input.value ||
           input.default ||
           (obj.isRange
-            ? { min: round(range[0]), max: round(range[1]) }
+            ? { min: range[0], max: range[1] }
             : range[0])
       };
     case TEXT:

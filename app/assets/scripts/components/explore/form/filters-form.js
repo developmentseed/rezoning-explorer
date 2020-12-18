@@ -177,79 +177,80 @@ function FiltersForm (props) {
                       } else if (!a.priority && b.priority) {
                         return 1;
                       }
-                    }).map(
-                      ([filter, setFilter], ind) => {
-                        const inputOnChange = useCallback(
+                    }).filter(([f, _]) => f.input.range[0] !== f.input.range[1])
+                      .map(
+                        ([filter, setFilter], ind) => {
+                          const inputOnChange = useCallback(
 
-                          (value) => {
-                            if (filter.active) {
+                            (value) => {
+                              if (filter.active) {
+                                setFilter({
+                                  ...filter,
+                                  input: {
+                                    ...filter.input,
+                                    value
+                                  }
+                                }
+                                );
+                              }
+                            }
+
+                            , [filter]);
+
+                          const switchOnChange = useCallback(
+                            () => {
                               setFilter({
+
                                 ...filter,
+                                active: !filter.active,
                                 input: {
                                   ...filter.input,
-                                  value
+                                  value: filter.input.type === BOOL
+                                    ? !filter.active
+                                    : filter.input.value
                                 }
-                              }
-                              );
+                              });
                             }
-                          }
-
-                          , [filter]);
-
-                        const switchOnChange = useCallback(
-                          () => {
-                            setFilter({
-
-                              ...filter,
-                              active: !filter.active,
-                              input: {
-                                ...filter.input,
-                                value: filter.input.type === BOOL
-                                  ? !filter.active
-                                  : filter.input.value
-                              }
-                            });
-                          }
-                          , [filter]);
-                        return (checkIncluded(filter, resource) && (
-                          <PanelOption
-                            key={filter.name}
-                            hidden={!isFoldExpanded}
-                          >
-                            <OptionHeadline>
-                              <PanelOptionTitle>
-                                {`${filter.name}`.concat(
-                                  filter.unit ? ` (${filter.unit})` : ''
-                                )}
-                              </PanelOptionTitle>
-                              {filter.info && (
-                                <InfoButton info={filter.info} id={filter.name}>
+                            , [filter]);
+                          return (checkIncluded(filter, resource) && (
+                            <PanelOption
+                              key={filter.name}
+                              hidden={!isFoldExpanded}
+                            >
+                              <OptionHeadline>
+                                <PanelOptionTitle>
+                                  {`${filter.name}`.concat(
+                                    filter.unit ? ` (${filter.unit})` : ''
+                                  )}
+                                </PanelOptionTitle>
+                                {filter.info && (
+                                  <InfoButton info={filter.info} id={filter.name}>
                                   Info
-                                </InfoButton>
-                              )}
+                                  </InfoButton>
+                                )}
 
-                              {!filter.isRange && (
-                                <FormSwitch
-                                  hideText
-                                  name={`toggle-${filter.name.replace(
+                                {!filter.isRange && (
+                                  <FormSwitch
+                                    hideText
+                                    name={`toggle-${filter.name.replace(
                                   / /g,
                                   '-'
                                 )}`}
-                                  disabled={filter.disabled}
-                                  checked={filter.active}
-                                  onChange={switchOnChange}
-                                >
+                                    disabled={filter.disabled}
+                                    checked={filter.active}
+                                    onChange={switchOnChange}
+                                  >
                                 Toggle filter
-                                </FormSwitch>)}
-                            </OptionHeadline>
-                            <FormInput
-                              option={filter}
-                              onChange={inputOnChange}
-                            />
-                          </PanelOption>
-                        )
-                        );
-                      })}
+                                  </FormSwitch>)}
+                              </OptionHeadline>
+                              <FormInput
+                                option={filter}
+                                onChange={inputOnChange}
+                              />
+                            </PanelOption>
+                          )
+                          );
+                        })}
                 />
               );
             })}

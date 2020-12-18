@@ -207,10 +207,16 @@ export function ExploreProvider (props) {
     //
     const filterString = filterValues
       .map((filter) => {
-        const { id, active, input } = filter;
+        const { id, active, input, isRange } = filter;
 
         // Bypass inactive filters
         if (!active || !checkIncluded(filter, selectedResource)) return null;
+        if (isRange) {
+          if (input.value.min === input.range[0] &&
+            input.value.max === input.range[1]) {
+            return null;
+          }
+        }
 
         // Add accepted filter types to the query
         if (input.type === SLIDER) {
