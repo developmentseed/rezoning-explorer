@@ -60,7 +60,7 @@ export function ExploreProvider (props) {
         id: 'lcoe-range',
         active: range && true,
         isRange: true,
-        unit: 'USD/MwH',
+        unit: 'USD/MWh',
         info: 'Filter zones by calculated LCOE',
         input: {
           value: range ? { min: range[0], max: range[1] } : null,
@@ -230,6 +230,8 @@ export function ExploreProvider (props) {
           return `${id}=${min * multiplier},${max * multiplier}`;
         } else if (input.type === BOOL) {
           return `${id}=${filter.input.value}`;
+        } else if (input.type === MULTI) {
+          return input.value.length === input.options.length ? null : `${id}=${input.value.join(',')}`;
         } else if (input.type === DROPDOWN || input.type === MULTI) {
           return `${id}=${filter.input.value.join(',')}`;
         } else {

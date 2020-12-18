@@ -37,33 +37,47 @@ export const outputLayers = [
     name: 'Satellite',
     type: 'raster',
     nonexclusive: true,
-    visible: true
+    visible: true,
+    category: 'output',
+    info: 'Satellite layer'
   },
   {
     id: FILTERED_LAYER_ID,
     name: 'Selected Area',
     type: 'raster',
-    visible: true
+    visible: true,
+    category: 'output',
+    info: 'Filtered selected area',
+    disabled: true
   },
   {
     id: LCOE_LAYER_LAYER_ID,
     name: 'LCOE Tiles',
-    type: 'raster'
+    type: 'raster',
+    category: 'output',
+    info: 'LCOE Tiles',
+    disabled: true
   },
   {
     id: ZONE_SCORE_LAYER_ID,
     name: 'Zone Score',
-    type: 'raster'
+    type: 'raster',
+    category: 'output',
+    info: 'Zone Score',
+    disabled: true
   },
   {
     id: ZONES_BOUNDARIES_LAYER_ID,
     name: 'Zone Boundaries',
     type: 'vector',
+    category: 'output',
+    info: 'Zone Boundaries',
     stops: [
       rgba(theme.main.color.base, 0),
       rgba(theme.main.color.base, 1)
     ],
-    visible: true
+    visible: true,
+    disabled: true
   }
 ];
 
@@ -116,7 +130,8 @@ const initializeMap = ({
     center: [0, 0],
     zoom: 5,
     bounds: selectedArea && selectedArea.bounds,
-    fitBoundsOptions
+    fitBoundsOptions,
+    preserveDrawingBuffer: true // required for the map's canvas to be exported to a PNG
   });
 
   map.on('load', () => {
@@ -125,6 +140,7 @@ const initializeMap = ({
     // which is completely black. Was not able to remove this via mapbox studio
     // so removing it on load.
     map.removeLayer('background');
+    map.setLayoutProperty('satellite', 'visibility', 'none');
 
     /*
      * Resize map on window size change
@@ -271,7 +287,7 @@ const initializeMap = ({
 };
 
 const addInputLayersToMap = (map, layers) => {
-  layers.forEach(layer => {
+  layers.forEach(({ id: layer }) => {
     map.addSource(`${layer}_source`, {
       type: 'raster',
       tiles: [`${config.apiEndpoint}/layers/${layer}/{z}/{x}/{y}.png?colormap=cool`],
@@ -311,6 +327,7 @@ function MbMap (props) {
     hoveredFeature, setHoveredFeature,
     map, setMap,
     inputLayers,
+    mapLayers,
     setMapLayers,
     setFocusZone
   } = useContext(MapContext);
@@ -329,9 +346,11 @@ function MbMap (props) {
       setMapLayers([
         ...outputLayers,
         ...layers.map(l => ({
-          id: l,
-          name: l.split('-').map(w => `${w[0].toUpperCase()}${w.slice(1)}`).join(' '),
-          type: 'raster'
+          ...l,
+          name: l.title,
+          type: 'raster',
+          info: l.description,
+          category: l.category || 'Uncategorized'
         }))
       ]);
       addInputLayersToMap(map, layers);
@@ -383,6 +402,17 @@ function MbMap (props) {
     });
 
     map.setLayoutProperty(FILTERED_LAYER_ID, 'visibility', 'visible');
+
+    setMapLayers(mapLayers.map(layer => {
+      if (layer.category === 'output') {
+        layer.disabled = false;
+        if (layer.visible) {
+          map.setLayoutProperty(layer.id, 'visibility', 'visible');
+        }
+      }
+      return layer;
+    })
+    );
   }, [filteredLayerUrl]);
 
   useEffect(() => {

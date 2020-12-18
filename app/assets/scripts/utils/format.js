@@ -75,7 +75,6 @@ export function formatThousands (num, options) {
     ...options
   };
 
-  // isNaN(null) === true
   if (isNaN(num) || (!num && num !== 0)) {
     return '--';
   }
@@ -105,4 +104,15 @@ export function formatThousands (num, options) {
   dec = opts.forceDecimals ? `${dec}${repeat(0, opts.decimals - dec.length)}` : dec;
 
   return dec !== '' ? `${int}.${dec} ${largeNumUnit}` : `${int} ${largeNumUnit}`;
+}
+
+/**
+ * Returns a title-cased version string passed
+ *
+ * @param {String} str String to make title-cased.
+ */
+export function toTitleCase (str) {
+  return str.replace(/\w\S*/g, function (txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
 }
