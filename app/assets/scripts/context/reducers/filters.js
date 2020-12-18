@@ -9,7 +9,8 @@ import {
 const abbreviateUnit = unit => {
   switch (unit) {
     case 'meters':
-      return 'm';
+      // Convert meters to km
+      return 'km';
     default:
       return unit;
   }
@@ -56,7 +57,7 @@ export async function fetchFilters (dispatch) {
           info: filter.description,
           unit: abbreviateUnit(filter.unit),
           category: filter.category,
-          active: false,
+          active: isRange || false,
           isRange,
           input: {
             range: INPUT_CONSTANTS.DEFAULT_RANGE,

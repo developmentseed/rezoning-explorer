@@ -116,7 +116,8 @@ const initializeMap = ({
     center: [0, 0],
     zoom: 5,
     bounds: selectedArea && selectedArea.bounds,
-    fitBoundsOptions
+    fitBoundsOptions,
+    preserveDrawingBuffer: true // required for the map's canvas to be exported to a PNG
   });
 
   map.on('load', () => {
@@ -271,7 +272,7 @@ const initializeMap = ({
 };
 
 const addInputLayersToMap = (map, layers) => {
-  layers.forEach(layer => {
+  layers.forEach(({ id: layer }) => {
     map.addSource(`${layer}_source`, {
       type: 'raster',
       tiles: [`${config.apiEndpoint}/layers/${layer}/{z}/{x}/{y}.png?colormap=cool`],
@@ -319,22 +320,18 @@ function MbMap (props) {
   useEffect(() => {
     if (!map) {
       initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeature, setFocusZone });
-      return;
-    }
-
-    if (selectedArea && selectedArea.bounds) {
-      map.fitBounds(selectedArea.bounds, fitBoundsOptions);
     }
   }, [map]);
 
   useEffect(() => {
     if (map && inputLayers.isReady()) {
       const layers = inputLayers.getData();
+
       setMapLayers([
         ...outputLayers,
         ...layers.map(l => ({
-          id: l,
-          name: l.split('-').map(w => `${w[0].toUpperCase()}${w.slice(1)}`).join(' '),
+          id: l.id,
+          name: l.id.split('-').map(w => `${w[0].toUpperCase()}${w.slice(1)}`).join(' '),
           type: 'raster'
         }))
       ]);
@@ -343,6 +340,7 @@ function MbMap (props) {
   }, [map, inputLayers]);
 
   // Watch window size changes
+
   useEffect(() => {
     if (map) {
       resizeMap(map);
@@ -411,6 +409,7 @@ function MbMap (props) {
   }, [outputLayerUrl]);
 
   // Update zone boundaries on change
+
   useEffect(() => {
     if (!map || !currentZones.isReady()) return;
     // Update GeoJSON source, applying hover effect if any

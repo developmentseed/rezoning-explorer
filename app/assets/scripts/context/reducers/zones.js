@@ -45,42 +45,74 @@ export const fetchZonesReducer = wrapLogReducer(makeAPIReducer('FETCH_ZONES'));
 /*
  * Make all asynchronous requests to load zone score from REZoning API
  * dispatch updates to some context using 'dispatch' function
-*/
-export async function fetchZones (grid, selectedArea, filterString, weights, lcoe, dispatch) {
+ */
+export async function fetchZones (
+  grid,
+  selectedArea,
+  selectedResource,
+  filterString,
+  weights,
+  lcoe,
+  dispatch
+) {
   dispatch({ type: 'REQUEST_FETCH_ZONES' });
   try {
     const { id: areaId, type } = selectedArea;
 
     let features;
 
-    if (grid) {
+    if (selectedResource === 'Off-Shore Wind') {
       // if offshore wind, we are already in grid and bounds are eez bounds
-      features = squareGrid(selectedArea.bounds, grid, { units: 'kilometers' }).features
-        .map((ft, i) => ({ ...ft, properties: { id: i } }));
+      features = squareGrid(selectedArea.bounds, grid, {
+        units: 'kilometers',
+        mask: {
+          type: 'FeatureCollection',
+          features: selectedArea.eez
+        }
+      }).features.map((ft, i) => ({ ...ft, properties: { id: i } }));
     } else {
       // Get area topojson
       const { body: zonesTopoJSON } = await fetchJSON(
-    `/public/zones/${type}/${areaId}.topojson`
+        `/public/zones/${type}/${areaId}.topojson`
       );
 
-      // Parse topojson
-      features = topojson.feature(
-        zonesTopoJSON,
-        zonesTopoJSON.objects[areaId]
-      ).features;
+      // Get sub areas from Topojson
+      if (grid) {
+        const areaLimits = topojson.merge(
+          zonesTopoJSON,
+          zonesTopoJSON.objects[areaId].geometries
+        );
 
-      // Set id from GID, if undefined
-      features = features.map((f) => {
-        if (typeof f.properties.id === 'undefined') {
-          f.properties.id = f.properties.GID_0;
-        }
-        return f;
-      });
+        const areaGrid = squareGrid(selectedArea.bounds, grid, {
+          mask: areaLimits,
+          units: 'kilometers'
+        });
+
+        features = areaGrid.features.map((ft, i) => ({
+          ...ft,
+          properties: { id: i }
+        }));
+      } else {
+        const subAreas = topojson.feature(
+          zonesTopoJSON,
+          zonesTopoJSON.objects[areaId]
+        ).features;
+
+        // Set id from GID, if undefined
+        features = subAreas.map((f) => {
+          if (typeof f.properties.id === 'undefined') {
+            f.properties.id = f.properties.GID_0;
+          }
+          return f;
+        });
+      }
     }
 
     // Fetch Lcoe for each sub-area
     const zones = await Promise.all(
-      features.map((z) => limit(() => getZoneSummary(z, filterString, weights, lcoe)))
+      features.map((z) =>
+        limit(() => getZoneSummary(z, filterString, weights, lcoe))
+      )
     );
 
     const maxScore = Math.max(

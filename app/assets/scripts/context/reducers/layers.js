@@ -18,7 +18,12 @@ export async function fetchInputLayers (dispatch) {
       await fetchJSON(`${apiEndpoint}/layers`)
     ).body;
 
-    dispatch({ type: 'RECEIVE_LAYERS', data: layers });
+    const layerList = Object.keys(layers).map(id => ({
+      id,
+      ...layers[id]
+    }));
+
+    dispatch({ type: 'RECEIVE_LAYERS', data: layerList });
   } catch (err) {
     dispatch({ type: 'INVALIDATE_LAYERS', error: err });
   }
