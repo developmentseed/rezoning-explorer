@@ -29,7 +29,7 @@ const StatsWrapper = styled.section`
     `}
 `;
 
-const zonesSummary = (zones) => {
+export const zonesSummary = (zones) => {
   const stats = zones.reduce(
     (stats, { properties: { summary } }) => {
       if (!summary || !summary.zone_score) return stats;

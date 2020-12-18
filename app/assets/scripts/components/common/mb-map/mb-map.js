@@ -116,7 +116,8 @@ const initializeMap = ({
     center: [0, 0],
     zoom: 5,
     bounds: selectedArea && selectedArea.bounds,
-    fitBoundsOptions
+    fitBoundsOptions,
+    preserveDrawingBuffer: true // required for the map's canvas to be exported to a PNG
   });
 
   map.on('load', () => {

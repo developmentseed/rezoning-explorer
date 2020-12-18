@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import { Subheading } from '../../styles/type/heading';
 import CardList, { CardWrapper } from '../common/card-list';
 import { themeVal } from '../../styles/utils/general';
-import FocusZone from './focus-zone';
+import FocusZone, { formatIndicator, formatLabel } from './focus-zone';
 import Dl from '../../styles/type/definition-list';
 import Button from '../../styles/button/button';
 import collecticon from '../../styles/collecticons';
@@ -14,6 +14,7 @@ import MapContext from '../../context/map-context';
 
 import { FormCheckable } from '../../styles/form/checkable';
 
+import ExportButton from './export';
 import ColorScale from '../common/color-scale';
 import zoneScoreColor from '../../styles/zoneScoreColors';
 
@@ -159,7 +160,7 @@ function ExploreZones (props) {
         return formatThousands(value);
     }
   };
-
+ 
   const onRowHoverEvent = (event, row) => {
     setHoveredFeature(event === 'enter' ? row : null);
   };
@@ -293,9 +294,7 @@ const ExportWrapper = styled.div`
 const ExportZonesButton = ({ onExport, small, usePadding }) => {
   return (
     <ExportWrapper usePadding={usePadding}>
-      <Button as='a' useIcon='download' variation='primary-raised-dark' size='small'>
-        {small ? 'Export' : 'Export Selected Zones'}
-      </Button>
+      <ExportButton />
     </ExportWrapper>
   );
 };

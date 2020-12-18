@@ -7,7 +7,7 @@ import ShadowScrollbar from '../common/shadow-scrollbar';
 import { themeVal } from '../../styles/utils/general';
 import { FormCheckable } from '../../styles/form/checkable';
 import { ExportZonesButton } from './explore-zones';
-import { formatThousands } from '../../utils/format.js';
+import { formatThousands, toTitleCase } from '../../utils/format.js';
 
 const Details = styled.div`
 /* stylelint-disable */
@@ -39,7 +39,9 @@ const FocusZoneFooter = styled.div`
   grid-gap: 0.25rem;
 `;
 
-const formatIndicator = function (id, value) {
+export const formatIndicator = function (id, value) {
+  if (typeof value !== 'number') return value;
+
   switch (id) {
     case 'zone_score':
       return formatThousands(value, { forceDecimals: true, decimals: 3 });
@@ -50,7 +52,9 @@ const formatIndicator = function (id, value) {
   }
 };
 
-const formatLabel = function (id) {
+export const formatLabel = function (id, titleCased = false) {
+  const label = id.replace(/_/g, ' '); // replace spaces;
+
   switch (id) {
     case 'lcoe':
       return `${id.replace(/_/g, ' ')} (USD/MwH)`;
@@ -59,7 +63,7 @@ const formatLabel = function (id) {
     case 'zone_output_density':
       return `${id.replace(/_/g, ' ')} (MWh/km²)`;
     default:
-      return id.replace(/_/g, ' ');
+      return titleCased ? toTitleCase(label) : label;
   }
 };
 
@@ -80,7 +84,7 @@ function FocusZone (props) {
           {Object.entries(detailsList).map(([label, data]) => (
             <Dl key={`${id}-${label}`}>
               <dt>{formatLabel(label)}</dt>
-              <dd>{typeof data === 'number' ? formatIndicator(label, data) : data}</dd>
+              <dd>{formatIndicator(label, data)}</dd>
             </Dl>
           ))}
         </Details>
