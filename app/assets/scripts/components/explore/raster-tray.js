@@ -15,18 +15,26 @@ const TrayWrapper = styled(ShadowScrollbar)`
   height: 20rem;
 `;
 const ControlWrapper = styled.div`
-  padding: 0.5rem;
+  padding: 0.5rem 0;
   width: 100%;
+
+  &:last-child {
+    padding-bottom: 2rem;
+  }
 `;
 const ControlHeadline = styled.div`
   display: grid;
   grid-template-columns: 3fr 1fr;
   justify-content: space-between;
   align-items: baseline;
+
+  ${Prose} {
+    font-size: 0.875rem;
+  }
 `;
 const ControlTools = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(1.5rem, 1fr));
+  grid-template-columns: 1fr 0 1fr;
   justify-content: end;
   #layer-visibility {
     grid-column: end;
@@ -50,9 +58,10 @@ const LayersWrapper = styled.div`
   opacity: ${({ show }) => show ? 1 : 0};
   transition: opacity .16s ease 0s;
   padding: 0.5rem;
+  overflow-x: hidden;
 
-  > div.accordion-fold-body {
-    padding-top: 0;
+  ${AccordionFold} {
+    padding-bottom: 1rem;
   }
 `;
 
