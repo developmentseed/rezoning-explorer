@@ -129,7 +129,7 @@ function ExpMapPrimePanel (props) {
                 width='20rem'
                 hideText
                 onClick={() => {
-                  setShowRasterPanel(!showRasterPanel); 
+                  setShowRasterPanel(!showRasterPanel);
                 }}
               >
                 <span>Contextual Layers</span>

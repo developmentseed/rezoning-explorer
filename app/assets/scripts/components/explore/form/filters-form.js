@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import T from 'prop-types';
-import styled from 'styled-components';
 
 import {
   FormWrapper,
@@ -10,9 +9,7 @@ import {
   PanelOptionTitle,
   InactiveMessage
 } from './form';
-import { Accordion, AccordionFold } from '../../../components/accordion';
-import collecticon from '../../../styles/collecticons';
-import { glsp } from '../../../styles/utils/theme-values';
+import { Accordion, AccordionFold, AccordionFoldTrigger } from '../../../components/accordion';
 import Heading from '../../../styles/type/heading';
 import { makeTitleCase } from '../../../styles/utils/general';
 
@@ -23,28 +20,6 @@ import { INPUT_CONSTANTS } from '../panel-data';
 import FormInput from './form-input';
 
 const { BOOL } = INPUT_CONSTANTS;
-
-const AccordionFoldTrigger = styled.a`
-  display: flex;
-  align-items: center;
-  margin: -${glsp(0.5)} -${glsp()};
-  padding: ${glsp(0.5)} ${glsp()};
-
-  &,
-  &:visited {
-    color: inherit;
-  }
-  &:active {
-    transform: none;
-  }
-  &:after {
-    ${collecticon('chevron-down--small')}
-    margin-left: auto;
-    transition: transform 240ms ease-in-out;
-    transform: ${({ isExpanded }) =>
-      isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
-  }
-`;
 
 /* Filters form
  * @param outputFilters is an array of shape

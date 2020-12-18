@@ -6,6 +6,9 @@ import InfoButton from '../common/info-button';
 import Prose from '../../styles/type/prose';
 import ShadowScrollbar from '../common/shadow-scrollbar';
 import SliderGroup from '../common/slider-group';
+import { Accordion, AccordionFold, AccordionFoldTrigger } from '../../components/accordion';
+import Heading from '../../styles/type/heading';
+import { makeTitleCase } from '../../styles/utils/general';
 
 const TrayWrapper = styled(ShadowScrollbar)`
   padding: 0.25rem;
@@ -25,7 +28,6 @@ const ControlTools = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(1.5rem, 1fr));
   justify-content: end;
-  grid-gap: 0.75rem;
   #layer-visibility {
     grid-column: end;
   }
@@ -47,6 +49,11 @@ const Legend = styled.div`
 const LayersWrapper = styled.div`
   opacity: ${({ show }) => show ? 1 : 0};
   transition: opacity .16s ease 0s;
+  padding: 0.5rem;
+
+  > div.accordion-fold-body {
+    padding-top: 0;
+  }
 `;
 
 function LayerControl (props) {
@@ -74,6 +81,7 @@ function LayerControl (props) {
             onClick={() => {
               onVisibilityToggle(props, !visible);
             }}
+            visuallyDisabled={props.disabled}
           >
             <span>Toggle Layer Visibility</span>
           </Button>
@@ -88,7 +96,7 @@ function LayerControl (props) {
             onLayerKnobChange(props, val);
           }}
           range={[0, 100]}
-          disabled={!visible}
+          disabled={props.disabled || !visible}
         />
       </Legend>
     </ControlWrapper>
@@ -98,6 +106,7 @@ function LayerControl (props) {
 LayerControl.propTypes = {
   id: T.string,
   name: T.string,
+  disabled: T.bool,
   onLayerKnobChange: T.func,
   onVisibilityToggle: T.func,
   info: T.string,
@@ -106,6 +115,14 @@ LayerControl.propTypes = {
 
 function RasterTray (props) {
   const { show, layers, onLayerKnobChange, onVisibilityToggle, className } = props;
+
+  const categorizedLayers = layers.reduce((cats, layer) => {
+    if (!cats[layer.category]) {
+      cats[layer.category] = [];
+    }
+    cats[layer.category].push(layer);
+    return cats;
+  }, {});
   return (
     <TrayWrapper
       className={className}
@@ -113,7 +130,52 @@ function RasterTray (props) {
       <LayersWrapper
         show={show}
       >
-        {layers.map(l => (
+
+        <Accordion
+          initialState={[
+            false,
+            true,
+            ...Object.keys(categorizedLayers).slice(2).map(_ => false)
+          ]}
+          allowMultiple
+        >
+          {({ checkExpanded, setExpanded }) => {
+            return (
+              Object.entries(categorizedLayers).map(([category, layers], idx) => {
+                return (
+                  <AccordionFold
+                    key={category}
+                    isFoldExpanded={checkExpanded(idx)}
+                    setFoldExpanded={v => setExpanded(idx, v)}
+                    renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                      <AccordionFoldTrigger
+                        isExpanded={isFoldExpanded}
+                        onClick={() => setFoldExpanded(!isFoldExpanded)}
+                      >
+                        <Heading size='small' variation='primary'>
+                          {makeTitleCase(category.replace(/_/g, ' '))}
+                        </Heading>
+                      </AccordionFoldTrigger>
+                    )}
+                    renderBody={({ isFoldExpanded }) => (
+                      layers.map(l => (
+                        <LayerControl
+                          key={l.name}
+                          {...l}
+                          onLayerKnobChange={onLayerKnobChange}
+                          onVisibilityToggle={onVisibilityToggle}
+                        />
+                      )
+                      )
+                    )}
+                  />
+                );
+              }));
+          }}
+
+        </Accordion>
+
+        {/* layers.map(l => (
           <LayerControl
             key={l.name}
             {...l}
@@ -121,7 +183,7 @@ function RasterTray (props) {
             onVisibilityToggle={onVisibilityToggle}
           />
         )
-        )}
+        ) */}
       </LayersWrapper>
     </TrayWrapper>
   );

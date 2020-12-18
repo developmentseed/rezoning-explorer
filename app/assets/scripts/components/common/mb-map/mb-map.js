@@ -47,21 +47,24 @@ export const outputLayers = [
     type: 'raster',
     visible: true,
     category: 'output',
-    info: 'Filtered selected area'
+    info: 'Filtered selected area',
+    disabled: true
   },
   {
     id: LCOE_LAYER_LAYER_ID,
     name: 'LCOE Tiles',
     type: 'raster',
     category: 'output',
-    info: 'LCOE Tiles'
+    info: 'LCOE Tiles',
+    disabled: true
   },
   {
     id: ZONE_SCORE_LAYER_ID,
     name: 'Zone Score',
     type: 'raster',
     category: 'output',
-    info: 'Zone Score'
+    info: 'Zone Score',
+    disabled: true
   },
   {
     id: ZONES_BOUNDARIES_LAYER_ID,
@@ -73,7 +76,8 @@ export const outputLayers = [
       rgba(theme.main.color.base, 0),
       rgba(theme.main.color.base, 1)
     ],
-    visible: true
+    visible: true,
+    disabled: true
   }
 ];
 
@@ -136,6 +140,7 @@ const initializeMap = ({
     // which is completely black. Was not able to remove this via mapbox studio
     // so removing it on load.
     map.removeLayer('background');
+    map.setLayoutProperty('satellite', 'visibility', 'none');
 
     /*
      * Resize map on window size change
@@ -322,6 +327,7 @@ function MbMap (props) {
     hoveredFeature, setHoveredFeature,
     map, setMap,
     inputLayers,
+    mapLayers,
     setMapLayers,
     setFocusZone
   } = useContext(MapContext);
@@ -343,7 +349,8 @@ function MbMap (props) {
           ...l,
           name: l.title,
           type: 'raster',
-          info: l.description
+          info: l.description,
+          category: l.category || 'Uncategorized'
         }))
       ]);
       addInputLayersToMap(map, layers);
@@ -395,6 +402,17 @@ function MbMap (props) {
     });
 
     map.setLayoutProperty(FILTERED_LAYER_ID, 'visibility', 'visible');
+
+    setMapLayers(mapLayers.map(layer => {
+      if (layer.category === 'output') {
+        layer.disabled = false;
+        if (layer.visible) {
+          map.setLayoutProperty(layer.id, 'visibility', 'visible');
+        }
+      }
+      return layer;
+    })
+    );
   }, [filteredLayerUrl]);
 
   useEffect(() => {
