@@ -294,8 +294,9 @@ function drawAnalysisInput (doc, data) {
     'p',
     'Officia nostrud occaecat ipsum do proident duis. Veniam veniam sint reprehenderit ad sint officia aliquip voluptate enim et enim velit ea. Reprehenderit elit in quis et consequat irure sint laboris nisi cupidatat. Incididunt ea do quis sint qui commodo incididunt cillum ex et reprehenderit aute consequat. Lorem nulla exercitation proident cillum aute nulla. Anim do aute do quis consectetur fugiat minim minim anim anim consectetur nulla non.'
   );
-  data.lcoeList.forEach((lcoe) => {
-    addTableRow(doc, lcoe.title, 'To be added');
+  Object.keys(data.lcoeValues).forEach((lcoeId) => {
+    const lcoe = data.lcoeValues[lcoeId];
+    addTableRow(doc, lcoe.title, lcoe.input.value);
   });
 }
 

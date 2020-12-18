@@ -1,7 +1,8 @@
 import { round } from '../utils/format';
 import {
   INPUT_CONSTANTS,
-  setRangeByUnit
+  setRangeByUnit,
+  apiResourceNameMap
 } from '../components/explore/panel-data';
 
 const {
@@ -116,6 +117,40 @@ export const weightQsSchema = (w) => ({
     const { value } = w.input;
     let shard = `${value}`;
     shard = w.active ? shard : `${shard},${false}`;
+    return shard;
+  }
+});
+
+export const lcoeQsSchema = (c, resource) => ({
+  key: c.id,
+  default: undefined,
+  hydrator: v => {
+    const base = {
+      ...c,
+      input: initByType(c, {}, apiResourceNameMap[resource]),
+      active: c.active === undefined ? true : c.active
+    };
+    let inputUpdate = {};
+    if (v) {
+      const [value, active] = v.split(',');
+      inputUpdate = {
+        value: castByFilterType(base.input.type)(value),
+        active: active === undefined
+      };
+    }
+    return {
+      ...base,
+      active: inputUpdate.active === undefined ? base.active : inputUpdate.active,
+      input: {
+        ...base.input,
+        value: inputUpdate.value || base.input.value
+      }
+    };
+  },
+  dehydrator: c => {
+    const { value } = c.input;
+    let shard = `${value}`;
+    shard = c.active ? shard : `${shard},${false}`;
     return shard;
   }
 });

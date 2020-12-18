@@ -18,7 +18,12 @@ import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap } from './panel-data
 import { HeadOption, HeadOptionHeadline } from './form/form';
 import { FiltersForm, WeightsForm, LCOEForm } from './form';
 
-import { initByType, castByFilterType, weightQsSchema } from '../../context/qs-state-schema';
+import {
+  initByType,
+  castByFilterType,
+  weightQsSchema,
+  lcoeQsSchema
+} from '../../context/qs-state-schema';
 
 const { GRID_OPTIONS } = INPUT_CONSTANTS;
 
@@ -175,40 +180,8 @@ function QueryForm (props) {
     });
   };
 
-  const lcoeInd = lcoeList.map(c => {
-    const [cost, setCost] = useQsState({
-      key: c.id,
-      default: undefined,
-      hydrator: v => {
-        const base = {
-          ...c,
-          input: initByType(c, {}, apiResourceNameMap[resource]),
-          active: c.active === undefined ? true : c.active
-        };
-        let inputUpdate = {};
-        if (v) {
-          const [value, active] = v.split(',');
-          inputUpdate = {
-            value: castByFilterType(base.input.type)(value),
-            active: active === undefined
-          };
-        }
-        return {
-          ...base,
-          active: inputUpdate.active === undefined ? base.active : inputUpdate.active,
-          input: {
-            ...base.input,
-            value: inputUpdate.value || base.input.value
-          }
-        };
-      },
-      dehydrator: c => {
-        const { value } = c.input;
-        let shard = `${value}`;
-        shard = c.active ? shard : `${shard},${false}`;
-        return shard;
-      }
-    });
+  const lcoeInd = lcoeList.map((c) => {
+    const [cost, setCost] = useQsState(lcoeQsSchema(c, resource));
     return [cost, setCost];
   });
 

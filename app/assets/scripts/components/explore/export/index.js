@@ -8,7 +8,7 @@ import { withRouter } from 'react-router';
 
 import ExploreContext from '../../../context/explore-context';
 import FormContext from '../../../context/form-context';
-import { weightQsSchema } from '../../../context/qs-state-schema';
+import { weightQsSchema, lcoeQsSchema } from '../../../context/qs-state-schema';
 
 import styled from 'styled-components';
 import Button from '../../../styles/button/button';
@@ -52,9 +52,10 @@ const ExportZonesButton = (props) => {
     FormContext
   );
 
+  // This will parse current querystring to get values for filters/weights/lcoe
+  // an pass to a function to generate the PDF
   function onExportPDFClick () {
-    // For weight configuration object in "weightsList", parse the querystring
-    // to get actual values for weights.
+    // Get weights values
     const weightsSchema = weightsList.reduce((acc, w) => {
       acc[w.id] = {
         accessor: w.id,
@@ -67,13 +68,26 @@ const ExportZonesButton = (props) => {
       props.location.search.substr(1)
     );
 
+    // Get LCOE values
+    const lcoeSchema = lcoeList.reduce((acc, l) => {
+      acc[l.id] = {
+        accessor: l.id,
+        hydrator: lcoeQsSchema(l, selectedResource).hydrator
+      };
+      return acc;
+    }, {});
+    const lcoeQsState = new QsState(lcoeSchema);
+    const lcoeValues = lcoeQsState.getState(
+      props.location.search.substr(1)
+    );
+
     const data = {
       selectedResource,
       selectedArea,
       zones: currentZones.getData() || [],
       filtersLists,
       weightsValues,
-      lcoeList,
+      lcoeValues,
       filterRanges
     };
     exportPDF(data);
