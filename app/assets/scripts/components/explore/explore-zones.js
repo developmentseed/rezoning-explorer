@@ -4,15 +4,15 @@ import styled, { css } from 'styled-components';
 import { Subheading } from '../../styles/type/heading';
 import CardList, { CardWrapper } from '../common/card-list';
 import { themeVal } from '../../styles/utils/general';
-import FocusZone from './focus-zone';
+import FocusZone, { formatIndicator, formatLabel } from './focus-zone';
 import Dl from '../../styles/type/definition-list';
 import Button from '../../styles/button/button';
-import { formatThousands } from '../../utils/format';
 import get from 'lodash.get';
 import MapContext from '../../context/map-context';
 
 import { FormCheckable } from '../../styles/form/checkable';
 
+import ExportButton from './export';
 import ColorScale from '../common/color-scale';
 import zoneScoreColor from '../../styles/zoneScoreColors';
 
@@ -102,26 +102,6 @@ function ExploreZones (props) {
   const { hoveredFeature, setHoveredFeature, focusZone, setFocusZone } = useContext(MapContext);
 
   const [selectedZones, setSelectedZones] = useState(currentZones.reduce((accum, zone) => ({ ...accum, [zone.id]: false }), {}));
-
-  const formatIndicator = function (id, value) {
-    switch (id) {
-      case 'zone_score':
-        return formatThousands(value, { forceDecimals: true, decimals: 3 });
-      case 'lcoe_density':
-        return formatThousands(value, { forceDecimals: true, decimals: 5 });
-      default:
-        return formatThousands(value);
-    }
-  };
-
-  const formatLabel = function (id) {
-    switch (id) {
-      case 'lcoe':
-        return `${id.replace(/_/g, ' ')} [USD/MwH]`;
-      default:
-        return id.replace(/_/g, ' ');
-    }
-  };
 
   const onRowHoverEvent = (event, row) => {
     setHoveredFeature(event === 'enter' ? row : null);
@@ -217,9 +197,7 @@ const ExportWrapper = styled.div`
 const ExportZonesButton = ({ onExport, small, usePadding }) => {
   return (
     <ExportWrapper usePadding={usePadding}>
-      <Button as='a' useIcon='download' variation='primary-raised-dark' size='small'>
-        {small ? 'Export' : 'Export Selected Zones'}
-      </Button>
+      <ExportButton />
     </ExportWrapper>
   );
 };
