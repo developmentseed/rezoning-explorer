@@ -37,28 +37,38 @@ export const outputLayers = [
     name: 'Satellite',
     type: 'raster',
     nonexclusive: true,
-    visible: true
+    visible: true,
+    category: 'output',
+    info: 'Satellite layer'
   },
   {
     id: FILTERED_LAYER_ID,
     name: 'Selected Area',
     type: 'raster',
-    visible: true
+    visible: true,
+    category: 'output',
+    info: 'Filtered selected area'
   },
   {
     id: LCOE_LAYER_LAYER_ID,
     name: 'LCOE Tiles',
-    type: 'raster'
+    type: 'raster',
+    category: 'output',
+    info: 'LCOE Tiles'
   },
   {
     id: ZONE_SCORE_LAYER_ID,
     name: 'Zone Score',
-    type: 'raster'
+    type: 'raster',
+    category: 'output',
+    info: 'Zone Score'
   },
   {
     id: ZONES_BOUNDARIES_LAYER_ID,
     name: 'Zone Boundaries',
     type: 'vector',
+    category: 'output',
+    info: 'Zone Boundaries',
     stops: [
       rgba(theme.main.color.base, 0),
       rgba(theme.main.color.base, 1)
@@ -330,9 +340,10 @@ function MbMap (props) {
       setMapLayers([
         ...outputLayers,
         ...layers.map(l => ({
-          id: l.id,
-          name: l.id.split('-').map(w => `${w[0].toUpperCase()}${w.slice(1)}`).join(' '),
-          type: 'raster'
+          ...l,
+          name: l.title,
+          type: 'raster',
+          info: l.description
         }))
       ]);
       addInputLayersToMap(map, layers);

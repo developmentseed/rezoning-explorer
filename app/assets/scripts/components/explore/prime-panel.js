@@ -128,83 +128,81 @@ function ExpMapPrimePanel (props) {
                 info={filteredLayerUrl ? null : 'Apply search to load raster layers'}
                 width='20rem'
                 hideText
-                visuallyDisabled={!filteredLayerUrl}
                 onClick={() => {
-                  if (filteredLayerUrl) { setShowRasterPanel(!showRasterPanel); }
+                  setShowRasterPanel(!showRasterPanel); 
                 }}
               >
                 <span>Contextual Layers</span>
               </InfoButton>
               <Subheading>Contextual Layers</Subheading>
 
-              { filteredLayerUrl &&
-                <RasterTray
-                  show={showRasterPanel}
-                  className='raster-tray'
-                  layers={mapLayers}
-                  onLayerKnobChange={(layer, knob) => {
-                    // Check if changes are applied to zones layer, which
-                    // have conditional paint properties due to filters
-                    if (layer.id === ZONES_BOUNDARIES_LAYER_ID) {
-                      const paintProperty = map.getPaintProperty(
-                        layer.id,
-                        'fill-opacity'
-                      );
+              <RasterTray
+                show={showRasterPanel}
+                className='raster-tray'
+                layers={mapLayers}
+                onLayerKnobChange={(layer, knob) => {
+                  // Check if changes are applied to zones layer, which
+                  // have conditional paint properties due to filters
+                  if (layer.id === ZONES_BOUNDARIES_LAYER_ID) {
+                    const paintProperty = map.getPaintProperty(
+                      layer.id,
+                      'fill-opacity'
+                    );
 
-                      // Zone boundaries layer uses a feature-state conditional
-                      // to detect hovering.
-                      // Here set the 3rd element of the array, which is the
-                      // non-hovered state value
-                      // to be the value of the knob
-                      paintProperty[3] = knob / 100;
-                      map.setPaintProperty(
-                        layer.id,
-                        'fill-opacity',
-                        paintProperty
-                      );
+                    // Zone boundaries layer uses a feature-state conditional
+                    // to detect hovering.
+                    // Here set the 3rd element of the array, which is the
+                    // non-hovered state value
+                    // to be the value of the knob
+                    paintProperty[3] = knob / 100;
+                    map.setPaintProperty(
+                      layer.id,
+                      'fill-opacity',
+                      paintProperty
+                    );
+                  } else {
+                    map.setPaintProperty(
+                      layer.id,
+                      layer.type === 'vector' ? 'fill-opacity' : 'raster-opacity',
+                      knob / 100
+                    );
+                  }
+                }}
+                onVisibilityToggle={(layer, visible) => {
+                  if (visible) {
+                    if (layer.type === 'raster' && !layer.nonexclusive) {
+                      const ml = mapLayers.map(l => {
+                        if (l.type === 'raster' && !l.nonexclusive) {
+                          map.setLayoutProperty(l.id, 'visibility', l.id === layer.id ? 'visible' : 'none');
+                          l.visible = l.id === layer.id;
+                        }
+                        return l;
+                      });
+                      setMapLayers(ml);
                     } else {
-                      map.setPaintProperty(
-                        layer.id,
-                        layer.type === 'vector' ? 'fill-opacity' : 'raster-opacity',
-                        knob / 100
-                      );
-                    }
-                  }}
-                  onVisibilityToggle={(layer, visible) => {
-                    if (visible) {
-                      if (layer.type === 'raster' && !layer.nonexclusive) {
-                        const ml = mapLayers.map(l => {
-                          if (l.type === 'raster' && !l.nonexclusive) {
-                            map.setLayoutProperty(l.id, 'visibility', l.id === layer.id ? 'visible' : 'none');
-                            l.visible = l.id === layer.id;
-                          }
-                          return l;
-                        });
-                        setMapLayers(ml);
-                      } else {
-                        map.setLayoutProperty(layer.id, 'visibility', 'visible');
-                        const ind = mapLayers.findIndex(l => l.id === layer.id);
-                        setMapLayers([...mapLayers.slice(0, ind),
-                          {
-                            ...layer,
-                            visible: true
-                          },
-                          ...mapLayers.slice(ind + 1)
-                        ]);
-                      }
-                    } else {
-                      map.setLayoutProperty(layer.id, 'visibility', 'none');
+                      map.setLayoutProperty(layer.id, 'visibility', 'visible');
                       const ind = mapLayers.findIndex(l => l.id === layer.id);
                       setMapLayers([...mapLayers.slice(0, ind),
                         {
                           ...layer,
-                          visible: false
+                          visible: true
                         },
                         ...mapLayers.slice(ind + 1)
                       ]);
                     }
-                  }}
-                />}
+                  } else {
+                    map.setLayoutProperty(layer.id, 'visibility', 'none');
+                    const ind = mapLayers.findIndex(l => l.id === layer.id);
+                    setMapLayers([...mapLayers.slice(0, ind),
+                      {
+                        ...layer,
+                        visible: false
+                      },
+                      ...mapLayers.slice(ind + 1)
+                    ]);
+                  }
+                }}
+              />
             </RasterTrayWrapper>
           ]
         }

@@ -60,9 +60,8 @@ function LayerControl (props) {
         <ControlTools>
           {props.info &&
             <InfoButton
-              id='layer-info'
+              id={`${id}-info`}
               info={props.info || null}
-              disabled={!props.info}
             >
               <span>Open Tour</span>
             </InfoButton>}
