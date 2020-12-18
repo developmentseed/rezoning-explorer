@@ -45,6 +45,8 @@ export const formatIndicator = function (id, value) {
   switch (id) {
     case 'zone_score':
       return formatThousands(value, { forceDecimals: true, decimals: 3 });
+    case 'lcoe':
+      return formatThousands(value, { forceDecimals: true, decimals: 2 });
     case 'lcoe_density':
       return formatThousands(value, { forceDecimals: true, decimals: 5 });
     default:
@@ -57,7 +59,7 @@ export const formatLabel = function (id, titleCased = false) {
 
   switch (id) {
     case 'lcoe':
-      return `${id.replace(/_/g, ' ')} (USD/MwH)`;
+      return `${id.replace(/_/g, ' ')} (USD/MWh)`;
     case 'zone_output':
       return `${id.replace(/_/g, ' ')} (GwH)`;
     case 'zone_output_density':

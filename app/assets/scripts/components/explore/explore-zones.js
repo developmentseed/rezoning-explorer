@@ -4,11 +4,10 @@ import styled, { css } from 'styled-components';
 import { Subheading } from '../../styles/type/heading';
 import CardList, { CardWrapper } from '../common/card-list';
 import { themeVal } from '../../styles/utils/general';
-import FocusZone, { formatIndicator, formatLabel } from './focus-zone';
+import FocusZone, { formatIndicator } from './focus-zone';
 import Dl from '../../styles/type/definition-list';
 import Button from '../../styles/button/button';
 import collecticon from '../../styles/collecticons';
-import { formatThousands } from '../../utils/format';
 import get from 'lodash.get';
 import MapContext from '../../context/map-context';
 
@@ -150,17 +149,6 @@ function ExploreZones (props) {
 
   const [sortAsc, setSortAsc] = useState(false);
 
-  const formatIndicator = function (id, value) {
-    switch (id) {
-      case 'zone_score':
-        return formatThousands(value, { forceDecimals: true, decimals: 3 });
-      case 'lcoe':
-        return formatThousands(value, { forceDecimals: true, decimals: 2 });
-      default:
-        return formatThousands(value);
-    }
-  };
- 
   const onRowHoverEvent = (event, row) => {
     setHoveredFeature(event === 'enter' ? row : null);
   };
@@ -195,7 +183,7 @@ function ExploreZones (props) {
                   }}
                 >
                   {name}
-                  {id === 'lcoe' && <span>(USD/MwH)</span>}
+                  {id === 'lcoe' && <span>(USD/MWh)</span>}
                 </ZoneColumnHead>
               );
             }
