@@ -16,14 +16,10 @@ const Details = styled.div`
     color: ${themeVal('color.primary')};
   }
 `;
-const LineChart = styled.div`
-/* stylelint-enable */
-
-`;
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-rows: 2rem auto 1fr;
+  grid-template-rows: 1fr;
   gap: 0.5rem;
   > ${Button} {
     text-align: left;
@@ -49,6 +45,8 @@ export const formatIndicator = function (id, value) {
   switch (id) {
     case 'zone_score':
       return formatThousands(value, { forceDecimals: true, decimals: 3 });
+    case 'lcoe':
+      return formatThousands(value, { forceDecimals: true, decimals: 2 });
     case 'lcoe_density':
       return formatThousands(value, { forceDecimals: true, decimals: 5 });
     default:
@@ -61,14 +59,18 @@ export const formatLabel = function (id, titleCased = false) {
 
   switch (id) {
     case 'lcoe':
-      return `${label.toUpperCase()} (USD/MWh)`; // add unit, make upper case
+      return `${id.replace(/_/g, ' ')} (USD/MWh)`;
+    case 'zone_output':
+      return `${id.replace(/_/g, ' ')} (GwH)`;
+    case 'zone_output_density':
+      return `${id.replace(/_/g, ' ')} (MWh/km²)`;
     default:
       return titleCased ? toTitleCase(label) : label;
   }
 };
 
 function FocusZone (props) {
-  const { zone, unFocus, selected, onSelect } = props;
+  const { zone, selected, onSelect } = props;
   const { id } = zone.properties;
   /* eslint-disable-next-line */
   const detailsList = {
@@ -79,10 +81,6 @@ function FocusZone (props) {
   return (
 
     <Wrapper>
-      <Button onClick={unFocus} size='small' useIcon={['chevron-left--small', 'before']}>
-        See All Zones
-      </Button>
-      <LineChart title='Supply Curve' />
       <ShadowScrollbar>
         <Details>
           {Object.entries(detailsList).map(([label, data]) => (
@@ -115,7 +113,6 @@ function FocusZone (props) {
 
 FocusZone.propTypes = {
   zone: T.object.isRequired,
-  unFocus: T.func,
   selected: T.bool,
   onSelect: T.func
 };
