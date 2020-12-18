@@ -272,7 +272,7 @@ const initializeMap = ({
 };
 
 const addInputLayersToMap = (map, layers) => {
-  layers.forEach(layer => {
+  layers.forEach(({ id: layer }) => {
     map.addSource(`${layer}_source`, {
       type: 'raster',
       tiles: [`${config.apiEndpoint}/layers/${layer}/{z}/{x}/{y}.png?colormap=cool`],
@@ -330,8 +330,8 @@ function MbMap (props) {
       setMapLayers([
         ...outputLayers,
         ...layers.map(l => ({
-          id: l,
-          name: l.split('-').map(w => `${w[0].toUpperCase()}${w.slice(1)}`).join(' '),
+          id: l.id,
+          name: l.id.split('-').map(w => `${w[0].toUpperCase()}${w.slice(1)}`).join(' '),
           type: 'raster'
         }))
       ]);
