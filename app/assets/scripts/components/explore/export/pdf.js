@@ -281,8 +281,9 @@ function drawAnalysisInput (doc, data) {
     'p',
     'Laboris aliqua duis incididunt occaecat elit occaecat sunt deserunt est commodo deserunt tempor anim nostrud. Sit sint mollit incididunt in nisi adipisicing excepteur quis veniam occaecat irure. Quis cupidatat aliqua irure aliqua deserunt minim anim laboris nulla enim proident magna amet.'
   );
-  data.weightsList.forEach((weight) => {
-    addTableRow(doc, weight.title, 'To be added');
+  Object.keys(data.weightsValues).forEach((weightId) => {
+    const weight = data.weightsValues[weightId];
+    addTableRow(doc, weight.title, weight.input.value);
   });
 
   // Add LCOE section

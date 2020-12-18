@@ -1,11 +1,14 @@
 import React, { useContext } from 'react';
+import T from 'prop-types';
 import { saveAs } from 'file-saver';
 import dataURItoBlob from '../../../utils/data-uri-to-blob';
 import { format } from 'date-fns';
 import exportPDF from './pdf';
+import { withRouter } from 'react-router';
 
 import ExploreContext from '../../../context/explore-context';
 import FormContext from '../../../context/form-context';
+import { weightQsSchema } from '../../../context/qs-state-schema';
 
 import styled from 'styled-components';
 import Button from '../../../styles/button/button';
@@ -14,6 +17,7 @@ import Dropdown, {
   DropMenu,
   DropMenuItem
 } from '../../common/dropdown';
+import QsState from '../../../utils/qs-state';
 
 const ExportWrapper = styled.div`
   padding: 0.5rem;
@@ -39,27 +43,41 @@ async function exportMapImage () {
   saveAs(dataURItoBlob(dataURL), `rezoning-snapshot-${timestamp()}.png`);
 }
 
-const ExportZonesButton = () => {
+const ExportZonesButton = (props) => {
   const { selectedResource, selectedArea, currentZones } = useContext(
     ExploreContext
   );
 
-  const {
-    filtersLists,
-    weightsList,
-    lcoeList,
-    filterRanges
-  } = useContext(FormContext);
+  const { filtersLists, weightsList, lcoeList, filterRanges } = useContext(
+    FormContext
+  );
 
-  const data = {
-    selectedResource,
-    selectedArea,
-    zones: currentZones.getData() || [],
-    filtersLists,
-    weightsList,
-    lcoeList,
-    filterRanges
-  };
+  function onExportPDFClick () {
+    // For weight configuration object in "weightsList", parse the querystring
+    // to get actual values for weights.
+    const weightsSchema = weightsList.reduce((acc, w) => {
+      acc[w.id] = {
+        accessor: w.id,
+        hydrator: weightQsSchema(w).hydrator
+      };
+      return acc;
+    }, {});
+    const weightsQsState = new QsState(weightsSchema);
+    const weightsValues = weightsQsState.getState(
+      props.location.search.substr(1)
+    );
+
+    const data = {
+      selectedResource,
+      selectedArea,
+      zones: currentZones.getData() || [],
+      filtersLists,
+      weightsValues,
+      lcoeList,
+      filterRanges
+    };
+    exportPDF(data);
+  }
 
   return (
     <ExportWrapper>
@@ -78,7 +96,7 @@ const ExportZonesButton = () => {
       >
         <DropTitle>Download Options</DropTitle>
         <DropMenu role='menu' iconified>
-          <DropMenuItem useIcon='page-label' onClick={() => exportPDF(data)}>
+          <DropMenuItem useIcon='page-label' onClick={onExportPDFClick}>
             PDF Report
           </DropMenuItem>
           <DropMenuItem useIcon='picture' onClick={() => exportMapImage()}>
@@ -90,5 +108,7 @@ const ExportZonesButton = () => {
   );
 };
 
-ExportZonesButton.propTypes = {};
-export default ExportZonesButton;
+ExportZonesButton.propTypes = {
+  location: T.object
+};
+export default withRouter(ExportZonesButton);
