@@ -7,6 +7,7 @@ import { collecticonsFont } from './collecticons';
 import { unscrollableY, unscrollableX } from './helpers';
 import mapboxStyles from './vendor/mapbox';
 import reactDatepickerStyles from './vendor/react-datepicker';
+import reactToastStyles from './vendor/react-toastify';
 import reactTooltipStyles from './vendor/react-tooltip';
 import reactInputRangeStyles from './vendor/react-input-range';
 
@@ -175,6 +176,7 @@ export default createGlobalStyle`
   ${mapboxStyles()}
   ${reactDatepickerStyles()}
   ${reactTooltipStyles()}
+  ${reactToastStyles()}
   ${reactInputRangeStyles()}
   ${baseStyles}
 `;

@@ -15,11 +15,17 @@ export function GlobalProvider (props) {
     });
   }, []);
 
+  const [downloads, setDownloads] = useState([]);
+  function addDownload (id) {
+    setDownloads(downloads.concat(id));
+  }
+
   return (
     <>
       <GlobalContext.Provider
         value={{
-          windowHeight
+          windowHeight,
+          addDownload
         }}
       >
         {props.children}
