@@ -38,7 +38,7 @@ export const outputLayers = [
     name: 'Satellite',
     type: 'raster',
     nonexclusive: true,
-    visible: true,
+    visible: false,
     category: 'output',
     info: 'Satellite layer'
   },
@@ -432,8 +432,9 @@ function MbMap (props) {
     setMapLayers(mapLayers.map(layer => {
       if (layer.category === 'output') {
         layer.disabled = false;
-        if (layer.visible) {
+        if (layer.visible || layer.id === SATELLITE) {
           map.setLayoutProperty(layer.id, 'visibility', 'visible');
+          layer.visible = true;
         }
       }
       return layer;
