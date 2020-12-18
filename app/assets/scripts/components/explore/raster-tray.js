@@ -76,11 +76,15 @@ function LayerControl (props) {
             id='layer-visibility'
             variation='base-plain'
             useIcon={visible ? 'eye' : 'eye-disabled'}
-            title='toggle-layer-visibility'
+            title={visible ? 'toggle layer visibiliity' : 'Generate zones to view output layers'}
             hideText
-            onClick={() => {
-              onVisibilityToggle(props, !visible);
-            }}
+            onClick={
+              props.disabled
+                ? null
+                : () => {
+                  onVisibilityToggle(props, !visible);
+                }
+            }
             visuallyDisabled={props.disabled}
           >
             <span>Toggle Layer Visibility</span>

@@ -70,7 +70,6 @@ function ExpMapPrimePanel (props) {
     gridMode,
     setGridMode,
     gridSize, setGridSize,
-    filteredLayerUrl,
     maxZoneScore, setMaxZoneScore,
     updateFilteredLayer,
     maxLCOE, setMaxLCOE
@@ -124,8 +123,7 @@ function ExpMapPrimePanel (props) {
                 className='info-button'
                 variation='base-plain'
                 useIcon='iso-stack'
-                title='Toggle Raster Tray'
-                info={filteredLayerUrl ? null : 'Apply search to load raster layers'}
+                info='Toggle contextual layers'
                 width='20rem'
                 hideText
                 onClick={() => {
