@@ -365,7 +365,7 @@ function MbMap (props) {
   }, [map]);
 
   useEffect(() => {
-    if (map && inputLayers.isReady()) {
+    if (map && inputLayers.isReady() && selectedArea) {
       const layers = inputLayers.getData();
 
       const initializedLayers = [
