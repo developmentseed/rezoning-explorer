@@ -58,7 +58,7 @@ function ExpMapSecPanel (props) {
                     currentZones={currentZones.getData()}
                     inputTouched={inputTouched}
                   />) : (
-                  <PreAnalysisMessage>{currentZones.fetching ? 'Loading...' : 'Please apply parameters (filters, weights & LCOE) to load zone analysis.'}</PreAnalysisMessage>
+                  <PreAnalysisMessage>{currentZones.fetching ? 'Loading...' : 'Apply parameters (Spatial filters, Weights & LCOE Economic inputs) and click "Generate Zones" to load zone analysis.'}</PreAnalysisMessage>
                 )}
             </PanelBlockBody>
           </PanelBlock>
