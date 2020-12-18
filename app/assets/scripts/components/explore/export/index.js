@@ -8,7 +8,11 @@ import { withRouter } from 'react-router';
 
 import ExploreContext from '../../../context/explore-context';
 import FormContext from '../../../context/form-context';
-import { weightQsSchema, lcoeQsSchema } from '../../../context/qs-state-schema';
+import {
+  weightQsSchema,
+  lcoeQsSchema,
+  filterQsSchema
+} from '../../../context/qs-state-schema';
 
 import styled from 'styled-components';
 import Button from '../../../styles/button/button';
@@ -59,7 +63,7 @@ const ExportZonesButton = (props) => {
     const filtersSchema = filtersLists.reduce((acc, w) => {
       acc[w.id] = {
         accessor: w.id,
-        hydrator: weightQsSchema(w, filterRanges, selectedResource).hydrator
+        hydrator: filterQsSchema(w, filterRanges, selectedResource).hydrator
       };
       return acc;
     }, {});

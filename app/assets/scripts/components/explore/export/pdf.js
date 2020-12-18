@@ -258,12 +258,12 @@ function drawAnalysisInput (doc, data) {
       }
 
       let value = filter.input.value;
-      if (filter.options) {
-        value = 'Unavailable';
-      } else if (typeof value === 'object') {
+      if (filter.isRange) {
         value = `${formatThousands(value.min)} to ${formatThousands(
           value.max
         )}`;
+      } else if (filter.options) {
+        value = 'Unavailable';
       }
 
       addTableRow(doc, title, value);
