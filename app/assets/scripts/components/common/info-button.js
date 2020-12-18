@@ -5,6 +5,9 @@ import Button from '../../styles/button/button';
 import styled from 'styled-components';
 const StyledTooltip = styled(ReactTooltip)`
   width: ${({ width }) => width || 'auto'};
+  /* Z index set to 1000 to go over shadow scroll bar
+   * which has z-index 1000 */
+  z-index: 1001;
 `;
 
 function InfoButton (props) {
