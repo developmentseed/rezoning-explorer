@@ -55,6 +55,19 @@ const ExportZonesButton = (props) => {
   // This will parse current querystring to get values for filters/weights/lcoe
   // an pass to a function to generate the PDF
   function onExportPDFClick () {
+    // Get filters values
+    const filtersSchema = filtersLists.reduce((acc, w) => {
+      acc[w.id] = {
+        accessor: w.id,
+        hydrator: weightQsSchema(w, filterRanges, selectedResource).hydrator
+      };
+      return acc;
+    }, {});
+    const filtersQsState = new QsState(filtersSchema);
+    const filtersValues = filtersQsState.getState(
+      props.location.search.substr(1)
+    );
+
     // Get weights values
     const weightsSchema = weightsList.reduce((acc, w) => {
       acc[w.id] = {
@@ -84,11 +97,11 @@ const ExportZonesButton = (props) => {
     const data = {
       selectedResource,
       selectedArea,
-      zones: currentZones.getData() || [],
-      filtersLists,
+      zones: currentZones.getData(),
+      filtersValues,
+      filterRanges: filterRanges.getData(),
       weightsValues,
-      lcoeValues,
-      filterRanges
+      lcoeValues
     };
     exportPDF(data);
   }

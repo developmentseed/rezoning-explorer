@@ -21,6 +21,7 @@ import { FiltersForm, WeightsForm, LCOEForm } from './form';
 import {
   initByType,
   castByFilterType,
+  filterQsSchema,
   weightQsSchema,
   lcoeQsSchema
 } from '../../context/qs-state-schema';
@@ -77,74 +78,10 @@ function QueryForm (props) {
   });
 
   /* Generate filters qs state variables */
-  const filtersInd = filtersLists.map(f => {
-    const [filt, setFilt] = useQsState({
-      key: f.id,
-      default: undefined,
-      hydrator: v => {
-        const base = {
-          ...f,
-          input: initByType(f, filterRanges.getData(), apiResourceNameMap[resource]),
-          active: f.active === undefined ? true : f.active
-        };
-
-        let inputUpdate;
-        if (v) {
-          if (base.isRange) {
-            const [min, max, active] = v.split(',');
-            inputUpdate = {
-              value: {
-                min: Number(min),
-                max: Number(max)
-              },
-              active: active === undefined
-            };
-          } else if (base.input.options) {
-            v = v.split(',');
-            let active = true;
-            if (v[v.length - 1] === 'false') {
-              // remove active
-              v = v.slice(0, v.length - 2).map(Number);
-              active = false;
-            } else {
-              v = v.map(Number);
-            }
-            inputUpdate = {
-              value: v,
-              active
-            };
-          } else {
-            const [val, active] = v.split(',');
-            inputUpdate = {
-              value: castByFilterType(base.input.type)(val),
-              active: active === undefined
-            };
-          }
-
-          return {
-            ...base,
-            active: inputUpdate.active,
-            input: {
-              ...base.input,
-              value: inputUpdate.value || base.input.value
-            }
-          };
-        }
-      },
-      dehydrator: f => {
-        const { value } = f.input;
-        let shard;
-        if (f.isRange) {
-          shard = `${value.min}, ${value.max}`;
-        } else if (f.input.options) {
-          shard = value.join(',');
-        } else {
-          shard = `${value}`;
-        }
-        shard = f.active ? shard : `${shard},${false}`;
-        return shard;
-      }
-    });
+  const filtersInd = filtersLists.map((f) => {
+    const [filt, setFilt] = useQsState(
+      filterQsSchema(f, filterRanges.getData(), resource)
+    );
     return [filt, setFilt];
   });
 

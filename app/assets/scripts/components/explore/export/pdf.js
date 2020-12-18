@@ -244,11 +244,10 @@ function drawAnalysisInput (doc, data) {
   doc.addPage();
   addText(doc, 'h2', 'Spatial Filters');
 
-  const { filtersLists } = data;
-  const filterRanges = data.filterRanges.getData();
+  const { filtersValues } = data;
 
   // Add one table per category
-  const categories = groupBy(filtersLists, 'category');
+  const categories = groupBy(filtersValues, 'category');
   Object.keys(categories).forEach((category) => {
     addText(doc, 'h3', toTitleCase(category));
 
@@ -258,14 +257,13 @@ function drawAnalysisInput (doc, data) {
         title = `${title} (${filter.unit})`;
       }
 
-      let value;
-      if (filter.isRange) {
-        const range = filterRanges[filter.layer];
-        value = range
-          ? `${formatThousands(range.min)} to ${formatThousands(range.max)}`
-          : 'To be added';
-      } else {
-        value = get(filter, 'input.value', 'To be added');
+      let value = filter.input.value;
+      if (filter.options) {
+        value = 'Unavailable';
+      } else if (typeof value === 'object') {
+        value = `${formatThousands(value.min)} to ${formatThousands(
+          value.max
+        )}`;
       }
 
       addTableRow(doc, title, value);
