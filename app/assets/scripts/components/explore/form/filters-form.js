@@ -169,7 +169,15 @@ function FiltersForm (props) {
                     </AccordionFoldTrigger>
                   )}
                   renderBody={({ isFoldExpanded }) =>
-                    list.map(
+                    list.sort(([a, _a], [b, _b]) => {
+                      if (a.priority && b.priority) {
+                        return 0;
+                      } else if (a.priority && !b.priority) {
+                        return -1;
+                      } else if (!a.priority && b.priority) {
+                        return 1;
+                      }
+                    }).map(
                       ([filter, setFilter], ind) => {
                         const inputOnChange = useCallback(
 
