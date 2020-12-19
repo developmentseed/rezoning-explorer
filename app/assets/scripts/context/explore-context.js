@@ -207,7 +207,7 @@ export function ExploreProvider (props) {
     //
     const filterString = filterValues
       .map((filter) => {
-        const { id, active, input } = filter;
+        const { id, active, input, isRange } = filter;
 
         // Bypass inactive filters
         if (!maskTypes.includes(input.type) &&
@@ -217,6 +217,11 @@ export function ExploreProvider (props) {
         } else if (maskTypes.includes(input.type) && active) {
           // If this is an 'active' mask filter, we don't need to send to the api. Active here means include these areas
           return null;
+        } else if (isRange) {
+          if (input.value.min === input.range[0] &&
+            input.value.max === input.range[1]) {
+            return null;
+          }
         }
 
         // Add accepted filter types to the query

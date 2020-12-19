@@ -11,6 +11,7 @@ import ExploreContext from '../../../context/explore-context';
 import MapContext from '../../../context/map-context';
 import theme from '../../../styles/theme/theme';
 import { rgba } from 'polished';
+import { RESOURCES } from '../../explore/panel-data';
 
 const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
@@ -37,7 +38,7 @@ export const outputLayers = [
     name: 'Satellite',
     type: 'raster',
     nonexclusive: true,
-    visible: true,
+    visible: false,
     category: 'output',
     info: 'Satellite layer'
   },
@@ -80,6 +81,15 @@ export const outputLayers = [
     disabled: true
   }
 ];
+const getResourceLayerName = resource => {
+  switch (resource) {
+    case RESOURCES.SOLAR:
+      return 'gsa-pvout';
+    case RESOURCES.WIND:
+    case RESOURCES.OFFSHORE:
+      return 'gwa-iec1';
+  }
+};
 
 const MapsContainer = styled.div`
   position: relative;
@@ -286,19 +296,34 @@ const initializeMap = ({
   });
 };
 
-const addInputLayersToMap = (map, layers) => {
-  layers.forEach(({ id: layer }) => {
-    map.addSource(`${layer}_source`, {
+const addInputLayersToMap = (map, layers, areaId, resource) => {
+  layers.forEach((layer) => {
+    const { id: layerId } = layer;
+    const source = map.getSource(`${layerId}_source`);
+
+    /* If source exists, replace the tiles and return */
+    if (source) {
+      source.tiles = [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis`];
+      if (layer.visible) {
+        map.setLayoutProperty(layerId, 'visibility', 'visible');
+      } else {
+        map.setLayoutProperty(layerId, 'visibility', 'none');
+      }
+      return;
+    }
+
+    map.addSource(`${layerId}_source`, {
       type: 'raster',
-      tiles: [`${config.apiEndpoint}/layers/${layer}/{z}/{x}/{y}.png?colormap=cool`],
+      tiles: [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis`],
       tileSize: 256
     });
+
     map.addLayer({
-      id: layer,
+      id: layerId,
       type: 'raster',
-      source: `${layer}_source`,
+      source: `${layerId}_source`,
       layout: {
-        visibility: 'none'
+        visibility: layer.visible ? 'visible' : 'none'
       },
       paint: {
         'raster-opacity': 0.5
@@ -340,22 +365,23 @@ function MbMap (props) {
   }, [map]);
 
   useEffect(() => {
-    if (map && inputLayers.isReady()) {
+    if (map && inputLayers.isReady() && selectedArea) {
       const layers = inputLayers.getData();
 
-      setMapLayers([
-        ...outputLayers,
+      const initializedLayers = [
         ...layers.map(l => ({
           ...l,
           name: l.title,
           type: 'raster',
           info: l.description,
-          category: l.category || 'Uncategorized'
+          category: l.category || 'Uncategorized',
+          visible: l.id === getResourceLayerName(selectedResource)
         }))
-      ]);
-      addInputLayersToMap(map, layers);
+      ];
+      addInputLayersToMap(map, initializedLayers, selectedArea.gid, selectedResource);
+      setMapLayers([...outputLayers, ...initializedLayers]);
     }
-  }, [map, inputLayers]);
+  }, [map, selectedArea, selectedResource, inputLayers]);
 
   // Watch window size changes
 
@@ -406,8 +432,9 @@ function MbMap (props) {
     setMapLayers(mapLayers.map(layer => {
       if (layer.category === 'output') {
         layer.disabled = false;
-        if (layer.visible) {
+        if (layer.visible || layer.id === SATELLITE) {
           map.setLayoutProperty(layer.id, 'visibility', 'visible');
+          layer.visible = true;
         }
       }
       return layer;
