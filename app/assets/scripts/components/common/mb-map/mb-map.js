@@ -87,7 +87,7 @@ const getResourceLayerName = resource => {
       return 'gsa-pvout';
     case RESOURCES.WIND:
     case RESOURCES.OFFSHORE:
-      return 'gwa-iec1';
+      return 'gwa-speed-100';
   }
 };
 
