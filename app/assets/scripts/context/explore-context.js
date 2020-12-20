@@ -207,10 +207,16 @@ export function ExploreProvider (props) {
     //
     const filterString = filterValues
       .map((filter) => {
-        const { id, active, input } = filter;
+        const { id, active, input, isRange } = filter;
 
         // Bypass inactive filters
         if (!active || !checkIncluded(filter, selectedResource)) return null;
+        if (isRange) {
+          if (input.value.min === input.range[0] &&
+            input.value.max === input.range[1]) {
+            return null;
+          }
+        }
 
         // Add accepted filter types to the query
         if (input.type === SLIDER) {
@@ -223,8 +229,10 @@ export function ExploreProvider (props) {
           return `${id}=${min * multiplier},${max * multiplier}`;
         } else if (input.type === BOOL) {
           return `${id}=${filter.input.value}`;
+        } else if (input.type === MULTI) {
+          return input.value.length === input.options.length ? null : `${id}=${input.value.join(',')}`;
         } else if (input.type === DROPDOWN || input.type === MULTI) {
-          return `${id}=${filter.input.value.join(', ')}`;
+          return `${id}=${filter.input.value.join(',')}`;
         } else {
         // discard non-accepted filter types
           /* eslint-disable-next-line */
