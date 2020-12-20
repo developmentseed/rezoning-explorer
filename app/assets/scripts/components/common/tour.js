@@ -9,9 +9,9 @@ import { themeVal } from '../../styles/utils/general';
 
 const steps = [
   {
-    title: 'Apply Spatial Exclusion Filters',
+    title: 'Apply Spatial Filters',
     target: '#filters-tab',
-    content: 'First, set filters to exclude undesired areas. Filters allow you to specify lower and upper thresholds for natural, infrastructure, environmental.',
+    content: 'First, set filters to exclude undesired areas. Spatial filters allow you to specify lower and upper thresholds for natural, infrastructure, environmental, and cultural areas. Certain areas can be masked out completely by toggling the respective filter switch off. Output LCOE and zone score values can also be filtered to narrow the returned results.',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
