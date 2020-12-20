@@ -3,6 +3,7 @@ import { themeVal } from '../../../styles/utils/general';
 import { glsp } from '../../../styles/utils/theme-values';
 import { FormSwitch } from '../../../styles/form/switch';
 import Button from '../../../styles/button/button';
+import collecticon from '../../../styles/collecticons/index';
 
 export const FormWrapper = styled.section`
   ${({ active }) => {
@@ -23,10 +24,57 @@ export const FormGroupWrapper = styled.div`
 
 export const FormHeader = styled.div`
   margin-bottom: ${glsp(0.5)};
-  h4 {
-    font-size: 0.875rem;
+  font-size: 0.875rem;
+
+  h1 {
     text-transform: uppercase;
     color: ${themeVal('color.baseAlpha')};
+  }
+
+  details[open] summary ~ * {
+    animation: open 240ms ease-in-out;
+  }
+
+  @keyframes open {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  details summary {
+    width: 100%;
+    padding: 0.5rem 0;
+    position: relative;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    line-height: initial;
+  }
+
+  details summary:after {
+    content: ${collecticon('plus--small')};
+    color: ${themeVal('color.baseAlpha')};
+    position: absolute;
+    line-height: 0;
+    font-size: 1rem;
+    right: 0;
+    transform-origin: center;
+    transition: transform 240ms ease-in-out;
+  }
+  details[open] summary:after {
+    transform: rotate(45deg);
+  }
+  details summary {
+    outline: 0;
   }
 `;
 
