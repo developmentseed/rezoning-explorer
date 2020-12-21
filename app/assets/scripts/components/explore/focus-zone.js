@@ -6,7 +6,6 @@ import Dl from '../../styles/type/definition-list';
 import ShadowScrollbar from '../common/shadow-scrollbar';
 import { themeVal } from '../../styles/utils/general';
 import { FormCheckable } from '../../styles/form/checkable';
-import { ExportZonesButton } from './explore-zones';
 import { formatThousands, toTitleCase } from '../../utils/format.js';
 
 const Details = styled.div`
