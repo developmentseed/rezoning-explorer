@@ -163,13 +163,25 @@ const ExportZonesButton = (props) => {
       >
         <DropTitle>Download Options</DropTitle>
         <DropMenu role='menu' iconified>
-          <DropMenuItem useIcon='page-label' onClick={onExportPDFClick}>
+          <DropMenuItem
+            data-dropdown='click.close'
+            useIcon='page-label'
+            onClick={onExportPDFClick}
+          >
             PDF Report
           </DropMenuItem>
-          <DropMenuItem useIcon='page-cog' onClick={onRawDataClick}>
+          <DropMenuItem
+            data-dropdown='click.close'
+            useIcon='page-cog'
+            onClick={onRawDataClick}
+          >
             Raw Data
           </DropMenuItem>
-          <DropMenuItem useIcon='picture' onClick={() => exportMapImage()}>
+          <DropMenuItem
+            data-dropdown='click.close'
+            useIcon='picture'
+            onClick={() => exportMapImage()}
+          >
             Map (.png)
           </DropMenuItem>
         </DropMenu>
