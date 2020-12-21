@@ -31,10 +31,6 @@ export const FormHeader = styled.div`
     color: ${themeVal('color.baseAlpha')};
   }
 
-  details[open] summary ~ * {
-    animation: open 240ms ease-in-out;
-  }
-
   @keyframes open {
     0% {
       opacity: 0;
@@ -42,10 +38,6 @@ export const FormHeader = styled.div`
     100% {
       opacity: 1;
     }
-  }
-
-  details summary::-webkit-details-marker {
-    display: none;
   }
 
   details summary {
@@ -58,6 +50,15 @@ export const FormHeader = styled.div`
     flex-flow: row nowrap;
     align-items: center;
     line-height: initial;
+    outline: 0;
+  }
+
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  details[open] summary ~ * {
+    animation: open 240ms ease-in-out;
   }
 
   details summary:after {
@@ -72,9 +73,6 @@ export const FormHeader = styled.div`
   }
   details[open] summary:after {
     transform: rotate(45deg);
-  }
-  details summary {
-    outline: 0;
   }
 `;
 
