@@ -5,7 +5,6 @@ import { Subheading } from '../../styles/type/heading';
 import CardList, { CardWrapper } from '../common/card-list';
 import { themeVal } from '../../styles/utils/general';
 import FocusZone, { formatIndicator } from './focus-zone';
-import Dl from '../../styles/type/definition-list';
 import Button from '../../styles/button/button';
 import collecticon from '../../styles/collecticons';
 import get from 'lodash.get';
@@ -94,12 +93,14 @@ const CardDetails = styled.ul`
   grid-template-columns: 1fr 1fr;
   font-size: 0.875rem;
 `;
-const Detail = styled(Dl)`
+const Detail = styled.dl`
   dt,
   dd {
     margin: 0;
   }
   dd {
+    font-size: ${themeVal('type.base.size')};
+    font-weight: ${themeVal('type.heading.weight')};
     text-align: right;
     color: ${themeVal('color.primary')};
   }
