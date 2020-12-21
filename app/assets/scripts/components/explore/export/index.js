@@ -166,7 +166,7 @@ const ExportZonesButton = (props) => {
           <DropMenuItem useIcon='page-label' onClick={onExportPDFClick}>
             PDF Report
           </DropMenuItem>
-          <DropMenuItem useIcon='page-label' onClick={onRawDataClick}>
+          <DropMenuItem useIcon='page-cog' onClick={onRawDataClick}>
             Raw Data
           </DropMenuItem>
           <DropMenuItem useIcon='picture' onClick={() => exportMapImage()}>
