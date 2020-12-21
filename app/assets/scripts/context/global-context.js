@@ -1,9 +1,16 @@
 import React, { createContext, useState, useEffect } from 'react';
 import T from 'prop-types';
+import config from '../config';
+import toasts from '../components/common/toasts';
+const {
+  apiEndpoint,
+  rawDataDownloadTimeout,
+  rawDataDownloadCheckInterval
+} = config;
 
 const GlobalContext = createContext({});
 
-export function GlobalProvider (props) {
+export function GlobalProvider(props) {
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
   useEffect(() => {
@@ -15,17 +22,62 @@ export function GlobalProvider (props) {
     });
   }, []);
 
-  const [downloads, setDownloads] = useState([]);
-  function addDownload (id) {
-    setDownloads(downloads.concat(id));
-  }
+  // The user is restricted to one one download at a time, Object 'downloadTask'
+  // keeps metadata of active download.
+  const [download, setDownload] = useState(null);
+
+  useEffect(() => {
+    let clientDownloadId;
+    if (download) {
+      clientDownloadId = setInterval(() => {
+        const duration = Date.now() - download.startedAt;
+        console.log(
+          `job ${clientDownloadId}: running for ${duration / 1000} s`
+        );
+        if (duration > rawDataDownloadTimeout) {
+          displayTimeoutError();
+        } else {
+          fetch(`${apiEndpoint}/export/status/${download.id}`).then(
+            async (res) => {
+              const { status } = await res.json();
+              if (status !== 'processing') {
+                console.log(status);
+                displaySuccess();
+              }
+            }
+          );
+        }
+      }, rawDataDownloadCheckInterval);
+    }
+
+    const displaySuccess = () => {
+      toasts.error(
+        `Export of ${download.selectedArea.name} has completed, click here to start download.`
+      );
+      cleanup();
+    };
+
+    const displayTimeoutError = () => {
+      toasts.error(
+        `Download of ${download.selectedArea.name} has expired. Please try again later.`
+      );
+      cleanup();
+    };
+
+    const cleanup = () => {
+      console.log('clearing ', clientDownloadId);
+      clearInterval(clientDownloadId);
+    };
+
+    return () => clientDownloadId && cleanup();
+  }, [download]);
 
   return (
     <>
       <GlobalContext.Provider
         value={{
           windowHeight,
-          addDownload
+          setDownload
         }}
       >
         {props.children}

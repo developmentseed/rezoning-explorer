@@ -61,7 +61,7 @@ const ExportZonesButton = (props) => {
     FormContext
   );
 
-  const { addDownload } = useContext(GlobalContext);
+  const { setDownload } = useContext(GlobalContext);
 
   // This will parse current querystring to get values for filters/weights/lcoe
   // an pass to a function to generate the PDF
@@ -138,9 +138,10 @@ const ExportZonesButton = (props) => {
       }
 
       const { id } = await res.json();
-      toasts.info(`Your download (${id}) request is being processed.`);
-      addDownload(id);
+      toasts.info(`Download of ${selectedArea.name} analysis is being processed.`);
+      setDownload({ id, selectedArea, startedAt: Date.now() });
     } catch (error) {
+      console.log(error);
       toasts.error('An unexpected error occurred. Please try again later.');
     }
   }
