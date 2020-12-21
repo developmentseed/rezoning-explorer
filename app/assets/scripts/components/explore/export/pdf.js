@@ -36,13 +36,13 @@ const options = {
 // fetch fonts & images on init for use in PDF
 let styles, baseFont, boldFont;
 async function initStyles () {
-  await fetch('/assets/fonts/Rubik-Light.ttf')
+  await fetch('/assets/fonts/IBM-Plex-Sans-Regular.ttf')
     .then((response) => response.arrayBuffer())
     .then((font) => {
       baseFont = font;
     });
 
-  await fetch('/assets/fonts/Rubik-Medium.ttf')
+  await fetch('/assets/fonts/IBM-Plex-Sans-Semibold.ttf')
     .then((response) => response.arrayBuffer())
     .then((font) => {
       boldFont = font;
