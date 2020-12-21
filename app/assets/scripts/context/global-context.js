@@ -51,15 +51,15 @@ export function GlobalProvider(props) {
     }
 
     const displaySuccess = () => {
-      toasts.error(
-        `Export of ${download.selectedArea.name} has completed, click here to start download.`
+      toasts.info(
+        `${download.prettyOperation} raw data export for ${download.selectedArea.name} has completed, click here to start download.`
       );
       cleanup();
     };
 
     const displayTimeoutError = () => {
       toasts.error(
-        `Download of ${download.selectedArea.name} has expired. Please try again later.`
+        `${download.prettyOperation} raw data export for ${download.selectedArea.name} has expired. Please try again later.`
       );
       cleanup();
     };

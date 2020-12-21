@@ -15,6 +15,11 @@ import {
   filterQsSchema
 } from '../../../context/qs-state-schema';
 
+import {
+  showGlobalLoadingMessage,
+  hideGlobalLoading
+} from '../../../components/common/global-loading';
+
 import styled from 'styled-components';
 import Button from '../../../styles/button/button';
 import Dropdown, {
@@ -25,6 +30,7 @@ import Dropdown, {
 import QsState from '../../../utils/qs-state';
 import toasts from '../../common/toasts';
 import GlobalContext from '../../../context/global-context';
+import { toTitleCase } from '../../../utils/format';
 
 const { apiEndpoint } = config;
 
@@ -115,7 +121,7 @@ const ExportZonesButton = (props) => {
     exportPDF(data);
   }
 
-  async function onRawDataClick () {
+  async function onRawDataClick(operation) {
     if (selectedArea.type !== 'country') {
       toasts.error(
         'Raw data exports are restricted to countries at the moment.'
@@ -124,9 +130,12 @@ const ExportZonesButton = (props) => {
     }
 
     try {
-      const qsString = '?lcoe_gen=0.5&lcoe_transmission=0.5&lcoe_road=0.5&grid=0.5&worldpop=0.5&slope=0.5&airports=0.5&ports=0.5&anchorages=0.5&roads=0.5&pp_whs=0.5&unep_coral=0.5&unesco=0.5&unesco_ramsar=0.5&wwf_glw_3=0.5&pp_marine_protected=0.5&unep_tidal=0.5&gsa_gti=0.5&gsa_pvout=0.5&srtm90=0.5&gebco=0.5&waterbodies=0.5&capacity_factor=0.8&crf=1&cg=2000&omfg=50000&omvg=4&ct=990&omft=0&cs=71000&cr=407000&omfr=0&decom=0&i=0.1&n=25&landuse=0&tlf=0&af=1&f_pp_marine_protected=false&f_unep_tidal=false';
+      showGlobalLoadingMessage('Requesting raw data export...');
+
+      const qsString = '?capacity_factor=0.8';
       const res = await fetch(
-        `${apiEndpoint}/export/lcoe/${selectedArea.id}${qsString}`, {
+        `${apiEndpoint}/export/${operation}/${selectedArea.id}${qsString}`,
+        {
           method: 'POST'
         }
       );
@@ -137,12 +146,26 @@ const ExportZonesButton = (props) => {
         throw err;
       }
 
+      // Operation name to be used in labels
+      const prettyOperation =
+        operation === 'lcoe' ? operation.toUpperCase() : toTitleCase(operation);
+
       const { id } = await res.json();
-      toasts.info(`Download of ${selectedArea.name} analysis is being processed.`);
-      setDownload({ id, selectedArea, startedAt: Date.now() });
+      toasts.info(
+        `${prettyOperation} raw data export for ${selectedArea.name} is being processed.`
+      );
+      setDownload({
+        id,
+        selectedArea,
+        startedAt: Date.now(),
+        prettyOperation,
+        operation
+      });
     } catch (error) {
       console.log(error);
       toasts.error('An unexpected error occurred. Please try again later.');
+    } finally {
+      hideGlobalLoading();
     }
   }
 
@@ -173,9 +196,16 @@ const ExportZonesButton = (props) => {
           <DropMenuItem
             data-dropdown='click.close'
             useIcon='page-cog'
-            onClick={onRawDataClick}
+            onClick={() => onRawDataClick('lcoe')}
           >
-            Raw Data
+            LCOE Raw Data
+          </DropMenuItem>
+          <DropMenuItem
+            data-dropdown='click.close'
+            useIcon='page-cog'
+            onClick={() => onRawDataClick('score')}
+          >
+            Score Raw Data
           </DropMenuItem>
           <DropMenuItem
             data-dropdown='click.close'
