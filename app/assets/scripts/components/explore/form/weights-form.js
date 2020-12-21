@@ -7,6 +7,7 @@ import {
   PanelOptionTitle,
   OptionHeadline
 } from './form';
+import Heading from '../../../styles/type/heading';
 import InfoButton from '../../common/info-button';
 import FormInput from '../form/form-input';
 
@@ -15,14 +16,14 @@ function WeightsForm (props) {
   return (
     <FormWrapper active={active}>
       <FormHeader>
-        <h4>
-          Zone Weighting Criteria
-        </h4>
         <details>
           <summary>
-          Adjusting the weights of...
+            <Heading size='small' variation='primary'>
+              Zone weights &emsp;
+            </Heading>
+              (read more...)
           </summary>
-          <p>parameters to change the calculated aggregated zone scores.</p>
+          <p>Set custom zone weighting parameters to change the calculated zone scores.</p>
         </details>
       </FormHeader>
       {weights.map(([weight, setWeight], ind) => {

@@ -7,6 +7,7 @@ import {
   PanelOptionTitle,
   OptionHeadline
 } from './form';
+import Heading from '../../../styles/type/heading';
 import InfoButton from '../../common/info-button';
 import FormInput from '../form/form-input';
 // import updateArrayIndex from '../../../utils/update-array-index';
@@ -16,14 +17,14 @@ function LCOEForm (props) {
   return (
     <FormWrapper active={active}>
       <FormHeader>
-        <h4>
-          Economic Parameters
-        </h4>
         <details>
           <summary>
-          Set economic parameters to...
+            <Heading size='small'>
+              Economic Parameters &emsp;
+            </Heading>
+            (read more...)
           </summary>
-          <p>o change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.</p>
+          <p>Adjust economic parameters to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.</p>
         </details>
       </FormHeader>
       {lcoe.map(([cost, setCost], ind) => {

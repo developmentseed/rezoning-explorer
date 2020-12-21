@@ -70,14 +70,14 @@ function FiltersForm (props) {
       active={active}
     >
       <FormHeader>
-        <h4>
-          Spatial Exclusion Filters
-        </h4>
         <details>
           <summary>
-          Set spatial exclusion filters to...
+            <Heading size='small' variation='primary'>
+              Spatial Filters &emsp;
+            </Heading>
+             (read more...)
           </summary>
-          <p>limit the areas included for zone weighting and LCOE analysis. Range sliders can have a minimum and maximum value. Any location in your selected area with values under the minimum or over the maximum allowed values for that filter will not be included in analysis. Areas with toggle-only filters are included by default; activate the filter to mask out these areas from analysis.</p>
+          <p>Apply spatial filters to limit the areas included for zone weighting and LCOE analysis. Range sliders can have a minimum and maximum value. Any location in your selected area with values under the minimum or over the maximum allowed values for that filter will not be included in analysis. Areas with toggle controls are included by default; switch these areas off to mask out these areas from analysis.</p>
         </details>
       </FormHeader>
       <Accordion
