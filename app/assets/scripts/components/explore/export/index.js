@@ -110,6 +110,15 @@ const ExportZonesButton = (props) => {
     exportPDF(data);
   }
 
+  // Conditional resource link for linking to GWA/GSA download pages
+  let ResourceLink;
+  if (selectedArea.type === 'country') {
+    const countryName = selectedArea.name;
+    (selectedResource === 'Solar PV')
+      ? ResourceLink = `https://globalsolaratlas.info/download/${countryName}`
+      : ResourceLink = `https://globalwindatlas.info/en/area/${countryName}?print=true`;
+  }
+
   return (
     <ExportWrapper>
       <Dropdown
@@ -127,6 +136,9 @@ const ExportZonesButton = (props) => {
       >
         <DropTitle>Download Options</DropTitle>
         <DropMenu role='menu' iconified>
+          <DropMenuItem useIcon='link' as='a' href={ResourceLink} target='_blank'>
+            Resource layers (link)
+          </DropMenuItem>
           <DropMenuItem useIcon='page-label' onClick={onExportPDFClick}>
             PDF Report
           </DropMenuItem>
