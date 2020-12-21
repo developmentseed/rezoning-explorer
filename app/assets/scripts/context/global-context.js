@@ -10,7 +10,7 @@ const {
 
 const GlobalContext = createContext({});
 
-export function GlobalProvider(props) {
+export function GlobalProvider (props) {
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
   useEffect(() => {
@@ -26,6 +26,7 @@ export function GlobalProvider(props) {
   // keeps metadata of active download.
   const [download, setDownload] = useState(null);
 
+  // Monitor download request by watching download object
   useEffect(() => {
     let clientDownloadId;
     if (download) {
@@ -40,7 +41,7 @@ export function GlobalProvider(props) {
           fetch(`${apiEndpoint}/export/status/${download.id}`).then(
             async (res) => {
               const { status } = await res.json();
-              if (status !== 'processing') {
+              if (status === 'complete') {
                 console.log(status);
                 displaySuccess();
               }
@@ -52,7 +53,12 @@ export function GlobalProvider(props) {
 
     const displaySuccess = () => {
       toasts.info(
-        `${download.prettyOperation} raw data export for ${download.selectedArea.name} has completed, click here to start download.`
+        `${download.prettyOperation} raw data export for ${download.selectedArea.name} has completed, click here to start download.`,
+        {
+          onClick: () => {
+            window.open(`${apiEndpoint}/export/${download.id}`, 'blank');
+          }
+        }
       );
       cleanup();
     };
@@ -65,10 +71,10 @@ export function GlobalProvider(props) {
     };
 
     const cleanup = () => {
-      console.log('clearing ', clientDownloadId);
       clearInterval(clientDownloadId);
     };
 
+    // On every download change or app unmount, clean up setInterval
     return () => clientDownloadId && cleanup();
   }, [download]);
 
