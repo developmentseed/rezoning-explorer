@@ -16,7 +16,7 @@ color = {
   danger: '#B3241C', // Red
   success: '#189C54', // Dark Green
   warning: '#F39C12', // Yellow
-  info: color.primary
+  info: color.secondary
 };
 
 color = {

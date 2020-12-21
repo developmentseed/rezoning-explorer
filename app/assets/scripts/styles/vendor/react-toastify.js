@@ -10,7 +10,7 @@ export default () => css`
     -webkit-transform: translate3d(0, 0, 9999px);
     position: fixed;
     padding: ${divide(themeVal('layout.space'), 2)};
-    width: 320px;
+    width: 350px;
     box-sizing: border-box;
     color: #fff;
   }
@@ -37,8 +37,8 @@ export default () => css`
     margin-left: -160px;
   }
   .Toastify__toast-container--bottom-right {
-    bottom: ${themeVal('layout.space')};
-    right: ${themeVal('layout.space')};
+    bottom: 0;
+    right: 0;
   }
 
   @media only screen and (max-width: 480px) {
