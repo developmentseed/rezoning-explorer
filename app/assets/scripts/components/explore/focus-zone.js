@@ -103,8 +103,6 @@ function FocusZone (props) {
             }}
           >Add zone to selection
           </FormCheckable>
-
-          <ExportZonesButton onExport={() => {}} small />
         </FocusZoneFooter>
       </ShadowScrollbar>
     </Wrapper>
