@@ -29,6 +29,11 @@ export const FormHeader = styled.div`
   h1 {
     text-transform: uppercase;
     color: ${themeVal('color.baseAlpha')};
+    margin-right: auto;
+  }
+  span {
+    color: ${themeVal('color.primary')};
+    margin-right: ${glsp()};
   }
 
   @keyframes open {
@@ -63,7 +68,7 @@ export const FormHeader = styled.div`
 
   details summary:after {
     content: ${collecticon('plus--small')};
-    color: ${themeVal('color.baseAlpha')};
+    color: ${themeVal('color.primary')};
     position: absolute;
     line-height: 0;
     font-size: 1rem;

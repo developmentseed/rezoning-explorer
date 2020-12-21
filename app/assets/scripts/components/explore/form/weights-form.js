@@ -2,12 +2,11 @@ import React, { useCallback } from 'react';
 import T from 'prop-types';
 import {
   FormWrapper,
-  FormHeader,
   PanelOption,
   PanelOptionTitle,
   OptionHeadline
 } from './form';
-import Heading from '../../../styles/type/heading';
+import FormIntro from './form-intro';
 import InfoButton from '../../common/info-button';
 import FormInput from '../form/form-input';
 
@@ -15,17 +14,10 @@ function WeightsForm (props) {
   const { weights, active } = props;
   return (
     <FormWrapper active={active}>
-      <FormHeader>
-        <details>
-          <summary>
-            <Heading size='small' variation='primary'>
-              Zone weights &emsp;
-            </Heading>
-              (read more...)
-          </summary>
-          <p>Set custom zone weighting parameters to change the calculated zone scores.</p>
-        </details>
-      </FormHeader>
+      <FormIntro
+        formTitle='Zone weights'
+        introText='Set custom zone weighting parameters to change the calculated zone scores.'
+      />
       {weights.map(([weight, setWeight], ind) => {
         const onChange = useCallback(
           (value) => {

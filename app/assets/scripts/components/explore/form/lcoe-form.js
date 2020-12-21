@@ -2,31 +2,24 @@ import React, { useCallback } from 'react';
 import T from 'prop-types';
 import {
   FormWrapper,
-  FormHeader,
   PanelOption,
   PanelOptionTitle,
   OptionHeadline
 } from './form';
-import Heading from '../../../styles/type/heading';
+import FormIntro from './form-intro';
 import InfoButton from '../../common/info-button';
 import FormInput from '../form/form-input';
 // import updateArrayIndex from '../../../utils/update-array-index';
 
 function LCOEForm (props) {
   const { lcoe, active } = props;
+
   return (
     <FormWrapper active={active}>
-      <FormHeader>
-        <details>
-          <summary>
-            <Heading size='small'>
-              Economic Parameters &emsp;
-            </Heading>
-            (read more...)
-          </summary>
-          <p>Adjust economic parameters to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.</p>
-        </details>
-      </FormHeader>
+      <FormIntro
+        formTitle='Economic Parameters'
+        introText='Adjust economic parameters to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.'
+      />
       {lcoe.map(([cost, setCost], ind) => {
         const onChange = useCallback(
           (v) => setCost({

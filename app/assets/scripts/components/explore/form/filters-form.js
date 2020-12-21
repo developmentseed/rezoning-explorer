@@ -4,12 +4,12 @@ import T from 'prop-types';
 import {
   FormWrapper,
   FormGroupWrapper,
-  FormHeader,
   PanelOption,
   OptionHeadline,
   PanelOptionTitle,
   InactiveMessage
 } from './form';
+import FormIntro from './form-intro';
 import { Accordion, AccordionFold, AccordionFoldTrigger } from '../../../components/accordion';
 import Heading from '../../../styles/type/heading';
 import { makeTitleCase } from '../../../styles/utils/general';
@@ -44,17 +44,10 @@ function FiltersForm (props) {
     <FormWrapper
       active={active}
     >
-      <FormHeader>
-        <details>
-          <summary>
-            <Heading size='small' variation='primary'>
-              Spatial Filters &emsp;
-            </Heading>
-             (read more...)
-          </summary>
-          <p>Apply spatial filters to limit the areas included for zone weighting and LCOE analysis. Range sliders can have a minimum and maximum value. Any location in your selected area with values under the minimum or over the maximum allowed values for that filter will not be included in analysis. Areas with toggle controls are included by default; switch these areas off to mask out these areas from analysis.</p>
-        </details>
-      </FormHeader>
+      <FormIntro
+        formTitle='Spatial Filters'
+        introText='Apply spatial filters to limit the areas included in zone weighting and LCOE analysis. Range sliders can have a minimum and maximum value. Any location in your selected area with values under the minimum or over the maximum allowed values for that filter will not be included in the analysis. Areas with toggle controls are included by default; switch these areas off to mask out these areas from analysis.'
+      />
       <Accordion
         initialState={[
           true,
