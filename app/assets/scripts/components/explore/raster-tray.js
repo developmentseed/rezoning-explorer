@@ -6,26 +6,36 @@ import InfoButton from '../common/info-button';
 import Prose from '../../styles/type/prose';
 import ShadowScrollbar from '../common/shadow-scrollbar';
 import SliderGroup from '../common/slider-group';
+import { Accordion, AccordionFold, AccordionFoldTrigger } from '../../components/accordion';
+import Heading from '../../styles/type/heading';
+import { makeTitleCase } from '../../styles/utils/general';
 
 const TrayWrapper = styled(ShadowScrollbar)`
   padding: 0.25rem;
   height: 20rem;
 `;
 const ControlWrapper = styled.div`
-  padding: 0.5rem;
+  padding: 0.5rem 0;
   width: 100%;
+
+  &:last-child {
+    padding-bottom: 2rem;
+  }
 `;
 const ControlHeadline = styled.div`
   display: grid;
   grid-template-columns: 3fr 1fr;
   justify-content: space-between;
   align-items: baseline;
+
+  ${Prose} {
+    font-size: 0.875rem;
+  }
 `;
 const ControlTools = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(1.5rem, 1fr));
+  grid-template-columns: 1fr 0 1fr;
   justify-content: end;
-  grid-gap: 0.75rem;
   #layer-visibility {
     grid-column: end;
   }
@@ -47,6 +57,12 @@ const Legend = styled.div`
 const LayersWrapper = styled.div`
   opacity: ${({ show }) => show ? 1 : 0};
   transition: opacity .16s ease 0s;
+  padding: 0.5rem;
+  overflow-x: hidden;
+
+  ${AccordionFold} {
+    padding-bottom: 1rem;
+  }
 `;
 
 function LayerControl (props) {
@@ -60,9 +76,8 @@ function LayerControl (props) {
         <ControlTools>
           {props.info &&
             <InfoButton
-              id='layer-info'
+              id={`${id}-info`}
               info={props.info || null}
-              disabled={!props.info}
             >
               <span>Open Tour</span>
             </InfoButton>}
@@ -70,11 +85,16 @@ function LayerControl (props) {
             id='layer-visibility'
             variation='base-plain'
             useIcon={visible ? 'eye' : 'eye-disabled'}
-            title='toggle-layer-visibility'
+            title={visible ? 'toggle layer visibiliity' : 'Generate zones to view output layers'}
             hideText
-            onClick={() => {
-              onVisibilityToggle(props, !visible);
-            }}
+            onClick={
+              props.disabled
+                ? null
+                : () => {
+                  onVisibilityToggle(props, !visible);
+                }
+            }
+            visuallyDisabled={props.disabled}
           >
             <span>Toggle Layer Visibility</span>
           </Button>
@@ -89,7 +109,7 @@ function LayerControl (props) {
             onLayerKnobChange(props, val);
           }}
           range={[0, 100]}
-          disabled={!visible}
+          disabled={props.disabled || !visible}
         />
       </Legend>
     </ControlWrapper>
@@ -99,6 +119,7 @@ function LayerControl (props) {
 LayerControl.propTypes = {
   id: T.string,
   name: T.string,
+  disabled: T.bool,
   onLayerKnobChange: T.func,
   onVisibilityToggle: T.func,
   info: T.string,
@@ -107,6 +128,14 @@ LayerControl.propTypes = {
 
 function RasterTray (props) {
   const { show, layers, onLayerKnobChange, onVisibilityToggle, className } = props;
+
+  const categorizedLayers = layers.reduce((cats, layer) => {
+    if (!cats[layer.category]) {
+      cats[layer.category] = [];
+    }
+    cats[layer.category].push(layer);
+    return cats;
+  }, {});
   return (
     <TrayWrapper
       className={className}
@@ -114,7 +143,52 @@ function RasterTray (props) {
       <LayersWrapper
         show={show}
       >
-        {layers.map(l => (
+
+        <Accordion
+          initialState={[
+            false,
+            true,
+            ...Object.keys(categorizedLayers).slice(2).map(_ => false)
+          ]}
+          allowMultiple
+        >
+          {({ checkExpanded, setExpanded }) => {
+            return (
+              Object.entries(categorizedLayers).map(([category, layers], idx) => {
+                return (
+                  <AccordionFold
+                    key={category}
+                    isFoldExpanded={checkExpanded(idx)}
+                    setFoldExpanded={v => setExpanded(idx, v)}
+                    renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                      <AccordionFoldTrigger
+                        isExpanded={isFoldExpanded}
+                        onClick={() => setFoldExpanded(!isFoldExpanded)}
+                      >
+                        <Heading size='small' variation='primary'>
+                          {makeTitleCase(category.replace(/_/g, ' '))}
+                        </Heading>
+                      </AccordionFoldTrigger>
+                    )}
+                    renderBody={({ isFoldExpanded }) => (
+                      layers.map(l => (
+                        <LayerControl
+                          key={l.name}
+                          {...l}
+                          onLayerKnobChange={onLayerKnobChange}
+                          onVisibilityToggle={onVisibilityToggle}
+                        />
+                      )
+                      )
+                    )}
+                  />
+                );
+              }));
+          }}
+
+        </Accordion>
+
+        {/* layers.map(l => (
           <LayerControl
             key={l.name}
             {...l}
@@ -122,7 +196,7 @@ function RasterTray (props) {
             onVisibilityToggle={onVisibilityToggle}
           />
         )
-        )}
+        ) */}
       </LayersWrapper>
     </TrayWrapper>
   );

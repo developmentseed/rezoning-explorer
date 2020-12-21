@@ -40,7 +40,7 @@ export const initByType = (obj, ranges, resource) => {
       obj.input.range ||
       DEFAULT_RANGE,
     obj.unit
-  );
+  ).map(round);
 
   switch (input.type) {
     case SLIDER:
@@ -52,7 +52,7 @@ export const initByType = (obj, ranges, resource) => {
           input.value ||
           input.default ||
           (obj.isRange
-            ? { min: round(range[0]), max: round(range[1]) }
+            ? { min: range[0], max: range[1] }
             : range[0])
       };
     case TEXT:
@@ -71,8 +71,8 @@ export const initByType = (obj, ranges, resource) => {
     case MULTI:
       return {
         ...input,
-        // For multi select use first option as default value
-        value: input.value || [0],
+        // For multi select, select all by default
+        value: input.value || input.options.map((e, i) => i),
         unit: null
       };
     case DROPDOWN:
