@@ -132,7 +132,7 @@ const ExportZonesButton = (props) => {
     try {
       showGlobalLoadingMessage('Requesting raw data export...');
 
-      const qsString = '?capacity_factor=0.8';
+      const qsString = '?capacity_factor=gsa-pvout';
       const res = await fetch(
         `${apiEndpoint}/export/${operation}/${selectedArea.id}${qsString}`,
         {
