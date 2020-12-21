@@ -120,6 +120,8 @@ const ExportZonesButton = (props) => {
             useIcon='download'
             variation='primary-raised-dark'
             size='small'
+            disabled={selectedArea.type === 'region'}
+            title={selectedArea.type === 'region' ? 'Regional resources can not be downloaded at this time' : 'Download country zone information, maps and data'}
           >
             Download
           </Button>
