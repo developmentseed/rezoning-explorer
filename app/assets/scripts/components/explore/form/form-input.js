@@ -21,7 +21,16 @@ const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT } = INPUT_CONSTANTS;
 
 const MultiSelectButton = styled(Button)`
   width: 100%;
-  ${truncated()}
+  text-transform: none;
+  font-weight: normal;
+  span {
+    max-width: 80%;
+    ${truncated()}
+  }
+`;
+
+const MultiDropdown = styled(Dropdown)`
+  max-width: 24rem;
 `;
 
 const MultiWrapper = styled(ShadowScrollbar)`
@@ -30,7 +39,14 @@ const MultiWrapper = styled(ShadowScrollbar)`
     > div {
       display: grid;
       grid-template-rows: repeat(auto-fill, minmax(1.5rem, 1fr));
+      gap: 0.125rem;
     }
+  }
+  ${FormCheckable} {
+      font-size: 0.875rem;
+      span {
+        line-height: 1.75;
+      }
   }
 `;
 
@@ -83,16 +99,20 @@ const FormInput = ({ option, onChange }) => {
       return null;
     case MULTI:
       return (
-        <Dropdown
+        <MultiDropdown
           triggerElement={
-            <MultiSelectButton disabled={!option.active}>
+            <MultiSelectButton
+              disabled={!option.active}
+              useIcon={['chevron-down--small', 'after']}
+              variation='primary-raised-light'
+            >
               {' '}
               {option.input.options
                 .filter((e, i) => value.includes(i))
                 .join(',')}
             </MultiSelectButton>
           }
-          alignment='right'
+          alignment='left'
         >
           <MultiWrapper>
             {option.input.options.map((o, i) => (
@@ -115,7 +135,7 @@ const FormInput = ({ option, onChange }) => {
               </FormCheckable>
             ))}
           </MultiWrapper>
-        </Dropdown>
+        </MultiDropdown>
       );
     case DROPDOWN:
       return (

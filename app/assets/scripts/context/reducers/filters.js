@@ -57,7 +57,8 @@ export async function fetchFilters (dispatch) {
           info: filter.description,
           unit: abbreviateUnit(filter.unit),
           category: filter.category,
-          active: isRange || false,
+          // TODO this line is remporary
+          active: !(filter.type === 'boolean') || false,
           isRange,
           input: {
             range: INPUT_CONSTANTS.DEFAULT_RANGE,
