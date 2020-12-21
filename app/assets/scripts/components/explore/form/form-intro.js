@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import T from 'prop-types';
-import { FormHeader } from './form';
+import { FormHeader } from '../../../styles/form/form';
 import Heading from '../../../styles/type/heading';
 
 const FormIntro = (props, { startOpen }) => {

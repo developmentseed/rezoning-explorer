@@ -8,7 +8,7 @@ import {
   OptionHeadline,
   PanelOptionTitle,
   InactiveMessage
-} from './form';
+} from '../../../styles/form/form';
 import FormIntro from './form-intro';
 import { Accordion, AccordionFold, AccordionFoldTrigger } from '../../../components/accordion';
 import Heading from '../../../styles/type/heading';

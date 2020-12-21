@@ -15,7 +15,7 @@ import Heading, { Subheading } from '../../styles/type/heading';
 import GridSetter from './grid-setter';
 
 import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap } from './panel-data';
-import { HeadOption, HeadOptionHeadline } from './form/form';
+import { HeadOption, HeadOptionHeadline } from '../../styles/form/form';
 import { FiltersForm, WeightsForm, LCOEForm } from './form';
 
 import {

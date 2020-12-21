@@ -5,7 +5,7 @@ import {
   PanelOption,
   PanelOptionTitle,
   OptionHeadline
-} from './form';
+} from '../../../styles/form/form';
 import FormIntro from './form-intro';
 import InfoButton from '../../common/info-button';
 import FormInput from '../form/form-input';
