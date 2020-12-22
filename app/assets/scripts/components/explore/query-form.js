@@ -47,6 +47,7 @@ const SubmissionSection = styled(PanelBlockFooter)`
   grid-template-columns: 0.5fr 1fr;
   gap: 0rem 1rem;
 `;
+
 function QueryForm (props) {
   const {
     area,
