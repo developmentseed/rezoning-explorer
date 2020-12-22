@@ -521,7 +521,7 @@ function MbMap (props) {
 
   return (
     <MapsContainer>
-      {rasterRange ? <MapLegend min={rasterRange.min} max={rasterRange.max} description={visibleRaster[0].title}/> : ''}
+      {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title}/> : ''}
       <SingleMapContainer ref={mapContainer} />
     </MapsContainer>
   );
