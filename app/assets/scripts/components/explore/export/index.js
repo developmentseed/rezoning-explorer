@@ -298,14 +298,14 @@ const ExportZonesButton = (props) => {
                 useIcon='page-cog'
                 onClick={() => onRawDataClick('lcoe')}
               >
-                LCOE Raw Data
+                LCOE as GeoTIFF
               </DropMenuItem>
               <DropMenuItem
                 data-dropdown='click.close'
                 useIcon='page-cog'
                 onClick={() => onRawDataClick('score')}
               >
-                Score Raw Data
+                Score as GeoTIFF
               </DropMenuItem>
             </>
           )}
