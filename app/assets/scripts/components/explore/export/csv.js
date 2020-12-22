@@ -3,19 +3,23 @@ import blobStream from 'blob-stream';
 import { format } from '@fast-csv/format';
 import { getTimestamp } from '../../../utils/format';
 
-export default async function exportCsv (data) {
+export default async function exportZonesCsv (selectedArea, zones) {
   const doc = format({ headers: true });
 
   const stream = doc.pipe(blobStream());
 
   // Parse zones
-  const rows = data.zones.map(({ properties }) => {
+  const rows = zones.map(({ properties }) => {
     const { name, id, summary } = properties;
-    return {
-      name,
-      id,
-      ...summary
+
+    const zone = {
+      id, ...summary
     };
+
+    // Add name if available
+    if (name) zone.name = name;
+
+    return zone;
   });
 
   // Add zones to CSV
@@ -26,7 +30,7 @@ export default async function exportCsv (data) {
   return await stream.on('finish', function () {
     saveAs(
       stream.toBlob('text/plain;charset=utf-8'),
-      `rezoning-${data.selectedArea.id}-zones-${getTimestamp()}.csv`
+      `rezoning-${selectedArea.id}-zones-${getTimestamp()}.csv`
     );
   });
 }
