@@ -1,4 +1,4 @@
-import PDFDocument from 'pdfkit';
+import PDFDocument from '../../../utils/pdfkit';
 import blobStream from 'blob-stream';
 import { saveAs } from 'file-saver';
 import { format } from 'date-fns';
@@ -8,6 +8,8 @@ import get from 'lodash.get';
 import groupBy from 'lodash.groupby';
 import { formatThousands, toTitleCase } from '../../../utils/format';
 import { formatIndicator, formatLabel } from '../focus-zone';
+
+/* eslint-disable camelcase */
 
 // Helper function to generate a formatted timestamp
 const timestamp = () => format(Date.now(), 'yyyyMMdd-hhmmss');
@@ -52,17 +54,17 @@ async function initStyles () {
     });
   await fetch('/assets/graphics/meta/android-chrome.png')
     .then((response) => response.arrayBuffer())
-    .then(logo => {
+    .then((logo) => {
       Logo = logo;
     });
   await fetch('/assets/graphics/content/logos/logo-wbg.png')
     .then((response) => response.arrayBuffer())
-    .then(logo => {
+    .then((logo) => {
       WBGLogo = logo;
     });
   await fetch('/assets/graphics/content/logos/logo-esmap.png')
     .then((response) => response.arrayBuffer())
-    .then(logo => {
+    .then((logo) => {
       ESMAPLogo = logo;
     });
 
@@ -139,10 +141,7 @@ function addText (doc, element, text, options) {
 
 function drawSectionHeader (label, left, top, doc, options) {
   doc.fontSize(12);
-  doc
-    .fillColor(options.baseFontColor, 1)
-    .font(boldFont)
-    .text(label, left, top);
+  doc.fillColor(options.baseFontColor, 1).font(boldFont).text(label, left, top);
 
   doc.rect(left, top + 18, 28, 2).fill(options.primaryColor);
 }
@@ -246,28 +245,33 @@ function drawFooter (doc) {
   doc.image(Logo, options.margin, doc.page.height - options.margin * 1.25, {
     height: 18
   });
-  doc.image(WBGLogo, options.margin * 2 + 8, doc.page.height - options.margin * 1.25, {
-    height: 18
-  });
-  doc.image(ESMAPLogo, 120 + options.margin * 2, doc.page.height - options.margin * 1.25, {
-    height: 18
-  });
+  doc.image(
+    WBGLogo,
+    options.margin * 2 + 8,
+    doc.page.height - options.margin * 1.25,
+    {
+      height: 18
+    }
+  );
+  doc.image(
+    ESMAPLogo,
+    120 + options.margin * 2,
+    doc.page.height - options.margin * 1.25,
+    {
+      height: 18
+    }
+  );
 
   // Left Title
   doc
     .fillColor(options.primaryColor)
     .font(boldFont)
-    .text(
-      'REZoning',
-      options.margin,
-      doc.page.height - options.margin * 1,
-      {
-        width: options.colWidthTwoCol,
-        height: 16,
-        align: 'left',
-        link: config.baseUrl
-      }
-    );
+    .text('REZoning', options.margin, doc.page.height - options.margin * 1, {
+      width: options.colWidthTwoCol,
+      height: 16,
+      align: 'left',
+      link: config.baseUrl
+    });
 
   // Right license
   doc
@@ -300,7 +304,10 @@ function drawFooter (doc) {
 /**
  * Draw Map & Area Summary
  */
-function drawMapArea (doc, { selectedResource, zones, map: { mapDataURL, mapAspectRatio } }) {
+function drawMapArea (
+  doc,
+  { selectedResource, zones, map: { mapDataURL, mapAspectRatio } }
+) {
   // Limit map height to a column width. This results in a square aspect ratio of the map
   const mapWidth = options.colWidthThreeCol * 2 + options.gutterThreeCol;
   const mapHeight = mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio;
@@ -308,9 +315,7 @@ function drawMapArea (doc, { selectedResource, zones, map: { mapDataURL, mapAspe
   // Map area has a three column layout
 
   // Background color on the full map area
-  doc
-    .rect(0, options.headerHeight, doc.page.width, mapHeight)
-    .fill('#f6f7f7');
+  doc.rect(0, options.headerHeight, doc.page.width, mapHeight).fill('#f6f7f7');
 
   // Map (2/3)
   doc.image(mapDataURL, options.margin, options.headerHeight, {
@@ -329,8 +334,7 @@ function drawMapArea (doc, { selectedResource, zones, map: { mapDataURL, mapAspe
     .fill();
 
   // Legend (1/3)
-  const legendLeft =
-  doc.page.width - options.margin - options.colWidthThreeCol;
+  const legendLeft = doc.page.width - options.margin - options.colWidthThreeCol;
 
   // Year header
   drawSectionHeader(
@@ -468,26 +472,43 @@ function drawAnalysisInput (doc, data) {
  * @param {Array} zones Array of zones to be included
  */
 function drawZonesList (doc, zones) {
-  // Add filters section (ranges must be available)
   doc.addPage();
+
+  // Title
   addText(doc, 'h2', 'Zones');
 
-  zones.forEach(({ id, properties: { name, summary } }) => {
-    addText(doc, 'h3', name || id);
+  // Set style to be used in the table
+  setStyle(doc, 'p');
 
-    // If zone name was used in title, include zone id in table
-    if (name) {
-      addTableRow(doc, 'ID', id);
-    }
+  // Prepare table data
+  const table = {
+    header: [
+      'ID',
+      'Score',
+      'LCOE (USD/MWh)',
+      'Output (GWh)',
+      'Output Density (MWh/km²)'
+    ],
+    cells: zones.map(
+      ({
+        id,
+        properties: {
+          name,
+          summary: { lcoe, zone_score, zone_output, zone_output_density }
+        }
+      }) => {
+        return [
+          name || id,
+          formatIndicator('zone_score', zone_score),
+          formatIndicator('lcoe', lcoe),
+          formatIndicator('zone_output', zone_output),
+          formatIndicator('zone_output_density', zone_output_density)
+        ];
+      }
+    )
+  };
 
-    Object.keys(summary).forEach((indicator) => {
-      addTableRow(
-        doc,
-        formatLabel(indicator, true),
-        formatIndicator(indicator, summary[indicator])
-      );
-    });
-  });
+  doc.table(table);
 }
 
 export default async function exportPDF (data) {
