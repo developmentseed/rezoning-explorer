@@ -510,7 +510,7 @@ function MbMap (props) {
 
   return (
     <MapsContainer>
-      <MapLegend />
+      <MapLegend min={0} max={1}/>
       <SingleMapContainer ref={mapContainer} />
     </MapsContainer>
   );

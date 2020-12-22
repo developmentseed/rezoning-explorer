@@ -5,8 +5,9 @@ import styled from 'styled-components';
 import { themeVal } from '../../../styles/utils/general';
 import { glsp } from '../../../styles/utils/theme-values';
 
-import { LegendThreshold } from '@visx/legend';
-import { scaleThreshold } from '@visx/scale';
+import { LegendLinear, LegendItem, LegendLabel } from '@visx/legend';
+import { scaleLinear } from '@visx/scale';
+import colormap from 'colormap';
 
 const MapLegendSelf = styled.div`
   position: absolute;
@@ -24,20 +25,31 @@ const MapLegendSelf = styled.div`
 `;
 
 export default function MapLegend (props) {
-  const threshold = scaleThreshold({
-    domain: [0.02, 0.04, 0.06, 0.08, 0.1],
-    range: ['#f2f0f7', '#dadaeb', '#bcbddc', '#9e9ac8', '#756bb1', '#54278f']
+  const scale = scaleLinear({
+    domain: Array(50).fill(0).map((a, i) => i / 50),
+    range: colormap({ colormap: 'viridis', nshades: 50 })
   });
 
   return (
     <MapLegendSelf>
-      <LegendThreshold
-        scale={threshold}
-        direction='column-reverse'
-        itemDirection='row-reverse'
-        labelMargin='0 20px 0 0'
-        shapeMargin='1px 0 0'
-      />
+      <LegendLinear
+        scale={scale}
+        steps={50}
+      >
+        {labels => (
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+          {labels.map((label, i) => (
+            <LegendItem key={`legend-linear-${i}`}>
+              <svg width={4} height={10}>
+                <rect fill={label.value} width={4} height={10} />
+              </svg>
+            </LegendItem>
+          ))}
+          </div>
+        )}
+      </LegendLinear>
+      <span>{props.min}</span>
+      <span style={{float: 'right'}}>{props.max}</span>
     </MapLegendSelf>
   );
 }
