@@ -25,7 +25,10 @@ const options = {
   baseFontColor: '#374863',
   secondaryFontColor: '#6d788f',
   primaryColor: '#23A6F5',
+  headerHeight: 96,
   colWidthTwoCol: 252,
+  gutterTwoCol: 28,
+  colWidthThreeCol: 160,
   gutterThreeCol: 26,
   tables: {
     rowSpacing: 3, // between text and bottom line
@@ -132,6 +135,16 @@ function addText (doc, element, text, options) {
 
   // Apply padding after adding the text
   doc.y += get(styles, [element, 'padding'], 0);
+}
+
+function drawSectionHeader (label, left, top, doc, options) {
+  doc.fontSize(12);
+  doc
+    .fillColor(options.baseFontColor, 1)
+    .font(boldFont)
+    .text(label, left, top);
+
+  doc.rect(left, top + 18, 28, 2).fill(options.primaryColor);
 }
 
 /**
@@ -260,19 +273,7 @@ function drawFooter (doc) {
   doc
     .fillColor(options.baseFontColor)
     .text(
-      config.baseUrl,
-      options.margin + 20 + 8,
-      options.pageHeight - options.margin * 1.5 + 12,
-      {
-        width: options.colWidthTwoCol,
-        height: 16,
-        align: 'left'
-      }
-    );
-
-  // Right license
-  doc.text(
-    'Creative Commons BY 4.0',
+      'Creative Commons BY 4.0',
       doc.page.width - options.colWidthTwoCol - options.margin,
       doc.page.height - options.margin * 1.25,
       {
@@ -294,6 +295,76 @@ function drawFooter (doc) {
       align: 'right'
     }
   );
+}
+
+/**
+ * Draw Map & Area Summary
+ */
+function drawMapArea (doc, { selectedResource, zones, map: { mapDataURL, mapAspectRatio } }) {
+  // Limit map height to a column width. This results in a square aspect ratio of the map
+  const mapWidth = options.colWidthThreeCol * 2 + options.gutterThreeCol;
+  const mapHeight = mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio;
+  // // MAP AREA
+  // Map area has a three column layout
+
+  // Background color on the full map area
+  doc
+    .rect(0, options.headerHeight, doc.page.width, mapHeight)
+    .fill('#f6f7f7');
+
+  // Map (2/3)
+  doc.image(mapDataURL, options.margin, options.headerHeight, {
+    fit: [doc.page.width, mapHeight]
+  });
+
+  // Map area outline
+  doc
+    .rect(0, options.headerHeight, doc.page.width, 1)
+    .fillColor('#192F35', 0.08)
+    .fill();
+
+  doc
+    .rect(0, options.headerHeight + mapHeight - 1, doc.page.width, 1)
+    .fillColor('#192F35', 0.08)
+    .fill();
+
+  // Legend (1/3)
+  const legendLeft =
+  doc.page.width - options.margin - options.colWidthThreeCol;
+
+  // Year header
+  drawSectionHeader(
+    'Area Summary',
+    legendLeft,
+    options.headerHeight + 20,
+    doc,
+    options
+  );
+
+  doc
+    .fillColor(options.baseFontColor)
+    .fontSize(8)
+    .font(baseFont)
+    .text('Area summary', legendLeft, options.headerHeight + 20 + 36, {
+      align: 'left'
+    });
+
+  addTableRow(doc, 'Resource', selectedResource);
+
+  /**
+   * Summary table
+   */
+  const stats = zonesSummary(zones);
+
+  stats.forEach((line) => {
+    let title = line.label;
+    if (line.unit) {
+      title = `${title} (${line.unit})`;
+    }
+
+    addTableRow(doc, title, line.data);
+  });
+  doc.y += get(options, 'tables.padding', 0);
 }
 
 /**
@@ -431,7 +502,7 @@ export default async function exportPDF (data) {
 
   // Add sections
   drawHeader(doc, data);
-  drawAreaSummary(doc, data);
+  drawMapArea(doc, data);
   drawAnalysisInput(doc, data);
   drawZonesList(doc, data.zones);
 
