@@ -1,7 +1,9 @@
 import { saveAs } from 'file-saver';
 import blobStream from 'blob-stream';
 import { format } from '@fast-csv/format';
-import { getTimestamp } from '../../../utils/format';
+import { getTimestamp, round } from '../../../utils/format';
+import config from '../../../config';
+const { indicatorsDecimals } = config;
 
 export default async function exportZonesCsv (selectedArea, zones) {
   const doc = format({ headers: true });
@@ -14,10 +16,16 @@ export default async function exportZonesCsv (selectedArea, zones) {
 
     const zone = {
       id,
-      zone_score: summary.zone_score,
-      lcoe_usd_mwh: summary.lcoe,
-      zone_output_gwh: summary.zone_output,
-      zone_output_density_mwh_km2: summary.zone_output_density
+      zone_score: round(summary.zone_score, indicatorsDecimals.zone_score),
+      lcoe_usd_mwh: round(summary.lcoe, indicatorsDecimals.lcoe),
+      zone_output_gwh: round(
+        summary.zone_output,
+        indicatorsDecimals.zone_output
+      ),
+      zone_output_density_mwh_km2: round(
+        summary.zone_output_density,
+        indicatorsDecimals.zone_output_density
+      )
     };
 
     // Add name if available
