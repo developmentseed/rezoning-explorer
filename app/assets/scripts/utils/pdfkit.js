@@ -74,7 +74,9 @@ PDFDocument.prototype.table = function (table, arg0, arg1, arg2) {
     this.moveTo(startX, rowBottomY - rowSpacing * 0.5)
       .lineTo(startX + usableWidth, rowBottomY - rowSpacing * 0.5)
       .lineWidth(2)
-      .stroke();
+      .opacity(0.25)
+      .stroke()
+      .opacity(1); // Reset opacity after drawing the line
   } else {
     // Just move the cursor down if header is not available
     rowBottomY = startY;
@@ -106,7 +108,7 @@ PDFDocument.prototype.table = function (table, arg0, arg1, arg2) {
     this.moveTo(startX, rowBottomY - rowSpacing * 0.5)
       .lineTo(startX + usableWidth, rowBottomY - rowSpacing * 0.5)
       .lineWidth(1)
-      .opacity(0.7)
+      .opacity(0.125)
       .stroke()
       .opacity(1); // Reset opacity after drawing the line
 
