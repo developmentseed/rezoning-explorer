@@ -7,7 +7,7 @@ import config from '../../../config';
 import get from 'lodash.get';
 import groupBy from 'lodash.groupby';
 import { formatThousands, toTitleCase } from '../../../utils/format';
-import { formatIndicator, formatLabel } from '../focus-zone';
+import { formatIndicator } from '../focus-zone';
 
 /* eslint-disable camelcase */
 
@@ -372,39 +372,6 @@ function drawMapArea (
 }
 
 /**
- * Draw Area Summary
- */
-function drawAreaSummary (doc, { selectedResource, zones }) {
-  const stats = zonesSummary(zones);
-
-  // Title
-  addText(doc, 'h2', 'Area summary');
-
-  // Description
-  addText(
-    doc,
-    'p',
-    'Dolor in qui nulla fugiat eu excepteur ex et amet est et veniam. Officia eu occaecat dolor nostrud sunt do consectetur nulla consequat laboris laboris eiusmod. Eu voluptate in consequat duis enim qui do commodo. Minim adipisicing commodo ullamco exercitation do nulla amet aliquip do duis tempor ex qui. Reprehenderit sit nostrud est dolor in eu ad in ut labore laborum voluptate amet. Voluptate proident culpa anim do.'
-  );
-
-  addTableRow(doc, 'Resource', selectedResource);
-
-  /**
-   * Summary table
-   */
-
-  stats.forEach((line) => {
-    let title = line.label;
-    if (line.unit) {
-      title = `${title} (${line.unit})`;
-    }
-
-    addTableRow(doc, title, line.data);
-  });
-  doc.y += get(options, 'tables.padding', 0);
-}
-
-/**
  * Draw Analysis Input
  */
 function drawAnalysisInput (doc, data) {
@@ -489,6 +456,7 @@ function drawZonesList (doc, zones) {
       'Output (GWh)',
       'Output Density (MWh/km²)'
     ],
+    columnAlignment: ['left', 'center', 'center', 'center', 'center'],
     cells: zones.map(
       ({
         id,

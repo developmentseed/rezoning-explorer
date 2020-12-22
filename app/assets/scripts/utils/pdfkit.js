@@ -5,6 +5,7 @@ PDFDocument.prototype.table = function (table, arg0, arg1, arg2) {
   let startX = this.page.margins.left;
   let startY = this.y;
   let options = {};
+  const { columnAlignment } = table;
 
   if (typeof arg0 === 'number' && typeof arg1 === 'number') {
     startX = arg0;
@@ -59,7 +60,7 @@ PDFDocument.prototype.table = function (table, arg0, arg1, arg2) {
   table.header.forEach((header, i) => {
     this.text(header, startX + i * columnContainerWidth, startY, {
       width: columnWidth,
-      align: 'left'
+      align: columnAlignment ? columnAlignment[i] : 'left'
     });
   });
 
@@ -87,7 +88,7 @@ PDFDocument.prototype.table = function (table, arg0, arg1, arg2) {
     row.forEach((cell, i) => {
       this.text(cell, startX + i * columnContainerWidth, startY, {
         width: columnWidth,
-        align: 'left'
+        align: columnAlignment ? columnAlignment[i] : 'left'
       });
     });
 
