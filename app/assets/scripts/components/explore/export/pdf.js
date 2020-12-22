@@ -388,7 +388,7 @@ function drawAnalysisInput (doc, data) {
 
     setStyle(doc, 'p');
 
-    const table = {
+    doc.table({
       columnAlignment: ['left', 'right'],
       cells: categories[category].map((filter) => {
         let title = filter.title;
@@ -406,9 +406,7 @@ function drawAnalysisInput (doc, data) {
         }
         return [title, value];
       })
-    };
-
-    doc.table(table);
+    });
   });
 
   // Add weights section
@@ -419,9 +417,13 @@ function drawAnalysisInput (doc, data) {
     'p',
     'Laboris aliqua duis incididunt occaecat elit occaecat sunt deserunt est commodo deserunt tempor anim nostrud. Sit sint mollit incididunt in nisi adipisicing excepteur quis veniam occaecat irure. Quis cupidatat aliqua irure aliqua deserunt minim anim laboris nulla enim proident magna amet.'
   );
-  Object.keys(data.weightsValues).forEach((weightId) => {
-    const weight = data.weightsValues[weightId];
-    addTableRow(doc, weight.title, weight.input.value);
+
+  doc.table({
+    columnAlignment: ['left', 'right'],
+    cells: Object.keys(data.weightsValues).map((weightId) => {
+      const weight = data.weightsValues[weightId];
+      return [weight.title, weight.input.value];
+    })
   });
 
   // Add LCOE section
@@ -432,9 +434,13 @@ function drawAnalysisInput (doc, data) {
     'p',
     'Officia nostrud occaecat ipsum do proident duis. Veniam veniam sint reprehenderit ad sint officia aliquip voluptate enim et enim velit ea. Reprehenderit elit in quis et consequat irure sint laboris nisi cupidatat. Incididunt ea do quis sint qui commodo incididunt cillum ex et reprehenderit aute consequat. Lorem nulla exercitation proident cillum aute nulla. Anim do aute do quis consectetur fugiat minim minim anim anim consectetur nulla non.'
   );
-  Object.keys(data.lcoeValues).forEach((lcoeId) => {
-    const lcoe = data.lcoeValues[lcoeId];
-    addTableRow(doc, lcoe.title, lcoe.input.value);
+
+  doc.table({
+    columnAlignment: ['left', 'right'],
+    cells: Object.keys(data.lcoeValues).map((lcoeId) => {
+      const lcoe = data.lcoeValues[lcoeId];
+      return [lcoe.title, lcoe.input.value];
+    })
   });
 }
 
