@@ -34,7 +34,6 @@ export const FormHeader = styled.div`
 
   h1 {
     text-transform: uppercase;
-    color: ${themeVal('color.baseAlpha')};
     margin-right: auto;
   }
   span {
