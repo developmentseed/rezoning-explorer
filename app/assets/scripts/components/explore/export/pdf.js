@@ -467,7 +467,7 @@ function drawZonesList (doc, zones) {
       'Output (GWh)',
       'Output Density (MWh/km²)'
     ],
-    columnAlignment: ['left', 'center', 'center', 'center', 'center'],
+    columnAlignment: ['left', 'right', 'right', 'right', 'right'],
     cells: zones.map(
       ({
         id,
