@@ -432,7 +432,7 @@ function MbMap (props) {
     setMapLayers(mapLayers.map(layer => {
       if (layer.category === 'output') {
         layer.disabled = false;
-        if (layer.visible || layer.id === SATELLITE) {
+        if (layer.visible) {
           map.setLayoutProperty(layer.id, 'visibility', 'visible');
           layer.visible = true;
         }
