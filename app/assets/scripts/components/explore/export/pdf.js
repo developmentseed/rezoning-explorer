@@ -22,7 +22,6 @@ const pdfDocumentOptions = {
 // General layout options
 const options = {
   ...pdfDocumentOptions,
-  pageHeight: 792,
   baseFontColor: '#374863',
   secondaryFontColor: '#6d788f',
   primaryColor: '#23A6F5',
@@ -35,7 +34,7 @@ const options = {
 };
 
 // fetch fonts & images on init for use in PDF
-let styles, baseFont, boldFont, Logo, WBGLogo;
+let styles, baseFont, boldFont, Logo, WBGLogo, ESMAPLogo;
 async function initStyles () {
   await fetch('/assets/fonts/IBM-Plex-Sans-Regular.ttf')
     .then((response) => response.arrayBuffer())
@@ -57,6 +56,11 @@ async function initStyles () {
     .then((response) => response.arrayBuffer())
     .then(logo => {
       WBGLogo = logo;
+    });
+  await fetch('/assets/graphics/content/logos/logo-esmap.png')
+    .then((response) => response.arrayBuffer())
+    .then(logo => {
+      ESMAPLogo = logo;
     });
 
   styles = {
@@ -217,17 +221,23 @@ function drawHeader (doc, { selectedArea }) {
 /**
  * Draw Footer
  */
-function drawFooter (doc, options) {
+function drawFooter (doc) {
   doc
-    .rect(0, options.pageHeight - options.margin * 2 - 1, options.pageWidth, 1)
-    .fillColor('#1F2A50', 0.08)
+    .rect(0, doc.page.height - options.margin * 2, doc.page.width, 1)
+    .fillColor('#1F2A50', 0.12)
     .fill();
 
   doc.fontSize(8).fillOpacity(1);
 
   // // Footer
-  doc.image(WBGLogo, options.margin, options.pageHeight - options.margin * 1.5, {
-    height: 20
+  doc.image(Logo, options.margin, doc.page.height - options.margin * 1.25, {
+    height: 18
+  });
+  doc.image(WBGLogo, options.margin * 2 + 8, doc.page.height - options.margin * 1.25, {
+    height: 18
+  });
+  doc.image(ESMAPLogo, 120 + options.margin * 2, doc.page.height - options.margin * 1.25, {
+    height: 18
   });
 
   // Left Title
@@ -235,9 +245,9 @@ function drawFooter (doc, options) {
     .fillColor(options.primaryColor)
     .font(boldFont)
     .text(
-      config.appTitle,
-      options.margin + 20 + 8,
-      options.pageHeight - options.margin * 1.5,
+      'REZoning',
+      options.margin,
+      doc.page.height - options.margin * 1,
       {
         width: options.colWidthTwoCol,
         height: 16,
@@ -246,10 +256,9 @@ function drawFooter (doc, options) {
       }
     );
 
-  // Left Subtitle
+  // Right license
   doc
-    .fillColor(options.secondaryFontColor)
-    .font(baseFont)
+    .fillColor(options.baseFontColor)
     .text(
       config.baseUrl,
       options.margin + 20 + 8,
@@ -264,21 +273,21 @@ function drawFooter (doc, options) {
   // Right license
   doc.text(
     'Creative Commons BY 4.0',
-    options.pageWidth - options.colWidthTwoCol - options.margin,
-    options.pageHeight - options.margin * 1.5,
-    {
-      width: options.colWidthTwoCol,
-      height: 16,
-      align: 'right',
-      link: 'https://creativecommons.org/licenses/by/4.0/'
-    }
-  );
+      doc.page.width - options.colWidthTwoCol - options.margin,
+      doc.page.height - options.margin * 1.25,
+      {
+        width: options.colWidthTwoCol,
+        height: 16,
+        align: 'right',
+        link: 'https://creativecommons.org/licenses/by/4.0/'
+      }
+    );
 
   // Right date
   doc.text(
     new Date().getFullYear(),
-    options.pageWidth - options.colWidthTwoCol - options.margin,
-    options.pageHeight - options.margin * 1.5 + 12,
+    doc.page.width - options.colWidthTwoCol - options.margin,
+    doc.page.height - options.margin * 1.25 + 12,
     {
       width: options.colWidthTwoCol,
       height: 16,
@@ -425,7 +434,13 @@ export default async function exportPDF (data) {
   drawAreaSummary(doc, data);
   drawAnalysisInput(doc, data);
   drawZonesList(doc, data.zones);
-  drawFooter(doc);
+
+  // Add footer to each page
+  const pages = doc.bufferedPageRange();
+  for (let i = 0; i < pages.count; i++) {
+    doc.switchToPage(i);
+    drawFooter(doc);
+  }
 
   // Finalize PDF file
   doc.end();
