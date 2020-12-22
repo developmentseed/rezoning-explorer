@@ -46,14 +46,13 @@ const InputLabel = styled.span`
 `;
 
 export default function MapLegend (props) {
-
   const scale = scaleLinear({
     domain: Array(50).fill(0).map((a, i) => i / 50),
     range: colormap({ colormap: 'viridis', nshades: 50 })
   });
 
-  const min = props.hasOwnProperty('min') ? props.min.toFixed(1) : '';
-  const max = props.hasOwnProperty('max') ? props.max.toFixed(1) : '';
+  const min = props.min !== undefined ? props.min.toFixed(1) : '';
+  const max = props.max !== undefined ? props.max.toFixed(1) : '';
 
   return (
     <MapLegendSelf>
