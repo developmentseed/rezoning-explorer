@@ -16,20 +16,20 @@ export default async function exportZonesCsv (selectedArea, zones) {
 
     const zone = {
       id,
-      zone_score: round(summary.zone_score, indicatorsDecimals.zone_score),
-      lcoe_usd_mwh: round(summary.lcoe, indicatorsDecimals.lcoe),
-      zone_output_gwh: round(
+      'Zone Score': round(summary.zone_score, indicatorsDecimals.zone_score),
+      'LCOE (USD/MWh)': round(summary.lcoe, indicatorsDecimals.lcoe),
+      'Zone Output (GWh)': round(
         summary.zone_output,
         indicatorsDecimals.zone_output
       ),
-      zone_output_density_mwh_km2: round(
+      'Zone Output Density (MWh/km²)': round(
         summary.zone_output_density,
         indicatorsDecimals.zone_output_density
       )
     };
 
     // Add name if available
-    if (name) zone.name = name;
+    if (name) zone.Name = name;
 
     return zone;
   });
