@@ -136,7 +136,7 @@ const ExportZonesButton = (props) => {
       >
         <DropTitle>Download Options</DropTitle>
         <DropMenu role='menu' iconified>
-          <DropMenuItem useIcon='link' as='a' href={ResourceLink} target='_blank'>
+          <DropMenuItem useIcon='link' href={ResourceLink} target='_blank' disabled={selectedArea.type !== 'country'}>
             Resource layers (link)
           </DropMenuItem>
           <DropMenuItem useIcon='page-label' onClick={onExportPDFClick}>
