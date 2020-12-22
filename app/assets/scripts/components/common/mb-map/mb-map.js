@@ -162,7 +162,7 @@ const initializeMap = ({
      * which will be displayed on "Apply" click
      */
 
-    map.setPaintProperty('land', 'background-opacity', 0.7);
+    map.setPaintProperty('land', 'background-opacity', 0.75);
 
     map.addSource(FILTERED_LAYER_SOURCE, {
       type: 'raster',
@@ -178,7 +178,7 @@ const initializeMap = ({
         visibility: 'none'
       },
       paint: {
-        'raster-opacity': 0.7
+        'raster-opacity': 0.75
       },
       minzoom: 0,
       maxzoom: 22
@@ -197,7 +197,7 @@ const initializeMap = ({
         visibility: 'none'
       },
       paint: {
-        'raster-opacity': 0.5
+        'raster-opacity': 0.75
       },
       minzoom: 0,
       maxzoom: 22
@@ -216,7 +216,7 @@ const initializeMap = ({
         visibility: 'none'
       },
       paint: {
-        'raster-opacity': 0.5
+        'raster-opacity': 0.75
       },
       minzoom: 0,
       maxzoom: 22
@@ -238,7 +238,7 @@ const initializeMap = ({
       layout: {},
       paint: {
         'fill-color': '#efefef',
-        'fill-opacity': 0.4,
+        'fill-opacity': 0.75,
         'fill-outline-color': '#232323'
       }
     });
@@ -264,8 +264,8 @@ const initializeMap = ({
         'fill-opacity': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
-          0.5,
-          0.2
+          0.75,
+          0.25
         ]
       }
     });
@@ -326,7 +326,7 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
         visibility: layer.visible ? 'visible' : 'none'
       },
       paint: {
-        'raster-opacity': 0.5
+        'raster-opacity': 0.75
       },
       minzoom: 0,
       maxzoom: 22

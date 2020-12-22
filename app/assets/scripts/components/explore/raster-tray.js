@@ -67,7 +67,7 @@ const LayersWrapper = styled.div`
 
 function LayerControl (props) {
   const { id, name, onLayerKnobChange, onVisibilityToggle, visible } = props;
-  const [knobPos, setKnobPos] = useState(50);
+  const [knobPos, setKnobPos] = useState(75);
 
   return (
     <ControlWrapper>
