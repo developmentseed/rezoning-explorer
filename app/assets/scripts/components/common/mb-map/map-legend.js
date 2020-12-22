@@ -11,20 +11,42 @@ import colormap from 'colormap';
 
 const MapLegendSelf = styled.div`
   position: absolute;
-  right: 8rem;
-  bottom: 1rem;
+  right: 0.5rem;
+  bottom: 2.5rem;
   z-index: 10;
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: ${themeVal('shape.rounded')};
   font-size: 0.874rem;
   padding: ${glsp(0.5)};
-
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   svg {
     display: block;
   }
 `;
 
+const LegendTitle = styled.div`
+  grid-column: span 2;
+  text-align: center;
+`;
+
+const LegendLabels = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const LegendLabelsStyled = styled(LegendLabels)`
+    grid-column: span 2;
+`;
+
+const InputLabel = styled.span`
+  text-align: ${({ align }) => align || 'left'};
+  grid-column: ${({ gridColumn }) => gridColumn || 'auto'};
+  font-size: 0.75rem;
+`;
+
 export default function MapLegend (props) {
+
   const scale = scaleLinear({
     domain: Array(50).fill(0).map((a, i) => i / 50),
     range: colormap({ colormap: 'viridis', nshades: 50 })
@@ -40,7 +62,7 @@ export default function MapLegend (props) {
         steps={50}
       >
         {labels => (
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <LegendLabelsStyled>
             {labels.map((label, i) => (
               <LegendItem key={`legend-linear-${label.datum}`}>
                 <svg width={4} height={10}>
@@ -48,12 +70,12 @@ export default function MapLegend (props) {
                 </svg>
               </LegendItem>
             ))}
-          </div>
+          </LegendLabelsStyled>
         )}
       </LegendLinear>
-      <span>{min}</span>
-      <span style={{ float: 'right' }}>{max}</span>
-      <div style={{ textAlign: 'center' }}>{props.description}</div>
+      <InputLabel>{min}</InputLabel>
+      <InputLabel align='right'>{max}</InputLabel>
+      <LegendTitle>{props.description}</LegendTitle>
     </MapLegendSelf>
   );
 }
