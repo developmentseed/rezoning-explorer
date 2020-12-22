@@ -13,7 +13,11 @@ export default async function exportZonesCsv (selectedArea, zones) {
     const { name, id, summary } = properties;
 
     const zone = {
-      id, ...summary
+      id,
+      zone_score: summary.zone_score,
+      lcoe_usd_mwh: summary.lcoe,
+      zone_output_gwh: summary.zone_output,
+      zone_output_density_mwh_km2: summary.zone_output_density
     };
 
     // Add name if available
