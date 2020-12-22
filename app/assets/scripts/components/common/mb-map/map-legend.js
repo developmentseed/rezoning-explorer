@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { themeVal } from '../../../styles/utils/general';
 import { glsp } from '../../../styles/utils/theme-values';
 
-import { LegendLinear, LegendItem, LegendLabel } from '@visx/legend';
+import { LegendLinear, LegendItem } from '@visx/legend';
 import { scaleLinear } from '@visx/scale';
 import colormap from 'colormap';
 
@@ -30,8 +30,8 @@ export default function MapLegend (props) {
     range: colormap({ colormap: 'viridis', nshades: 50 })
   });
 
-  const min = props.min ? props.min.toFixed(1) : ''
-  const max = props.max ? props.max.toFixed(1) : ''
+  const min = props.min ? props.min.toFixed(1) : '';
+  const max = props.max ? props.max.toFixed(1) : '';
 
   return (
     <MapLegendSelf>
@@ -41,21 +41,25 @@ export default function MapLegend (props) {
       >
         {labels => (
           <div style={{ display: 'flex', flexDirection: 'row' }}>
-          {labels.map((label, i) => (
-            <LegendItem key={`legend-linear-${i}`}>
-              <svg width={4} height={10}>
-                <rect fill={label.value} width={4} height={10} />
-              </svg>
-            </LegendItem>
-          ))}
+            {labels.map((label, i) => (
+              <LegendItem key={`legend-linear-${label.datum}`}>
+                <svg width={4} height={10}>
+                  <rect fill={label.value} width={4} height={10} />
+                </svg>
+              </LegendItem>
+            ))}
           </div>
         )}
       </LegendLinear>
       <span>{min}</span>
-      <span style={{float: 'right'}}>{max}</span>
-      <div style={{textAlign: 'center'}}>{props.description}</div>
+      <span style={{ float: 'right' }}>{max}</span>
+      <div style={{ textAlign: 'center' }}>{props.description}</div>
     </MapLegendSelf>
   );
 }
 
-MapLegend.propTypes = {};
+MapLegend.propTypes = {
+  description: T.string,
+  min: T.number,
+  max: T.number
+};
