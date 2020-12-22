@@ -32,9 +32,6 @@ export function GlobalProvider (props) {
     if (download) {
       clientDownloadId = setInterval(() => {
         const duration = Date.now() - download.startedAt;
-        console.log(
-          `job ${clientDownloadId}: running for ${duration / 1000} s`
-        );
         if (duration > rawDataDownloadTimeout) {
           displayTimeoutError();
         } else {
@@ -42,7 +39,6 @@ export function GlobalProvider (props) {
             async (res) => {
               const { status } = await res.json();
               if (status === 'complete') {
-                console.log(status);
                 displaySuccess();
               }
             }
