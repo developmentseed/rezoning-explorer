@@ -22,9 +22,10 @@ const pdfDocumentOptions = {
 // General layout options
 const options = {
   ...pdfDocumentOptions,
-  baseFontColor: '#3a455c',
+  pageHeight: 792,
+  baseFontColor: '#374863',
   secondaryFontColor: '#6d788f',
-  primaryColor: '#5860ff',
+  primaryColor: '#23A6F5',
   colWidthTwoCol: 252,
   gutterThreeCol: 26,
   tables: {
@@ -34,7 +35,7 @@ const options = {
 };
 
 // fetch fonts & images on init for use in PDF
-let styles, baseFont, boldFont;
+let styles, baseFont, boldFont, Logo, WBGLogo;
 async function initStyles () {
   await fetch('/assets/fonts/IBM-Plex-Sans-Regular.ttf')
     .then((response) => response.arrayBuffer())
@@ -46,6 +47,16 @@ async function initStyles () {
     .then((response) => response.arrayBuffer())
     .then((font) => {
       boldFont = font;
+    });
+  await fetch('/assets/graphics/meta/android-chrome.png')
+    .then((response) => response.arrayBuffer())
+    .then(logo => {
+      Logo = logo;
+    });
+  await fetch('/assets/graphics/content/logos/logo-wbg.png')
+    .then((response) => response.arrayBuffer())
+    .then(logo => {
+      WBGLogo = logo;
     });
 
   styles = {
@@ -204,6 +215,79 @@ function drawHeader (doc, { selectedArea }) {
 }
 
 /**
+ * Draw Footer
+ */
+function drawFooter (doc, options) {
+  doc
+    .rect(0, options.pageHeight - options.margin * 2 - 1, options.pageWidth, 1)
+    .fillColor('#1F2A50', 0.08)
+    .fill();
+
+  doc.fontSize(8).fillOpacity(1);
+
+  // // Footer
+  doc.image(WBGLogo, options.margin, options.pageHeight - options.margin * 1.5, {
+    height: 20
+  });
+
+  // Left Title
+  doc
+    .fillColor(options.primaryColor)
+    .font(boldFont)
+    .text(
+      config.appTitle,
+      options.margin + 20 + 8,
+      options.pageHeight - options.margin * 1.5,
+      {
+        width: options.colWidthTwoCol,
+        height: 16,
+        align: 'left',
+        link: config.baseUrl
+      }
+    );
+
+  // Left Subtitle
+  doc
+    .fillColor(options.secondaryFontColor)
+    .font(baseFont)
+    .text(
+      config.baseUrl,
+      options.margin + 20 + 8,
+      options.pageHeight - options.margin * 1.5 + 12,
+      {
+        width: options.colWidthTwoCol,
+        height: 16,
+        align: 'left'
+      }
+    );
+
+  // Right license
+  doc.text(
+    'Creative Commons BY 4.0',
+    options.pageWidth - options.colWidthTwoCol - options.margin,
+    options.pageHeight - options.margin * 1.5,
+    {
+      width: options.colWidthTwoCol,
+      height: 16,
+      align: 'right',
+      link: 'https://creativecommons.org/licenses/by/4.0/'
+    }
+  );
+
+  // Right date
+  doc.text(
+    new Date().getFullYear(),
+    options.pageWidth - options.colWidthTwoCol - options.margin,
+    options.pageHeight - options.margin * 1.5 + 12,
+    {
+      width: options.colWidthTwoCol,
+      height: 16,
+      align: 'right'
+    }
+  );
+}
+
+/**
  * Draw Area Summary
  */
 function drawAreaSummary (doc, { selectedResource, zones }) {
@@ -341,6 +425,7 @@ export default async function exportPDF (data) {
   drawAreaSummary(doc, data);
   drawAnalysisInput(doc, data);
   drawZonesList(doc, data.zones);
+  drawFooter(doc);
 
   // Finalize PDF file
   doc.end();
@@ -348,7 +433,7 @@ export default async function exportPDF (data) {
   return await stream.on('finish', function () {
     saveAs(
       stream.toBlob('application/pdf'),
-      `rezoning-summary-${timestamp()}.pdf`
+      `REZoning-summary-${timestamp()}.pdf`
     );
   });
 }
