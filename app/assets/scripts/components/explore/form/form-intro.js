@@ -19,7 +19,7 @@ const FormIntro = (props, { startOpen }) => {
           <Heading size='small'>
             {formTitle}
           </Heading>
-          <span>Show {open ? 'less' : 'more'}</span>
+          <span>Read {open ? 'less' : 'more'}</span>
         </summary>
         <p>{introText}</p>
       </details>

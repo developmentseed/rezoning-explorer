@@ -46,7 +46,7 @@ function FiltersForm (props) {
     >
       <FormIntro
         formTitle='Spatial Filters'
-        introText='Apply spatial filters to limit the areas included in zone weighting and LCOE analysis. Range sliders can have a minimum and maximum value. Any location in your selected area with values under the minimum or over the maximum allowed values for that filter will not be included in the analysis. Areas with toggle controls are included by default; switch these areas off to mask out these areas from analysis.'
+        introText='Apply spatial filters to limit the areas included in zone weighting and LCOE analysis. Range sliders can have a minimum and maximum value. Any location in your selected area with values under the minimum or over the maximum allowed values for that filter will not be included in the analysis. Areas with toggle controls are included by default; switch these areas off to mask out these areas from analysis. View the "Selected Area" contextual layer after filters have been applied to see the areas included for analysis.'
       />
       <Accordion
         initialState={[
