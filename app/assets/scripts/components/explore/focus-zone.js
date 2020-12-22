@@ -53,10 +53,10 @@ export const formatIndicator = function (id, value) {
         forceDecimals: true,
         decimals: indicatorsDecimals.lcoe
       });
-    case 'lcoe_density':
+    case 'zone_output_density':
       return formatThousands(value, {
         forceDecimals: true,
-        decimals: indicatorsDecimals.lcoe_density
+        decimals: indicatorsDecimals.zone_output_density
       });
     default:
       return formatThousands(value);
