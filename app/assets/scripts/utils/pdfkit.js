@@ -16,7 +16,10 @@ PDFDocument.prototype.table = function (table, arg0, arg1, arg2) {
     options = arg0;
   }
 
-  const columnCount = table.header.length;
+  // Get column count from header, if present, or first row
+  const columnCount = table.header
+    ? table.header.length
+    : table.cells[0].length;
   const columnSpacing = options.columnSpacing || 15;
   const rowSpacing = options.rowSpacing || 5;
   const usableWidth =
@@ -50,28 +53,32 @@ PDFDocument.prototype.table = function (table, arg0, arg1, arg2) {
     rowBottomY = 0;
   });
 
-  // Allow the user to override style for header
-  prepareHeader();
-
-  // Check to have enough room for header and first rows
-  if (startY + 3 * computeRowHeight(table.header) > maxY) this.addPage();
-
   // Print all header
-  table.header.forEach((header, i) => {
-    this.text(header, startX + i * columnContainerWidth, startY, {
-      width: columnWidth,
-      align: columnAlignment ? columnAlignment[i] : 'left'
+  if (table.header) {
+    // Allow the user to override style for header
+    prepareHeader();
+
+    // Check to have enough room for header and first rows
+    if (startY + 3 * computeRowHeight(table.header) > maxY) this.addPage();
+
+    table.header.forEach((header, i) => {
+      this.text(header, startX + i * columnContainerWidth, startY, {
+        width: columnWidth,
+        align: columnAlignment ? columnAlignment[i] : 'left'
+      });
     });
-  });
 
-  // Refresh the y coordinate of the bottom of the header row
-  rowBottomY = Math.max(startY + computeRowHeight(table.header), rowBottomY);
-
-  // Separation line between header and rows
-  this.moveTo(startX, rowBottomY - rowSpacing * 0.5)
-    .lineTo(startX + usableWidth, rowBottomY - rowSpacing * 0.5)
-    .lineWidth(2)
-    .stroke();
+    // Refresh the y coordinate of the bottom of the header row
+    rowBottomY = Math.max(startY + computeRowHeight(table.header), rowBottomY);
+    // Separation line between header and rows
+    this.moveTo(startX, rowBottomY - rowSpacing * 0.5)
+      .lineTo(startX + usableWidth, rowBottomY - rowSpacing * 0.5)
+      .lineWidth(2)
+      .stroke();
+  } else {
+    // Just move the cursor down if header is not available
+    rowBottomY = startY;
+  }
 
   table.cells.forEach((row, i) => {
     const rowHeight = computeRowHeight(row);

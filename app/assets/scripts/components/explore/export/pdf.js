@@ -386,24 +386,29 @@ function drawAnalysisInput (doc, data) {
   Object.keys(categories).forEach((category) => {
     addText(doc, 'h3', toTitleCase(category));
 
-    categories[category].forEach((filter) => {
-      let title = filter.title;
-      if (filter.unit) {
-        title = `${title} (${filter.unit})`;
-      }
+    setStyle(doc, 'p');
 
-      let value = filter.input.value;
-      if (filter.isRange) {
-        value = `${formatThousands(value.min)} to ${formatThousands(
-          value.max
-        )}`;
-      } else if (filter.options) {
-        value = 'Unavailable';
-      }
+    const table = {
+      columnAlignment: ['left', 'right'],
+      cells: categories[category].map((filter) => {
+        let title = filter.title;
+        if (filter.unit) {
+          title = `${title} (${filter.unit})`;
+        }
 
-      addTableRow(doc, title, value);
-    });
-    doc.y += get(options, 'tables.padding', 0);
+        let value = filter.input.value;
+        if (filter.isRange) {
+          value = `${formatThousands(value.min)} to ${formatThousands(
+            value.max
+          )}`;
+        } else if (filter.options) {
+          value = 'Unavailable';
+        }
+        return [title, value];
+      })
+    };
+
+    doc.table(table);
   });
 
   // Add weights section
