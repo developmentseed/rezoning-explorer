@@ -15,7 +15,7 @@ import Heading, { Subheading } from '../../styles/type/heading';
 import GridSetter from './grid-setter';
 
 import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap } from './panel-data';
-import { HeadOption, HeadOptionHeadline } from './form/form';
+import { HeadOption, HeadOptionHeadline } from '../../styles/form/form';
 import { FiltersForm, WeightsForm, LCOEForm } from './form';
 
 import {
@@ -44,7 +44,7 @@ export const EditButton = styled(Button).attrs({
 
 const SubmissionSection = styled(PanelBlockFooter)`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.5fr 1fr;
   gap: 0rem 1rem;
 `;
 function QueryForm (props) {
@@ -245,7 +245,7 @@ function QueryForm (props) {
 
       <TabbedBlockBody>
         <FiltersForm
-          name='filters'
+          name='Filters'
           icon='filter'
           setPreset={(preset) => {
             if (preset === 'reset') {
@@ -289,7 +289,7 @@ function QueryForm (props) {
 
         />
         <LCOEForm
-          name='lcoe'
+          name='Economics'
           icon='disc-dollar'
           lcoe={lcoeInd}
           // setLcoe={setLcoe}
@@ -327,7 +327,7 @@ function QueryForm (props) {
           variation='primary-raised-dark'
           useIcon='tick--small'
         >
-          Apply
+          Generate Zones
         </Button>
       </SubmissionSection>
     </PanelBlock>

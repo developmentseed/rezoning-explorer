@@ -248,6 +248,14 @@ const ExportZonesButton = (props) => {
       hideGlobalLoading();
     }
   }
+  // Conditional resource link for linking to GWA/GSA download pages
+  let ResourceLink;
+  if (selectedArea.type === 'country') {
+    const countryName = selectedArea.name;
+    selectedResource === 'Solar PV'
+      ? (ResourceLink = `https://globalsolaratlas.info/download/${countryName}`)
+      : (ResourceLink = `https://globalwindatlas.info/en/area/${countryName}?print=true`);
+  }
 
   return (
     <ExportWrapper>
@@ -266,6 +274,14 @@ const ExportZonesButton = (props) => {
       >
         <DropTitle>Download Options</DropTitle>
         <DropMenu role='menu' iconified>
+          <DropMenuItem
+            useIcon='link'
+            href={ResourceLink}
+            target='_blank'
+            disabled={selectedArea.type !== 'country'}
+          >
+            Resource layers (link)
+          </DropMenuItem>
           <DropMenuItem
             data-dropdown='click.close'
             useIcon='page-label'
