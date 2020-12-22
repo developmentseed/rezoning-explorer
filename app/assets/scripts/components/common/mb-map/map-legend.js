@@ -48,8 +48,9 @@ export default function MapLegend (props) {
           </div>
         )}
       </LegendLinear>
-      <span>{props.min}</span>
-      <span style={{float: 'right'}}>{props.max}</span>
+      <span>{props.min.toFixed(1)}</span>
+      <span style={{float: 'right'}}>{props.max.toFixed(1)}</span>
+      <div style={{textAlign: 'center'}}>{props.description}</div>
     </MapLegendSelf>
   );
 }
