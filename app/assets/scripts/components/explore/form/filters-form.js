@@ -8,7 +8,8 @@ import {
   OptionHeadline,
   PanelOptionTitle,
   InactiveMessage
-} from './form';
+} from '../../../styles/form/form';
+import FormIntro from './form-intro';
 import { Accordion, AccordionFold, AccordionFoldTrigger } from '../../../components/accordion';
 import Heading from '../../../styles/type/heading';
 import { makeTitleCase } from '../../../styles/utils/general';
@@ -40,7 +41,13 @@ function FiltersForm (props) {
   } = props;
 
   return (
-    <FormWrapper active={active}>
+    <FormWrapper
+      active={active}
+    >
+      <FormIntro
+        formTitle='Spatial Filters'
+        introText='Apply spatial filters to limit the areas included in zone weighting and LCOE analysis. Range sliders can have a minimum and maximum value. Any location in your selected area with values under the minimum or over the maximum allowed values for that filter will not be included in the analysis. Areas with toggle controls are included by default; switch these areas off to mask out these areas from analysis. View the "Selected Area" contextual layer after filters have been applied to see the areas included for analysis.'
+      />
       <Accordion
         initialState={[
           true,
