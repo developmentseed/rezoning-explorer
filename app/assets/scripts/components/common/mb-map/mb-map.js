@@ -12,6 +12,7 @@ import MapContext from '../../../context/map-context';
 import theme from '../../../styles/theme/theme';
 import { rgba } from 'polished';
 import { RESOURCES } from '../../explore/panel-data';
+import MapLegend from './map-legend';
 
 const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
@@ -509,6 +510,7 @@ function MbMap (props) {
 
   return (
     <MapsContainer>
+      <MapLegend />
       <SingleMapContainer ref={mapContainer} />
     </MapsContainer>
   );
