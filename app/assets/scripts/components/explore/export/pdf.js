@@ -486,7 +486,10 @@ function drawZonesList (doc, zones) {
       }
     )
   };
-
+  if (zones[0].properties.name) {
+    table.header.shift();
+    table.header.unshift('Name');
+  }
   doc.table(table);
 }
 
