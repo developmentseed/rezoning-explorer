@@ -193,20 +193,24 @@ const ExportZonesButton = (props) => {
           >
             PDF Report
           </DropMenuItem>
-          <DropMenuItem
-            data-dropdown='click.close'
-            useIcon='page-cog'
-            onClick={() => onRawDataClick('lcoe')}
-          >
-            LCOE Raw Data
-          </DropMenuItem>
-          <DropMenuItem
-            data-dropdown='click.close'
-            useIcon='page-cog'
-            onClick={() => onRawDataClick('score')}
-          >
-            Score Raw Data
-          </DropMenuItem>
+          {selectedArea && selectedArea.type === 'country' && (
+            <>
+              <DropMenuItem
+                data-dropdown='click.close'
+                useIcon='page-cog'
+                onClick={() => onRawDataClick('lcoe')}
+              >
+                LCOE Raw Data
+              </DropMenuItem>
+              <DropMenuItem
+                data-dropdown='click.close'
+                useIcon='page-cog'
+                onClick={() => onRawDataClick('score')}
+              >
+                Score Raw Data
+              </DropMenuItem>
+            </>
+          )}
           <DropMenuItem
             data-dropdown='click.close'
             useIcon='picture'
