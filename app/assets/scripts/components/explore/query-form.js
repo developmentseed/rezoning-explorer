@@ -245,7 +245,7 @@ function QueryForm (props) {
 
       <TabbedBlockBody>
         <FiltersForm
-          name='Spatial'
+          name='Filters'
           icon='filter'
           setPreset={(preset) => {
             if (preset === 'reset') {
@@ -289,7 +289,7 @@ function QueryForm (props) {
 
         />
         <LCOEForm
-          name='Economic'
+          name='Economics'
           icon='disc-dollar'
           lcoe={lcoeInd}
           // setLcoe={setLcoe}
