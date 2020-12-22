@@ -291,37 +291,37 @@ const ExportZonesButton = (props) => {
           </DropMenuItem>
           <DropMenuItem
             data-dropdown='click.close'
-            useIcon='page-label'
+            useIcon='table'
             onClick={() => {
               exportZonesCsv(selectedArea, currentZones.getData());
             }}
           >
-            Zones as CSV
+            Zones (.csv)
           </DropMenuItem>
           <DropMenuItem
             data-dropdown='click.close'
-            useIcon='page-label'
+            useIcon='map'
             onClick={() => {
               exportZonesGeoJSON(selectedArea, currentZones.getData());
             }}
           >
-            Zones as GeoJSON
+            Zones (.geojson)
           </DropMenuItem>
           {selectedArea && selectedArea.type === 'country' && (
             <>
               <DropMenuItem
                 data-dropdown='click.close'
-                useIcon='page-cog'
+                useIcon='globe'
                 onClick={() => onRawDataClick('lcoe')}
               >
-                LCOE as GeoTIFF
+                LCOE (GeoTIFF)
               </DropMenuItem>
               <DropMenuItem
                 data-dropdown='click.close'
-                useIcon='page-cog'
+                useIcon='globe'
                 onClick={() => onRawDataClick('score')}
               >
-                Score as GeoTIFF
+                Score (GeoTIFF)
               </DropMenuItem>
             </>
           )}
