@@ -297,13 +297,18 @@ const initializeMap = ({
 };
 
 const addInputLayersToMap = (map, layers, areaId, resource) => {
+  console.log(layers)
   layers.forEach((layer) => {
-    const { id: layerId } = layer;
+    console.log(layer);
+    const { id: layerId, tiles: layerTiles } = layer;
     const source = map.getSource(`${layerId}_source`);
+
+    /* some layers have existing tiles */
+    const tiles = layerTiles || [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis`];
 
     /* If source exists, replace the tiles and return */
     if (source) {
-      source.tiles = [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis`];
+      source.tiles = tiles
       if (layer.visible) {
         map.setLayoutProperty(layerId, 'visibility', 'visible');
       } else {
@@ -312,25 +317,52 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
       return;
     }
 
-    map.addSource(`${layerId}_source`, {
-      type: 'raster',
-      tiles: [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis`],
-      tileSize: 256
-    });
+    /* existing tiles are vectors */
+    if (layerTiles) {
+      console.log(layerId)
+      map.addSource(`${layerId}_source`, {
+        type: 'vector',
+        tiles: tiles,
+        tileSize: 512
+      });
 
-    map.addLayer({
-      id: layerId,
-      type: 'raster',
-      source: `${layerId}_source`,
-      layout: {
-        visibility: layer.visible ? 'visible' : 'none'
-      },
-      paint: {
-        'raster-opacity': 0.5
-      },
-      minzoom: 0,
-      maxzoom: 22
-    }, ZONES_BOUNDARIES_LAYER_ID);
+      map.addLayer({
+        id: layerId,
+        type: 'line',
+        source: `${layerId}_source`,
+        'source-layer': 'grid',
+        layout: {
+          visibility: layer.visible ? 'visible' : 'none'
+        },
+        paint: {
+          'line-color': 'orange',
+          'line-width': 1.5
+        },
+        minzoom: 0,
+        maxzoom: 22
+      }, ZONES_BOUNDARIES_LAYER_ID);
+    } else {
+      map.addSource(`${layerId}_source`, {
+        type: 'raster',
+        tiles: tiles,
+        tileSize: 256
+      });
+
+      map.addLayer({
+        id: layerId,
+        type: 'raster',
+        source: `${layerId}_source`,
+        layout: {
+          visibility: layer.visible ? 'visible' : 'none'
+        },
+        paint: {
+          'raster-opacity': 0.5
+        },
+        minzoom: 0,
+        maxzoom: 22
+      }, ZONES_BOUNDARIES_LAYER_ID);
+    }
+
   });
 };
 
@@ -367,7 +399,6 @@ function MbMap (props) {
   useEffect(() => {
     if (map && inputLayers.isReady() && selectedArea) {
       const layers = inputLayers.getData();
-
       const initializedLayers = [
         ...layers.map(l => ({
           ...l,
