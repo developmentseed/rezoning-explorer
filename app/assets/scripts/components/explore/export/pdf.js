@@ -1,16 +1,12 @@
 import PDFDocument from 'pdfkit';
 import blobStream from 'blob-stream';
 import { saveAs } from 'file-saver';
-import { format } from 'date-fns';
 import { zonesSummary } from '../explore-stats';
 import config from '../../../config';
 import get from 'lodash.get';
 import groupBy from 'lodash.groupby';
-import { formatThousands, toTitleCase } from '../../../utils/format';
+import { formatThousands, toTitleCase, getTimestamp } from '../../../utils/format';
 import { formatIndicator, formatLabel } from '../focus-zone';
-
-// Helper function to generate a formatted timestamp
-const timestamp = () => format(Date.now(), 'yyyyMMdd-hhmmss');
 
 // Base PDF options
 const pdfDocumentOptions = {
@@ -348,7 +344,7 @@ export default async function exportPDF (data) {
   return await stream.on('finish', function () {
     saveAs(
       stream.toBlob('application/pdf'),
-      `rezoning-summary-${timestamp()}.pdf`
+      `rezoning-summary-${getTimestamp()}.pdf`
     );
   });
 }

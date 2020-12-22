@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 /**
  * Rounds a number to a specified amount of decimals.
  *
@@ -116,3 +118,8 @@ export function toTitleCase (str) {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
   });
 }
+
+/**
+ * Get current timestamp in format 'yyyyMMdd-hhmmss'
+ */
+export const getTimestamp = () => format(Date.now(), 'yyyyMMdd-hhmmss');

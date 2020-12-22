@@ -31,6 +31,7 @@ import QsState from '../../../utils/qs-state';
 import toasts from '../../common/toasts';
 import GlobalContext from '../../../context/global-context';
 import { toTitleCase } from '../../../utils/format';
+import exportCsv from './csv';
 
 const { apiEndpoint } = config;
 
@@ -121,6 +122,9 @@ async function exportMapImage () {
   saveAs(dataURItoBlob(dataURL), `rezoning-snapshot-${timestamp()}.png`);
 }
 
+/**
+ * The component
+ */
 const ExportZonesButton = (props) => {
   const { selectedResource, selectedArea, currentZones } = useContext(
     ExploreContext
@@ -131,6 +135,56 @@ const ExportZonesButton = (props) => {
   );
 
   const { setDownload } = useContext(GlobalContext);
+
+  // Gather input and output data to export
+  function getData () {
+    // Get filters values
+    const filtersSchema = filtersLists.reduce((acc, w) => {
+      acc[w.id] = {
+        accessor: w.id,
+        hydrator: filterQsSchema(w, filterRanges, selectedResource).hydrator
+      };
+      return acc;
+    }, {});
+    const filtersQsState = new QsState(filtersSchema);
+    const filtersValues = filtersQsState.getState(
+      props.location.search.substr(1)
+    );
+
+    // Get weights values
+    const weightsSchema = weightsList.reduce((acc, w) => {
+      acc[w.id] = {
+        accessor: w.id,
+        hydrator: weightQsSchema(w).hydrator
+      };
+      return acc;
+    }, {});
+    const weightsQsState = new QsState(weightsSchema);
+    const weightsValues = weightsQsState.getState(
+      props.location.search.substr(1)
+    );
+
+    // Get LCOE values
+    const lcoeSchema = lcoeList.reduce((acc, l) => {
+      acc[l.id] = {
+        accessor: l.id,
+        hydrator: lcoeQsSchema(l, selectedResource).hydrator
+      };
+      return acc;
+    }, {});
+    const lcoeQsState = new QsState(lcoeSchema);
+    const lcoeValues = lcoeQsState.getState(props.location.search.substr(1));
+
+    return {
+      selectedResource,
+      selectedArea,
+      zones: currentZones.getData(),
+      filtersValues,
+      filterRanges: filterRanges.getData(),
+      weightsValues,
+      lcoeValues
+    };
+  }
 
   // This will parse current querystring to get values for filters/weights/lcoe
   // an pass to a function to generate the PDF
@@ -267,6 +321,15 @@ const ExportZonesButton = (props) => {
             onClick={onExportPDFClick}
           >
             PDF Report
+          </DropMenuItem>
+          <DropMenuItem
+            data-dropdown='click.close'
+            useIcon='page-label'
+            onClick={() => {
+              exportCsv(getData());
+            }}
+          >
+            Zones as CSV
           </DropMenuItem>
           {selectedArea && selectedArea.type === 'country' && (
             <>
