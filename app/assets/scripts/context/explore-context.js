@@ -23,7 +23,7 @@ import {
 } from '../components/explore/panel-data';
 
 const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI, DEFAULT_RANGE } = INPUT_CONSTANTS;
-
+const maskTypes = [BOOL];
 const ExploreContext = createContext({});
 
 export function ExploreProvider (props) {
@@ -209,8 +209,14 @@ export function ExploreProvider (props) {
         const { id, active, input, isRange } = filter;
 
         // Bypass inactive filters
-        if (!active || !checkIncluded(filter, selectedResource)) return null;
-        if (isRange) {
+        if (!maskTypes.includes(input.type) &&
+            (!active || !checkIncluded(filter, selectedResource))) {
+          // Skip filters that are NOT mask and are inactive
+          return null;
+        } else if (maskTypes.includes(input.type) && active) {
+          // If this is an 'active' mask filter, we don't need to send to the api. Active here means include these areas
+          return null;
+        } else if (isRange) {
           if (input.value.min === input.range[0] &&
             input.value.max === input.range[1]) {
             return null;
@@ -253,7 +259,7 @@ export function ExploreProvider (props) {
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
 
     setOutputLayerUrl(
-      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=cool`
+      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=viridis`
     );
 
     generateZones(filterString, weights, lcoe);

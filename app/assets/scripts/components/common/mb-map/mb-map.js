@@ -8,10 +8,12 @@ import { resizeMap } from './mb-map-utils';
 import { featureCollection } from '@turf/helpers';
 
 import ExploreContext from '../../../context/explore-context';
+import FormContext from '../../../context/form-context';
 import MapContext from '../../../context/map-context';
 import theme from '../../../styles/theme/theme';
 import { rgba } from 'polished';
 import { RESOURCES } from '../../explore/panel-data';
+import MapLegend from './map-legend';
 
 const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
@@ -357,6 +359,16 @@ function MbMap (props) {
     setFocusZone
   } = useContext(MapContext);
 
+  const {
+    filterRanges
+  } = useContext(FormContext);
+
+  const visibleRaster = mapLayers.filter(layer => layer.type === 'raster' && layer.visible && layer.id !== 'FILTERED_LAYER_ID');
+  let rasterRange = null;
+  if (visibleRaster.length > 0) {
+    rasterRange = filterRanges.getData()[visibleRaster[0].id];
+  }
+
   // Initialize map on mount
   useEffect(() => {
     if (!map) {
@@ -509,6 +521,7 @@ function MbMap (props) {
 
   return (
     <MapsContainer>
+      {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title} /> : ''}
       <SingleMapContainer ref={mapContainer} />
     </MapsContainer>
   );
