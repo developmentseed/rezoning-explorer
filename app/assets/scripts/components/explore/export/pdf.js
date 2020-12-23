@@ -357,9 +357,11 @@ function drawAnalysisInput (doc, data) {
 
   const { filtersValues } = data;
 
+  let includedLandcover;
+
   // Add one table per category
-  const categories = groupBy(filtersValues, 'category');
-  Object.keys(categories).forEach((category, index) => {
+  const filterCategories = groupBy(filtersValues, 'category');
+  Object.keys(filterCategories).forEach((category, index) => {
     const currentY = doc.y;
     doc.y += get(options, 'tables.padding', 0);
 
@@ -367,7 +369,7 @@ function drawAnalysisInput (doc, data) {
     const filterTable = {
       columnAlignment: ['left', 'right'],
       header: [toTitleCase(category), ''],
-      cells: categories[category].map((filter) => {
+      cells: filterCategories[category].map((filter) => {
         let title = filter.title;
         if (filter.unit) {
           title = `${title} (${filter.unit})`;
@@ -378,17 +380,35 @@ function drawAnalysisInput (doc, data) {
           value = `${formatThousands(value.min)} to ${formatThousands(
             value.max
           )}`;
+        } else if (filter.id === 'f_land_cover') {
+          // Keep landcover filters to include lates
+          includedLandcover = value.map((i) => filter.options[i]);
+          return;
         } else if (filter.options) {
-          value = 'Unavailable';
+          // Discard other categorical filters as they are not supported now
+          return [title, 'Unavailable'];
         }
         return [title, value];
-      })
+      }).filter((x) => x) // discard null values from categorical filters
     };
     doc.table(filterTable, (options.margin + ((index % 2) * options.colWidthTwoCol) + ((index % 2) * options.gutterTwoCol)), doc.y + ((index & 2) * 80), { prepareHeader: () => doc.font(boldFont).fontSize(10), prepareRow: () => doc.fontSize(8).font(baseFont), width: options.colWidthTwoCol });
     if (index % 2 === 0) {
       doc.y = currentY;
     }
   });
+
+  if (includedLandcover) {
+    addText(
+      doc,
+      'h3',
+      'Land Cover Types'
+    );
+    addText(
+      doc,
+      'p',
+      includedLandcover.join(', ')
+    );
+  }
 
   // Add weights section
   doc.addPage();
