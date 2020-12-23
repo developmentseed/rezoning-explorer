@@ -150,43 +150,6 @@ function drawSectionHeader (label, left, top, doc, options) {
   doc.font(baseFont); // reset font after drawing section header
 }
 
-// left and top of the 'section'
-function drawSectionDescription (text, left, top, width, doc, options) {
-  doc
-    .fillColor(options.baseFontColor)
-    .fontSize(8)
-    .font(baseFont)
-    .text(text, left, top + 32, {
-      width: width,
-      align: 'left'
-    });
-}
-
-/**
- * Add a 2-cell table row to the document.
- * @param {Object} doc The document object.
- * @param {String} leftText Text to add in left cell.
- * @param {String} rightText Text to add in right cell.
- */
-function addTableRow (doc, leftText, rightText) {
-  const startX = doc.page.margins.left;
-  const startY = doc.y;
-  const usableWidth = doc.page.width - options.margin;
-  const rowHeight = styles.p.fontSize + options.tables.rowSpacing;
-
-  addText(doc, 'p', leftText, { align: 'left' });
-  doc.y = startY;
-  addText(doc, 'p', rightText, { align: 'right' });
-
-  doc
-    .moveTo(startX, startY + rowHeight)
-    .lineTo(usableWidth, startY + rowHeight)
-    .lineWidth(2)
-    .opacity(0.08)
-    .stroke()
-    .opacity(1);
-}
-
 /**
  * Draw Header
  */
