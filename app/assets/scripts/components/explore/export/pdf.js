@@ -106,7 +106,7 @@ async function initStyles () {
       font: boldFont
     },
     p: {
-      fontSize: 10,
+      fontSize: 8,
       padding: 10,
       fillColor: options.baseFontColor,
       font: baseFont
@@ -144,6 +144,22 @@ function drawSectionHeader (label, left, top, doc, options) {
   doc.fillColor(options.baseFontColor, 1).font(boldFont).text(label, left, top);
 
   doc.rect(left, top + 18, 28, 2).fill(options.primaryColor);
+
+  doc.fontSize(8); // reset font size after drawing section header
+  doc.fillColor(options.baseFontColor, 1); // reset color after drawing section header
+  doc.font(baseFont); // reset font after drawing section header
+}
+
+// left and top of the 'section'
+function drawSectionDescription (text, left, top, width, doc, options) {
+  doc
+    .fillColor(options.baseFontColor)
+    .fontSize(8)
+    .font(baseFont)
+    .text(text, left, top + 32, {
+      width: width,
+      align: 'left'
+    });
 }
 
 /**
@@ -336,7 +352,7 @@ function drawMapArea (
   // Legend (1/3)
   const legendLeft = doc.page.width - options.margin - options.colWidthThreeCol;
 
-  // Year header
+  // Area header
   drawSectionHeader(
     'Area Summary',
     legendLeft,
@@ -345,29 +361,23 @@ function drawMapArea (
     options
   );
 
-  doc
-    .fillColor(options.baseFontColor)
-    .fontSize(8)
-    .font(baseFont)
-    .text('Area summary', legendLeft, options.headerHeight + 20 + 36, {
-      align: 'left'
-    });
-
-  addTableRow(doc, 'Resource', selectedResource);
-
   /**
-   * Summary table
+   * Area Summary table
    */
   const stats = zonesSummary(zones);
-
-  stats.forEach((line) => {
-    let title = line.label;
-    if (line.unit) {
-      title = `${title} (${line.unit})`;
-    }
-
-    addTableRow(doc, title, line.data);
-  });
+  const summaryTable = {
+    columnAlignment: ['left', 'right'],
+    cells: stats.map((line) => {
+      let label = line.label;
+      if (line.unit) {
+        label = `${label} (${line.unit})`;
+      }
+      const value = line.data;
+      return [label, value];
+    })
+  };
+  summaryTable.cells.unshift(['Resource', selectedResource]);
+  doc.table(summaryTable, legendLeft, doc.y + 12, { prepareCells: () => doc.fontSize(12), width: (options.colWidthThreeCol) });
   doc.y += get(options, 'tables.padding', 0);
 }
 
@@ -459,7 +469,7 @@ function drawZonesList (doc, zones) {
   setStyle(doc, 'p');
 
   // Prepare table data
-  const table = {
+  const zonesTable = {
     header: [
       'ID',
       'Score',
@@ -487,10 +497,10 @@ function drawZonesList (doc, zones) {
     )
   };
   if (zones[0].properties.name) {
-    table.header.shift();
-    table.header.unshift('Name');
+    zonesTable.header.shift();
+    zonesTable.header.unshift('Name');
   }
-  doc.table(table);
+  doc.table(zonesTable, { prepareHeader: () => doc.font(boldFont), prepareRow: (row, i) => doc.font(baseFont) });
 }
 
 export default async function exportPDF (data) {
