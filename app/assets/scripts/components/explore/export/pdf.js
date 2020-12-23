@@ -48,7 +48,7 @@ async function initStyles () {
     .then((font) => {
       boldFont = font;
     });
-  await fetch('/assets/graphics/meta/android-chrome.png')
+  await fetch('/assets/graphics/content/logos/logo-rezoning.png')
     .then((response) => response.arrayBuffer())
     .then((logo) => {
       Logo = logo;
@@ -190,7 +190,7 @@ function drawHeader (doc, { selectedArea }) {
     .font(baseFont)
     .fontSize(subTitleSize)
     .text(
-      config.appDescription,
+      'Identify project areas for solar, wind and offshore wind development',
       doc.page.width - options.colWidthTwoCol - options.margin,
       options.margin + 16,
       {
@@ -222,7 +222,7 @@ function drawFooter (doc) {
   });
   doc.image(
     WBGLogo,
-    options.margin * 2 + 8,
+    options.margin * 3.25 + 12,
     doc.page.height - options.margin * 1.25,
     {
       height: 18
@@ -230,7 +230,7 @@ function drawFooter (doc) {
   );
   doc.image(
     ESMAPLogo,
-    120 + options.margin * 2,
+    options.margin * 3.25 + 120,
     doc.page.height - options.margin * 1.25,
     {
       height: 18
@@ -241,12 +241,33 @@ function drawFooter (doc) {
   doc
     .fillColor(options.primaryColor)
     .font(boldFont)
-    .text('REZoning', options.margin, doc.page.height - options.margin * 1, {
-      width: options.colWidthTwoCol,
-      height: 16,
-      align: 'left',
-      link: config.baseUrl
-    });
+    .text(
+      'REZoning',
+      options.margin * 1.5 + 4,
+      doc.page.height - options.margin * 1.25,
+      {
+        width: options.colWidthTwoCol,
+        height: 16,
+        align: 'left',
+        link: 'https://rezoning.surge.sh'
+      }
+    );
+
+  // Left Subtitle
+  doc
+    .fillColor(options.secondaryFontColor)
+    .font(baseFont)
+    .fontSize(6)
+    .text(
+      'https://rezoning.surge.sh',
+      options.margin * 1.5 + 4,
+      doc.page.height - options.margin,
+      {
+        width: options.colWidthTwoCol,
+        height: 16,
+        align: 'left'
+      }
+    );
 
   // Right license
   doc
