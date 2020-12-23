@@ -283,6 +283,7 @@ const ExportZonesButton = (props) => {
         <DropTitle>Download Options</DropTitle>
         <DropMenu role='menu' iconified>
           <DropMenuItem
+            data-dropdown='click.close'
             useIcon='link'
             href={ResourceLink}
             target='_blank'
