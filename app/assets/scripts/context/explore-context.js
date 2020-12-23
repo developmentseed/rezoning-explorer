@@ -106,7 +106,6 @@ export function ExploreProvider (props) {
     }
 
     initAreasAndFilters();
-    // fetchInputLayers(dispatchInputLayers);
   }, []);
 
   // Load eezs
