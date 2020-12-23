@@ -106,7 +106,6 @@ const Detail = styled.dl`
     font-size: ${themeVal('type.base.size')};
     font-weight: ${themeVal('type.heading.weight')};
     text-align: right;
-    /* color: ${themeVal('color.primary')}; */
   }
 `;
 
