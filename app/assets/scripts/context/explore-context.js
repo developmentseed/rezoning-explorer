@@ -18,6 +18,7 @@ import {
 
 import {
   INPUT_CONSTANTS,
+  RESOURCES,
   checkIncluded,
   getMultiplierByUnit
 } from '../components/explore/panel-data';
@@ -251,15 +252,18 @@ export function ExploreProvider (props) {
     // If area of country type, prepare path string to add to URL
     const countryPath = selectedArea.type === 'country' ? `${selectedArea.id}` : '';
 
+    // Off-shore mask flag
+    const offshoreWindMask = selectedResource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
+
     // Apply filter querystring to the map
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/${countryPath}/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
+      `${config.apiEndpoint}/filter/${countryPath}/{z}/{x}/{y}.png?${filterString}${offshoreWindMask}&color=54,166,244,80`
     );
 
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
 
     setOutputLayerUrl(
-      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=viridis`
+      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}${offshoreWindMask}&colormap=viridis`
     );
 
     generateZones(filterString, weights, lcoe);
