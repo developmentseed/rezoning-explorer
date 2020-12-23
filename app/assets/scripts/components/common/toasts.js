@@ -40,10 +40,12 @@ const defaultOptions = {
 
 // TODO: Add a content wrapper to the toasts for easy styling.
 const toasts = {
-  error: (content, opts = defaultOptions) => toast.error(content, opts),
-  success: (content, opts = defaultOptions) => toast.success(content, opts),
-  info: (content, opts = defaultOptions) => toast.info(content, opts),
-  warn: (content, opts = defaultOptions) => toast.warn(content, opts)
+  error: (content, opts) =>
+    toast.error(content, { ...defaultOptions, ...opts }),
+  success: (content, opts) =>
+    toast.success(content, { ...defaultOptions, ...opts }),
+  info: (content, opts) => toast.info(content, { ...defaultOptions, ...opts }),
+  warn: (content, opts) => toast.warn(content, { ...defaultOptions, ...opts })
 };
 
 export default toasts;
