@@ -78,8 +78,8 @@ PDFDocument.prototype.table = function (table, arg0, arg1, arg2) {
     // Refresh the y coordinate of the bottom of the header row
     rowBottomY = Math.max(startY + computeRowHeight(table.header), rowBottomY);
     // Separation line between header and rows
-    this.moveTo(startX, rowBottomY - rowSpacing * 0.5)
-      .lineTo(startX + usableWidth, rowBottomY - rowSpacing * 0.5)
+    this.moveTo(startX, rowBottomY - rowSpacing)
+      .lineTo(startX + usableWidth, rowBottomY - rowSpacing)
       .lineWidth(2)
       .opacity(0.25)
       .stroke()
