@@ -131,7 +131,7 @@ function Home () {
                 size='xlarge'
                 title='Visit Explore Page'
               >
-                Explore
+                Start Exploring
               </Button>
               <Button
                 as={StyledLink}
