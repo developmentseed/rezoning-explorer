@@ -66,6 +66,10 @@ const Card = styled(CardWrapper)`
     box-shadow: none;
     transform: none;
     background: ${themeVal('color.primaryAlpha')};
+
+    dd {
+      color: ${themeVal('color.primary')};
+    }
   }
   ${FormCheckable} {
     padding: 0 1rem;
@@ -102,19 +106,23 @@ const Detail = styled.dl`
     font-size: ${themeVal('type.base.size')};
     font-weight: ${themeVal('type.heading.weight')};
     text-align: right;
-    color: ${themeVal('color.primary')};
   }
 `;
 
 const ZoneColumnHead = styled(Subheading)`
     text-align: right;
-    color: ${themeVal('color.primary')};
     display: flex;
     flex-flow: row wrap;
     justify-content: flex-end;
     span {
       order: 3;
       flex: 100%;
+    }
+    &:hover {
+      color: ${themeVal('color.primary')};
+    }
+    &:after {
+      color: ${themeVal('color.primary')};
     }
     ${({ asc, activelySorting }) => {
       if (activelySorting) {
