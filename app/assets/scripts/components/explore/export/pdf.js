@@ -385,6 +385,7 @@ function drawAnalysisInput (doc, data) {
     doc.y += get(options, 'tables.padding', 0);
 
     setStyle(doc, 'p');
+
     const filterTable = {
       columnAlignment: ['left', 'right'],
       header: [toTitleCase(category), ''],
@@ -398,14 +399,26 @@ function drawAnalysisInput (doc, data) {
         if (filter.isRange) {
           value = `${formatThousands(value.min)} to ${formatThousands(
             value.max
-          )}`;
+            )}`;
         } else if (filter.options) {
           value = 'Unavailable';
         }
         return [title, value];
       })
     };
-    doc.table(filterTable, (options.margin + ((index % 2) * options.colWidthTwoCol) + ((index % 2) * options.gutterTwoCol)), doc.y + ((index & 2) * 80), { prepareHeader: () => doc.font(boldFont).fontSize(10), prepareRow: () => doc.fontSize(8).font(baseFont), width: options.colWidthTwoCol });
+
+    const tableX = (options.margin + ((index % 2) * options.colWidthTwoCol) + ((index % 2) * options.gutterTwoCol));
+    const tableY = doc.y + ((index & 2) * 80);
+
+    doc.table(
+      filterTable,
+      tableX,
+      tableY,
+      {
+        prepareHeader: () => doc.font(boldFont).fontSize(10),
+        prepareRow: () => doc.fontSize(8).font(baseFont),
+        width: options.colWidthTwoCol - (options.gutterTwoCol / 2)
+      });
     if (index % 2 === 0) {
       doc.y = currentY;
     }
