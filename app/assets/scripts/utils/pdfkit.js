@@ -61,11 +61,18 @@ PDFDocument.prototype.table = function (table, arg0, arg1, arg2) {
     // Check to have enough room for header and first rows
     if (startY + 3 * computeRowHeight(table.header) > maxY) this.addPage();
 
-    table.header.forEach((header, i) => {
-      this.text(header, startX + i * columnContainerWidth, startY, {
-        width: columnWidth,
-        align: columnAlignment ? columnAlignment[i] : 'left'
-      });
+    table.header.forEach((head, i) => {
+      if (i === table.header.length - 1) {
+        this.text(head, startX + i * columnContainerWidth, startY, {
+          width: columnContainerWidth, // remove spacing from last cell in row; avoids extra space in right-aligned columns
+          align: columnAlignment ? columnAlignment[i] : 'left'
+        });
+      } else {
+        this.text(head, startX + i * columnContainerWidth, startY, {
+          width: columnWidth,
+          align: columnAlignment ? columnAlignment[i] : 'left'
+        });
+      }
     });
 
     // Refresh the y coordinate of the bottom of the header row
@@ -95,10 +102,17 @@ PDFDocument.prototype.table = function (table, arg0, arg1, arg2) {
 
     // Print all cells of the current row
     row.forEach((cell, i) => {
-      this.text(cell, startX + i * columnContainerWidth, startY, {
-        width: columnWidth,
-        align: columnAlignment ? columnAlignment[i] : 'left'
-      });
+      if (i === row.length - 1) {
+        this.text(cell, startX + i * columnContainerWidth, startY, {
+          width: columnContainerWidth, // remove spacing from last cell in row; avoids extra space in right-aligned columns
+          align: columnAlignment ? columnAlignment[i] : 'left'
+        });
+      } else {
+        this.text(cell, startX + i * columnContainerWidth, startY, {
+          width: columnWidth,
+          align: columnAlignment ? columnAlignment[i] : 'left'
+        });
+      }
     });
 
     // Refresh the y coordinate of the bottom of this row
