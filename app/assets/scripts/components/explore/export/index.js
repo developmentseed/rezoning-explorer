@@ -117,10 +117,10 @@ function getFilterValues (
  *
  * Reference: https://stackoverflow.com/questions/49807311/how-to-get-usable-canvas-from-mapbox-gl-js
  */
-async function exportMapImage () {
+async function exportMapImage (selectedArea) {
   const canvas = document.getElementsByClassName('mapboxgl-canvas')[0];
   const dataURL = canvas.toDataURL('image/png');
-  saveAs(dataURItoBlob(dataURL), `rezoning-snapshot-${timestamp()}.png`);
+  saveAs(dataURItoBlob(dataURL), `WBG-REZoning-${selectedArea.id}-map-snapshot-${timestamp()}.png`);
 }
 
 /**
@@ -336,7 +336,7 @@ const ExportZonesButton = (props) => {
           <DropMenuItem
             data-dropdown='click.close'
             useIcon='picture'
-            onClick={() => exportMapImage()}
+            onClick={() => exportMapImage(selectedArea)}
           >
             Map (.png)
           </DropMenuItem>

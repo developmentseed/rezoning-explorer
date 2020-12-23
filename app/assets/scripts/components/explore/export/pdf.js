@@ -523,7 +523,7 @@ export default async function exportPDF (data) {
   return await stream.on('finish', function () {
     saveAs(
       stream.toBlob('application/pdf'),
-      `REZoning-summary-${getTimestamp()}.pdf`
+      `WBG-REZoning-${data.selectedArea.id}-summary-${getTimestamp()}.pdf`
     );
   });
 }

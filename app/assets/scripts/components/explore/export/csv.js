@@ -42,7 +42,7 @@ export default async function exportZonesCsv (selectedArea, zones) {
   return await stream.on('finish', function () {
     saveAs(
       stream.toBlob('text/plain;charset=utf-8'),
-      `rezoning-${selectedArea.id}-zones-${getTimestamp()}.csv`
+      `WBG-REZoning-${selectedArea.id}-zones-${getTimestamp()}.csv`
     );
   });
 }

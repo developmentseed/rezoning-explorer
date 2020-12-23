@@ -32,5 +32,5 @@ export default async function exportZonesGeoJSON (selectedArea, zones) {
     type: 'text/plain;charset=utf-8'
   });
 
-  saveAs(blob, `rezoning-${selectedArea.id}-zones-${getTimestamp()}.geojson`);
+  saveAs(blob, `WBG-REZoning-${selectedArea.id}-zones-${getTimestamp()}.geojson`);
 }
