@@ -86,8 +86,8 @@ PDFDocument.prototype.table = function (table, arg0, arg1, arg2) {
     const rowHeight = computeRowHeight(row);
 
     // Switch to next page if we cannot go any further because the space is over.
-    // For safety, consider 3 rows margin instead of just one
-    if (startY + 3 * rowHeight < maxY) startY = rowBottomY + rowSpacing;
+    // For safety, consider 5 rows margin instead of just one
+    if (startY + 5 * rowHeight < maxY) startY = rowBottomY + rowSpacing;
     else this.addPage();
 
     // Allow the user to override style for rows
