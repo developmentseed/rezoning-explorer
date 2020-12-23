@@ -377,7 +377,7 @@ function drawMapArea (
     })
   };
   summaryTable.cells.unshift(['Resource', selectedResource]);
-  doc.table(summaryTable, legendLeft, doc.y + 12, { prepareCells: () => doc.fontSize(12), width: (options.colWidthThreeCol) });
+  doc.table(summaryTable, legendLeft, doc.y + 12, { width: (options.colWidthThreeCol) });
   doc.y += get(options, 'tables.padding', 0);
 }
 
@@ -387,19 +387,27 @@ function drawMapArea (
 function drawAnalysisInput (doc, data) {
   // Add filters section (ranges must be available)
   doc.addPage();
-  addText(doc, 'h2', 'Spatial Filters');
+  // Filters header
+  drawSectionHeader(
+    'Filters',
+    doc.x,
+    doc.y,
+    doc,
+    options
+  );
 
   const { filtersValues } = data;
 
   // Add one table per category
   const categories = groupBy(filtersValues, 'category');
-  Object.keys(categories).forEach((category) => {
-    addText(doc, 'h3', toTitleCase(category));
+  Object.keys(categories).forEach((category, index) => {
+    const currentY = doc.y;
+    doc.y += get(options, 'tables.padding', 0);
 
     setStyle(doc, 'p');
-
-    doc.table({
+    const filterTable = {
       columnAlignment: ['left', 'right'],
+      header: [toTitleCase(category), ''],
       cells: categories[category].map((filter) => {
         let title = filter.title;
         if (filter.unit) {
@@ -416,12 +424,23 @@ function drawAnalysisInput (doc, data) {
         }
         return [title, value];
       })
-    });
+    };
+    doc.table(filterTable, (options.margin + ((index % 2) * options.colWidthTwoCol) + ((index % 2) * options.gutterTwoCol)), doc.y + ((index & 2) * 80), { prepareHeader: () => doc.font(boldFont).fontSize(10), prepareRow: () => doc.fontSize(8).font(baseFont), width: options.colWidthTwoCol });
+    if (index % 2 === 0) {
+      doc.y = currentY;
+    }
   });
 
   // Add weights section
   doc.addPage();
-  addText(doc, 'h2', 'Weights');
+  drawSectionHeader(
+    'Weights',
+    doc.x,
+    doc.y,
+    doc,
+    options
+  );
+  doc.y += options.tables.padding;
   addText(
     doc,
     'p',
@@ -434,11 +453,18 @@ function drawAnalysisInput (doc, data) {
       const weight = data.weightsValues[weightId];
       return [weight.title, weight.input.value];
     })
-  });
+  }, { width: options.colWidthThreeCol * 2 });
 
   // Add LCOE section
   doc.addPage();
-  addText(doc, 'h2', 'LCOE');
+  drawSectionHeader(
+    'Economics',
+    doc.x,
+    doc.y,
+    doc,
+    options
+  );
+  doc.y += options.tables.padding;
   addText(
     doc,
     'p',
@@ -451,7 +477,7 @@ function drawAnalysisInput (doc, data) {
       const lcoe = data.lcoeValues[lcoeId];
       return [lcoe.title, lcoe.input.value];
     })
-  });
+  }, { width: options.colWidthThreeCol * 2 });
 }
 
 /**
@@ -463,8 +489,14 @@ function drawZonesList (doc, zones) {
   doc.addPage();
 
   // Title
-  addText(doc, 'h2', 'Zones');
-
+  drawSectionHeader(
+    'Zones',
+    doc.x,
+    doc.y,
+    doc,
+    options
+  );
+  doc.y += options.tables.padding;
   // Set style to be used in the table
   setStyle(doc, 'p');
 
