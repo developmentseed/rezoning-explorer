@@ -5,15 +5,21 @@ import {
   PanelOption,
   PanelOptionTitle,
   OptionHeadline
-} from './form';
+} from '../../../styles/form/form';
+import FormIntro from './form-intro';
 import InfoButton from '../../common/info-button';
 import FormInput from '../form/form-input';
 // import updateArrayIndex from '../../../utils/update-array-index';
 
 function LCOEForm (props) {
   const { lcoe, active } = props;
+
   return (
     <FormWrapper active={active}>
+      <FormIntro
+        formTitle='Economic Parameters'
+        introText='Adjust economic parameters to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.'
+      />
       {lcoe.map(([cost, setCost], ind) => {
         const onChange = useCallback(
           (v) => setCost({

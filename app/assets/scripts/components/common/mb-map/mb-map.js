@@ -8,9 +8,12 @@ import { resizeMap } from './mb-map-utils';
 import { featureCollection } from '@turf/helpers';
 
 import ExploreContext from '../../../context/explore-context';
+import FormContext from '../../../context/form-context';
 import MapContext from '../../../context/map-context';
 import theme from '../../../styles/theme/theme';
 import { rgba } from 'polished';
+import { RESOURCES } from '../../explore/panel-data';
+import MapLegend from './map-legend';
 
 const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
@@ -37,35 +40,58 @@ export const outputLayers = [
     name: 'Satellite',
     type: 'raster',
     nonexclusive: true,
-    visible: true
+    visible: false,
+    category: 'output',
+    info: 'Satellite layer'
   },
   {
     id: FILTERED_LAYER_ID,
     name: 'Selected Area',
     type: 'raster',
-    visible: true
+    visible: true,
+    category: 'output',
+    info: 'Filtered selected area',
+    disabled: true
   },
   {
     id: LCOE_LAYER_LAYER_ID,
     name: 'LCOE Tiles',
-    type: 'raster'
+    type: 'raster',
+    category: 'output',
+    info: 'LCOE Tiles',
+    disabled: true
   },
   {
     id: ZONE_SCORE_LAYER_ID,
     name: 'Zone Score',
-    type: 'raster'
+    type: 'raster',
+    category: 'output',
+    info: 'Zone Score',
+    disabled: true
   },
   {
     id: ZONES_BOUNDARIES_LAYER_ID,
     name: 'Zone Boundaries',
     type: 'vector',
+    category: 'output',
+    info: 'Zone Boundaries',
     stops: [
       rgba(theme.main.color.base, 0),
       rgba(theme.main.color.base, 1)
     ],
-    visible: true
+    visible: true,
+    disabled: true
   }
 ];
+const getResourceLayerName = resource => {
+  switch (resource) {
+    case RESOURCES.SOLAR:
+      return 'gsa-pvout';
+    case RESOURCES.WIND:
+    case RESOURCES.OFFSHORE:
+      return 'gwa-speed-100';
+  }
+};
 
 const MapsContainer = styled.div`
   position: relative;
@@ -116,15 +142,17 @@ const initializeMap = ({
     center: [0, 0],
     zoom: 5,
     bounds: selectedArea && selectedArea.bounds,
-    fitBoundsOptions
+    fitBoundsOptions,
+    preserveDrawingBuffer: true // required for the map's canvas to be exported to a PNG
   });
 
   map.on('load', () => {
-    setMap(map);
     // This map style has a 'background' layer underneath the satellite layer
     // which is completely black. Was not able to remove this via mapbox studio
-    // so removing it on load.
+    // so removing it on load. Removing before setMap ensures that the satellite map does not flash on load.
     map.removeLayer('background');
+    map.setLayoutProperty('satellite', 'visibility', 'none');
+    setMap(map);
 
     /*
      * Resize map on window size change
@@ -136,7 +164,7 @@ const initializeMap = ({
      * which will be displayed on "Apply" click
      */
 
-    map.setPaintProperty('land', 'background-opacity', 0.7);
+    map.setPaintProperty('land', 'background-opacity', 0.75);
 
     map.addSource(FILTERED_LAYER_SOURCE, {
       type: 'raster',
@@ -152,7 +180,7 @@ const initializeMap = ({
         visibility: 'none'
       },
       paint: {
-        'raster-opacity': 0.7
+        'raster-opacity': 0.75
       },
       minzoom: 0,
       maxzoom: 22
@@ -171,7 +199,7 @@ const initializeMap = ({
         visibility: 'none'
       },
       paint: {
-        'raster-opacity': 0.5
+        'raster-opacity': 0.75
       },
       minzoom: 0,
       maxzoom: 22
@@ -190,7 +218,7 @@ const initializeMap = ({
         visibility: 'none'
       },
       paint: {
-        'raster-opacity': 0.5
+        'raster-opacity': 0.75
       },
       minzoom: 0,
       maxzoom: 22
@@ -212,7 +240,7 @@ const initializeMap = ({
       layout: {},
       paint: {
         'fill-color': '#efefef',
-        'fill-opacity': 0.4,
+        'fill-opacity': 0.75,
         'fill-outline-color': '#232323'
       }
     });
@@ -238,8 +266,8 @@ const initializeMap = ({
         'fill-opacity': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
-          0.5,
-          0.2
+          0.75,
+          0.25
         ]
       }
     });
@@ -270,22 +298,39 @@ const initializeMap = ({
   });
 };
 
-const addInputLayersToMap = (map, layers) => {
-  layers.forEach(layer => {
-    map.addSource(`${layer}_source`, {
+const addInputLayersToMap = (map, layers, areaId, resource) => {
+  // Off-shore mask flag
+  const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
+  layers.forEach((layer) => {
+    const { id: layerId } = layer;
+    const source = map.getSource(`${layerId}_source`);
+
+    /* If source exists, replace the tiles and return */
+    if (source) {
+      source.tiles = [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`];
+      if (layer.visible) {
+        map.setLayoutProperty(layerId, 'visibility', 'visible');
+      } else {
+        map.setLayoutProperty(layerId, 'visibility', 'none');
+      }
+      return;
+    }
+
+    map.addSource(`${layerId}_source`, {
       type: 'raster',
-      tiles: [`${config.apiEndpoint}/layers/${layer}/{z}/{x}/{y}.png?colormap=cool`],
+      tiles: [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`],
       tileSize: 256
     });
+
     map.addLayer({
-      id: layer,
+      id: layerId,
       type: 'raster',
-      source: `${layer}_source`,
+      source: `${layerId}_source`,
       layout: {
-        visibility: 'none'
+        visibility: layer.visible ? 'visible' : 'none'
       },
       paint: {
-        'raster-opacity': 0.5
+        'raster-opacity': 0.75
       },
       minzoom: 0,
       maxzoom: 22
@@ -311,9 +356,20 @@ function MbMap (props) {
     hoveredFeature, setHoveredFeature,
     map, setMap,
     inputLayers,
+    mapLayers,
     setMapLayers,
     setFocusZone
   } = useContext(MapContext);
+
+  const {
+    filterRanges
+  } = useContext(FormContext);
+
+  const visibleRaster = mapLayers.filter(layer => layer.type === 'raster' && layer.visible && layer.id !== 'FILTERED_LAYER_ID');
+  let rasterRange = null;
+  if (visibleRaster.length > 0) {
+    rasterRange = filterRanges.getData()[visibleRaster[0].id];
+  }
 
   // Initialize map on mount
   useEffect(() => {
@@ -323,20 +379,23 @@ function MbMap (props) {
   }, [map]);
 
   useEffect(() => {
-    if (map && inputLayers.isReady()) {
+    if (map && inputLayers.isReady() && selectedArea) {
       const layers = inputLayers.getData();
 
-      setMapLayers([
-        ...outputLayers,
+      const initializedLayers = [
         ...layers.map(l => ({
-          id: l,
-          name: l.split('-').map(w => `${w[0].toUpperCase()}${w.slice(1)}`).join(' '),
-          type: 'raster'
+          ...l,
+          name: l.title,
+          type: 'raster',
+          info: l.description,
+          category: l.category || 'Uncategorized',
+          visible: l.id === getResourceLayerName(selectedResource)
         }))
-      ]);
-      addInputLayersToMap(map, layers);
+      ];
+      addInputLayersToMap(map, initializedLayers, selectedArea.gid, selectedResource);
+      setMapLayers([...outputLayers, ...initializedLayers]);
     }
-  }, [map, inputLayers]);
+  }, [map, selectedArea, selectedResource, inputLayers]);
 
   // Watch window size changes
 
@@ -383,6 +442,18 @@ function MbMap (props) {
     });
 
     map.setLayoutProperty(FILTERED_LAYER_ID, 'visibility', 'visible');
+
+    setMapLayers(mapLayers.map(layer => {
+      if (layer.category === 'output') {
+        layer.disabled = false;
+        if (layer.visible) {
+          map.setLayoutProperty(layer.id, 'visibility', 'visible');
+          layer.visible = true;
+        }
+      }
+      return layer;
+    })
+    );
   }, [filteredLayerUrl]);
 
   useEffect(() => {
@@ -452,6 +523,7 @@ function MbMap (props) {
 
   return (
     <MapsContainer>
+      {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title} /> : ''}
       <SingleMapContainer ref={mapContainer} />
     </MapsContainer>
   );

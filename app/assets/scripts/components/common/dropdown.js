@@ -10,6 +10,7 @@ import { divide, multiply } from '../../styles/utils/math';
 import { headingAlt } from '../../styles/type/heading';
 import { surfaceElevatedD } from '../../styles/skins';
 import collecticon from '../../styles/collecticons';
+import { disabled, visuallyDisabled } from '../../styles/helpers';
 
 const _rgba = stylizeFunction(rgba);
 const _tint = stylizeFunction(tint);
@@ -584,6 +585,24 @@ export const DropMenuItem = styled.a`
       text-align: center;
     }
   }
+  ${({ useIcon }) =>
+    useIcon &&
+    css`
+      &:before {
+        ${collecticon(useIcon)}
+      }
+    `}
+  /* Disabled */
+  ${({ disabled: dis }) => dis &&
+    css`
+      ${disabled()}
+    `}
+
+  /* Visually Disabled */
+  ${({ visuallyDisabled: vd }) => vd &&
+    css`
+      ${visuallyDisabled()}
+    `}
 `;
 
 export const DropInset = styled.div`

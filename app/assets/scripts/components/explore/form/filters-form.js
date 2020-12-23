@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import T from 'prop-types';
-import styled from 'styled-components';
 
 import {
   FormWrapper,
@@ -9,10 +8,9 @@ import {
   OptionHeadline,
   PanelOptionTitle,
   InactiveMessage
-} from './form';
-import { Accordion, AccordionFold } from '../../../components/accordion';
-import collecticon from '../../../styles/collecticons';
-import { glsp } from '../../../styles/utils/theme-values';
+} from '../../../styles/form/form';
+import FormIntro from './form-intro';
+import { Accordion, AccordionFold, AccordionFoldTrigger } from '../../../components/accordion';
 import Heading from '../../../styles/type/heading';
 import { makeTitleCase } from '../../../styles/utils/general';
 
@@ -23,28 +21,6 @@ import { INPUT_CONSTANTS } from '../panel-data';
 import FormInput from './form-input';
 
 const { BOOL } = INPUT_CONSTANTS;
-
-const AccordionFoldTrigger = styled.a`
-  display: flex;
-  align-items: center;
-  margin: -${glsp(0.5)} -${glsp()};
-  padding: ${glsp(0.5)} ${glsp()};
-
-  &,
-  &:visited {
-    color: inherit;
-  }
-  &:active {
-    transform: none;
-  }
-  &:after {
-    ${collecticon('chevron-down--small')}
-    margin-left: auto;
-    transition: transform 240ms ease-in-out;
-    transform: ${({ isExpanded }) =>
-      isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
-  }
-`;
 
 /* Filters form
  * @param outputFilters is an array of shape
@@ -65,7 +41,13 @@ function FiltersForm (props) {
   } = props;
 
   return (
-    <FormWrapper active={active}>
+    <FormWrapper
+      active={active}
+    >
+      <FormIntro
+        formTitle='Spatial Filters'
+        introText='Apply spatial filters to limit the areas included in zone weighting and LCOE analysis. Range sliders can have a minimum and maximum value. Any location in your selected area with values under the minimum or over the maximum allowed values for that filter will not be included in the analysis. Areas with toggle controls are included by default; switch these areas off to mask out these areas from analysis. View the "Selected Area" contextual layer after filters have been applied to see the areas included for analysis.'
+      />
       <Accordion
         initialState={[
           true,
@@ -169,76 +151,88 @@ function FiltersForm (props) {
                     </AccordionFoldTrigger>
                   )}
                   renderBody={({ isFoldExpanded }) =>
-                    list.map(
-                      ([filter, setFilter], ind) => {
-                        const inputOnChange = useCallback(
+                    list.sort(([a, _a], [b, _b]) => {
+                      if (a.priority && b.priority) {
+                        return 0;
+                      } else if (a.priority && !b.priority) {
+                        return -1;
+                      } else if (!a.priority && b.priority) {
+                        return 1;
+                      }
+                    }).filter(([f, _]) => f.input.range[0] !== f.input.range[1])
+                      .map(
+                        ([filter, setFilter], ind) => {
+                          const inputOnChange = useCallback(
 
-                          (value) => {
-                            if (filter.active) {
+                            (value) => {
+                              if (filter.active) {
+                                setFilter({
+                                  ...filter,
+                                  input: {
+                                    ...filter.input,
+                                    value
+                                  }
+                                }
+                                );
+                              }
+                            }
+
+                            , [filter]);
+
+                          const switchOnChange = useCallback(
+                            () => {
                               setFilter({
+
                                 ...filter,
+                                active: !filter.active,
                                 input: {
                                   ...filter.input,
-                                  value
+                                  value: filter.input.type === BOOL
+                                    ? !filter.active
+                                    : filter.input.value
                                 }
-                              }
-                              );
+                              });
                             }
-                          }
-
-                          , [JSON.stringify(filters)]);
-
-                        const switchOnChange = useCallback(
-                          () => {
-                            setFilter({
-                              ...filter,
-                              active: !filter.active,
-                              input: {
-                                ...filter.input,
-                                value: filter.input.type === BOOL
-                                  ? !filter.active
-                                  : filter.input.value
-                              }
-                            });
-                          }
-                          , [JSON.stringify(filters)]);
-                        return (checkIncluded(filter, resource) && (
-                          <PanelOption
-                            key={filter.name}
-                            hidden={!isFoldExpanded}
-                          >
-                            <OptionHeadline>
-                              <PanelOptionTitle>
-                                {`${filter.name}`.concat(
-                                  filter.unit ? ` (${filter.unit})` : ''
-                                )}
-                              </PanelOptionTitle>
-                              {filter.info && (
-                                <InfoButton info={filter.info} id={filter.name}>
+                            , [filter]);
+                          return (checkIncluded(filter, resource) && (
+                            <PanelOption
+                              key={filter.name}
+                              hidden={!isFoldExpanded}
+                            >
+                              <OptionHeadline>
+                                <PanelOptionTitle>
+                                  {`${filter.name}`.concat(
+                                    filter.unit ? ` (${filter.unit})` : ''
+                                  )}
+                                </PanelOptionTitle>
+                                {filter.info && (
+                                  <InfoButton info={filter.info} id={filter.name}>
                                   Info
-                                </InfoButton>
-                              )}
-                              <FormSwitch
-                                hideText
-                                name={`toggle-${filter.name.replace(
+                                  </InfoButton>
+                                )}
+
+                                {filter.input.type === BOOL && (
+                                  <FormSwitch
+                                    hideText
+                                    name={`toggle-${filter.name.replace(
                                   / /g,
                                   '-'
                                 )}`}
-                                disabled={filter.disabled}
-                                checked={filter.active}
-                                onChange={switchOnChange}
-                              >
+                                    disabled={filter.disabled}
+                                    checked={filter.active}
+                                    onChange={switchOnChange}
+                                  >
                                 Toggle filter
-                              </FormSwitch>
-                            </OptionHeadline>
-                            <FormInput
-                              option={filter}
-                              onChange={inputOnChange}
-                            />
-                          </PanelOption>
-                        )
-                        );
-                      })}
+                                  </FormSwitch>)}
+                              </OptionHeadline>
+                              <FormInput
+                                option={filter}
+                                onChange={inputOnChange}
+                              />
+                            </PanelOption>
+                          )
+                          );
+                        })}
                 />
               );
             })}

@@ -1,9 +1,32 @@
 import React, { useState } from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
+import { glsp } from '../styles/utils/theme-values';
+import collecticon from '../styles/collecticons';
 
 const AccordionFoldSelf = styled.section`
   /* No default styles */
+`;
+export const AccordionFoldTrigger = styled.a`
+  display: flex;
+  align-items: center;
+  margin: -${glsp(0.5)} -${glsp()};
+  padding: ${glsp(0.5)} ${glsp()};
+
+  &,
+  &:visited {
+    color: inherit;
+  }
+  &:active {
+    transform: none;
+  }
+  &:after {
+    ${collecticon('chevron-down--small')}
+    margin-left: auto;
+    transition: transform 240ms ease-in-out;
+    transform: ${({ isExpanded }) =>
+      isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
+  }
 `;
 
 const AccordionFoldBody = styled.div`
@@ -11,7 +34,7 @@ const AccordionFoldBody = styled.div`
   transition: max-height 320ms ease-in-out, opacity 320ms ease-in-out;
   opacity: ${({ isExpanded }) => (isExpanded ? 1 : 0)};
   max-height: ${({ isExpanded }) => (isExpanded ? '400vh' : 0)};
-  padding-top: 2rem;
+  padding-top: ${glsp()};
   ${({ isExpanded }) => !isExpanded && 'display: none;'}
 `;
 
@@ -160,7 +183,7 @@ function AccordionFoldCmp ({
   return (
     <AccordionFoldSelf className={className} id={id} as={as}>
       {headerContent}
-      <AccordionFoldBody isExpanded={isFoldExpanded}>
+      <AccordionFoldBody isExpanded={isFoldExpanded} className='accordion-fold-body'>
         {bodyContent}
       </AccordionFoldBody>
     </AccordionFoldSelf>

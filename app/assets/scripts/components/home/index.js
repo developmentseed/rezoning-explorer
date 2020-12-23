@@ -89,15 +89,18 @@ const BackgroundWrapper = styled.figure`
 
 const PartnerLogos = styled.ul`
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: row nowrap;
   list-style: none;
-  margin-top: 2rem;
+  margin-top: 4rem;
   li {
     margin-right: 2rem;
   }
-  ${media.smallUp`
-    flex-flow: row nowrap;
-  `}
+  img {
+    height: 2rem;
+    ${media.smallUp`
+      height: 2.5rem;
+    `}
+  }
 `;
 
 function Home () {
@@ -128,7 +131,7 @@ function Home () {
                 size='xlarge'
                 title='Visit Explore Page'
               >
-                Explore
+                Start Exploring
               </Button>
               <Button
                 as={StyledLink}
@@ -142,8 +145,8 @@ function Home () {
             </CTAButtons>
             <p>Inspired by <a href='https://mapre.lbl.gov/'>MapRE</a></p>
             <PartnerLogos>
-              <li><img src='https://via.placeholder.com/140x60.png/EFEFEF/000000/?text=Partner+Logo+1' /></li>
-              <li><img src='https://via.placeholder.com/140x60.png/EFEFEF/000000/?text=Partner+Logo+2' /></li>
+              <li><img src='./assets/graphics/content/logos/logo-esmap--white.png' /></li>
+              <li><img src='./assets/graphics/content/logos/logo-wb--white.png' /></li>
             </PartnerLogos>
           </InpageBodyInner>
         </InpageBody>

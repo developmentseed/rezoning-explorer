@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 import StatSummary from '../common/table';
 import { themeVal } from '../../styles/utils/general';
 import { formatThousands } from '../../utils/format';
+import area from '@turf/area';
 
 const StatsWrapper = styled.section`
   display: grid;
@@ -29,15 +30,16 @@ const StatsWrapper = styled.section`
     `}
 `;
 
-const zonesSummary = (zones) => {
+export const zonesSummary = (zones) => {
   const stats = zones.reduce(
-    (stats, { properties: { summary } }) => {
+    (stats, zone) => {
+      const { properties: { summary } } = zone;
       if (!summary || !summary.zone_score) return stats;
       return {
         zonesCount: stats.zonesCount + 1,
         zonesOutput: stats.zonesOutput + summary.zone_output,
         zonesArea:
-          stats.zonesArea + summary.zone_output / summary.zone_output_density
+          stats.zonesArea + area(zone) / 1000000
       };
     },
     {
@@ -54,7 +56,7 @@ const zonesSummary = (zones) => {
       unit: 'km²',
       data:
         stats.zonesArea > 0
-          ? formatThousands(stats.zonesArea / 10, { decimals: 0 })
+          ? formatThousands(stats.zonesArea, { decimals: 0 })
           : '--'
     },
     {

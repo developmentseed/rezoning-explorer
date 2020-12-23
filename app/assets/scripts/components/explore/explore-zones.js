@@ -4,15 +4,15 @@ import styled, { css } from 'styled-components';
 import { Subheading } from '../../styles/type/heading';
 import CardList, { CardWrapper } from '../common/card-list';
 import { themeVal } from '../../styles/utils/general';
-import FocusZone from './focus-zone';
-import Dl from '../../styles/type/definition-list';
+import FocusZone, { formatIndicator } from './focus-zone';
 import Button from '../../styles/button/button';
-import { formatThousands } from '../../utils/format';
+import collecticon from '../../styles/collecticons';
 import get from 'lodash.get';
 import MapContext from '../../context/map-context';
 
 import { FormCheckable } from '../../styles/form/checkable';
 
+import ExportButton from './export';
 import ColorScale from '../common/color-scale';
 import zoneScoreColor from '../../styles/zoneScoreColors';
 
@@ -35,11 +35,26 @@ const ZonesWrapper = styled.section`
     `}
 `;
 
-const ZonesHeader = styled(Subheading)`
-  padding: 1rem 0rem;
+const ZonesHeader = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) 0.75fr;
+  align-items: baseline;
+  margin: 1rem 0rem;
+  ${Button} {
+    font-size: 0.875rem;
+    text-align: left;
+    margin: 0 -1.5rem;
+    padding: 0.25rem 1.5rem;
+    width: 150%;
+    font-weight: 400;
+    grid-column: span 5;
+  }
 `;
 
 const Card = styled(CardWrapper)`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-content: space-between;
   height: auto;
   box-shadow: none;
   border: none;
@@ -51,9 +66,14 @@ const Card = styled(CardWrapper)`
     box-shadow: none;
     transform: none;
     background: ${themeVal('color.primaryAlpha')};
+
+    dd {
+      color: ${themeVal('color.primary')};
+    }
   }
   ${FormCheckable} {
     padding: 0 1rem;
+    justify-self: end;
   }
 `;
 
@@ -72,29 +92,62 @@ const CardIcon = styled.div`
 `;
 
 const CardDetails = styled.ul`
-  display: flex;
-  flex-flow: column nowrap;
-  flex: 1;
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   font-size: 0.875rem;
 `;
-const Detail = styled(Dl)`
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-
-  & ~ & {
-    padding-top: 0.125rem;
-  }
-
+const Detail = styled.dl`
   dt,
   dd {
     margin: 0;
   }
   dd {
+    font-size: ${themeVal('type.base.size')};
+    font-weight: ${themeVal('type.heading.weight')};
     text-align: right;
-    color: ${themeVal('color.primary')};
   }
 `;
+
+const ZoneColumnHead = styled(Subheading)`
+    text-align: right;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-end;
+    span {
+      order: 3;
+      flex: 100%;
+    }
+    &:hover {
+      color: ${themeVal('color.primary')};
+    }
+    &:after {
+      color: ${themeVal('color.primary')};
+    }
+    ${({ asc, activelySorting }) => {
+      if (activelySorting) {
+        return css`
+        /* stylelint-disable */
+          &:after {
+            order: 2;
+            vertical-align: bottom;
+            ${collecticon(asc ? 'sort-asc' : 'sort-desc')}
+          }
+        `;
+      } else {
+          return css`
+            &:after {
+            /* stylelint-enable */
+              order: 2;
+              vertical-align: bottom;
+              ${collecticon('sort-none')}
+            }
+          `;
+      }
+    }}
+`;
+
+const columns = [{ id: 'lcoe', name: 'LCOE' }, { id: 'zone_score', name: 'SCORE' }];
 
 function ExploreZones (props) {
   const { active, currentZones } = props;
@@ -103,39 +156,55 @@ function ExploreZones (props) {
 
   const [selectedZones, setSelectedZones] = useState(currentZones.reduce((accum, zone) => ({ ...accum, [zone.id]: false }), {}));
 
-  const formatIndicator = function (id, value) {
-    switch (id) {
-      case 'zone_score':
-        return formatThousands(value, { forceDecimals: true, decimals: 3 });
-      case 'lcoe_density':
-        return formatThousands(value, { forceDecimals: true, decimals: 5 });
-      default:
-        return formatThousands(value);
-    }
-  };
-
-  const formatLabel = function (id) {
-    switch (id) {
-      case 'lcoe':
-        return `${id.replace(/_/g, ' ')} [USD/MwH]`;
-      default:
-        return id.replace(/_/g, ' ');
-    }
-  };
+  const [sortAsc, setSortAsc] = useState(false);
 
   const onRowHoverEvent = (event, row) => {
     setHoveredFeature(event === 'enter' ? row : null);
   };
 
+  const [sortId, setSortId] = useState('lcoe');
+
   return (
     <ZonesWrapper active={active}>
       <ColorScale steps={10} heading='Weighted Zone Score' min={0} max={1} colorFunction={zoneScoreColor} />
-      <ZonesHeader>All Zones</ZonesHeader>
+      {focusZone ? (
+        <ZonesHeader>
+          <Button onClick={() => setFocusZone(null)} size='small' useIcon={['chevron-left--small', 'before']}>
+            See All Zones
+          </Button>
+        </ZonesHeader>
+      ) : (
+        <ZonesHeader>
+          <Subheading>All Zones</Subheading>
+
+          {
+            columns.map(({ id, name }) => {
+              return (
+                <ZoneColumnHead
+                  key={id}
+                  title={`Sort by ${name}`}
+                  as='a'
+                  activelySorting={sortId === id}
+                  asc={sortAsc}
+                  onClick={() => {
+                    setSortId(id);
+                    setSortAsc(!sortAsc);
+                  }}
+                >
+                  {name}
+                  {id === 'lcoe' && <span>(USD/MWh)</span>}
+                </ZoneColumnHead>
+              );
+            }
+
+            )
+          }
+        </ZonesHeader>
+      )}
 
       {focusZone ? (
         <FocusZone
           zone={focusZone}
-          unFocus={() => setFocusZone(null)}
           selected={selectedZones[focusZone.id] || false}
           onSelect={() =>
             setSelectedZones({
@@ -147,7 +216,13 @@ function ExploreZones (props) {
         <>
           <CardList
             numColumns={1}
-            data={currentZones}
+            data={
+              currentZones.sort((a, b) =>
+                sortAsc
+                  ? parseFloat(b.properties.summary[sortId]) - parseFloat(a.properties.summary[sortId])
+                  : parseFloat(a.properties.summary[sortId]) - parseFloat(b.properties.summary[sortId])
+              )
+            }
             renderCard={(data) => (
               <Card
                 size='large'
@@ -167,7 +242,6 @@ function ExploreZones (props) {
                       .filter(([label, value]) => FILTERED_PROPERTIES[label])
                       .map(([label, value]) => (
                         <Detail key={`${data.id}-${label}`}>
-                          <dt>{formatLabel(label)}</dt>
                           <dd>{formatIndicator(label, value)}</dd>
                         </Detail>
                       )
@@ -217,9 +291,7 @@ const ExportWrapper = styled.div`
 const ExportZonesButton = ({ onExport, small, usePadding }) => {
   return (
     <ExportWrapper usePadding={usePadding}>
-      <Button as='a' useIcon='download' variation='primary-raised-dark' size='small'>
-        {small ? 'Export' : 'Export Selected Zones'}
-      </Button>
+      <ExportButton />
     </ExportWrapper>
   );
 };

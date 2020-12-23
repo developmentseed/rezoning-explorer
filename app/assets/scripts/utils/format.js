@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 /**
  * Rounds a number to a specified amount of decimals.
  *
@@ -75,7 +77,6 @@ export function formatThousands (num, options) {
     ...options
   };
 
-  // isNaN(null) === true
   if (isNaN(num) || (!num && num !== 0)) {
     return '--';
   }
@@ -106,3 +107,19 @@ export function formatThousands (num, options) {
 
   return dec !== '' ? `${int}.${dec} ${largeNumUnit}` : `${int} ${largeNumUnit}`;
 }
+
+/**
+ * Returns a title-cased version string passed
+ *
+ * @param {String} str String to make title-cased.
+ */
+export function toTitleCase (str) {
+  return str.replace(/\w\S*/g, function (txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+}
+
+/**
+ * Get current timestamp in format 'yyyyMMdd-hhmmss'
+ */
+export const getTimestamp = () => format(Date.now(), 'yyyyMMdd-hhmmss');

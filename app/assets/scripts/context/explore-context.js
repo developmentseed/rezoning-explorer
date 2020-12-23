@@ -18,12 +18,13 @@ import {
 
 import {
   INPUT_CONSTANTS,
+  RESOURCES,
   checkIncluded,
   getMultiplierByUnit
 } from '../components/explore/panel-data';
 
 const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI, DEFAULT_RANGE } = INPUT_CONSTANTS;
-
+const maskTypes = [BOOL];
 const ExploreContext = createContext({});
 
 export function ExploreProvider (props) {
@@ -38,6 +39,7 @@ export function ExploreProvider (props) {
         id: 'zone-score-range',
         active: true,
         isRange: true,
+        info: 'Filter zones by calculated zone score',
         input: {
           value: range ? { min: range[0], max: range[1] } : { min: 0, max: 1 },
           type: SLIDER,
@@ -59,7 +61,8 @@ export function ExploreProvider (props) {
         id: 'lcoe-range',
         active: range && true,
         isRange: true,
-        unit: 'USD/MwH',
+        unit: 'USD/MWh',
+        info: 'Filter zones by calculated LCOE',
         input: {
           value: range ? { min: range[0], max: range[1] } : null,
           type: SLIDER,
@@ -104,7 +107,6 @@ export function ExploreProvider (props) {
     }
 
     initAreasAndFilters();
-    // fetchInputLayers(dispatchInputLayers);
   }, []);
 
   // Load eezs
@@ -205,10 +207,22 @@ export function ExploreProvider (props) {
     //
     const filterString = filterValues
       .map((filter) => {
-        const { id, active, input } = filter;
+        const { id, active, input, isRange } = filter;
 
         // Bypass inactive filters
-        if (!active || !checkIncluded(filter, selectedResource)) return null;
+        if (!maskTypes.includes(input.type) &&
+            (!active || !checkIncluded(filter, selectedResource))) {
+          // Skip filters that are NOT mask and are inactive
+          return null;
+        } else if (maskTypes.includes(input.type) && active) {
+          // If this is an 'active' mask filter, we don't need to send to the api. Active here means include these areas
+          return null;
+        } else if (isRange) {
+          if (input.value.min === input.range[0] &&
+            input.value.max === input.range[1]) {
+            return null;
+          }
+        }
 
         // Add accepted filter types to the query
         if (input.type === SLIDER) {
@@ -221,8 +235,10 @@ export function ExploreProvider (props) {
           return `${id}=${min * multiplier},${max * multiplier}`;
         } else if (input.type === BOOL) {
           return `${id}=${filter.input.value}`;
+        } else if (input.type === MULTI) {
+          return input.value.length === input.options.length ? null : `${id}=${input.value.join(',')}`;
         } else if (input.type === DROPDOWN || input.type === MULTI) {
-          return `${id}=${filter.input.value.join(', ')}`;
+          return `${id}=${filter.input.value.join(',')}`;
         } else {
         // discard non-accepted filter types
           /* eslint-disable-next-line */
@@ -236,15 +252,18 @@ export function ExploreProvider (props) {
     // If area of country type, prepare path string to add to URL
     const countryPath = selectedArea.type === 'country' ? `${selectedArea.id}` : '';
 
+    // Off-shore mask flag
+    const offshoreWindMask = selectedResource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
+
     // Apply filter querystring to the map
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/${countryPath}/{z}/{x}/{y}.png?${filterString}&color=54,166,244,80`
+      `${config.apiEndpoint}/filter/${countryPath}/{z}/{x}/{y}.png?${filterString}${offshoreWindMask}&color=54,166,244,80`
     );
 
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
 
     setOutputLayerUrl(
-      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}&colormap=cool`
+      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}${offshoreWindMask}&colormap=viridis`
     );
 
     generateZones(filterString, weights, lcoe);

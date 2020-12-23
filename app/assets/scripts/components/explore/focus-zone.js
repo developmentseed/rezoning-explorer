@@ -6,24 +6,21 @@ import Dl from '../../styles/type/definition-list';
 import ShadowScrollbar from '../common/shadow-scrollbar';
 import { themeVal } from '../../styles/utils/general';
 import { FormCheckable } from '../../styles/form/checkable';
-import { ExportZonesButton } from './explore-zones';
-import { formatThousands } from '../../utils/format.js';
+import { formatThousands, toTitleCase } from '../../utils/format.js';
+import config from '../../config';
+const { indicatorsDecimals } = config;
 
 const Details = styled.div`
-/* stylelint-disable */
+  /* stylelint-disable */
   dd {
     font-weight: ${themeVal('type.base.bold')};
     color: ${themeVal('color.primary')};
   }
 `;
-const LineChart = styled.div`
-/* stylelint-enable */
-
-`;
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-rows: 2rem auto 1fr;
+  grid-template-rows: 1fr;
   gap: 0.5rem;
   > ${Button} {
     text-align: left;
@@ -37,34 +34,52 @@ const FocusZoneFooter = styled.div`
   flex-flow: column nowrap;
   justify-content: stretch;*/
 
-
   display: grid;
   grid-template-rows: 1fr 1fr;
   grid-gap: 0.25rem;
 `;
 
-const formatIndicator = function (id, value) {
+export const formatIndicator = function (id, value) {
+  if (typeof value !== 'number') return value;
+
   switch (id) {
     case 'zone_score':
-      return formatThousands(value, { forceDecimals: true, decimals: 3 });
-    case 'lcoe_density':
-      return formatThousands(value, { forceDecimals: true, decimals: 5 });
+      return formatThousands(value, {
+        forceDecimals: true,
+        decimals: indicatorsDecimals.zone_score
+      });
+    case 'lcoe':
+      return formatThousands(value, {
+        forceDecimals: true,
+        decimals: indicatorsDecimals.lcoe
+      });
+    case 'zone_output_density':
+      return formatThousands(value, {
+        forceDecimals: true,
+        decimals: indicatorsDecimals.zone_output_density
+      });
     default:
       return formatThousands(value);
   }
 };
 
-const formatLabel = function (id) {
+export const formatLabel = function (id, titleCased = false) {
+  const label = id.replace(/_/g, ' '); // replace spaces;
+
   switch (id) {
     case 'lcoe':
-      return `${id.replace(/_/g, ' ')} [USD/MwH]`;
+      return `${id.replace(/_/g, ' ')} (USD/MWh)`;
+    case 'zone_output':
+      return `${id.replace(/_/g, ' ')} (GwH)`;
+    case 'zone_output_density':
+      return `${id.replace(/_/g, ' ')} (MWh/km²)`;
     default:
-      return id.replace(/_/g, ' ');
+      return titleCased ? toTitleCase(label) : label;
   }
 };
 
 function FocusZone (props) {
-  const { zone, unFocus, selected, onSelect } = props;
+  const { zone, selected, onSelect } = props;
   const { id } = zone.properties;
   /* eslint-disable-next-line */
   const detailsList = {
@@ -73,18 +88,13 @@ function FocusZone (props) {
     ...zone.properties.summary
   };
   return (
-
     <Wrapper>
-      <Button onClick={unFocus} size='small' useIcon={['chevron-left--small', 'before']}>
-        See All Zones
-      </Button>
-      <LineChart title='Supply Curve' />
       <ShadowScrollbar>
         <Details>
           {Object.entries(detailsList).map(([label, data]) => (
             <Dl key={`${id}-${label}`}>
               <dt>{formatLabel(label)}</dt>
-              <dd>{typeof data === 'number' ? formatIndicator(label, data) : data}</dd>
+              <dd>{formatIndicator(label, data)}</dd>
             </Dl>
           ))}
         </Details>
@@ -99,10 +109,9 @@ function FocusZone (props) {
             onClick={(e) => {
               e.stopPropagation();
             }}
-          >Add zone to selection
+          >
+            Add zone to selection
           </FormCheckable>
-
-          <ExportZonesButton onExport={() => {}} small />
         </FocusZoneFooter>
       </ShadowScrollbar>
     </Wrapper>
@@ -111,7 +120,6 @@ function FocusZone (props) {
 
 FocusZone.propTypes = {
   zone: T.object.isRequired,
-  unFocus: T.func,
   selected: T.bool,
   onSelect: T.func
 };
