@@ -90,7 +90,7 @@ module.exports.serve = gulp.series(
 module.exports.default = gulp.series(
   clean,
   collecticons,
-  gulp.parallel(vendorScripts, javascript),
+  gulp.parallel(vendorScripts, javascript, fonts),
   gulp.parallel(html, imagesImagemin),
   publicFiles,
   finish
@@ -214,6 +214,10 @@ function collecticons () {
 
 function finish () {
   return gulp.src('dist/**/*').pipe($.size({ title: 'build', gzip: true }));
+}
+
+function fonts () {
+  return gulp.src(['app/assets/fonts/**/*']).pipe(gulp.dest('dist/assets/fonts'));
 }
 
 // After being rendered by jekyll process the html files. (merge css files, etc)

@@ -37,7 +37,7 @@ const options = {
 // fetch fonts & images on init for use in PDF
 let styles, baseFont, boldFont, Logo, WBGLogo, ESMAPLogo;
 async function initStyles () {
-  await fetch('/assets/fonts/IBM-Plex-Sans-Regular.ttf')
+  await fetch('/assets/fonts/IBM-Plex-Sans-regular.ttf')
     .then((response) => response.arrayBuffer())
     .then((font) => {
       baseFont = font;
