@@ -299,13 +299,15 @@ const initializeMap = ({
 };
 
 const addInputLayersToMap = (map, layers, areaId, resource) => {
+  // Off-shore mask flag
+  const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
   layers.forEach((layer) => {
     const { id: layerId } = layer;
     const source = map.getSource(`${layerId}_source`);
 
     /* If source exists, replace the tiles and return */
     if (source) {
-      source.tiles = [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis`];
+      source.tiles = [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`];
       if (layer.visible) {
         map.setLayoutProperty(layerId, 'visibility', 'visible');
       } else {
@@ -316,7 +318,7 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
 
     map.addSource(`${layerId}_source`, {
       type: 'raster',
-      tiles: [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis`],
+      tiles: [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`],
       tileSize: 256
     });
 

@@ -37,7 +37,7 @@ const options = {
 // fetch fonts & images on init for use in PDF
 let styles, baseFont, boldFont, Logo, WBGLogo, ESMAPLogo;
 async function initStyles () {
-  await fetch('/assets/fonts/IBM-Plex-Sans-Regular.ttf')
+  await fetch('/assets/fonts/IBM-Plex-Sans-regular.ttf')
     .then((response) => response.arrayBuffer())
     .then((font) => {
       baseFont = font;
@@ -48,7 +48,7 @@ async function initStyles () {
     .then((font) => {
       boldFont = font;
     });
-  await fetch('/assets/graphics/meta/android-chrome.png')
+  await fetch('/assets/graphics/content/logos/logo-rezoning.png')
     .then((response) => response.arrayBuffer())
     .then((logo) => {
       Logo = logo;
@@ -190,7 +190,7 @@ function drawHeader (doc, { selectedArea }) {
     .font(baseFont)
     .fontSize(subTitleSize)
     .text(
-      config.appDescription,
+      'Identify project areas for solar, wind and offshore wind development',
       doc.page.width - options.colWidthTwoCol - options.margin,
       options.margin + 16,
       {
@@ -222,7 +222,7 @@ function drawFooter (doc) {
   });
   doc.image(
     WBGLogo,
-    options.margin * 2 + 8,
+    options.margin * 3.25 + 12,
     doc.page.height - options.margin * 1.25,
     {
       height: 18
@@ -230,7 +230,7 @@ function drawFooter (doc) {
   );
   doc.image(
     ESMAPLogo,
-    120 + options.margin * 2,
+    options.margin * 3.25 + 120,
     doc.page.height - options.margin * 1.25,
     {
       height: 18
@@ -241,12 +241,33 @@ function drawFooter (doc) {
   doc
     .fillColor(options.primaryColor)
     .font(boldFont)
-    .text('REZoning', options.margin, doc.page.height - options.margin * 1, {
-      width: options.colWidthTwoCol,
-      height: 16,
-      align: 'left',
-      link: config.baseUrl
-    });
+    .text(
+      'REZoning',
+      options.margin * 1.5 + 4,
+      doc.page.height - options.margin * 1.25,
+      {
+        width: options.colWidthTwoCol,
+        height: 16,
+        align: 'left',
+        link: 'https://rezoning.surge.sh'
+      }
+    );
+
+  // Left Subtitle
+  doc
+    .fillColor(options.secondaryFontColor)
+    .font(baseFont)
+    .fontSize(6)
+    .text(
+      'https://rezoning.surge.sh',
+      options.margin * 1.5 + 4,
+      doc.page.height - options.margin,
+      {
+        width: options.colWidthTwoCol,
+        height: 16,
+        align: 'left'
+      }
+    );
 
   // Right license
   doc
@@ -366,6 +387,7 @@ function drawAnalysisInput (doc, data) {
     doc.y += get(options, 'tables.padding', 0);
 
     setStyle(doc, 'p');
+
     const filterTable = {
       columnAlignment: ['left', 'right'],
       header: [toTitleCase(category), ''],
@@ -391,7 +413,19 @@ function drawAnalysisInput (doc, data) {
         return [title, value];
       }).filter((x) => x) // discard null values from categorical filters
     };
-    doc.table(filterTable, (options.margin + ((index % 2) * options.colWidthTwoCol) + ((index % 2) * options.gutterTwoCol)), doc.y + ((index & 2) * 80), { prepareHeader: () => doc.font(boldFont).fontSize(10), prepareRow: () => doc.fontSize(8).font(baseFont), width: options.colWidthTwoCol });
+
+    const tableX = (options.margin + ((index % 2) * options.colWidthTwoCol) + ((index % 2) * options.gutterTwoCol));
+    const tableY = doc.y + ((index & 2) * 80);
+
+    doc.table(
+      filterTable,
+      tableX,
+      tableY,
+      {
+        prepareHeader: () => doc.font(boldFont).fontSize(10),
+        prepareRow: () => doc.fontSize(8).font(baseFont),
+        width: options.colWidthTwoCol - (options.gutterTwoCol / 2)
+      });
     if (index % 2 === 0) {
       doc.y = currentY;
     }
