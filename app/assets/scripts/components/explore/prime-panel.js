@@ -21,10 +21,6 @@ import RasterTray from './raster-tray';
 import { ZONES_BOUNDARIES_LAYER_ID } from '../common/mb-map/mb-map';
 import { Subheading } from '../../styles/type/heading';
 
-import {
-  resourceList
-} from './panel-data';
-
 const PrimePanel = styled(Panel)`
   ${media.largeUp`
     width: 22rem;
