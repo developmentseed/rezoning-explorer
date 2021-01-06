@@ -20,7 +20,8 @@ import {
   INPUT_CONSTANTS,
   RESOURCES,
   checkIncluded,
-  getMultiplierByUnit
+  getMultiplierByUnit,
+  resourceList
 } from '../components/explore/panel-data';
 
 const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI, DEFAULT_RANGE } = INPUT_CONSTANTS;
@@ -81,6 +82,7 @@ export function ExploreProvider (props) {
     key: 'areaId',
     default: undefined
   });
+  const [availableResources, setAvailableResources] = useState(null);
   const [selectedResource, setSelectedResource] = useQsState({
     key: 'resourceId',
     default: undefined
@@ -162,7 +164,20 @@ export function ExploreProvider (props) {
     dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
 
     // Set area object to context
-    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
+    const selectedArea = areas.find((a) => a.id === selectedAreaId);
+    setSelectedArea(selectedArea);
+
+    // Update available resources list
+    setAvailableResources(resourceList.filter((r) => {
+      // If no area is selected, return all resources
+      if (!selectedArea) return true;
+
+      // If resource is not offshore, include it
+      if (r.name !== RESOURCES.OFFSHORE) return true;
+
+      // Include offshore if area as EEZ defined
+      return typeof selectedArea.eez !== 'undefined';
+    }));
   }, [selectedAreaId]);
 
   // Find selected area based on changes in id
@@ -311,6 +326,7 @@ export function ExploreProvider (props) {
           selectedArea,
           selectedAreaId,
           setSelectedAreaId,
+          availableResources,
           selectedResource,
           setSelectedResource,
 
