@@ -61,7 +61,9 @@ function ExpMapPrimePanel (props) {
    * Get Explore context values
    */
   const {
-    areas, setSelectedAreaId,
+    areas,
+    setSelectedAreaId,
+    availableResources,
     selectedResource,
     selectedArea,
     setSelectedResource,
@@ -250,7 +252,7 @@ function ExpMapPrimePanel (props) {
             setShowSelectResourceModal(false);
           }
         }}
-        data={resourceList}
+        data={availableResources}
         renderHeader={() => (
           <ModalHeader
             id='select-resource-modal-header'
