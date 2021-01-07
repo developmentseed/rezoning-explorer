@@ -116,11 +116,34 @@ export function ExploreProvider (props) {
   });
 
   // Resource context
-  const [availableResources, setAvailableResources] = useState(null);
+  const [availableResources, setAvailableResources] = useState(resourceList);
   const [selectedResource, setSelectedResource] = useQsState({
     key: 'resourceId',
-    default: undefined
+    default: undefined,
+    validator: (v) => {
+      // Do not discard value if resources list is not ready
+      // if (availableResources.length === 0) return true;
+
+      // Check if resource id is available for this country
+      return availableResources.map((r) => r.name).includes(v);
+    }
   });
+
+  // Helper function to update resource list for the selected area
+  function updateAvailableResources () {
+    setAvailableResources(
+      resourceList.filter((r) => {
+        // If no area is selected, return all resources
+        if (!selectedArea) return true;
+
+        // If resource is not offshore, include it
+        if (r.name !== RESOURCES.OFFSHORE) return true;
+
+        // Include offshore if area as EEZ defined
+        return typeof selectedArea.eez !== 'undefined';
+      })
+    );
+  }
 
   const [gridMode, setGridMode] = useState(false);
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
@@ -162,7 +185,7 @@ export function ExploreProvider (props) {
       return accum;
     }, new Map());
 
-    // Apply EEZ to country areas
+    // Apply EEZs to areas list
     setAreas(
       areas.map((a) => {
         if (a.type === 'country') {
@@ -171,6 +194,8 @@ export function ExploreProvider (props) {
         return a;
       })
     );
+
+    updateAvailableResources();
     hideGlobalLoading();
   };
 
@@ -182,18 +207,7 @@ export function ExploreProvider (props) {
     // Set area object to context
     const selectedArea = areas.find((a) => a.id === selectedAreaId);
     setSelectedArea(selectedArea);
-
-    // Update available resources list
-    setAvailableResources(resourceList.filter((r) => {
-      // If no area is selected, return all resources
-      if (!selectedArea) return true;
-
-      // If resource is not offshore, include it
-      if (r.name !== RESOURCES.OFFSHORE) return true;
-
-      // Include offshore if area as EEZ defined
-      return typeof selectedArea.eez !== 'undefined';
-    }));
+    updateAvailableResources();
   }, [selectedAreaId]);
 
   // Find selected area based on changes in id
