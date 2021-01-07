@@ -24,7 +24,39 @@ import {
   resourceList
 } from '../components/explore/panel-data';
 
-const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI, DEFAULT_RANGE } = INPUT_CONSTANTS;
+// Prepare area dataset
+const areasList = areasJson
+  .map((a) => {
+    if (a.type === 'country') {
+      a.id = a.gid;
+    }
+    // Parse bounds, if a string
+    if (a.bounds && typeof a.bounds === 'string') {
+      a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
+    }
+    return a;
+  })
+  .sort(function (a, b) {
+    var nameA = a.name.toUpperCase();
+    var nameB = b.name.toUpperCase();
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    // names must be equal
+    return 0;
+  });
+
+const {
+  GRID_OPTIONS,
+  SLIDER,
+  BOOL,
+  DROPDOWN,
+  MULTI,
+  DEFAULT_RANGE
+} = INPUT_CONSTANTS;
 const maskTypes = [BOOL];
 const ExploreContext = createContext({});
 
@@ -75,7 +107,7 @@ export function ExploreProvider (props) {
   });
 
   // Init areas state
-  const [areas, setAreas] = useState([]);
+  const [areas, setAreas] = useState(areasList);
   const [selectedArea, setSelectedArea] = useState(null);
 
   const [selectedAreaId, setSelectedAreaId] = useQsState({
@@ -128,32 +160,14 @@ export function ExploreProvider (props) {
       return accum;
     }, new Map());
 
+    // Apply EEZ to country areas
     setAreas(
-      areasJson
-        .map((a) => {
-          if (a.type === 'country') {
-            a.id = a.gid;
-            a.eez = eezCountries.get(a.id);
-          }
-          // Parse bounds, if a string
-          if (a.bounds && typeof a.bounds === 'string') {
-            a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
-          }
-
-          return a;
-        })
-        .sort(function (a, b) {
-          var nameA = a.name.toUpperCase();
-          var nameB = b.name.toUpperCase();
-          if (nameA < nameB) {
-            return -1;
-          }
-          if (nameA > nameB) {
-            return 1;
-          }
-          // names must be equal
-          return 0;
-        })
+      areas.map((a) => {
+        if (a.type === 'country') {
+          a.eez = eezCountries.get(a.id);
+        }
+        return a;
+      })
     );
     hideGlobalLoading();
   };
