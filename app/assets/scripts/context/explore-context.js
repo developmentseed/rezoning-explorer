@@ -120,13 +120,7 @@ export function ExploreProvider (props) {
   const [selectedResource, setSelectedResource] = useQsState({
     key: 'resourceId',
     default: undefined,
-    validator: (v) => {
-      // Do not discard value if resources list is not ready
-      // if (availableResources.length === 0) return true;
-
-      // Check if resource id is available for this country
-      return availableResources.map((r) => r.name).includes(v);
-    }
+    validator: (v) => availableResources.map((r) => r.name).includes(v)
   });
 
   // Helper function to update resource list for the selected area.
