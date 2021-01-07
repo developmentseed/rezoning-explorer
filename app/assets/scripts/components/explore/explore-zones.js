@@ -37,7 +37,7 @@ const ZonesWrapper = styled.section`
 
 const ZonesHeader = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr) 0.75fr;
+  grid-template-columns: repeat(3, 1fr) 1rem;
   align-items: baseline;
   margin: 1rem 0rem;
   ${Button} {
@@ -53,7 +53,7 @@ const ZonesHeader = styled.div`
 
 const Card = styled(CardWrapper)`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr) 1rem;
   justify-content: space-between;
   height: auto;
   box-shadow: none;
@@ -248,23 +248,6 @@ function ExploreZones (props) {
                       )
                     : 'UNAVAILABLE'}
                 </CardDetails>
-                <FormCheckable
-                  name={data.id}
-                  id={data.id}
-                  type='checkbox'
-                  checked={selectedZones[data.id]}
-                  onChange={() => {
-                    setSelectedZones({
-                      ...selectedZones,
-                      [data.id]: !selectedZones[data.id]
-                    });
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                  hideText
-                >Add zone to selection
-                </FormCheckable>
 
               </Card>
             )}
