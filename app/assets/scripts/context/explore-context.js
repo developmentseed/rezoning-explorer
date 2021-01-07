@@ -106,14 +106,16 @@ export function ExploreProvider (props) {
     dehydrator: v => v.active && `${v.input.value.min},${v.input.value.max}`
   });
 
-  // Init areas state
+  // Area context
   const [areas, setAreas] = useState(areasList);
   const [selectedArea, setSelectedArea] = useState(null);
-
   const [selectedAreaId, setSelectedAreaId] = useQsState({
     key: 'areaId',
-    default: undefined
+    default: undefined,
+    validator: areasList.map((a) => a.id)
   });
+
+  // Resource context
   const [availableResources, setAvailableResources] = useState(null);
   const [selectedResource, setSelectedResource] = useQsState({
     key: 'resourceId',
