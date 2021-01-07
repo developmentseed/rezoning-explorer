@@ -129,18 +129,20 @@ export function ExploreProvider (props) {
     }
   });
 
-  // Helper function to update resource list for the selected area
-  function updateAvailableResources () {
+  // Helper function to update resource list for the selected area.
+  // Instead of using "selectedArea" from state, the area must be passed as a param
+  // to avoid life cycle errors.
+  function updateAvailableResources (area) {
     setAvailableResources(
       resourceList.filter((r) => {
         // If no area is selected, return all resources
-        if (!selectedArea) return true;
+        if (!area) return true;
 
         // If resource is not offshore, include it
         if (r.name !== RESOURCES.OFFSHORE) return true;
 
         // Include offshore if area as EEZ defined
-        return typeof selectedArea.eez !== 'undefined';
+        return typeof area.eez !== 'undefined';
       })
     );
   }
@@ -186,16 +188,16 @@ export function ExploreProvider (props) {
     }, new Map());
 
     // Apply EEZs to areas list
-    setAreas(
-      areas.map((a) => {
-        if (a.type === 'country') {
-          a.eez = eezCountries.get(a.id);
-        }
-        return a;
-      })
-    );
+    const areasWithEez = areas.map((a) => {
+      if (a.type === 'country') {
+        a.eez = eezCountries.get(a.id);
+      }
+      return a;
+    });
+    setAreas(areasWithEez);
+    const currentArea = areasWithEez.find((a) => a.id === selectedAreaId);
+    updateAvailableResources(currentArea);
 
-    updateAvailableResources();
     hideGlobalLoading();
   };
 
@@ -205,9 +207,9 @@ export function ExploreProvider (props) {
     dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
 
     // Set area object to context
-    const selectedArea = areas.find((a) => a.id === selectedAreaId);
-    setSelectedArea(selectedArea);
-    updateAvailableResources();
+    const area = areas.find((a) => a.id === selectedAreaId);
+    setSelectedArea(area);
+    updateAvailableResources(area);
   }, [selectedAreaId]);
 
   // Find selected area based on changes in id
@@ -228,6 +230,7 @@ export function ExploreProvider (props) {
     }
 
     setSelectedArea(nextArea);
+    updateAvailableResources(nextArea);
   }, [areas, selectedAreaId, selectedResource]);
 
   useEffect(() => {
