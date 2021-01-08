@@ -168,7 +168,7 @@ export const weightQsSchema = (w) => {
     key: w.id,
     default: defaultValue,
     hydrator: (v) => {
-      const value = parseFloat(v);
+      const value = Number(v);
       return {
         ...w,
         active: true,
@@ -179,14 +179,14 @@ export const weightQsSchema = (w) => {
       };
     },
     dehydrator: (v) => {
-      return parseFloat(get(v, 'input.value', defaultValue));
+      return Number(get(v, 'input.value', defaultValue));
     },
     validator: v => {
       const value = get(v, 'input.value');
 
       if (isNaN(value)) return false;
 
-      const floatValue = parseFloat(value);
+      const floatValue = Number(value);
 
       return (floatValue === max || inRange(floatValue, min, max));
     }
