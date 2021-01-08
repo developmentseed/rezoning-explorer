@@ -120,7 +120,7 @@ export const filterQsSchema = (f, filterRanges, resource) => {
           // max should be valid and not bigger than default max
           value.max = isNaN(max) || max > defaultMax ? defaultMax : max;
 
-          // max should be valid and not bigger than max
+          // min should be valid and not bigger than max
           value.min = isNaN(min) || min < defaultMin || min > value.max ? defaultMin : min;
 
           inputUpdate = {
