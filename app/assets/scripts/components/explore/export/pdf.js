@@ -7,6 +7,7 @@ import get from 'lodash.get';
 import groupBy from 'lodash.groupby';
 import { formatThousands, toTitleCase, getTimestamp } from '../../../utils/format';
 import { formatIndicator } from '../focus-zone';
+import difference from 'lodash.difference';
 
 /* eslint-disable camelcase */
 
@@ -379,8 +380,9 @@ function drawAnalysisInput (doc, data) {
   const { filtersValues } = data;
 
   // Add one table per category
-  const categories = groupBy(filtersValues, 'category');
-  Object.keys(categories).forEach((category, index) => {
+  const filterCategories = groupBy(filtersValues, 'category');
+  Object.keys(filterCategories).forEach((category, index) => {
+    let excludedLandcover;
     const currentY = doc.y;
     doc.y += get(options, 'tables.padding', 0);
 
@@ -389,7 +391,7 @@ function drawAnalysisInput (doc, data) {
     const filterTable = {
       columnAlignment: ['left', 'right'],
       header: [toTitleCase(category), ''],
-      cells: categories[category].map((filter) => {
+      cells: filterCategories[category].map((filter) => {
         let title = filter.title;
         if (filter.unit) {
           title = `${title} (${filter.unit})`;
@@ -399,13 +401,32 @@ function drawAnalysisInput (doc, data) {
         if (filter.isRange) {
           value = `${formatThousands(value.min)} to ${formatThousands(
             value.max
-            )}`;
+          )}`;
+        } else if (filter.id === 'f_land_cover') {
+          const availableLandcoverIndexes = filter.options.map((name, i) => i);
+          const excludedLandcoverIndexes = difference(availableLandcoverIndexes, value);
+          excludedLandcover = excludedLandcoverIndexes.map((i) => filter.options[i]);
+          return;
         } else if (filter.options) {
-          value = 'Unavailable';
+          // Discard other categorical filters as they are not supported now
+          return [title, 'Unavailable'];
         }
         return [title, value];
-      })
+      }).filter((x) => x) // discard null values from categorical filters
     };
+
+    // When 'f_land_cover' is part of category, include land cover types at the
+    // end of the table
+    if (excludedLandcover) {
+      if (excludedLandcover.length > 0) {
+        filterTable.cells.push([
+          'Excluded land cover types',
+          excludedLandcover.join(', ')
+        ]);
+      } else {
+        filterTable.cells.push(['All land cover types are included', '-']);
+      }
+    }
 
     const tableX = (options.margin + ((index % 2) * options.colWidthTwoCol) + ((index % 2) * options.gutterTwoCol));
     const tableY = doc.y + ((index & 2) * 80);

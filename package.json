@@ -133,6 +133,7 @@
     "jest-styled-components": "^7.0.2",
     "lodash.debounce": "^4.0.8",
     "lodash.defaultsdeep": "^4.6.1",
+    "lodash.difference": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.groupby": "^4.6.0",
     "lodash.inrange": "^3.3.6",
