@@ -20,10 +20,43 @@ import {
   INPUT_CONSTANTS,
   RESOURCES,
   checkIncluded,
-  getMultiplierByUnit
+  getMultiplierByUnit,
+  resourceList
 } from '../components/explore/panel-data';
 
-const { GRID_OPTIONS, SLIDER, BOOL, DROPDOWN, MULTI, DEFAULT_RANGE } = INPUT_CONSTANTS;
+// Prepare area dataset
+const areasList = areasJson
+  .map((a) => {
+    if (a.type === 'country') {
+      a.id = a.gid;
+    }
+    // Parse bounds, if a string
+    if (a.bounds && typeof a.bounds === 'string') {
+      a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
+    }
+    return a;
+  })
+  .sort(function (a, b) {
+    var nameA = a.name.toUpperCase();
+    var nameB = b.name.toUpperCase();
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    // names must be equal
+    return 0;
+  });
+
+const {
+  GRID_OPTIONS,
+  SLIDER,
+  BOOL,
+  DROPDOWN,
+  MULTI,
+  DEFAULT_RANGE
+} = INPUT_CONSTANTS;
 const maskTypes = [BOOL];
 const ExploreContext = createContext({});
 
@@ -73,18 +106,40 @@ export function ExploreProvider (props) {
     dehydrator: v => v.active && `${v.input.value.min},${v.input.value.max}`
   });
 
-  // Init areas state
-  const [areas, setAreas] = useState([]);
+  // Area context
+  const [areas, setAreas] = useState(areasList);
   const [selectedArea, setSelectedArea] = useState(null);
-
   const [selectedAreaId, setSelectedAreaId] = useQsState({
     key: 'areaId',
-    default: undefined
+    default: undefined,
+    validator: areasList.map((a) => a.id)
   });
+
+  // Resource context
+  const [availableResources, setAvailableResources] = useState(resourceList);
   const [selectedResource, setSelectedResource] = useQsState({
     key: 'resourceId',
-    default: undefined
+    default: undefined,
+    validator: (v) => availableResources.map((r) => r.name).includes(v)
   });
+
+  // Helper function to update resource list for the selected area.
+  // Instead of using "selectedArea" from state, the area must be passed as a param
+  // to avoid life cycle errors.
+  function updateAvailableResources (area) {
+    setAvailableResources(
+      resourceList.filter((r) => {
+        // If no area is selected, return all resources
+        if (!area) return true;
+
+        // If resource is not offshore, include it
+        if (r.name !== RESOURCES.OFFSHORE) return true;
+
+        // Include offshore if area as EEZ defined
+        return typeof area.eez !== 'undefined';
+      })
+    );
+  }
 
   const [gridMode, setGridMode] = useState(false);
   const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
@@ -126,33 +181,17 @@ export function ExploreProvider (props) {
       return accum;
     }, new Map());
 
-    setAreas(
-      areasJson
-        .map((a) => {
-          if (a.type === 'country') {
-            a.id = a.gid;
-            a.eez = eezCountries.get(a.id);
-          }
-          // Parse bounds, if a string
-          if (a.bounds && typeof a.bounds === 'string') {
-            a.bounds = a.bounds.split(',').map((x) => parseFloat(x));
-          }
+    // Apply EEZs to areas list
+    const areasWithEez = areas.map((a) => {
+      if (a.type === 'country') {
+        a.eez = eezCountries.get(a.id);
+      }
+      return a;
+    });
+    setAreas(areasWithEez);
+    const currentArea = areasWithEez.find((a) => a.id === selectedAreaId);
+    updateAvailableResources(currentArea);
 
-          return a;
-        })
-        .sort(function (a, b) {
-          var nameA = a.name.toUpperCase();
-          var nameB = b.name.toUpperCase();
-          if (nameA < nameB) {
-            return -1;
-          }
-          if (nameA > nameB) {
-            return 1;
-          }
-          // names must be equal
-          return 0;
-        })
-    );
     hideGlobalLoading();
   };
 
@@ -162,7 +201,9 @@ export function ExploreProvider (props) {
     dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
 
     // Set area object to context
-    setSelectedArea(areas.find((a) => a.id === selectedAreaId));
+    const area = areas.find((a) => a.id === selectedAreaId);
+    setSelectedArea(area);
+    updateAvailableResources(area);
   }, [selectedAreaId]);
 
   // Find selected area based on changes in id
@@ -183,6 +224,7 @@ export function ExploreProvider (props) {
     }
 
     setSelectedArea(nextArea);
+    updateAvailableResources(nextArea);
   }, [areas, selectedAreaId, selectedResource]);
 
   useEffect(() => {
@@ -311,6 +353,7 @@ export function ExploreProvider (props) {
           selectedArea,
           selectedAreaId,
           setSelectedAreaId,
+          availableResources,
           selectedResource,
           setSelectedResource,
 

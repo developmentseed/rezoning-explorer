@@ -5,7 +5,6 @@ import Button from '../../styles/button/button';
 import Dl from '../../styles/type/definition-list';
 import ShadowScrollbar from '../common/shadow-scrollbar';
 import { themeVal } from '../../styles/utils/general';
-import { FormCheckable } from '../../styles/form/checkable';
 import { formatThousands, toTitleCase } from '../../utils/format.js';
 import config from '../../config';
 const { indicatorsDecimals } = config;
@@ -79,7 +78,7 @@ export const formatLabel = function (id, titleCased = false) {
 };
 
 function FocusZone (props) {
-  const { zone, selected, onSelect } = props;
+  const { zone } = props;
   const { id } = zone.properties;
   /* eslint-disable-next-line */
   const detailsList = {
@@ -99,29 +98,14 @@ function FocusZone (props) {
           ))}
         </Details>
 
-        <FocusZoneFooter>
-          <FormCheckable
-            name={id}
-            id={id}
-            type='checkbox'
-            checked={selected}
-            onChange={onSelect}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            Add zone to selection
-          </FormCheckable>
-        </FocusZoneFooter>
+        <FocusZoneFooter />
       </ShadowScrollbar>
     </Wrapper>
   );
 }
 
 FocusZone.propTypes = {
-  zone: T.object.isRequired,
-  selected: T.bool,
-  onSelect: T.func
+  zone: T.object.isRequired
 };
 
 export default FocusZone;
