@@ -1,6 +1,7 @@
 import { round } from '../utils/format';
 import get from 'lodash.get';
 import inRange from 'lodash.inrange';
+import intersection from 'lodash.intersection';
 import {
   INPUT_CONSTANTS,
   DEFAULT_WEIGHT_RANGE,
@@ -136,8 +137,12 @@ export const filterQsSchema = (f, filterRanges, resource) => {
           } else {
             v = v.map(Number);
           }
+
           inputUpdate = {
-            value: v,
+            value: intersection(
+              base.input.options.map((opt, i) => i), // restrict to existing options indexes
+              v
+            ),
             active
           };
         } else {
