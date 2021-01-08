@@ -91,73 +91,88 @@ export const initByType = (obj, ranges, resource) => {
   }
 };
 
-export const filterQsSchema = (f, filterRanges, resource) => ({
-  key: f.id,
-  default: undefined,
-  hydrator: v => {
-    const base = {
-      ...f,
-      input: initByType(f, filterRanges, apiResourceNameMap[resource]),
-      active: f.active === undefined ? true : f.active
-    };
+export const filterQsSchema = (f, filterRanges, resource) => {
+  const base = {
+    ...f,
+    input: initByType(f, filterRanges, apiResourceNameMap[resource]),
+    active: f.active === undefined ? true : f.active
+  };
 
-    let inputUpdate;
-    if (v) {
-      if (base.isRange) {
-        const [min, max, active] = v.split(',');
-        inputUpdate = {
-          value: {
-            min: Number(min),
-            max: Number(max)
-          },
-          active: active === undefined
-        };
-      } else if (base.input.options) {
-        v = v.split(',');
-        let active = true;
-        if (v[v.length - 1] === 'false') {
-          // remove active
-          v = v.slice(0, v.length - 2).map(Number);
-          active = false;
+  return {
+    key: f.id,
+    default: undefined,
+    hydrator: (v) => {
+      let inputUpdate;
+      if (v) {
+        if (base.isRange) {
+          const value = {};
+
+          // get defaults
+          const defaultMin = get(base, 'input.range[0]');
+          const defaultMax = get(base, 'input.range[1]');
+
+          // parse value string
+          let [min, max, active] = v.split(',');
+          min = Number(min);
+          max = Number(max);
+
+          // max should be valid and not bigger than default max
+          value.max = isNaN(max) || max > defaultMax ? defaultMax : max;
+
+          // max should be valid and not bigger than max
+          value.min = isNaN(min) || min < defaultMin || min > value.max ? defaultMin : min;
+
+          inputUpdate = {
+            value,
+            active: active === undefined
+          };
+        } else if (base.input.options) {
+          v = v.split(',');
+          let active = true;
+          if (v[v.length - 1] === 'false') {
+            // remove active
+            v = v.slice(0, v.length - 2).map(Number);
+            active = false;
+          } else {
+            v = v.map(Number);
+          }
+          inputUpdate = {
+            value: v,
+            active
+          };
         } else {
-          v = v.map(Number);
+          const [val, active] = v.split(',');
+          inputUpdate = {
+            value: castByFilterType(base.input.type)(val),
+            active: active === undefined
+          };
         }
-        inputUpdate = {
-          value: v,
-          active
-        };
-      } else {
-        const [val, active] = v.split(',');
-        inputUpdate = {
-          value: castByFilterType(base.input.type)(val),
-          active: active === undefined
+
+        return {
+          ...base,
+          active: inputUpdate.active,
+          input: {
+            ...base.input,
+            value: inputUpdate.value || base.input.value
+          }
         };
       }
-
-      return {
-        ...base,
-        active: inputUpdate.active,
-        input: {
-          ...base.input,
-          value: inputUpdate.value || base.input.value
-        }
-      };
+    },
+    dehydrator: (f) => {
+      const { value } = f.input;
+      let shard;
+      if (f.isRange) {
+        shard = `${value.min}, ${value.max}`;
+      } else if (f.input.options) {
+        shard = value.join(',');
+      } else {
+        shard = `${value}`;
+      }
+      shard = f.active ? shard : `${shard},${false}`;
+      return shard;
     }
-  },
-  dehydrator: f => {
-    const { value } = f.input;
-    let shard;
-    if (f.isRange) {
-      shard = `${value.min}, ${value.max}`;
-    } else if (f.input.options) {
-      shard = value.join(',');
-    } else {
-      shard = `${value}`;
-    }
-    shard = f.active ? shard : `${shard},${false}`;
-    return shard;
-  }
-});
+  };
+};
 
 export const weightQsSchema = (w) => {
   const defaultValue = get(w, 'input.default', DEFAULT_WEIGHT_VALUE);
