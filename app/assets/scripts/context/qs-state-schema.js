@@ -1,6 +1,10 @@
 import { round } from '../utils/format';
+import get from 'lodash.get';
+import inRange from 'lodash.inrange';
 import {
   INPUT_CONSTANTS,
+  DEFAULT_WEIGHT_RANGE,
+  DEFAULT_WEIGHT_VALUE,
   setRangeByUnit,
   apiResourceNameMap
 } from '../components/explore/panel-data';
@@ -155,39 +159,39 @@ export const filterQsSchema = (f, filterRanges, resource) => ({
   }
 });
 
-export const weightQsSchema = (w) => ({
-  key: w.id,
-  hydrator: (v) => {
-    const base = {
-      ...w,
-      input: initByType(w, {}),
-      active: w.active === undefined ? true : w.active
-    };
-    let inputUpdate = {};
-    if (v) {
-      const [value, active] = v.split(',');
-      inputUpdate = {
-        value: castByFilterType(base.input.type)(value),
-        active: active === undefined
+export const weightQsSchema = (w) => {
+  const defaultValue = get(w, 'input.default', DEFAULT_WEIGHT_VALUE);
+  const min = get(w, 'input.range[0]', DEFAULT_WEIGHT_RANGE[0]);
+  const max = get(w, 'input.range[1]', DEFAULT_WEIGHT_RANGE[1]);
+
+  return {
+    key: w.id,
+    default: defaultValue,
+    hydrator: (v) => {
+      const value = Number(v);
+      return {
+        ...w,
+        active: true,
+        input: {
+          ...w.input,
+          value: inRange(value, min, max) ? value : defaultValue
+        }
       };
+    },
+    dehydrator: (v) => {
+      return Number(get(v, 'input.value', defaultValue));
+    },
+    validator: v => {
+      const value = get(v, 'input.value');
+
+      if (isNaN(value)) return false;
+
+      const floatValue = Number(value);
+
+      return (floatValue === max || inRange(floatValue, min, max));
     }
-    return {
-      ...base,
-      active:
-        inputUpdate.active === undefined ? base.active : inputUpdate.active,
-      input: {
-        ...base.input,
-        value: inputUpdate.value || base.input.value
-      }
-    };
-  },
-  dehydrator: (w) => {
-    const { value } = w.input;
-    let shard = `${value}`;
-    shard = w.active ? shard : `${shard},${false}`;
-    return shard;
-  }
-});
+  };
+};
 
 export const lcoeQsSchema = (c, resource) => ({
   key: c.id,

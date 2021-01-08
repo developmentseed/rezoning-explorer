@@ -135,6 +135,7 @@
     "lodash.defaultsdeep": "^4.6.1",
     "lodash.get": "^4.4.2",
     "lodash.groupby": "^4.6.0",
+    "lodash.inrange": "^3.3.6",
     "lodash.set": "^4.3.2",
     "lodash.throttle": "^4.1.1",
     "mapbox-gl": "^1.11.0",
