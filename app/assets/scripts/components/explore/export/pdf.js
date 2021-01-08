@@ -7,6 +7,7 @@ import get from 'lodash.get';
 import groupBy from 'lodash.groupby';
 import { formatThousands, toTitleCase, getTimestamp } from '../../../utils/format';
 import { formatIndicator } from '../focus-zone';
+import difference from 'lodash.difference';
 
 /* eslint-disable camelcase */
 
@@ -378,11 +379,10 @@ function drawAnalysisInput (doc, data) {
 
   const { filtersValues } = data;
 
-  let includedLandcover;
-
   // Add one table per category
   const filterCategories = groupBy(filtersValues, 'category');
   Object.keys(filterCategories).forEach((category, index) => {
+    let excludedLandcover;
     const currentY = doc.y;
     doc.y += get(options, 'tables.padding', 0);
 
@@ -403,8 +403,9 @@ function drawAnalysisInput (doc, data) {
             value.max
           )}`;
         } else if (filter.id === 'f_land_cover') {
-          // Keep landcover filters to include lates
-          includedLandcover = value.map((i) => filter.options[i]);
+          const availableLandcoverIndexes = filter.options.map((name, i) => i);
+          const excludedLandcoverIndexes = difference(availableLandcoverIndexes, value);
+          excludedLandcover = excludedLandcoverIndexes.map((i) => filter.options[i]);
           return;
         } else if (filter.options) {
           // Discard other categorical filters as they are not supported now
@@ -413,6 +414,19 @@ function drawAnalysisInput (doc, data) {
         return [title, value];
       }).filter((x) => x) // discard null values from categorical filters
     };
+
+    // When 'f_land_cover' is part of category, include land cover types at the
+    // end of the table
+    if (excludedLandcover) {
+      if (excludedLandcover.length > 0) {
+        filterTable.cells.push([
+          'Excluded land cover types',
+          excludedLandcover.join(', ')
+        ]);
+      } else {
+        filterTable.cells.push(['All land cover types are included', '-']);
+      }
+    }
 
     const tableX = (options.margin + ((index % 2) * options.colWidthTwoCol) + ((index % 2) * options.gutterTwoCol));
     const tableY = doc.y + ((index & 2) * 80);
@@ -430,19 +444,6 @@ function drawAnalysisInput (doc, data) {
       doc.y = currentY;
     }
   });
-
-  if (includedLandcover) {
-    addText(
-      doc,
-      'h3',
-      'Land Cover Types'
-    );
-    addText(
-      doc,
-      'p',
-      includedLandcover.join(', ')
-    );
-  }
 
   // Add weights section
   doc.addPage();
