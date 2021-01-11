@@ -92,6 +92,12 @@ export const initByType = (obj, ranges, resource) => {
   }
 };
 
+/**
+ * Return filter querystring schema to configure useQsSchemma hook
+ * @param {object} f Filter definition
+ * @param {object} filterRanges Filter ranges
+ * @param {string} resource Currently selected resource
+ */
 export const filterQsSchema = (f, filterRanges, resource) => {
   const base = {
     ...f,
@@ -179,6 +185,10 @@ export const filterQsSchema = (f, filterRanges, resource) => {
   };
 };
 
+/**
+ * Return weight querystring schema to configure useQsSchemma hook
+ * @param {object} w Weight definition
+ */
 export const weightQsSchema = (w) => {
   const defaultValue = get(w, 'input.default', DEFAULT_WEIGHT_VALUE);
   const min = get(w, 'input.range[0]', DEFAULT_WEIGHT_RANGE[0]);
@@ -213,36 +223,61 @@ export const weightQsSchema = (w) => {
   };
 };
 
-export const lcoeQsSchema = (c, resource) => ({
-  key: c.id,
-  default: undefined,
-  hydrator: v => {
-    const base = {
-      ...c,
-      input: initByType(c, {}, apiResourceNameMap[resource]),
-      active: c.active === undefined ? true : c.active
-    };
-    let inputUpdate = {};
-    if (v) {
-      const [value, active] = v.split(',');
-      inputUpdate = {
-        value: castByFilterType(base.input.type)(value),
-        active: active === undefined
-      };
-    }
-    return {
-      ...base,
-      active: inputUpdate.active === undefined ? base.active : inputUpdate.active,
-      input: {
-        ...base.input,
-        value: inputUpdate.value || base.input.value
+/**
+ * Return LCOE querystring schema to configure useQsSchemma hook
+ * @param {object} c Weight definition
+ * @param {string} c Selected resource
+ */
+export const lcoeQsSchema = (c, resource) => {
+  const resourceApiId = apiResourceNameMap[resource];
+  const base = {
+    ...c,
+    input: initByType(c, {}, apiResourceNameMap[resource]),
+    active: c.active === undefined ? true : c.active
+  };
+
+  return {
+    key: c.id,
+    default: undefined,
+    hydrator: (v) => {
+      let inputUpdate = {};
+      if (v) {
+        const [qsvalue, active] = v.split(',');
+        let value = get(c, 'input.default');
+        const parsedValue = castByFilterType(base.input.type)(qsvalue);
+
+        // Validate supported LCOE types: options, integer, number
+        if (
+          base.input.options &&
+          get(base, `input.options.${resourceApiId}`, []).includes(parsedValue)
+        ) {
+          value = parsedValue;
+        } else if (base.type === 'integer' && Number.isInteger(parsedValue)) {
+          value = parsedValue;
+        } else if (base.type === 'number' && !isNaN(parsedValue)) {
+          value = parsedValue;
+        }
+
+        inputUpdate = {
+          value,
+          active: active === undefined
+        };
       }
-    };
-  },
-  dehydrator: c => {
-    const { value } = c.input;
-    let shard = `${value}`;
-    shard = c.active ? shard : `${shard},${false}`;
-    return shard;
-  }
-});
+      return {
+        ...base,
+        active:
+          inputUpdate.active === undefined ? base.active : inputUpdate.active,
+        input: {
+          ...base.input,
+          value: inputUpdate.value || base.input.value
+        }
+      };
+    },
+    dehydrator: (c) => {
+      const { value } = c.input;
+      let shard = `${value}`;
+      shard = c.active ? shard : `${shard},${false}`;
+      return shard;
+    }
+  };
+};
