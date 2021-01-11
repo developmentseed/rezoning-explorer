@@ -10,16 +10,9 @@ import {
   apiResourceNameMap
 } from '../components/explore/panel-data';
 
-const {
-  SLIDER,
-  BOOL,
-  DROPDOWN,
-  MULTI,
-  TEXT,
-  DEFAULT_RANGE
-} = INPUT_CONSTANTS;
+const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
-export const castByFilterType = type => {
+export const castByFilterType = (type) => {
   switch (type) {
     case BOOL:
       return Boolean;
@@ -56,9 +49,7 @@ export const initByType = (obj, ranges, resource) => {
         value:
           input.value ||
           input.default ||
-          (obj.isRange
-            ? { min: range[0], max: range[1] }
-            : range[0])
+          (obj.isRange ? { min: range[0], max: range[1] } : range[0])
       };
     case TEXT:
       return {
@@ -127,7 +118,10 @@ export const filterQsSchema = (f, filterRanges, resource) => {
           value.max = isNaN(max) || max > defaultMax ? defaultMax : max;
 
           // min should be valid and not bigger than max
-          value.min = isNaN(min) || min < defaultMin || min > value.max ? defaultMin : min;
+          value.min =
+            isNaN(min) || min < defaultMin || min > value.max
+              ? defaultMin
+              : min;
 
           inputUpdate = {
             value,
@@ -211,14 +205,14 @@ export const weightQsSchema = (w) => {
     dehydrator: (v) => {
       return Number(get(v, 'input.value', defaultValue));
     },
-    validator: v => {
+    validator: (v) => {
       const value = get(v, 'input.value');
 
       if (isNaN(value)) return false;
 
       const floatValue = Number(value);
 
-      return (floatValue === max || inRange(floatValue, min, max));
+      return floatValue === max || inRange(floatValue, min, max);
     }
   };
 };
