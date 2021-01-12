@@ -1,15 +1,14 @@
 import '@babel/polyfill';
-import './wdyr';
 import React, { useEffect, useContext } from 'react';
 import { render } from 'react-dom';
 import { Router, Route, Switch } from 'react-router-dom';
-// import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import GlobalContext, { GlobalProvider } from './context/global-context';
 import history from './utils/history.js';
 
 import GlobalStyles from './styles/global';
 import { GlobalLoading } from './components/common/global-loading';
+import { ToastContainerCustom } from './components/common/toasts';
 
 import theme from './styles/theme/theme';
 
@@ -42,6 +41,7 @@ function Root () {
             <Route exact path='/about' component={About} />
           </Switch>
           <GlobalLoading />
+          <ToastContainerCustom />
         </GlobalProvider>
       </ThemeProvider>
     </Router>

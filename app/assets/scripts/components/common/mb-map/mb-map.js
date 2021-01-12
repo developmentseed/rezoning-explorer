@@ -8,10 +8,12 @@ import { resizeMap } from './mb-map-utils';
 import { featureCollection } from '@turf/helpers';
 
 import ExploreContext from '../../../context/explore-context';
+import FormContext from '../../../context/form-context';
 import MapContext from '../../../context/map-context';
 import theme from '../../../styles/theme/theme';
 import { rgba } from 'polished';
 import { RESOURCES } from '../../explore/panel-data';
+import MapLegend from './map-legend';
 
 const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
@@ -145,12 +147,12 @@ const initializeMap = ({
   });
 
   map.on('load', () => {
-    setMap(map);
     // This map style has a 'background' layer underneath the satellite layer
     // which is completely black. Was not able to remove this via mapbox studio
-    // so removing it on load.
+    // so removing it on load. Removing before setMap ensures that the satellite map does not flash on load.
     map.removeLayer('background');
     map.setLayoutProperty('satellite', 'visibility', 'none');
+    setMap(map);
 
     /*
      * Resize map on window size change
@@ -162,7 +164,7 @@ const initializeMap = ({
      * which will be displayed on "Apply" click
      */
 
-    map.setPaintProperty('land', 'background-opacity', 0.7);
+    map.setPaintProperty('land', 'background-opacity', 0.75);
 
     map.addSource(FILTERED_LAYER_SOURCE, {
       type: 'raster',
@@ -178,7 +180,7 @@ const initializeMap = ({
         visibility: 'none'
       },
       paint: {
-        'raster-opacity': 0.7
+        'raster-opacity': 0.75
       },
       minzoom: 0,
       maxzoom: 22
@@ -197,7 +199,7 @@ const initializeMap = ({
         visibility: 'none'
       },
       paint: {
-        'raster-opacity': 0.5
+        'raster-opacity': 0.75
       },
       minzoom: 0,
       maxzoom: 22
@@ -216,7 +218,7 @@ const initializeMap = ({
         visibility: 'none'
       },
       paint: {
-        'raster-opacity': 0.5
+        'raster-opacity': 0.75
       },
       minzoom: 0,
       maxzoom: 22
@@ -238,7 +240,7 @@ const initializeMap = ({
       layout: {},
       paint: {
         'fill-color': '#efefef',
-        'fill-opacity': 0.4,
+        'fill-opacity': 0.75,
         'fill-outline-color': '#232323'
       }
     });
@@ -264,8 +266,8 @@ const initializeMap = ({
         'fill-opacity': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
-          0.5,
-          0.2
+          0.75,
+          0.25
         ]
       }
     });
@@ -297,14 +299,15 @@ const initializeMap = ({
 };
 
 const addInputLayersToMap = (map, layers, areaId, resource) => {
-  console.log(layers)
+  // Off-shore mask flag
+  const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
+
   layers.forEach((layer) => {
-    console.log(layer);
     const { id: layerId, tiles: layerTiles } = layer;
     const source = map.getSource(`${layerId}_source`);
 
     /* some layers have existing tiles */
-    const tiles = layerTiles || [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis`];
+    const tiles = layerTiles || [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`];
 
     /* If source exists, replace the tiles and return */
     if (source) {
@@ -356,13 +359,12 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
           visibility: layer.visible ? 'visible' : 'none'
         },
         paint: {
-          'raster-opacity': 0.5
+          'raster-opacity': 0.75
         },
         minzoom: 0,
         maxzoom: 22
       }, ZONES_BOUNDARIES_LAYER_ID);
     }
-
   });
 };
 
@@ -388,6 +390,16 @@ function MbMap (props) {
     setMapLayers,
     setFocusZone
   } = useContext(MapContext);
+
+  const {
+    filterRanges
+  } = useContext(FormContext);
+
+  const visibleRaster = mapLayers.filter(layer => layer.type === 'raster' && layer.visible && layer.id !== 'FILTERED_LAYER_ID');
+  let rasterRange = null;
+  if (visibleRaster.length > 0) {
+    rasterRange = filterRanges.getData()[visibleRaster[0].id];
+  }
 
   // Initialize map on mount
   useEffect(() => {
@@ -463,7 +475,7 @@ function MbMap (props) {
     setMapLayers(mapLayers.map(layer => {
       if (layer.category === 'output') {
         layer.disabled = false;
-        if (layer.visible || layer.id === SATELLITE) {
+        if (layer.visible) {
           map.setLayoutProperty(layer.id, 'visibility', 'visible');
           layer.visible = true;
         }
@@ -540,6 +552,7 @@ function MbMap (props) {
 
   return (
     <MapsContainer>
+      {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title} /> : ''}
       <SingleMapContainer ref={mapContainer} />
     </MapsContainer>
   );

@@ -56,6 +56,8 @@ const DROPDOWN = 'dropdown';
 const GRID_OPTIONS = [25, 50];
 const DEFAULT_RANGE = [0, 1000000];
 const DEFAULT_UNIT = '%';
+export const DEFAULT_WEIGHT_RANGE = [0, 1];
+export const DEFAULT_WEIGHT_VALUE = 0.5;
 
 export const INPUT_CONSTANTS = {
   SLIDER,

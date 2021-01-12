@@ -37,7 +37,7 @@ const ZonesWrapper = styled.section`
 
 const ZonesHeader = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr) 0.75fr;
+  grid-template-columns: repeat(3, 1fr) 1rem;
   align-items: baseline;
   margin: 1rem 0rem;
   ${Button} {
@@ -53,7 +53,7 @@ const ZonesHeader = styled.div`
 
 const Card = styled(CardWrapper)`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr) 1rem;
   justify-content: space-between;
   height: auto;
   box-shadow: none;
@@ -66,6 +66,10 @@ const Card = styled(CardWrapper)`
     box-shadow: none;
     transform: none;
     background: ${themeVal('color.primaryAlpha')};
+
+    dd {
+      color: ${themeVal('color.primary')};
+    }
   }
   ${FormCheckable} {
     padding: 0 1rem;
@@ -102,19 +106,23 @@ const Detail = styled.dl`
     font-size: ${themeVal('type.base.size')};
     font-weight: ${themeVal('type.heading.weight')};
     text-align: right;
-    color: ${themeVal('color.primary')};
   }
 `;
 
 const ZoneColumnHead = styled(Subheading)`
     text-align: right;
-    color: ${themeVal('color.primary')};
     display: flex;
     flex-flow: row wrap;
     justify-content: flex-end;
     span {
       order: 3;
       flex: 100%;
+    }
+    &:hover {
+      color: ${themeVal('color.primary')};
+    }
+    &:after {
+      color: ${themeVal('color.primary')};
     }
     ${({ asc, activelySorting }) => {
       if (activelySorting) {
@@ -240,23 +248,6 @@ function ExploreZones (props) {
                       )
                     : 'UNAVAILABLE'}
                 </CardDetails>
-                <FormCheckable
-                  name={data.id}
-                  id={data.id}
-                  type='checkbox'
-                  checked={selectedZones[data.id]}
-                  onChange={() => {
-                    setSelectedZones({
-                      ...selectedZones,
-                      [data.id]: !selectedZones[data.id]
-                    });
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                  hideText
-                >Add zone to selection
-                </FormCheckable>
 
               </Card>
             )}

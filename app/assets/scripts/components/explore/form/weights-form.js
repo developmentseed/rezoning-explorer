@@ -5,7 +5,8 @@ import {
   PanelOption,
   PanelOptionTitle,
   OptionHeadline
-} from './form';
+} from '../../../styles/form/form';
+import FormIntro from './form-intro';
 import InfoButton from '../../common/info-button';
 import FormInput from '../form/form-input';
 
@@ -13,6 +14,10 @@ function WeightsForm (props) {
   const { weights, active } = props;
   return (
     <FormWrapper active={active}>
+      <FormIntro
+        formTitle='Zone weights'
+        introText='Set custom zone weighting parameters to change the calculated zone scores.'
+      />
       {weights.map(([weight, setWeight], ind) => {
         const onChange = useCallback(
           (value) => {

@@ -5,11 +5,12 @@ import Button from '../../styles/button/button';
 import Dl from '../../styles/type/definition-list';
 import ShadowScrollbar from '../common/shadow-scrollbar';
 import { themeVal } from '../../styles/utils/general';
-import { FormCheckable } from '../../styles/form/checkable';
 import { formatThousands, toTitleCase } from '../../utils/format.js';
+import config from '../../config';
+const { indicatorsDecimals } = config;
 
 const Details = styled.div`
-/* stylelint-disable */
+  /* stylelint-disable */
   dd {
     font-weight: ${themeVal('type.base.bold')};
     color: ${themeVal('color.primary')};
@@ -32,7 +33,6 @@ const FocusZoneFooter = styled.div`
   flex-flow: column nowrap;
   justify-content: stretch;*/
 
-
   display: grid;
   grid-template-rows: 1fr 1fr;
   grid-gap: 0.25rem;
@@ -43,11 +43,20 @@ export const formatIndicator = function (id, value) {
 
   switch (id) {
     case 'zone_score':
-      return formatThousands(value, { forceDecimals: true, decimals: 3 });
+      return formatThousands(value, {
+        forceDecimals: true,
+        decimals: indicatorsDecimals.zone_score
+      });
     case 'lcoe':
-      return formatThousands(value, { forceDecimals: true, decimals: 2 });
-    case 'lcoe_density':
-      return formatThousands(value, { forceDecimals: true, decimals: 5 });
+      return formatThousands(value, {
+        forceDecimals: true,
+        decimals: indicatorsDecimals.lcoe
+      });
+    case 'zone_output_density':
+      return formatThousands(value, {
+        forceDecimals: true,
+        decimals: indicatorsDecimals.zone_output_density
+      });
     default:
       return formatThousands(value);
   }
@@ -69,7 +78,7 @@ export const formatLabel = function (id, titleCased = false) {
 };
 
 function FocusZone (props) {
-  const { zone, selected, onSelect } = props;
+  const { zone } = props;
   const { id } = zone.properties;
   /* eslint-disable-next-line */
   const detailsList = {
@@ -78,7 +87,6 @@ function FocusZone (props) {
     ...zone.properties.summary
   };
   return (
-
     <Wrapper>
       <ShadowScrollbar>
         <Details>
@@ -90,28 +98,14 @@ function FocusZone (props) {
           ))}
         </Details>
 
-        <FocusZoneFooter>
-          <FormCheckable
-            name={id}
-            id={id}
-            type='checkbox'
-            checked={selected}
-            onChange={onSelect}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >Add zone to selection
-          </FormCheckable>
-        </FocusZoneFooter>
+        <FocusZoneFooter />
       </ShadowScrollbar>
     </Wrapper>
   );
 }
 
 FocusZone.propTypes = {
-  zone: T.object.isRequired,
-  selected: T.bool,
-  onSelect: T.func
+  zone: T.object.isRequired
 };
 
 export default FocusZone;
