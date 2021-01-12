@@ -311,7 +311,7 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
 
     /* If source exists, replace the tiles and return */
     if (source) {
-      source.tiles = tiles
+      source.tiles = tiles;
       if (layer.visible) {
         map.setLayoutProperty(layerId, 'visibility', 'visible');
       } else {
@@ -322,7 +322,6 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
 
     /* existing tiles are vectors */
     if (layerTiles) {
-      console.log(layerId)
       map.addSource(`${layerId}_source`, {
         type: 'vector',
         tiles: tiles,
