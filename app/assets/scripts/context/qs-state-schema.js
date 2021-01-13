@@ -230,6 +230,10 @@ export const lcoeQsSchema = (c, resource) => {
     active: c.active === undefined ? true : c.active
   };
 
+  const min = get(base, 'input.range[0]');
+  const max = get(base, 'input.range[1]');
+  const defaultValue = get(base, 'input.default');
+
   return {
     key: c.id,
     default: undefined,
@@ -246,10 +250,9 @@ export const lcoeQsSchema = (c, resource) => {
           get(base, `input.options.${resourceApiId}`, []).includes(parsedValue)
         ) {
           value = parsedValue;
-        } else if (base.type === 'integer' && Number.isInteger(parsedValue)) {
-          value = parsedValue;
-        } else if (base.type === 'number' && !isNaN(parsedValue)) {
-          value = parsedValue;
+        } else if (base.input.range) {
+          value = Number(parsedValue)
+          value = inRange(value, min, max) ? value : defaultValue;
         }
 
         inputUpdate = {
