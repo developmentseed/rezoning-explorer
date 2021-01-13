@@ -303,7 +303,7 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
   const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
 
   layers.forEach((layer) => {
-    const { id: layerId, tiles: layerTiles } = layer;
+    const { id: layerId, tiles: layerTiles, symbol } = layer;
     const source = map.getSource(`${layerId}_source`);
 
     /* some layers have existing tiles */
@@ -322,27 +322,48 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
 
     /* existing tiles are vectors */
     if (layerTiles) {
+      // Add source
       map.addSource(`${layerId}_source`, {
         type: 'vector',
-        tiles: tiles,
+        tiles: [layerTiles],
         tileSize: 512
       });
 
-      map.addLayer({
-        id: layerId,
-        type: 'line',
-        source: `${layerId}_source`,
-        'source-layer': 'grid',
-        layout: {
-          visibility: layer.visible ? 'visible' : 'none'
-        },
-        paint: {
-          'line-color': 'orange',
-          'line-width': 1.5
-        },
-        minzoom: 0,
-        maxzoom: 22
-      }, ZONES_BOUNDARIES_LAYER_ID);
+      if (symbol) {
+        // Add a symbol layer with maki icon available in styles
+        map.addLayer({
+          id: layerId,
+          type: 'symbol',
+          source: `${layerId}_source`,
+          'source-layer': layer.id,
+          layout: {
+            visibility: layer.visible ? 'visible' : 'none',
+            'icon-image': symbol
+          },
+          paint: {
+            'icon-color': layer.color
+          },
+          minzoom: 0,
+          maxzoom: 22
+        }, ZONES_BOUNDARIES_LAYER_ID);
+      } else {
+        // Add line layer
+        map.addLayer({
+          id: layerId,
+          type: 'line',
+          source: `${layerId}_source`,
+          'source-layer': layer.id,
+          layout: {
+            visibility: layer.visible ? 'visible' : 'none'
+          },
+          paint: {
+            'line-color': layer.color,
+            'line-width': 1.5
+          },
+          minzoom: 0,
+          maxzoom: 22
+        }, ZONES_BOUNDARIES_LAYER_ID);
+      }
     } else {
       map.addSource(`${layerId}_source`, {
         type: 'raster',
