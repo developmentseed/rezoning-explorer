@@ -251,7 +251,7 @@ export const lcoeQsSchema = (c, resource) => {
         ) {
           value = parsedValue;
         } else if (base.input.range) {
-          value = Number(parsedValue)
+          value = Number(parsedValue);
           value = inRange(value, min, max) ? value : defaultValue;
         }
 
