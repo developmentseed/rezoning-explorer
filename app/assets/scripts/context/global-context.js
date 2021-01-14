@@ -29,6 +29,7 @@ export function GlobalProvider (props) {
   // Monitor download request by watching download object
   useEffect(() => {
     let clientDownloadId;
+    let downloadUrl;
     if (download) {
       clientDownloadId = setInterval(() => {
         const duration = Date.now() - download.startedAt;
@@ -37,9 +38,14 @@ export function GlobalProvider (props) {
         } else {
           fetch(`${apiEndpoint}/export/status/${download.id}`).then(
             async (res) => {
-              const { status } = await res.json();
+              const { status, url } = await res.json();
               if (status === 'complete') {
-                displaySuccess();
+                if (url) {
+                  downloadUrl = url;
+                  displaySuccess();
+                } else {
+                  displayUnknownError();
+                }
               }
             }
           );
@@ -52,7 +58,7 @@ export function GlobalProvider (props) {
         `${download.prettyOperation} raw data export for ${download.selectedArea.name} has completed, click here to start download.`,
         {
           onClick: () => {
-            window.open(`${apiEndpoint}/export/${download.id}`, 'blank');
+            window.open(downloadUrl, 'blank');
           }
         }
       );
@@ -62,6 +68,13 @@ export function GlobalProvider (props) {
     const displayTimeoutError = () => {
       toasts.error(
         `${download.prettyOperation} raw data export for ${download.selectedArea.name} has expired. Please try again later.`
+      );
+      cleanup();
+    };
+
+    const displayUnknownError = () => {
+      toasts.error(
+        `An unknown error occured in ${download.prettyOperation} raw data export for ${download.selectedArea.name}. Please try again later.`
       );
       cleanup();
     };
