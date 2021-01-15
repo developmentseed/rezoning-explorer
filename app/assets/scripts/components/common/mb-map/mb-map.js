@@ -603,7 +603,7 @@ function MbMap (props) {
           onClose={() => setPopoverCoords(null)}
           title='Zone Summary'
           content={<>{renderZoneDetailsList(popoverCoods.feature)}</>}
-          renderFooter='Click to open details at the right panel.'
+          renderFooter='Click zone to view more details in the right panel.'
         />
       )}
     </MapsContainer>
