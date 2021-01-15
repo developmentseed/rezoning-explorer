@@ -275,8 +275,25 @@ const initializeMap = ({
     });
 
     map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
-      if (e.features) {
-        setHoveredFeature(e.features ? e.features[0].properties.id : null);
+      if (e.features && e.features.length > 0) {
+        const feature = e.features[0];
+        const summary = JSON.parse(feature.properties.summary);
+        setHoveredFeature(feature.id);
+        setPopoverCoords({
+          feature: {
+            ...feature,
+            properties: {
+              ...feature.properties,
+              summary: {
+                lcoe: summary.lcoe,
+                zone_score: summary.zone_score
+              }
+            }
+          },
+          coords: [e.lngLat.lng, e.lngLat.lat]
+        });
+      } else {
+        setPopoverCoords(null);
       }
     });
 
@@ -286,7 +303,6 @@ const initializeMap = ({
     map.on('click', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features) {
         const ft = e.features[0];
-        setPopoverCoords([e.lngLat.lng, e.lngLat.lat]);
         setFocusZone({
           ...ft,
           properties: {
@@ -581,18 +597,15 @@ function MbMap (props) {
     <MapsContainer>
       {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title} /> : ''}
       <SingleMapContainer ref={mapContainer} />
-      {map && popoverCoods && focusZone &&
+      {map && popoverCoods && (
         <MapPopover
           mbMap={map}
-          lngLat={popoverCoods}
+          lngLat={popoverCoods.coords}
           onClose={() => setPopoverCoords(null)}
-          title='Zone Details'
-          content={(
-            <>
-              {renderZoneDetailsList(focusZone)}
-            </>
-          )}
-        />}
+          title='Zone Summary'
+          content={<>{renderZoneDetailsList(popoverCoods.feature)}</>}
+        />
+      )}
     </MapsContainer>
   );
 }
