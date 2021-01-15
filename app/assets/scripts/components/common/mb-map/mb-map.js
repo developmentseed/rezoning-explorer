@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import T from 'prop-types';
 import styled, { withTheme } from 'styled-components';
 import mapboxgl from 'mapbox-gl';
 import config from '../../../config';
 import { glsp } from '../../../styles/utils/theme-values';
 import { resizeMap } from './mb-map-utils';
+import MapPopover from '../mb-popover';
 import { featureCollection } from '@turf/helpers';
 
 import ExploreContext from '../../../context/explore-context';
@@ -14,6 +15,7 @@ import theme from '../../../styles/theme/theme';
 import { rgba } from 'polished';
 import { RESOURCES } from '../../explore/panel-data';
 import MapLegend from './map-legend';
+import { renderZoneDetailsList } from './../../explore/focus-zone';
 
 const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
@@ -134,6 +136,7 @@ const initializeMap = ({
   setMap,
   mapContainer,
   setHoveredFeature,
+  setPopoverCoords,
   setFocusZone
 }) => {
   const map = new mapboxgl.Map({
@@ -152,7 +155,6 @@ const initializeMap = ({
     // so removing it on load. Removing before setMap ensures that the satellite map does not flash on load.
     map.removeLayer('background');
     map.setLayoutProperty('satellite', 'visibility', 'none');
-    setMap(map);
 
     /*
      * Resize map on window size change
@@ -273,8 +275,25 @@ const initializeMap = ({
     });
 
     map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
-      if (e.features) {
-        setHoveredFeature(e.features ? e.features[0].properties.id : null);
+      if (e.features && e.features.length > 0) {
+        const feature = e.features[0];
+        const summary = JSON.parse(feature.properties.summary);
+        setHoveredFeature(feature.id);
+        setPopoverCoords({
+          feature: {
+            ...feature,
+            properties: {
+              ...feature.properties,
+              summary: {
+                lcoe: summary.lcoe,
+                zone_score: summary.zone_score
+              }
+            }
+          },
+          coords: [e.lngLat.lng, e.lngLat.lat]
+        });
+      } else {
+        setPopoverCoords(null);
       }
     });
 
@@ -295,6 +314,8 @@ const initializeMap = ({
     });
 
     map.resize();
+
+    setMap(map);
   });
 };
 
@@ -391,6 +412,7 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
 function MbMap (props) {
   const { triggerResize } = props;
   const mapContainer = useRef(null);
+  const [popoverCoods, setPopoverCoords] = useState(null);
 
   const {
     selectedArea,
@@ -424,7 +446,7 @@ function MbMap (props) {
   // Initialize map on mount
   useEffect(() => {
     if (!map) {
-      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeature, setFocusZone });
+      initializeMap({ setMap, mapContainer, selectedArea, setPopoverCoords, setHoveredFeature, setFocusZone });
     }
   }, [map]);
 
@@ -574,6 +596,16 @@ function MbMap (props) {
     <MapsContainer>
       {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title} /> : ''}
       <SingleMapContainer ref={mapContainer} />
+      {map && popoverCoods && (
+        <MapPopover
+          mbMap={map}
+          lngLat={popoverCoods.coords}
+          onClose={() => setPopoverCoords(null)}
+          title='Zone Summary'
+          content={<>{renderZoneDetailsList(popoverCoods.feature)}</>}
+          renderFooter='Click zone to view more details in the right panel.'
+        />
+      )}
     </MapsContainer>
   );
 }
