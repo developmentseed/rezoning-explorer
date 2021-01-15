@@ -430,7 +430,6 @@ function MbMap (props) {
     inputLayers,
     mapLayers,
     setMapLayers,
-    focusZone,
     setFocusZone
   } = useContext(MapContext);
 
