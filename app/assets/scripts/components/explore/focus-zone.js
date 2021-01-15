@@ -77,8 +77,7 @@ export const formatLabel = function (id, titleCased = false) {
   }
 };
 
-function FocusZone (props) {
-  const { zone } = props;
+export function renderZoneDetailsList (zone) {
   const { id } = zone.properties;
   /* eslint-disable-next-line */
   const detailsList = {
@@ -86,18 +85,24 @@ function FocusZone (props) {
     name: zone.properties.id,
     ...zone.properties.summary
   };
+
+  return Object.entries(detailsList).map(([label, data]) => (
+    <Dl key={`${id}-${label}`}>
+      <dt>{formatLabel(label)}</dt>
+      <dd>{formatIndicator(label, data)}</dd>
+    </Dl>
+  ));
+}
+
+function FocusZone (props) {
+  const { zone } = props;
+
   return (
     <Wrapper>
       <ShadowScrollbar>
         <Details>
-          {Object.entries(detailsList).map(([label, data]) => (
-            <Dl key={`${id}-${label}`}>
-              <dt>{formatLabel(label)}</dt>
-              <dd>{formatIndicator(label, data)}</dd>
-            </Dl>
-          ))}
+          {renderZoneDetailsList(zone)}
         </Details>
-
         <FocusZoneFooter />
       </ShadowScrollbar>
     </Wrapper>

@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import T from 'prop-types';
 import styled, { withTheme } from 'styled-components';
 import mapboxgl from 'mapbox-gl';
 import config from '../../../config';
 import { glsp } from '../../../styles/utils/theme-values';
 import { resizeMap } from './mb-map-utils';
+import MapPopover from '../mb-popover';
 import { featureCollection } from '@turf/helpers';
 
 import ExploreContext from '../../../context/explore-context';
@@ -14,6 +15,7 @@ import theme from '../../../styles/theme/theme';
 import { rgba } from 'polished';
 import { RESOURCES } from '../../explore/panel-data';
 import MapLegend from './map-legend';
+import { renderZoneDetailsList } from './../../explore/focus-zone';
 
 const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
@@ -134,6 +136,7 @@ const initializeMap = ({
   setMap,
   mapContainer,
   setHoveredFeature,
+  setPopoverCoords,
   setFocusZone
 }) => {
   const map = new mapboxgl.Map({
@@ -152,7 +155,6 @@ const initializeMap = ({
     // so removing it on load. Removing before setMap ensures that the satellite map does not flash on load.
     map.removeLayer('background');
     map.setLayoutProperty('satellite', 'visibility', 'none');
-    setMap(map);
 
     /*
      * Resize map on window size change
@@ -284,6 +286,7 @@ const initializeMap = ({
     map.on('click', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features) {
         const ft = e.features[0];
+        setPopoverCoords([e.lngLat.lng, e.lngLat.lat]);
         setFocusZone({
           ...ft,
           properties: {
@@ -295,6 +298,8 @@ const initializeMap = ({
     });
 
     map.resize();
+
+    setMap(map);
   });
 };
 
@@ -391,6 +396,7 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
 function MbMap (props) {
   const { triggerResize } = props;
   const mapContainer = useRef(null);
+  const [popoverCoods, setPopoverCoords] = useState(null);
 
   const {
     selectedArea,
@@ -408,6 +414,7 @@ function MbMap (props) {
     inputLayers,
     mapLayers,
     setMapLayers,
+    focusZone,
     setFocusZone
   } = useContext(MapContext);
 
@@ -424,7 +431,7 @@ function MbMap (props) {
   // Initialize map on mount
   useEffect(() => {
     if (!map) {
-      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeature, setFocusZone });
+      initializeMap({ setMap, mapContainer, selectedArea, setPopoverCoords, setHoveredFeature, setFocusZone });
     }
   }, [map]);
 
@@ -574,6 +581,18 @@ function MbMap (props) {
     <MapsContainer>
       {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title} /> : ''}
       <SingleMapContainer ref={mapContainer} />
+      {map && popoverCoods && focusZone &&
+        <MapPopover
+          mbMap={map}
+          lngLat={popoverCoods}
+          onClose={() => setPopoverCoords(null)}
+          title='Zone Details'
+          content={(
+            <>
+              {renderZoneDetailsList(focusZone)}
+            </>
+          )}
+        />}
     </MapsContainer>
   );
 }
