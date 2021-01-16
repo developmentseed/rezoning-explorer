@@ -196,6 +196,7 @@ export const PopoverToolbar = styled.div`
 `;
 
 export const PopoverBody = styled.div`
+  font-size: 0.875rem;
   margin-bottom: ${glsp()};
 
   > *:not(:last-child) {
@@ -204,6 +205,7 @@ export const PopoverBody = styled.div`
 `;
 
 export const PopoverFooter = styled.footer`
+  font-size: 0.875rem;
   > *:not(:last-child) {
     margin-bottom: ${glsp()};
   }
