@@ -287,6 +287,11 @@ const initializeMap = ({
       }
     });
 
+    map.on('mouseleave', ZONES_BOUNDARIES_LAYER_ID, () => {
+      setPopoverCoords(null);
+      setHoveredFeature(null);
+    });
+
     // Set the focused zone to build the zone details panel
     // when map zone bound is clicked
     // This is cleared from the explore-zones component
