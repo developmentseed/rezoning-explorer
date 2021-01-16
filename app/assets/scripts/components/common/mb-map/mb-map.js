@@ -585,9 +585,10 @@ function MbMap (props) {
           mbMap={map}
           lngLat={popoverCoods.coords}
           closeButton={false}
+          offset={[15, 15]}
           content={<>{renderZoneDetailsList(popoverCoods.zoneFeature, ['lcoe', 'zone_score'])}</>}
           footerContent={
-            <a onClick={() => setFocusZone(popoverCoods.zoneFeature)}>
+            <a>
               Click zone to view more details in the right panel.
             </a>
           }
