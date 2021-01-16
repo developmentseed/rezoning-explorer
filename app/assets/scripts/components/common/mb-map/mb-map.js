@@ -277,19 +277,9 @@ const initializeMap = ({
     map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features && e.features.length > 0) {
         const feature = e.features[0];
-        const summary = JSON.parse(feature.properties.summary);
         setHoveredFeature(feature.id);
         setPopoverCoords({
-          feature: {
-            ...feature,
-            properties: {
-              ...feature.properties,
-              summary: {
-                lcoe: summary.lcoe,
-                zone_score: summary.zone_score
-              }
-            }
-          },
+          zoneFeature: feature,
           coords: [e.lngLat.lng, e.lngLat.lat]
         });
       } else {
@@ -303,13 +293,7 @@ const initializeMap = ({
     map.on('click', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features) {
         const ft = e.features[0];
-        setFocusZone({
-          ...ft,
-          properties: {
-            ...ft.properties,
-            summary: JSON.parse(ft.properties.summary)
-          }
-        });
+        setFocusZone(ft);
       }
     });
 
@@ -600,18 +584,10 @@ function MbMap (props) {
         <MapPopover
           mbMap={map}
           lngLat={popoverCoods.coords}
-          onClose={() => setPopoverCoords(null)}
-          closeButton='false'
-          content={<>{renderZoneDetailsList(popoverCoods.feature)}</>}
+          closeButton={false}
+          content={<>{renderZoneDetailsList(popoverCoods.zoneFeature, ['lcoe', 'zone_score'])}</>}
           footerContent={
-            <a onClick={() => setFocusZone({
-              ...popoverCoods.feature,
-              properties: {
-                ...popoverCoods.feature.properties,
-                summary: JSON.parse(popoverCoods.feature.properties.summary)
-              }
-            })}
-            >
+            <a onClick={() => setFocusZone(popoverCoods.zoneFeature)}>
               Click zone to view more details in the right panel.
             </a>
           }
