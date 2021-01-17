@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import T from 'prop-types';
 import styled, { withTheme } from 'styled-components';
 import mapboxgl from 'mapbox-gl';
 import config from '../../../config';
 import { glsp } from '../../../styles/utils/theme-values';
 import { resizeMap } from './mb-map-utils';
+import MapPopover from '../mb-popover';
 import { featureCollection } from '@turf/helpers';
 
 import ExploreContext from '../../../context/explore-context';
@@ -14,6 +15,7 @@ import theme from '../../../styles/theme/theme';
 import { rgba } from 'polished';
 import { RESOURCES } from '../../explore/panel-data';
 import MapLegend from './map-legend';
+import { renderZoneDetailsList } from './../../explore/focus-zone';
 
 const fitBoundsOptions = { padding: 20 };
 mapboxgl.accessToken = config.mbToken;
@@ -134,6 +136,7 @@ const initializeMap = ({
   setMap,
   mapContainer,
   setHoveredFeature,
+  setPopoverCoords,
   setFocusZone
 }) => {
   const map = new mapboxgl.Map({
@@ -152,7 +155,6 @@ const initializeMap = ({
     // so removing it on load. Removing before setMap ensures that the satellite map does not flash on load.
     map.removeLayer('background');
     map.setLayoutProperty('satellite', 'visibility', 'none');
-    setMap(map);
 
     /*
      * Resize map on window size change
@@ -273,9 +275,21 @@ const initializeMap = ({
     });
 
     map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
-      if (e.features) {
-        setHoveredFeature(e.features ? e.features[0].properties.id : null);
+      if (e.features && e.features.length > 0) {
+        const feature = e.features[0];
+        setHoveredFeature(feature.id);
+        setPopoverCoords({
+          zoneFeature: feature,
+          coords: [e.lngLat.lng, e.lngLat.lat]
+        });
+      } else {
+        setPopoverCoords(null);
       }
+    });
+
+    map.on('mouseleave', ZONES_BOUNDARIES_LAYER_ID, () => {
+      setPopoverCoords(null);
+      setHoveredFeature(null);
     });
 
     // Set the focused zone to build the zone details panel
@@ -284,30 +298,30 @@ const initializeMap = ({
     map.on('click', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features) {
         const ft = e.features[0];
-        setFocusZone({
-          ...ft,
-          properties: {
-            ...ft.properties,
-            summary: JSON.parse(ft.properties.summary)
-          }
-        });
+        setFocusZone(ft);
       }
     });
 
     map.resize();
+
+    setMap(map);
   });
 };
 
 const addInputLayersToMap = (map, layers, areaId, resource) => {
   // Off-shore mask flag
   const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
+
   layers.forEach((layer) => {
-    const { id: layerId } = layer;
+    const { id: layerId, tiles: layerTiles, symbol } = layer;
     const source = map.getSource(`${layerId}_source`);
+
+    /* some layers have existing tiles */
+    const tiles = layerTiles || [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`];
 
     /* If source exists, replace the tiles and return */
     if (source) {
-      source.tiles = [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`];
+      source.tiles = tiles;
       if (layer.visible) {
         map.setLayoutProperty(layerId, 'visibility', 'visible');
       } else {
@@ -316,31 +330,78 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
       return;
     }
 
-    map.addSource(`${layerId}_source`, {
-      type: 'raster',
-      tiles: [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`],
-      tileSize: 256
-    });
+    /* existing tiles are vectors */
+    if (layerTiles) {
+      // Add source
+      map.addSource(`${layerId}_source`, {
+        type: 'vector',
+        tiles: [layerTiles],
+        tileSize: 512
+      });
 
-    map.addLayer({
-      id: layerId,
-      type: 'raster',
-      source: `${layerId}_source`,
-      layout: {
-        visibility: layer.visible ? 'visible' : 'none'
-      },
-      paint: {
-        'raster-opacity': 0.75
-      },
-      minzoom: 0,
-      maxzoom: 22
-    }, ZONES_BOUNDARIES_LAYER_ID);
+      if (symbol) {
+        // Add a symbol layer with maki icon available in styles
+        map.addLayer({
+          id: layerId,
+          type: 'symbol',
+          source: `${layerId}_source`,
+          'source-layer': layer.id,
+          layout: {
+            visibility: layer.visible ? 'visible' : 'none',
+            'icon-image': symbol
+          },
+          paint: {
+            'icon-color': layer.color
+          },
+          minzoom: 0,
+          maxzoom: 22
+        }, ZONES_BOUNDARIES_LAYER_ID);
+      } else {
+        // Add line layer
+        map.addLayer({
+          id: layerId,
+          type: 'line',
+          source: `${layerId}_source`,
+          'source-layer': layer.id,
+          layout: {
+            visibility: layer.visible ? 'visible' : 'none'
+          },
+          paint: {
+            'line-color': layer.color,
+            'line-width': 1.5
+          },
+          minzoom: 0,
+          maxzoom: 22
+        }, ZONES_BOUNDARIES_LAYER_ID);
+      }
+    } else {
+      map.addSource(`${layerId}_source`, {
+        type: 'raster',
+        tiles: tiles,
+        tileSize: 256
+      });
+
+      map.addLayer({
+        id: layerId,
+        type: 'raster',
+        source: `${layerId}_source`,
+        layout: {
+          visibility: layer.visible ? 'visible' : 'none'
+        },
+        paint: {
+          'raster-opacity': 0.75
+        },
+        minzoom: 0,
+        maxzoom: 22
+      }, ZONES_BOUNDARIES_LAYER_ID);
+    }
   });
 };
 
 function MbMap (props) {
   const { triggerResize } = props;
   const mapContainer = useRef(null);
+  const [popoverCoods, setPopoverCoords] = useState(null);
 
   const {
     selectedArea,
@@ -374,14 +435,13 @@ function MbMap (props) {
   // Initialize map on mount
   useEffect(() => {
     if (!map) {
-      initializeMap({ setMap, mapContainer, selectedArea, setHoveredFeature, setFocusZone });
+      initializeMap({ setMap, mapContainer, selectedArea, setPopoverCoords, setHoveredFeature, setFocusZone });
     }
   }, [map]);
 
   useEffect(() => {
     if (map && inputLayers.isReady() && selectedArea) {
       const layers = inputLayers.getData();
-
       const initializedLayers = [
         ...layers.map(l => ({
           ...l,
@@ -525,6 +585,20 @@ function MbMap (props) {
     <MapsContainer>
       {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title} /> : ''}
       <SingleMapContainer ref={mapContainer} />
+      {map && popoverCoods && (
+        <MapPopover
+          mbMap={map}
+          lngLat={popoverCoods.coords}
+          closeButton={false}
+          offset={[15, 15]}
+          content={<>{renderZoneDetailsList(popoverCoods.zoneFeature, ['lcoe', 'zone_score'])}</>}
+          footerContent={
+            <a>
+              Click zone to view more details in the right panel.
+            </a>
+          }
+        />
+      )}
     </MapsContainer>
   );
 }

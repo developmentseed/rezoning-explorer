@@ -1,20 +1,18 @@
 import { round } from '../utils/format';
+import get from 'lodash.get';
+import inRange from 'lodash.inrange';
+import intersection from 'lodash.intersection';
 import {
   INPUT_CONSTANTS,
+  DEFAULT_WEIGHT_RANGE,
+  DEFAULT_WEIGHT_VALUE,
   setRangeByUnit,
   apiResourceNameMap
 } from '../components/explore/panel-data';
 
-const {
-  SLIDER,
-  BOOL,
-  DROPDOWN,
-  MULTI,
-  TEXT,
-  DEFAULT_RANGE
-} = INPUT_CONSTANTS;
+const { SLIDER, BOOL, DROPDOWN, MULTI, TEXT, DEFAULT_RANGE } = INPUT_CONSTANTS;
 
-export const castByFilterType = type => {
+export const castByFilterType = (type) => {
   switch (type) {
     case BOOL:
       return Boolean;
@@ -51,9 +49,7 @@ export const initByType = (obj, ranges, resource) => {
         value:
           input.value ||
           input.default ||
-          (obj.isRange
-            ? { min: range[0], max: range[1] }
-            : range[0])
+          (obj.isRange ? { min: range[0], max: range[1] } : range[0])
       };
     case TEXT:
       return {
@@ -87,138 +83,198 @@ export const initByType = (obj, ranges, resource) => {
   }
 };
 
-export const filterQsSchema = (f, filterRanges, resource) => ({
-  key: f.id,
-  default: undefined,
-  hydrator: v => {
-    const base = {
-      ...f,
-      input: initByType(f, filterRanges, apiResourceNameMap[resource]),
-      active: f.active === undefined ? true : f.active
-    };
+/**
+ * Return filter querystring schema to configure useQsSchemma hook
+ * @param {object} f Filter definition
+ * @param {object} filterRanges Filter ranges
+ * @param {string} resource Currently selected resource
+ */
+export const filterQsSchema = (f, filterRanges, resource) => {
+  const base = {
+    ...f,
+    input: initByType(f, filterRanges, apiResourceNameMap[resource]),
+    active: f.active === undefined ? true : f.active
+  };
 
-    let inputUpdate;
-    if (v) {
-      if (base.isRange) {
-        const [min, max, active] = v.split(',');
-        inputUpdate = {
-          value: {
-            min: Number(min),
-            max: Number(max)
-          },
-          active: active === undefined
-        };
-      } else if (base.input.options) {
-        v = v.split(',');
-        let active = true;
-        if (v[v.length - 1] === 'false') {
-          // remove active
-          v = v.slice(0, v.length - 2).map(Number);
-          active = false;
+  return {
+    key: f.id,
+    default: undefined,
+    hydrator: (v) => {
+      let inputUpdate;
+      if (v) {
+        if (base.isRange) {
+          const value = {};
+
+          // get defaults
+          const defaultMin = get(base, 'input.range[0]');
+          const defaultMax = get(base, 'input.range[1]');
+
+          // parse value string
+          let [min, max, active] = v.split(',');
+          min = Number(min);
+          max = Number(max);
+
+          // max should be valid and not bigger than default max
+          value.max = isNaN(max) || max > defaultMax ? defaultMax : max;
+
+          // min should be valid and not bigger than max
+          value.min =
+            isNaN(min) || min < defaultMin || min > value.max
+              ? defaultMin
+              : min;
+
+          inputUpdate = {
+            value,
+            active: active === undefined
+          };
+        } else if (base.input.options) {
+          v = v.split(',');
+          let active = true;
+          if (v[v.length - 1] === 'false') {
+            // remove active
+            v = v.slice(0, v.length - 2).map(Number);
+            active = false;
+          } else {
+            v = v.map(Number);
+          }
+
+          inputUpdate = {
+            value: intersection(
+              base.input.options.map((opt, i) => i), // restrict to existing options indexes
+              v
+            ),
+            active
+          };
         } else {
-          v = v.map(Number);
+          const [val, active] = v.split(',');
+          inputUpdate = {
+            value: castByFilterType(base.input.type)(val),
+            active: active === undefined
+          };
         }
-        inputUpdate = {
-          value: v,
-          active
+
+        return {
+          ...base,
+          active: inputUpdate.active,
+          input: {
+            ...base.input,
+            value: inputUpdate.value || base.input.value
+          }
         };
+      }
+    },
+    dehydrator: (f) => {
+      const { value } = f.input;
+      let shard;
+      if (f.isRange) {
+        shard = `${value.min}, ${value.max}`;
+      } else if (f.input.options) {
+        shard = value.join(',');
       } else {
-        const [val, active] = v.split(',');
+        shard = `${value}`;
+      }
+      shard = f.active ? shard : `${shard},${false}`;
+      return shard;
+    }
+  };
+};
+
+/**
+ * Return weight querystring schema to configure useQsSchemma hook
+ * @param {object} w Weight definition
+ */
+export const weightQsSchema = (w) => {
+  const defaultValue = get(w, 'input.default', DEFAULT_WEIGHT_VALUE);
+  const min = get(w, 'input.range[0]', DEFAULT_WEIGHT_RANGE[0]);
+  const max = get(w, 'input.range[1]', DEFAULT_WEIGHT_RANGE[1]);
+
+  return {
+    key: w.id,
+    default: defaultValue,
+    hydrator: (v) => {
+      const value = Number(v);
+      return {
+        ...w,
+        active: true,
+        input: {
+          ...w.input,
+          value: inRange(value, min, max) ? value : defaultValue
+        }
+      };
+    },
+    dehydrator: (v) => {
+      return Number(get(v, 'input.value', defaultValue));
+    },
+    validator: (v) => {
+      const value = get(v, 'input.value');
+
+      if (isNaN(value)) return false;
+
+      const floatValue = Number(value);
+
+      return floatValue === max || inRange(floatValue, min, max);
+    }
+  };
+};
+
+/**
+ * Return LCOE querystring schema to configure useQsSchemma hook
+ * @param {object} c Weight definition
+ * @param {string} c Selected resource
+ */
+export const lcoeQsSchema = (c, resource) => {
+  const resourceApiId = apiResourceNameMap[resource];
+  const base = {
+    ...c,
+    input: initByType(c, {}, apiResourceNameMap[resource]),
+    active: c.active === undefined ? true : c.active
+  };
+
+  const min = get(base, 'input.range[0]');
+  const max = get(base, 'input.range[1]');
+  const defaultValue = get(base, 'input.default');
+
+  return {
+    key: c.id,
+    default: undefined,
+    hydrator: (v) => {
+      let inputUpdate = {};
+      if (v) {
+        const [qsvalue, active] = v.split(',');
+        let value = get(c, 'input.default');
+        const parsedValue = castByFilterType(base.input.type)(qsvalue);
+
+        // Validate supported LCOE types: options, integer, number
+        if (
+          base.input.options &&
+          get(base, `input.options.${resourceApiId}`, []).includes(parsedValue)
+        ) {
+          value = parsedValue;
+        } else if (base.input.range) {
+          value = Number(parsedValue);
+          value = inRange(value, min, max) ? value : defaultValue;
+        }
+
         inputUpdate = {
-          value: castByFilterType(base.input.type)(val),
+          value,
           active: active === undefined
         };
       }
-
       return {
         ...base,
-        active: inputUpdate.active,
+        active:
+          inputUpdate.active === undefined ? base.active : inputUpdate.active,
         input: {
           ...base.input,
           value: inputUpdate.value || base.input.value
         }
       };
+    },
+    dehydrator: (c) => {
+      const { value } = c.input;
+      let shard = `${value}`;
+      shard = c.active ? shard : `${shard},${false}`;
+      return shard;
     }
-  },
-  dehydrator: f => {
-    const { value } = f.input;
-    let shard;
-    if (f.isRange) {
-      shard = `${value.min}, ${value.max}`;
-    } else if (f.input.options) {
-      shard = value.join(',');
-    } else {
-      shard = `${value}`;
-    }
-    shard = f.active ? shard : `${shard},${false}`;
-    return shard;
-  }
-});
-
-export const weightQsSchema = (w) => ({
-  key: w.id,
-  hydrator: (v) => {
-    const base = {
-      ...w,
-      input: initByType(w, {}),
-      active: w.active === undefined ? true : w.active
-    };
-    let inputUpdate = {};
-    if (v) {
-      const [value, active] = v.split(',');
-      inputUpdate = {
-        value: castByFilterType(base.input.type)(value),
-        active: active === undefined
-      };
-    }
-    return {
-      ...base,
-      active:
-        inputUpdate.active === undefined ? base.active : inputUpdate.active,
-      input: {
-        ...base.input,
-        value: inputUpdate.value || base.input.value
-      }
-    };
-  },
-  dehydrator: (w) => {
-    const { value } = w.input;
-    let shard = `${value}`;
-    shard = w.active ? shard : `${shard},${false}`;
-    return shard;
-  }
-});
-
-export const lcoeQsSchema = (c, resource) => ({
-  key: c.id,
-  default: undefined,
-  hydrator: v => {
-    const base = {
-      ...c,
-      input: initByType(c, {}, apiResourceNameMap[resource]),
-      active: c.active === undefined ? true : c.active
-    };
-    let inputUpdate = {};
-    if (v) {
-      const [value, active] = v.split(',');
-      inputUpdate = {
-        value: castByFilterType(base.input.type)(value),
-        active: active === undefined
-      };
-    }
-    return {
-      ...base,
-      active: inputUpdate.active === undefined ? base.active : inputUpdate.active,
-      input: {
-        ...base.input,
-        value: inputUpdate.value || base.input.value
-      }
-    };
-  },
-  dehydrator: c => {
-    const { value } = c.input;
-    let shard = `${value}`;
-    shard = c.active ? shard : `${shard},${false}`;
-    return shard;
-  }
-});
+  };
+};

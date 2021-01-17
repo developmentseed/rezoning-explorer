@@ -5,7 +5,6 @@ import Button from '../../styles/button/button';
 import Dl from '../../styles/type/definition-list';
 import ShadowScrollbar from '../common/shadow-scrollbar';
 import { themeVal } from '../../styles/utils/general';
-import { FormCheckable } from '../../styles/form/checkable';
 import { formatThousands, toTitleCase } from '../../utils/format.js';
 import config from '../../config';
 const { indicatorsDecimals } = config;
@@ -78,50 +77,55 @@ export const formatLabel = function (id, titleCased = false) {
   }
 };
 
-function FocusZone (props) {
-  const { zone, selected, onSelect } = props;
-  const { id } = zone.properties;
-  /* eslint-disable-next-line */
-  const detailsList = {
-    id: id,
-    name: zone.properties.id,
-    ...zone.properties.summary
+export function renderZoneDetailsList (zone, detailsList) {
+  const { id, properties } = zone;
+
+  let summary = properties.summary;
+
+  // Some feature summaries are JSON strings
+  if (typeof summary === 'string' || summary instanceof String) {
+    summary = JSON.parse(summary);
+  }
+
+  // Filter summary to include selected details
+  if (detailsList) {
+    summary = detailsList.reduce((acc, key) => {
+      acc[key] = summary[key];
+      return acc;
+    }, {});
+  }
+
+  const flatZone = {
+    id,
+    name: zone.name || properties.name || id,
+    ...summary
   };
+
+  return Object.entries(flatZone).map(([label, data]) => (
+    <Dl key={`${id}-${label}`}>
+      <dt>{formatLabel(label)}</dt>
+      <dd>{formatIndicator(label, data)}</dd>
+    </Dl>
+  ));
+}
+
+function FocusZone (props) {
+  const { zone } = props;
+
   return (
     <Wrapper>
       <ShadowScrollbar>
         <Details>
-          {Object.entries(detailsList).map(([label, data]) => (
-            <Dl key={`${id}-${label}`}>
-              <dt>{formatLabel(label)}</dt>
-              <dd>{formatIndicator(label, data)}</dd>
-            </Dl>
-          ))}
+          {renderZoneDetailsList(zone)}
         </Details>
-
-        <FocusZoneFooter>
-          <FormCheckable
-            name={id}
-            id={id}
-            type='checkbox'
-            checked={selected}
-            onChange={onSelect}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            Add zone to selection
-          </FormCheckable>
-        </FocusZoneFooter>
+        <FocusZoneFooter />
       </ShadowScrollbar>
     </Wrapper>
   );
 }
 
 FocusZone.propTypes = {
-  zone: T.object.isRequired,
-  selected: T.bool,
-  onSelect: T.func
+  zone: T.object.isRequired
 };
 
 export default FocusZone;
