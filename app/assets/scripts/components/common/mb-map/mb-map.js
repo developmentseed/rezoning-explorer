@@ -277,24 +277,19 @@ const initializeMap = ({
     map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features && e.features.length > 0) {
         const feature = e.features[0];
-        const summary = JSON.parse(feature.properties.summary);
         setHoveredFeature(feature.id);
         setPopoverCoords({
-          feature: {
-            ...feature,
-            properties: {
-              ...feature.properties,
-              summary: {
-                lcoe: summary.lcoe,
-                zone_score: summary.zone_score
-              }
-            }
-          },
+          zoneFeature: feature,
           coords: [e.lngLat.lng, e.lngLat.lat]
         });
       } else {
         setPopoverCoords(null);
       }
+    });
+
+    map.on('mouseleave', ZONES_BOUNDARIES_LAYER_ID, () => {
+      setPopoverCoords(null);
+      setHoveredFeature(null);
     });
 
     // Set the focused zone to build the zone details panel
@@ -303,13 +298,7 @@ const initializeMap = ({
     map.on('click', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features) {
         const ft = e.features[0];
-        setFocusZone({
-          ...ft,
-          properties: {
-            ...ft.properties,
-            summary: JSON.parse(ft.properties.summary)
-          }
-        });
+        setFocusZone(ft);
       }
     });
 
@@ -600,10 +589,14 @@ function MbMap (props) {
         <MapPopover
           mbMap={map}
           lngLat={popoverCoods.coords}
-          onClose={() => setPopoverCoords(null)}
-          title='Zone Summary'
-          content={<>{renderZoneDetailsList(popoverCoods.feature)}</>}
-          renderFooter='Click zone to view more details in the right panel.'
+          closeButton={false}
+          offset={[15, 15]}
+          content={<>{renderZoneDetailsList(popoverCoods.zoneFeature, ['lcoe', 'zone_score'])}</>}
+          footerContent={
+            <a>
+              Click zone to view more details in the right panel.
+            </a>
+          }
         />
       )}
     </MapsContainer>

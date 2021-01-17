@@ -77,16 +77,31 @@ export const formatLabel = function (id, titleCased = false) {
   }
 };
 
-export function renderZoneDetailsList (zone) {
-  const { id } = zone.properties;
-  /* eslint-disable-next-line */
-  const detailsList = {
-    id: id,
-    name: zone.properties.id,
-    ...zone.properties.summary
+export function renderZoneDetailsList (zone, detailsList) {
+  const { id, properties } = zone;
+
+  let summary = properties.summary;
+
+  // Some feature summaries are JSON strings
+  if (typeof summary === 'string' || summary instanceof String) {
+    summary = JSON.parse(summary);
+  }
+
+  // Filter summary to include selected details
+  if (detailsList) {
+    summary = detailsList.reduce((acc, key) => {
+      acc[key] = summary[key];
+      return acc;
+    }, {});
+  }
+
+  const flatZone = {
+    id,
+    name: zone.name || properties.name || id,
+    ...summary
   };
 
-  return Object.entries(detailsList).map(([label, data]) => (
+  return Object.entries(flatZone).map(([label, data]) => (
     <Dl key={`${id}-${label}`}>
       <dt>{formatLabel(label)}</dt>
       <dd>{formatIndicator(label, data)}</dd>
