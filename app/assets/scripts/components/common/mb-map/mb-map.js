@@ -313,11 +313,11 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
   const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
 
   layers.forEach((layer) => {
-    const { id: layerId, tiles: layerTiles, symbol } = layer;
+    let { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
     const source = map.getSource(`${layerId}_source`);
 
     /* some layers have existing tiles */
-    const tiles = layerTiles || [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`];
+    const tiles = layerTiles || `${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
 
     /* If source exists, replace the tiles and return */
     if (source) {
@@ -331,11 +331,11 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
     }
 
     /* existing tiles are vectors */
-    if (layerTiles) {
+    if (layerType !== 'raster') {
       // Add source
       map.addSource(`${layerId}_source`, {
         type: 'vector',
-        tiles: [layerTiles],
+        tiles: [tiles],
         tileSize: 512
       });
 
@@ -377,7 +377,7 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
     } else {
       map.addSource(`${layerId}_source`, {
         type: 'raster',
-        tiles: tiles,
+        tiles: [tiles],
         tileSize: 256
       });
 
@@ -446,7 +446,7 @@ function MbMap (props) {
         ...layers.map(l => ({
           ...l,
           name: l.title,
-          type: 'raster',
+          type: l.type,
           info: l.description,
           category: l.category || 'Uncategorized',
           visible: l.id === getResourceLayerName(selectedResource)
