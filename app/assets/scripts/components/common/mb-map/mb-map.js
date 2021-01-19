@@ -312,7 +312,15 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
   // Off-shore mask flag
   const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
 
-  layers.forEach((layer) => {
+  // Sort by layer type: symbol > line > raster
+  const sortedLayers = layers.sort((a, b) => {
+    if (a.type === b.type) return 0;
+    if (a.type === 'raster' || b.type === 'symbol') return -1;
+    if (a.type === 'symbol') return 1;
+    return 0;
+  });
+
+  sortedLayers.forEach((layer) => {
     const { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
     const source = map.getSource(`${layerId}_source`);
 
@@ -355,7 +363,7 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
           },
           minzoom: 0,
           maxzoom: 22
-        }, ZONES_BOUNDARIES_LAYER_ID);
+        });
       } else {
         // Add line layer
         map.addLayer({
@@ -372,7 +380,7 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
           },
           minzoom: 0,
           maxzoom: 22
-        }, ZONES_BOUNDARIES_LAYER_ID);
+        });
       }
     } else {
       map.addSource(`${layerId}_source`, {
