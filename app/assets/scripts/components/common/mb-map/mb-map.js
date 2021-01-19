@@ -308,20 +308,31 @@ const initializeMap = ({
   });
 };
 
-const addInputLayersToMap = (map, layers, areaId, resource) => {
+const addInputLayersToMap = (map, layers, selectedArea, resource) => {
   // Off-shore mask flag
   const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
 
-  layers.forEach((layer) => {
-    const { id: layerId, tiles: layerTiles, symbol } = layer;
+  // If area of country type, prepare path string to add to URL
+  const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
+
+  // Sort by layer type: symbol > line > raster
+  const sortedLayers = layers.sort((a, b) => {
+    if (a.type === b.type) return 0;
+    if (a.type === 'raster' || b.type === 'symbol') return -1;
+    if (a.type === 'symbol') return 1;
+    return 0;
+  });
+
+  sortedLayers.forEach((layer) => {
+    const { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
     const source = map.getSource(`${layerId}_source`);
 
     /* some layers have existing tiles */
-    const tiles = layerTiles || [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`];
+    const tiles = layerTiles || `${config.apiEndpoint}/layers${countryPath}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
 
     /* If source exists, replace the tiles and return */
     if (source) {
-      source.tiles = tiles;
+      source.tiles = [tiles];
       if (layer.visible) {
         map.setLayoutProperty(layerId, 'visibility', 'visible');
       } else {
@@ -331,11 +342,11 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
     }
 
     /* existing tiles are vectors */
-    if (layerTiles) {
+    if (layerType !== 'raster') {
       // Add source
       map.addSource(`${layerId}_source`, {
         type: 'vector',
-        tiles: [layerTiles],
+        tiles: [tiles],
         tileSize: 512
       });
 
@@ -355,7 +366,7 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
           },
           minzoom: 0,
           maxzoom: 22
-        }, ZONES_BOUNDARIES_LAYER_ID);
+        });
       } else {
         // Add line layer
         map.addLayer({
@@ -372,12 +383,12 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
           },
           minzoom: 0,
           maxzoom: 22
-        }, ZONES_BOUNDARIES_LAYER_ID);
+        });
       }
     } else {
       map.addSource(`${layerId}_source`, {
         type: 'raster',
-        tiles: tiles,
+        tiles: [tiles],
         tileSize: 256
       });
 
@@ -446,13 +457,13 @@ function MbMap (props) {
         ...layers.map(l => ({
           ...l,
           name: l.title,
-          type: 'raster',
+          type: l.type,
           info: l.description,
           category: l.category || 'Uncategorized',
           visible: l.id === getResourceLayerName(selectedResource)
         }))
       ];
-      addInputLayersToMap(map, initializedLayers, selectedArea.gid, selectedResource);
+      addInputLayersToMap(map, initializedLayers, selectedArea, selectedResource);
       setMapLayers([...outputLayers, ...initializedLayers]);
     }
   }, [map, selectedArea, selectedResource, inputLayers]);

@@ -11,12 +11,12 @@ import { wrapLogReducer } from './../contexeed';
 const limit = pLimit(50);
 const { apiEndpoint } = config;
 
-async function getZoneSummary (feature, filterString, weights, lcoe) {
+async function getZoneSummary (feature, filterString, weights, lcoe, countryPath) {
   let summary = {};
 
   try {
     summary = (
-      await fetchJSON(`${apiEndpoint}/zone?${filterString}`, {
+      await fetchJSON(`${apiEndpoint}/zone${countryPath}?${filterString}`, {
         method: 'POST',
         body: JSON.stringify({
           aoi: feature.geometry,
@@ -108,10 +108,13 @@ export async function fetchZones (
       }
     }
 
+    // If area of country type, prepare path string to add to URL
+    const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
+
     // Fetch Lcoe for each sub-area
     const zones = await Promise.all(
       features.map((z) =>
-        limit(() => getZoneSummary(z, filterString, weights, lcoe))
+        limit(() => getZoneSummary(z, filterString, weights, lcoe, countryPath))
       )
     );
 
