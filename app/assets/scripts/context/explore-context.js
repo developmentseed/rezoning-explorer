@@ -240,7 +240,6 @@ export function ExploreProvider (props) {
       filterString,
       weights,
       lcoe,
-      selectedArea.id,
       dispatchCurrentZones
     );
   };

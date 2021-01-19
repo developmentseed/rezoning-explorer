@@ -16,7 +16,7 @@ async function getZoneSummary (feature, filterString, weights, lcoe, countryPath
 
   try {
     summary = (
-      await fetchJSON(`${apiEndpoint}/zone/${countryPath}?${filterString}`, {
+      await fetchJSON(`${apiEndpoint}/zone${countryPath}?${filterString}`, {
         method: 'POST',
         body: JSON.stringify({
           aoi: feature.geometry,
@@ -53,7 +53,6 @@ export async function fetchZones (
   filterString,
   weights,
   lcoe,
-  countryPath,
   dispatch
 ) {
   dispatch({ type: 'REQUEST_FETCH_ZONES' });
@@ -108,6 +107,9 @@ export async function fetchZones (
         });
       }
     }
+
+    // If area of country type, prepare path string to add to URL
+    const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
 
     // Fetch Lcoe for each sub-area
     const zones = await Promise.all(
