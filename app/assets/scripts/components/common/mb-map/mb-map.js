@@ -277,24 +277,19 @@ const initializeMap = ({
     map.on('mousemove', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features && e.features.length > 0) {
         const feature = e.features[0];
-        const summary = JSON.parse(feature.properties.summary);
         setHoveredFeature(feature.id);
         setPopoverCoords({
-          feature: {
-            ...feature,
-            properties: {
-              ...feature.properties,
-              summary: {
-                lcoe: summary.lcoe,
-                zone_score: summary.zone_score
-              }
-            }
-          },
+          zoneFeature: feature,
           coords: [e.lngLat.lng, e.lngLat.lat]
         });
       } else {
         setPopoverCoords(null);
       }
+    });
+
+    map.on('mouseleave', ZONES_BOUNDARIES_LAYER_ID, () => {
+      setPopoverCoords(null);
+      setHoveredFeature(null);
     });
 
     // Set the focused zone to build the zone details panel
@@ -303,13 +298,7 @@ const initializeMap = ({
     map.on('click', ZONES_BOUNDARIES_LAYER_ID, (e) => {
       if (e.features) {
         const ft = e.features[0];
-        setFocusZone({
-          ...ft,
-          properties: {
-            ...ft.properties,
-            summary: JSON.parse(ft.properties.summary)
-          }
-        });
+        setFocusZone(ft);
       }
     });
 
@@ -323,16 +312,24 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
   // Off-shore mask flag
   const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
 
-  layers.forEach((layer) => {
-    const { id: layerId, tiles: layerTiles, symbol } = layer;
+  // Sort by layer type: symbol > line > raster
+  const sortedLayers = layers.sort((a, b) => {
+    if (a.type === b.type) return 0;
+    if (a.type === 'raster' || b.type === 'symbol') return -1;
+    if (a.type === 'symbol') return 1;
+    return 0;
+  });
+
+  sortedLayers.forEach((layer) => {
+    const { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
     const source = map.getSource(`${layerId}_source`);
 
     /* some layers have existing tiles */
-    const tiles = layerTiles || [`${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`];
+    const tiles = layerTiles || `${config.apiEndpoint}/layers/${areaId}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
 
     /* If source exists, replace the tiles and return */
     if (source) {
-      source.tiles = tiles;
+      source.tiles = [tiles];
       if (layer.visible) {
         map.setLayoutProperty(layerId, 'visibility', 'visible');
       } else {
@@ -342,11 +339,11 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
     }
 
     /* existing tiles are vectors */
-    if (layerTiles) {
+    if (layerType !== 'raster') {
       // Add source
       map.addSource(`${layerId}_source`, {
         type: 'vector',
-        tiles: [layerTiles],
+        tiles: [tiles],
         tileSize: 512
       });
 
@@ -366,7 +363,7 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
           },
           minzoom: 0,
           maxzoom: 22
-        }, ZONES_BOUNDARIES_LAYER_ID);
+        });
       } else {
         // Add line layer
         map.addLayer({
@@ -383,12 +380,12 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
           },
           minzoom: 0,
           maxzoom: 22
-        }, ZONES_BOUNDARIES_LAYER_ID);
+        });
       }
     } else {
       map.addSource(`${layerId}_source`, {
         type: 'raster',
-        tiles: tiles,
+        tiles: [tiles],
         tileSize: 256
       });
 
@@ -457,7 +454,7 @@ function MbMap (props) {
         ...layers.map(l => ({
           ...l,
           name: l.title,
-          type: 'raster',
+          type: l.type,
           info: l.description,
           category: l.category || 'Uncategorized',
           visible: l.id === getResourceLayerName(selectedResource)
@@ -600,10 +597,14 @@ function MbMap (props) {
         <MapPopover
           mbMap={map}
           lngLat={popoverCoods.coords}
-          onClose={() => setPopoverCoords(null)}
-          title='Zone Summary'
-          content={<>{renderZoneDetailsList(popoverCoods.feature)}</>}
-          renderFooter='Click zone to view more details in the right panel.'
+          closeButton={false}
+          offset={[15, 15]}
+          content={<>{renderZoneDetailsList(popoverCoods.zoneFeature, ['lcoe', 'zone_score'])}</>}
+          footerContent={
+            <a>
+              Click zone to view more details in the right panel.
+            </a>
+          }
         />
       )}
     </MapsContainer>
