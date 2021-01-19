@@ -90,7 +90,7 @@ jobs:
           name: Deploy to surge
           command: |
             cp /workspace/dist/index.html /workspace/dist/200.html
-            ./node_modules/surge/lib/cli.js --project /workspace/dist --domain https://rezoning-dev.surge.sh
+            ./node_modules/surge/lib/cli.js --project /workspace/dist --domain http://rezoning-dev.surge.sh
 
   deploy-surge:
     <<: *base_def
