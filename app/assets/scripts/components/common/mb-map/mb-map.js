@@ -329,7 +329,7 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
 
     /* If source exists, replace the tiles and return */
     if (source) {
-      source.tiles = tiles;
+      source.tiles = [tiles];
       if (layer.visible) {
         map.setLayoutProperty(layerId, 'visibility', 'visible');
       } else {
