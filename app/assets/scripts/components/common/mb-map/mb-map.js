@@ -313,7 +313,7 @@ const addInputLayersToMap = (map, layers, areaId, resource) => {
   const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
 
   layers.forEach((layer) => {
-    let { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
+    const { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
     const source = map.getSource(`${layerId}_source`);
 
     /* some layers have existing tiles */
