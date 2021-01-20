@@ -12,7 +12,9 @@ const limit = pLimit(50);
 const { apiEndpoint } = config;
 
 async function getZoneSummary (feature, filterString, weights, lcoe, countryPath) {
-  let summary = {};
+  let summary = {
+    lcoe: 0, zone_score: 0, zone_output: 0, zone_output_density: 0
+  };
 
   try {
     summary = (
@@ -29,6 +31,11 @@ async function getZoneSummary (feature, filterString, weights, lcoe, countryPath
     // eslint-disable-next-line
     console.log(`Error fetching zone ${feature.properties.id} analysis.`);
   }
+
+  // Set negative values to zero
+  Object.keys(summary).forEach(key => {
+    if (summary[key] < 0) summary[key] = 0;
+  });
 
   return {
     ...feature,
