@@ -12,7 +12,9 @@ const limit = pLimit(50);
 const { apiEndpoint } = config;
 
 async function getZoneSummary (feature, filterString, weights, lcoe, countryPath) {
-  let summary = {};
+  let summary = {
+    lcoe: 0, zone_score: 0, zone_output: 0, zone_output_density: 0
+  };
 
   try {
     summary = (
