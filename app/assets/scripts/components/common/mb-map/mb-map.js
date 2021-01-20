@@ -556,6 +556,16 @@ function MbMap (props) {
         }
       }))
     });
+
+    // Disable all layers besides zones boundaries
+    setMapLayers(mapLayers.map(layer => {
+      const visible = layer.id === ZONES_BOUNDARIES_LAYER_ID;
+      map.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none');
+      return {
+        ...layer,
+        visible
+      };
+    }));
   }, [currentZones]);
 
   useEffect(() => {
