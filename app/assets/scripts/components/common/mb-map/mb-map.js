@@ -315,15 +315,7 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
   // If area of country type, prepare path string to add to URL
   const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
 
-  // Sort by layer type: symbol > line > raster
-  const sortedLayers = layers.sort((a, b) => {
-    if (a.type === b.type) return 0;
-    if (a.type === 'raster' || b.type === 'symbol') return -1;
-    if (a.type === 'symbol') return 1;
-    return 0;
-  });
-
-  sortedLayers.forEach((layer) => {
+  layers.forEach((layer) => {
     const { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
     const source = map.getSource(`${layerId}_source`);
 
@@ -564,6 +556,16 @@ function MbMap (props) {
         }
       }))
     });
+
+    // Disable all layers besides zones boundaries
+    setMapLayers(mapLayers.map(layer => {
+      const visible = layer.id === ZONES_BOUNDARIES_LAYER_ID;
+      map.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none');
+      return {
+        ...layer,
+        visible
+      };
+    }));
   }, [currentZones]);
 
   useEffect(() => {
