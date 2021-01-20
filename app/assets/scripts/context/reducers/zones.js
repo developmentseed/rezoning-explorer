@@ -30,6 +30,11 @@ async function getZoneSummary (feature, filterString, weights, lcoe, countryPath
     console.log(`Error fetching zone ${feature.properties.id} analysis.`);
   }
 
+  // Set negative values to zero
+  Object.keys(summary).forEach(key => {
+    if (summary[key] < 0) summary[key] = 0;
+  });
+
   return {
     ...feature,
     id: feature.properties.id,
