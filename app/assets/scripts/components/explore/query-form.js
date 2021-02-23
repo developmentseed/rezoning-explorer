@@ -271,24 +271,6 @@ function QueryForm (props) {
             ]
           }
         />
-        <WeightsForm
-          name='weights'
-          icon='sliders-horizontal'
-          weights={weightsInd}
-          presets={presets.weights}
-          setPreset={(preset) => {
-            if (preset === 'reset') {
-              initialize(weightsList, weightsInd, {
-                reset: true
-              });
-            } else {
-              initialize(presets.weights[preset], weightsInd, {
-                reset: true
-              });
-            }
-          }}
-
-        />
         <LCOEForm
           name='Economics'
           icon='disc-dollar'
@@ -302,6 +284,24 @@ function QueryForm (props) {
               });
             } else {
               initialize(presets.lcoe[preset], lcoeInd, {
+                reset: true
+              });
+            }
+          }}
+
+        />
+        <WeightsForm
+          name='weights'
+          icon='sliders-horizontal'
+          weights={weightsInd}
+          presets={presets.weights}
+          setPreset={(preset) => {
+            if (preset === 'reset') {
+              initialize(weightsList, weightsInd, {
+                reset: true
+              });
+            } else {
+              initialize(presets.weights[preset], weightsInd, {
                 reset: true
               });
             }

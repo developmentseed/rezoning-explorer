@@ -445,30 +445,6 @@ function drawAnalysisInput (doc, data) {
     }
   });
 
-  // Add weights section
-  doc.addPage();
-  drawSectionHeader(
-    'Weights',
-    doc.x,
-    doc.y,
-    doc,
-    options
-  );
-  doc.y += options.tables.padding;
-  addText(
-    doc,
-    'p',
-    'Laboris aliqua duis incididunt occaecat elit occaecat sunt deserunt est commodo deserunt tempor anim nostrud. Sit sint mollit incididunt in nisi adipisicing excepteur quis veniam occaecat irure. Quis cupidatat aliqua irure aliqua deserunt minim anim laboris nulla enim proident magna amet.'
-  );
-
-  doc.table({
-    columnAlignment: ['left', 'right'],
-    cells: Object.keys(data.weightsValues).map((weightId) => {
-      const weight = data.weightsValues[weightId];
-      return [weight.title, weight.input.value];
-    })
-  }, { width: options.colWidthThreeCol * 2 });
-
   // Add LCOE section
   doc.addPage();
   drawSectionHeader(
@@ -490,6 +466,30 @@ function drawAnalysisInput (doc, data) {
     cells: Object.keys(data.lcoeValues).map((lcoeId) => {
       const lcoe = data.lcoeValues[lcoeId];
       return [lcoe.title, lcoe.input.value];
+    })
+  }, { width: options.colWidthThreeCol * 2 });
+
+  // Add weights section
+  doc.addPage();
+  drawSectionHeader(
+    'Weights',
+    doc.x,
+    doc.y,
+    doc,
+    options
+  );
+  doc.y += options.tables.padding;
+  addText(
+    doc,
+    'p',
+    'Laboris aliqua duis incididunt occaecat elit occaecat sunt deserunt est commodo deserunt tempor anim nostrud. Sit sint mollit incididunt in nisi adipisicing excepteur quis veniam occaecat irure. Quis cupidatat aliqua irure aliqua deserunt minim anim laboris nulla enim proident magna amet.'
+  );
+
+  doc.table({
+    columnAlignment: ['left', 'right'],
+    cells: Object.keys(data.weightsValues).map((weightId) => {
+      const weight = data.weightsValues[weightId];
+      return [weight.title, weight.input.value];
     })
   }, { width: options.colWidthThreeCol * 2 });
 }
