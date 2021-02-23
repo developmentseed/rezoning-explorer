@@ -136,7 +136,16 @@ const initializeMap = ({
     fitBoundsOptions,
     preserveDrawingBuffer: true // required for the map's canvas to be exported to a PNG
   });
+
+  // Disable map rotation using right click + drag.
+  map.dragRotate.disable();
+
+  // Disable map rotation using touch rotation gesture.
+  map.touchZoomRotate.disableRotation();
+
+  // Add zoom controls.
   map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
+
   map.on('load', () => {
     // This map style has a 'background' layer underneath the satellite layer
     // which is completely black. Was not able to remove this via mapbox studio
