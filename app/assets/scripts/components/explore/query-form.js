@@ -225,7 +225,7 @@ function QueryForm (props) {
 
         <HeadOption>
           <HeadOptionHeadline>
-            <Subheading>Grid Size: </Subheading>
+            <Subheading>Zone Type and Size: </Subheading>
             <Subheading variation='primary'>
               <Subheadingstrong>
                 {gridMode ? `${gridSize} km²` : 'Boundaries'}
