@@ -120,7 +120,7 @@ function Home () {
         <InpageBody>
           <InpageBodyInner>
             <Lead>
-              Identify and explore high potential project areas for solar, wind
+              Identify and explore high potential project areas for solar, onshore wind
               and offshore wind development
             </Lead>
             <CTAButtons>

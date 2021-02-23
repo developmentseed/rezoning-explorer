@@ -191,7 +191,7 @@ function drawHeader (doc, { selectedArea }) {
     .font(baseFont)
     .fontSize(subTitleSize)
     .text(
-      'Identify project areas for solar, wind and offshore wind development',
+      'Identify project areas for solar, onshore wind and offshore wind development',
       doc.page.width - options.colWidthTwoCol - options.margin,
       options.margin + 16,
       {
