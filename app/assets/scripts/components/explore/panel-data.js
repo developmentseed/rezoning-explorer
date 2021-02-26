@@ -1,4 +1,4 @@
-const WIND = 'Wind';
+const WIND = 'Onshore Wind';
 const OFFSHORE = 'Off-Shore Wind';
 const SOLAR = 'Solar PV';
 export const RESOURCES = {

@@ -102,23 +102,11 @@ const MapsContainer = styled.div`
   /* Styles to accommodate the partner logos */
   .mapboxgl-ctrl-bottom-left {
     display: flex;
-    align-items: center;
-    flex-direction: row-reverse;
+    align-items: start;
+    flex-direction: column;
+    justify-content: space-between;
     > .mapboxgl-ctrl {
-      margin: 0 ${glsp(0.5)} 0 0;
-    }
-  }
-  .partner-logos {
-    display: flex;
-    img {
-      display: block;
-      height: 3rem;
-    }
-    a {
-      display: block;
-    }
-    > *:not(:last-child) {
-      margin: 0 ${glsp(0.5)} 0 0;
+      margin-bottom: ${glsp(0.5)};
     }
   }
 `;
@@ -148,6 +136,15 @@ const initializeMap = ({
     fitBoundsOptions,
     preserveDrawingBuffer: true // required for the map's canvas to be exported to a PNG
   });
+
+  // Disable map rotation using right click + drag.
+  map.dragRotate.disable();
+
+  // Disable map rotation using touch rotation gesture.
+  map.touchZoomRotate.disableRotation();
+
+  // Add zoom controls.
+  map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
 
   map.on('load', () => {
     // This map style has a 'background' layer underneath the satellite layer
