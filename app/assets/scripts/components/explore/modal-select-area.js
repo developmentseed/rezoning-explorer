@@ -5,17 +5,16 @@ import T from 'prop-types';
 import ModalSelect from './modal-select';
 import FormInput from '../../styles/form/input';
 import { Card } from '../common/card-list';
-import { ModalHeader } from '@devseed-ui/modal';
+import { ModalHeadline } from '@devseed-ui/modal';
 
 const SearchBar = styled(FormInput)`
-  width: 100%;
-`;
-
-const HeaderWrapper = styled(ModalHeader)`
-  display: flex;
-  flex-flow: column nowrap;
   width: 80%;
   margin: 0 auto;
+`;
+
+const HeaderWrapper = styled(ModalHeadline)`
+  flex-flow: column nowrap;
+  width: 100%;
 `;
 
 const Headline = styled.h3`
@@ -30,12 +29,12 @@ const Headline = styled.h3`
 const HeadlineTabs = styled.div`
   display: flex;
   margin-bottom: 1rem;
+  justify-content: center;
 `;
 
 function ModalSelectArea (props) {
   const {
     areas,
-    selectedResource,
     showSelectAreaModal,
     setShowSelectAreaModal,
     setSelectedAreaId
@@ -48,12 +47,14 @@ function ModalSelectArea (props) {
     <ModalSelect
       revealed={showSelectAreaModal}
       onOverlayClick={() => {
-        if (selectedResource) {
-          setShowSelectAreaModal(false);
-        }
+        setShowSelectAreaModal(false);
+        // if (selectedResource) {
+        //   setShowSelectAreaModal(false);
+        // }
       }}
+      onCloseClick={() => setShowSelectAreaModal(false)}
       data={areas.filter((a) => a.type === areaType)}
-      renderHeader={() => (
+      renderHeadline={() => (
         <HeaderWrapper id='select-area-modal-header'>
           <HeadlineTabs>
             {['country', 'region'].map((t) => (
@@ -99,7 +100,6 @@ function ModalSelectArea (props) {
 
 ModalSelectArea.propTypes = {
   areas: T.array,
-  selectedResource: T.string,
   showSelectAreaModal: T.bool,
   setShowSelectAreaModal: T.func,
   setSelectedAreaId: T.func
