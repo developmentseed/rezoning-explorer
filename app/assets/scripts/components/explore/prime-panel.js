@@ -245,9 +245,6 @@ function ExpMapPrimePanel (props) {
         revealed={showSelectResourceModal && !showSelectAreaModal}
         onOverlayClick={() => {
           setShowSelectResourceModal(false);
-          // if (selectedResource) {
-          //   setShowSelectResourceModal(false);
-          // }
         }}
         onCloseClick={() => {
           setShowSelectResourceModal(false);

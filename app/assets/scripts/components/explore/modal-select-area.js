@@ -12,7 +12,7 @@ const SearchBar = styled(FormInput)`
   margin: 0 auto;
 `;
 
-const HeaderWrapper = styled(ModalHeadline)`
+const HeadlineWrapper = styled(ModalHeadline)`
   flex-flow: column nowrap;
   width: 100%;
 `;
@@ -48,14 +48,11 @@ function ModalSelectArea (props) {
       revealed={showSelectAreaModal}
       onOverlayClick={() => {
         setShowSelectAreaModal(false);
-        // if (selectedResource) {
-        //   setShowSelectAreaModal(false);
-        // }
       }}
       onCloseClick={() => setShowSelectAreaModal(false)}
       data={areas.filter((a) => a.type === areaType)}
       renderHeadline={() => (
-        <HeaderWrapper id='select-area-modal-header'>
+        <HeadlineWrapper id='select-area-modal-header'>
           <HeadlineTabs>
             {['country', 'region'].map((t) => (
               <Headline
@@ -73,7 +70,7 @@ function ModalSelectArea (props) {
             onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
           />
-        </HeaderWrapper>
+        </HeadlineWrapper>
       )}
       filterCard={(card) =>
         card.name.toLowerCase().includes(searchValue.toLowerCase())}
