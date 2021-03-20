@@ -2,6 +2,7 @@ import { createGlobalStyle, css } from 'styled-components';
 import { normalize, rgba } from 'polished';
 
 import { themeVal, stylizeFunction } from './utils/general';
+import media from './utils/media-queries';
 // import { collecticonsFont } from '@devseed-ui/collecticons';
 import { collecticonsFont } from './collecticons';
 import { unscrollableY, unscrollableX } from './helpers';
@@ -167,6 +168,10 @@ const baseStyles = css`
 
   #modal-select {
     background: ${themeVal('color.baseAlphaB')};
+    top: 4rem;
+    ${media.mediumUp`
+      left: 4rem;
+    `}
   }
 `;
 
