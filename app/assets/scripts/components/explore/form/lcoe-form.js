@@ -60,7 +60,8 @@ LCOEForm.propTypes = {
   setPreset: T.func,
   lcoe: T.array,
   setLcoe: T.func,
-  active: T.bool
+  active: T.bool,
+  disabled: T.bool
 };
 
 export default LCOEForm;

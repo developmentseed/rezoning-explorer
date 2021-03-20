@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { themeVal } from '../utils/general';
 import { glsp } from '../utils/theme-values';
 import { FormSwitch } from './switch';
@@ -17,6 +17,14 @@ export const FormWrapper = styled.section`
       return 'display: none;';
     }
   }}
+  ${({ disabled }) => disabled &&
+    css`
+      filter: blur(4px);
+      opacity: 0.8;
+      cursor: not-allowed;
+      pointer-events: none;
+    `
+  }
 `;
 
 export const FormGroupWrapper = styled.div`
@@ -131,6 +139,17 @@ export const InactiveMessage = styled.div`
   padding: 0.5rem 0;
   font-size: 0.875rem;
   font-style: italic;
+`;
+
+export const EmptyState = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 35vh 2rem;
+  background: rgba(255,255,255,0.64);
+  text-align: center;
+  z-index: 1;
 `;
 
 export default Form;

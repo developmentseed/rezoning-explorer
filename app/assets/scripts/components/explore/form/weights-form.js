@@ -60,7 +60,8 @@ WeightsForm.propTypes = {
   setPreset: T.func,
   weights: T.array,
   setWeights: T.func,
-  active: T.bool
+  active: T.bool,
+  disabled: T.bool
 };
 
 export default WeightsForm;
