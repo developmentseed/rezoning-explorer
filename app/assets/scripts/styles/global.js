@@ -170,6 +170,7 @@ const baseStyles = css`
     background: ${themeVal('color.baseAlphaB')};
     top: 4rem;
     ${media.mediumUp`
+      top: 0;
       left: 4rem;
     `}
   }
