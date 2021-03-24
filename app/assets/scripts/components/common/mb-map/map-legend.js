@@ -10,8 +10,8 @@ import { scaleLinear, scaleOrdinal } from '@visx/scale';
 import colormap from 'colormap';
 
 const MapLegendSelf = styled.div`
+  ${cardSkin}
   z-index: 10;
-  ${cardSkin};
   font-size: 0.875rem;
   padding: ${glsp(0.75)};
   margin: ${glsp(0.5)};
