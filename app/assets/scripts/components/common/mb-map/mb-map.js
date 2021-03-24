@@ -594,6 +594,7 @@ function MbMap (props) {
   return (
     <MapsContainer>
       {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title} /> : ''}
+      {selectedResource === 'Off-Shore Wind' && <MapLegend description='Country Exclusive Econnomic Zone' />}
       <SingleMapContainer ref={mapContainer} />
       {map && popoverCoods && (
         <MapPopover
