@@ -2,25 +2,22 @@ import React from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 
-import { themeVal } from '../../../styles/utils/general';
 import { glsp } from '../../../styles/utils/theme-values';
+import { cardSkin } from '../../../styles/skins';
 
 import { LegendLinear, LegendItem } from '@visx/legend';
-import { scaleLinear } from '@visx/scale';
+import { scaleLinear, scaleOrdinal } from '@visx/scale';
 import colormap from 'colormap';
 
 const MapLegendSelf = styled.div`
-  position: absolute;
-  right: 0.5rem;
-  bottom: 2.5rem;
   z-index: 10;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: ${themeVal('shape.rounded')};
-  font-size: 0.874rem;
-  padding: ${glsp(0.5)};
+  ${cardSkin};
+  font-size: 0.875rem;
+  padding: ${glsp(0.75)};
   margin: ${glsp(0.5)};
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: ${glsp(0.25)};
   svg {
     display: block;
   }

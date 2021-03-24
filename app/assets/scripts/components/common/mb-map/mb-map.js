@@ -103,6 +103,7 @@ const MapsContainer = styled.div`
   justify-content: flex-end;
   flex-flow: column;
   align-items: flex-end;
+  padding-bottom: 2.125rem;
   /* Styles to accommodate the partner logos */
   .mapboxgl-ctrl-bottom-left {
     display: flex;
