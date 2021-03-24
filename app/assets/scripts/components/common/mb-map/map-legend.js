@@ -47,10 +47,19 @@ const InputLabel = styled.span`
 `;
 
 export default function MapLegend (props) {
-  const scale = scaleLinear({
-    domain: Array(50).fill(0).map((a, i) => i / 50),
-    range: colormap({ colormap: 'viridis', nshades: 50 })
-  });
+  // Default legend scale uses colormap with "viridis." Logic allows for custom colormaps passed to legends, and for custom ordinal color scales
+  let scale;
+  if (props.scale.colorArray) {
+    scale = scaleOrdinal({
+      domain: Array(props.scale.domain).fill(0).map((a, i) => i / props.scale.domain),
+      range: props.scale.colorArray
+    });
+  } else {
+    scale = scaleLinear({
+      domain: Array(props.scale.domain).fill(0).map((a, i) => i / props.scale.domain),
+      range: colormap({ colormap: props.scale.colorMap, nshades: props.scale.domain })
+    });
+  }
 
   const min = props.min !== undefined ? props.min.toFixed(1) : '';
   const max = props.max !== undefined ? props.max.toFixed(1) : '';
@@ -59,14 +68,14 @@ export default function MapLegend (props) {
     <MapLegendSelf>
       <LegendLinear
         scale={scale}
-        steps={50}
+        steps={props.scale.domain}
       >
         {labels => (
           <LegendLabelsStyled>
             {labels.map((label, i) => (
               <LegendItem key={`legend-linear-${label.datum}`}>
-                <svg width={4} height={10}>
-                  <rect fill={label.value} width={4} height={10} />
+                <svg width={props.width || 4} height={10}>
+                  <rect fill={label.value} stroke={props.scale.colorArray && 'black'} width={props.width || 4} height={10} />
                 </svg>
               </LegendItem>
             ))}
@@ -83,5 +92,19 @@ export default function MapLegend (props) {
 MapLegend.propTypes = {
   description: T.string,
   min: T.number,
-  max: T.number
+  max: T.number,
+  width: T.oneOfType([T.string, T.number]),
+  scale: T.shape({
+    domain: T.number,
+    colorMap: T.string,
+    colorArray: T.array
+  })
+};
+
+MapLegend.defaultProps = {
+  scale: {
+    domain: 50,
+    colorMap: 'viridis',
+    colorArray: null
+  }
 };
