@@ -99,6 +99,11 @@ const MapsContainer = styled.div`
   position: relative;
   overflow: hidden;
   height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  flex-flow: column;
+  align-items: flex-end;
+  padding-bottom: 2.125rem;
   /* Styles to accommodate the partner logos */
   .mapboxgl-ctrl-bottom-left {
     display: flex;
@@ -594,6 +599,7 @@ function MbMap (props) {
   return (
     <MapsContainer>
       {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title} /> : ''}
+      {selectedResource === 'Off-Shore Wind' && <MapLegend scale={{ domain: 1, colorArray: ['#d5d5d5'] }} width={200} description='Exclusive Economic Zone' />}
       <SingleMapContainer ref={mapContainer} />
       {map && popoverCoods && (
         <MapPopover

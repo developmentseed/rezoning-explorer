@@ -2,24 +2,22 @@ import React from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 
-import { themeVal } from '../../../styles/utils/general';
 import { glsp } from '../../../styles/utils/theme-values';
+import { cardSkin } from '../../../styles/skins';
 
 import { LegendLinear, LegendItem } from '@visx/legend';
-import { scaleLinear } from '@visx/scale';
+import { scaleLinear, scaleOrdinal } from '@visx/scale';
 import colormap from 'colormap';
 
 const MapLegendSelf = styled.div`
-  position: absolute;
-  right: 0.5rem;
-  bottom: 2.5rem;
+  ${cardSkin}
   z-index: 10;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: ${themeVal('shape.rounded')};
-  font-size: 0.874rem;
-  padding: ${glsp(0.5)};
+  font-size: 0.875rem;
+  padding: ${glsp(0.75)};
+  margin: ${glsp(0.5)};
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: ${glsp(0.25)};
   svg {
     display: block;
   }
@@ -46,10 +44,19 @@ const InputLabel = styled.span`
 `;
 
 export default function MapLegend (props) {
-  const scale = scaleLinear({
-    domain: Array(50).fill(0).map((a, i) => i / 50),
-    range: colormap({ colormap: 'viridis', nshades: 50 })
-  });
+  // Default legend scale uses colormap with "viridis." Logic allows for custom colormaps passed to legends, and for custom ordinal color scales
+  let scale;
+  if (props.scale.colorArray) {
+    scale = scaleOrdinal({
+      domain: Array(props.scale.domain).fill(0).map((a, i) => i / props.scale.domain),
+      range: props.scale.colorArray
+    });
+  } else {
+    scale = scaleLinear({
+      domain: Array(props.scale.domain).fill(0).map((a, i) => i / props.scale.domain),
+      range: colormap({ colormap: props.scale.colorMap, nshades: props.scale.domain })
+    });
+  }
 
   const min = props.min !== undefined ? props.min.toFixed(1) : '';
   const max = props.max !== undefined ? props.max.toFixed(1) : '';
@@ -58,14 +65,14 @@ export default function MapLegend (props) {
     <MapLegendSelf>
       <LegendLinear
         scale={scale}
-        steps={50}
+        steps={props.scale.domain}
       >
         {labels => (
           <LegendLabelsStyled>
             {labels.map((label, i) => (
               <LegendItem key={`legend-linear-${label.datum}`}>
-                <svg width={4} height={10}>
-                  <rect fill={label.value} width={4} height={10} />
+                <svg width={props.width || 4} height={10}>
+                  <rect fill={label.value} stroke={props.scale.colorArray && 'black'} width={props.width || 4} height={10} />
                 </svg>
               </LegendItem>
             ))}
@@ -82,5 +89,19 @@ export default function MapLegend (props) {
 MapLegend.propTypes = {
   description: T.string,
   min: T.number,
-  max: T.number
+  max: T.number,
+  width: T.oneOfType([T.string, T.number]),
+  scale: T.shape({
+    domain: T.number,
+    colorMap: T.string,
+    colorArray: T.array
+  })
+};
+
+MapLegend.defaultProps = {
+  scale: {
+    domain: 50,
+    colorMap: 'viridis',
+    colorArray: null
+  }
 };
