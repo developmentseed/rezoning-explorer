@@ -99,6 +99,10 @@ const MapsContainer = styled.div`
   position: relative;
   overflow: hidden;
   height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  flex-flow: column;
+  align-items: flex-end;
   /* Styles to accommodate the partner logos */
   .mapboxgl-ctrl-bottom-left {
     display: flex;

@@ -18,6 +18,7 @@ const MapLegendSelf = styled.div`
   border-radius: ${themeVal('shape.rounded')};
   font-size: 0.874rem;
   padding: ${glsp(0.5)};
+  margin: ${glsp(0.5)};
   display: grid;
   grid-template-columns: 1fr 1fr;
   svg {
