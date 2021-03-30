@@ -64,9 +64,7 @@ function QueryForm (props) {
     onSelectionChange,
     gridMode,
     setGridMode,
-    gridSize, setGridSize,
-    maxZoneScore, setMaxZoneScore,
-    maxLCOE, setMaxLCOE
+    gridSize, setGridSize
   } = props;
 
   const firstLoad = useRef(true);
@@ -264,12 +262,6 @@ function QueryForm (props) {
           filters={filtersInd}
           checkIncluded={checkIncluded}
           resource={resource}
-          outputFilters={
-            [
-              [maxZoneScore, setMaxZoneScore, 'Run analysis to filter on zone score'],
-              [maxLCOE, setMaxLCOE, 'Run analysis to filter on LCOE']
-            ]
-          }
         />
         <LCOEForm
           name='Economics'
@@ -355,11 +347,7 @@ QueryForm.propTypes = {
   gridMode: T.bool,
   setGridMode: T.func,
   gridSize: T.number,
-  setGridSize: T.func,
-  maxZoneScore: T.object,
-  setMaxZoneScore: T.func,
-  maxLCOE: T.object,
-  setMaxLCOE: T.func
+  setGridSize: T.func
 };
 
 export default QueryForm;

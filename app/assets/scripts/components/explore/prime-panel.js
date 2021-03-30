@@ -68,9 +68,7 @@ function ExpMapPrimePanel (props) {
     gridMode,
     setGridMode,
     gridSize, setGridSize,
-    maxZoneScore, setMaxZoneScore,
-    updateFilteredLayer,
-    maxLCOE, setMaxLCOE
+    updateFilteredLayer
   } = useContext(ExploreContext);
   const {
     showSelectAreaModal,
@@ -223,10 +221,6 @@ function ExpMapPrimePanel (props) {
                 setGridMode={setGridMode}
                 gridSize={gridSize}
                 setGridSize={setGridSize}
-                maxZoneScore={maxZoneScore}
-                setMaxZoneScore={setMaxZoneScore}
-                maxLCOE={maxLCOE}
-                setMaxLCOE={setMaxLCOE}
                 onAreaEdit={() => setShowSelectAreaModal(true)}
                 onResourceEdit={() => setShowSelectResourceModal(true)}
                 onInputTouched={(status) => {

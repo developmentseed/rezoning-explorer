@@ -6,8 +6,7 @@ import {
   FormGroupWrapper,
   PanelOption,
   OptionHeadline,
-  PanelOptionTitle,
-  InactiveMessage
+  PanelOptionTitle
 } from '../../../styles/form/form';
 import FormIntro from './form-intro';
 import { Accordion, AccordionFold, AccordionFoldTrigger } from '../../../components/accordion';
@@ -36,7 +35,6 @@ function FiltersForm (props) {
     filters,
     checkIncluded,
     resource,
-    outputFilters,
     active
   } = props;
 
@@ -65,63 +63,7 @@ function FiltersForm (props) {
         allowMultiple
       >
         {({ checkExpanded, setExpanded }) => (
-          /* Output filters, not toggleable */
           <>
-            <AccordionFold
-              forwardedAs={FormGroupWrapper}
-              isFoldExpanded={checkExpanded(0)}
-              setFoldExpanded={(v) => setExpanded(0, v)}
-              renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                <AccordionFoldTrigger
-                  isExpanded={isFoldExpanded}
-                  onClick={() => setFoldExpanded(!isFoldExpanded)}
-                >
-                  <Heading size='small' variation='primary'>
-                    {makeTitleCase('Output Filters')}
-                  </Heading>
-                </AccordionFoldTrigger>
-              )}
-              renderBody={({ isFoldExpanded }) => (
-                <>
-                  {
-                    outputFilters
-                      .map(([filterObject, setFilterObject, inactiveMessage]) => {
-                        const onChange = useCallback(
-                          (value) => {
-                            setFilterObject({
-                              ...filterObject,
-                              input: {
-                                ...filterObject.input,
-                                value
-                              }
-                            }
-                            );
-                          }, [filterObject]);
-                        return (
-                          <PanelOption key={filterObject.name} hidden={!isFoldExpanded}>
-                            <OptionHeadline>
-                              <PanelOptionTitle>{`${filterObject.name}`.concat(filterObject.unit ? ` (${filterObject.unit})` : '')}</PanelOptionTitle>
-                              {filterObject.info && (
-                                <InfoButton info={filterObject.info} id={filterObject.name}>
-                                Info
-                                </InfoButton>
-                              )}
-                            </OptionHeadline>
-                            {filterObject.active
-                              ? (
-                                <FormInput
-                                  option={filterObject}
-                                  onChange={onChange}
-                                />) : <InactiveMessage>{inactiveMessage}</InactiveMessage>}
-                          </PanelOption>
-
-                        );
-                      })
-                  }
-                </>
-              )}
-            />
-
             {Object.entries(
               filters.reduce((accum, filt) => {
                 const [get] = filt;
