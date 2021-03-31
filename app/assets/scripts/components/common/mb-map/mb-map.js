@@ -148,8 +148,9 @@ const initializeMap = ({
   // Disable map rotation using touch rotation gesture.
   map.touchZoomRotate.disableRotation();
 
-  // Add zoom controls.
+  // Add zoom and scale controls.
   map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
+  map.addControl(new mapboxgl.ScaleControl({ maxWidth: 224, unit: 'metric' }), 'bottom-right');
 
   map.on('load', () => {
     // This map style has a 'background' layer underneath the satellite layer
