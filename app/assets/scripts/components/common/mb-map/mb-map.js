@@ -113,6 +113,17 @@ const MapsContainer = styled.div`
     > .mapboxgl-ctrl {
       margin-bottom: ${glsp(0.5)};
     }
+    /* > .mapboxgl-ctrl-scale:first-child {
+      margin-bottom: -2px;
+      border-top: none;
+    }
+    > .mapboxgl-ctrl-scale:nth-of-type(2) {
+      border-bottom: none;
+      border-top: 2px solid #333;
+    } */
+  }
+  .mapboxgl-ctrl-top-right {
+    margin-top: 2.625rem;
   }
 `;
 
@@ -149,8 +160,9 @@ const initializeMap = ({
   map.touchZoomRotate.disableRotation();
 
   // Add zoom and scale controls.
-  map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
-  map.addControl(new mapboxgl.ScaleControl({ maxWidth: 224, unit: 'metric' }), 'bottom-right');
+  map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+  // map.addControl(new mapboxgl.ScaleControl({ maxWidth: 224, unit: 'imperial' }), 'bottom-left');
+  map.addControl(new mapboxgl.ScaleControl({ maxWidth: 224, unit: 'metric' }), 'bottom-left');
 
   map.on('load', () => {
     // This map style has a 'background' layer underneath the satellite layer
