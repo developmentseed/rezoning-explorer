@@ -299,7 +299,7 @@ export function ExploreProvider (props) {
 
     // Apply filter querystring to the map
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/${countryPath}/{z}/{x}/{y}.png?${filterString}${offshoreWindMask}&color=54,166,244,80`
+      `${config.apiEndpoint}/filter/${countryPath}/{z}/{x}/{y}.png?${filterString}${offshoreWindMask}&color=255,174,0,100`
     );
 
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
