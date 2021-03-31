@@ -48,11 +48,11 @@ export const outputLayers = [
   },
   {
     id: FILTERED_LAYER_ID,
-    name: 'Selected Area',
+    name: 'Suitable Areas',
     type: 'raster',
     visible: true,
     category: 'output',
-    info: 'Filtered selected area',
+    info: 'Filtered suitable area',
     disabled: true
   },
   {
