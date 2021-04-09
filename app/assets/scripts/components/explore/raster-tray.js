@@ -59,9 +59,12 @@ const LayersWrapper = styled.div`
   transition: opacity .16s ease 0s;
   padding: 0.5rem;
   overflow-x: hidden;
-
   ${AccordionFold} {
     padding-bottom: 1rem;
+
+    &:first-of-type {
+      padding-top: 2rem;
+    }
   }
 `;
 
