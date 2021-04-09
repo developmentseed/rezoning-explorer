@@ -25,7 +25,7 @@ function InfoButton (props) {
         {props.children}
       </Button>
       {info &&
-        <StyledTooltip width={width} id={id} place='bottom' effect='float'>
+        <StyledTooltip width={width} id={id} place='bottom' effect='solid'>
           {info}
         </StyledTooltip>}
     </>
