@@ -129,6 +129,11 @@ LayerControl.propTypes = {
 function RasterTray (props) {
   const { show, layers, onLayerKnobChange, onVisibilityToggle, className } = props;
 
+  /*
+   * Reduce layers into categories.
+   * Layers with out a category will be stored under `undefined`
+   * These layers are displayed outside of the accordion
+  */
   const categorizedLayers = layers.reduce((cats, layer) => {
     if (!cats[layer.category]) {
       cats[layer.category] = [];
@@ -136,6 +141,7 @@ function RasterTray (props) {
     cats[layer.category].push(layer);
     return cats;
   }, {});
+
   return (
     <TrayWrapper
       className={className}
@@ -143,45 +149,57 @@ function RasterTray (props) {
       <LayersWrapper
         show={show}
       >
+        {
+          // Non categorized layers
+          categorizedLayers[undefined] && categorizedLayers[undefined].map(l => (
+            <LayerControl
+              key={l.name}
+              {...l}
+              onLayerKnobChange={onLayerKnobChange}
+              onVisibilityToggle={onVisibilityToggle}
+            />
+
+          ))
+        }
 
         <Accordion
           initialState={[
             false,
             true,
-            ...Object.keys(categorizedLayers).slice(2).map(_ => false)
+            ...Object.keys(categorizedLayers).filter(cat => cat).slice(2).map(_ => false)
           ]}
           allowMultiple
         >
           {({ checkExpanded, setExpanded }) => {
             return (
               Object.entries(categorizedLayers).map(([category, layers], idx) => {
-                return (
-                  <AccordionFold
-                    key={category}
-                    isFoldExpanded={checkExpanded(idx)}
-                    setFoldExpanded={v => setExpanded(idx, v)}
-                    renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                      <AccordionFoldTrigger
-                        isExpanded={isFoldExpanded}
-                        onClick={() => setFoldExpanded(!isFoldExpanded)}
-                      >
-                        <Heading size='small' variation='primary'>
-                          {makeTitleCase(category.replace(/_/g, ' '))}
-                        </Heading>
-                      </AccordionFoldTrigger>
-                    )}
-                    renderBody={({ isFoldExpanded }) => (
-                      layers.map(l => (
-                        <LayerControl
-                          key={l.name}
-                          {...l}
-                          onLayerKnobChange={onLayerKnobChange}
-                          onVisibilityToggle={onVisibilityToggle}
-                        />
-                      )
-                      )
-                    )}
-                  />
+                return (category !== 'undefined' &&
+                 <AccordionFold
+                   key={category}
+                   isFoldExpanded={checkExpanded(idx)}
+                   setFoldExpanded={v => setExpanded(idx, v)}
+                   renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                     <AccordionFoldTrigger
+                       isExpanded={isFoldExpanded}
+                       onClick={() => setFoldExpanded(!isFoldExpanded)}
+                     >
+                       <Heading size='small' variation='primary'>
+                         {makeTitleCase(category.replace(/_/g, ' '))}
+                       </Heading>
+                     </AccordionFoldTrigger>
+                   )}
+                   renderBody={({ isFoldExpanded }) => (
+                     layers.map(l => (
+                       <LayerControl
+                         key={l.name}
+                         {...l}
+                         onLayerKnobChange={onLayerKnobChange}
+                         onVisibilityToggle={onVisibilityToggle}
+                       />
+                     )
+                     )
+                   )}
+                 />
                 );
               }));
           }}
