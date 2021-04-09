@@ -7,6 +7,9 @@ import {
 
 const { apiEndpoint } = config;
 
+const BASIC = 'Basic';
+const ADVANCED = 'Advanced';
+
 export const lcoeReducer = wrapLogReducer(makeAPIReducer('FETCH_LCOE'));
 /*
  * Make async request to api for lcoe schema
@@ -33,6 +36,7 @@ export async function fetchLcoe (dispatch) {
           id,
           name: cost.title,
           info: cost.description,
+          category: Math.random() > 0.5 ? BASIC : ADVANCED,
           input: {
             type,
             ...opts,
