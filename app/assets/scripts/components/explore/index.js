@@ -10,5 +10,8 @@ function ExploreComponent () {
     </ExploreProvider>
   );
 }
+if (process.env.NODE_ENV === 'development') {
+  ExploreComponent.whyDidYouRender = true;
+}
 
 export default ExploreComponent;

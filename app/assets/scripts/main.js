@@ -1,4 +1,4 @@
-import './wydr';
+import './wdyr';
 import '@babel/polyfill';
 import React, { useEffect, useContext } from 'react';
 import { render } from 'react-dom';
