@@ -266,8 +266,8 @@ function QueryForm (props) {
           resource={resource}
           outputFilters={
             [
-              [maxZoneScore, setMaxZoneScore, 'Run analysis to filter on zone score'],
-              [maxLCOE, setMaxLCOE, 'Run analysis to filter on LCOE']
+              [maxZoneScore, setMaxZoneScore, 'A sum of scores for multiple criteria normalized from 0 to 1 and weighted by user-defined weights for each zone. 1 is desired whereas 0 is not. The zone score filter excludes zones with scores below the user-defined threshold.'],
+              [maxLCOE, setMaxLCOE, 'The LCOE score filter excludes zones with LCOE estimates below the user-defined threshold.']
             ]
           }
         />
