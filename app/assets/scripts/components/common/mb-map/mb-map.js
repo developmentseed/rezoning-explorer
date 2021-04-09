@@ -159,9 +159,10 @@ const initializeMap = ({
   // Disable map rotation using touch rotation gesture.
   map.touchZoomRotate.disableRotation();
 
-  // Add zoom and scale controls.
+  // Add zoom controls
   map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-  // map.addControl(new mapboxgl.ScaleControl({ maxWidth: 224, unit: 'imperial' }), 'bottom-left');
+
+  // Add scale
   map.addControl(new mapboxgl.ScaleControl({ maxWidth: 224, unit: 'metric' }), 'bottom-left');
 
   map.on('load', () => {
