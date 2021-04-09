@@ -95,6 +95,10 @@ const getResourceLayerName = resource => {
   }
 };
 
+const layerDefaultVisibility = id => {
+  return id === ZONES_BOUNDARIES_LAYER_ID || id === FILTERED_LAYER_ID;
+}
+
 const MapsContainer = styled.div`
   position: relative;
   overflow: hidden;
@@ -444,6 +448,9 @@ function MbMap (props) {
     }
   }, [map]);
 
+  /*
+   * Initialize map layers on receipt of input layers
+  */
   useEffect(() => {
     if (map && inputLayers.isReady() && selectedArea) {
       const layers = inputLayers.getData();
@@ -545,6 +552,9 @@ function MbMap (props) {
 
   // Update zone boundaries on change
 
+  /*
+   * Update visibility of layers on new zones
+  */
   useEffect(() => {
     if (!map || !currentZones.isReady()) return;
     // Update GeoJSON source, applying hover effect if any
@@ -561,7 +571,7 @@ function MbMap (props) {
 
     // Disable all layers besides zones boundaries
     setMapLayers(mapLayers.map(layer => {
-      const visible = layer.id === ZONES_BOUNDARIES_LAYER_ID;
+      const visible = layerDefaultVisibility(layer.id)
       map.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none');
       return {
         ...layer,
