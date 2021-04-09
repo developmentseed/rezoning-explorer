@@ -1,6 +1,7 @@
 import React from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
+import get from 'lodash.get';
 
 import { glsp } from '../../../styles/utils/theme-values';
 import { cardSkin } from '../../../styles/skins';
@@ -58,7 +59,10 @@ export default function MapLegend (props) {
     });
   }
 
-  if (props.type === 'boolean') {
+  const { relatedFilter } = props;
+
+  // Show different legend if filter type is boolean
+  if (get(relatedFilter, 'input.type') === 'boolean') {
     return (
       <MapLegendSelf>
         <LegendTitle>{scale(1)} In </LegendTitle>
@@ -70,6 +74,7 @@ export default function MapLegend (props) {
 
   const min = props.min !== undefined ? props.min.toFixed(1) : '';
   const max = props.max !== undefined ? props.max.toFixed(1) : '';
+  const unit = relatedFilter && relatedFilter.unit ? ` (${relatedFilter.unit})` : '';
 
   return (
     <MapLegendSelf>
@@ -91,17 +96,17 @@ export default function MapLegend (props) {
       </LegendLinear>
       <InputLabel>{min}</InputLabel>
       <InputLabel align='right'>{max}</InputLabel>
-      <LegendTitle>{props.description}</LegendTitle>
+      <LegendTitle>{props.description}{unit}</LegendTitle>
     </MapLegendSelf>
   );
 }
 
 MapLegend.propTypes = {
   description: T.string,
+  relatedFilter: T.object,
   min: T.number,
   max: T.number,
   width: T.oneOfType([T.string, T.number]),
-  type: T.string,
   scale: T.shape({
     domain: T.number,
     colorMap: T.string,

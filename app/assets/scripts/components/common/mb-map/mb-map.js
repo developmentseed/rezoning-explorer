@@ -615,8 +615,8 @@ function MbMap (props) {
           min={rasterRange && rasterRange.min}
           max={rasterRange && rasterRange.max}
           description={visibleRaster[0].title}
-          type={
-            (filtersLists.find((l) => l.layer === visibleRaster[0].id)).input.type
+          relatedFilter={
+            (filtersLists.find((l) => l.layer === visibleRaster[0].id))
           }
         />
       ) : (
