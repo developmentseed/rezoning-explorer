@@ -17,16 +17,17 @@ const MapLegendSelf = styled.div`
   padding: ${glsp(0.75)};
   margin: ${glsp(0.5)};
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: ${glsp(0.25)};
+  grid-template-columns: ${({ type }) => (type === 'linear' ? '1fr 1fr' : 'auto 1fr')};
+  grid-gap: ${({ type }) => (type === 'linear' ? '0.25rem' : '0.75rem')};
+  width: 14rem;
   svg {
     display: block;
   }
 `;
 
 const LegendTitle = styled.div`
-  grid-column: span 2;
-  text-align: center;
+  grid-column: ${({ type }) => (type === 'linear' && 'span 2')};
+  text-align: ${({ type }) => (type === 'linear' && 'center')};
 `;
 
 const LegendLabels = styled.div`
@@ -64,10 +65,13 @@ export default function MapLegend (props) {
   // Show different legend if filter type is boolean
   if (get(relatedFilter, 'input.type') === 'boolean') {
     return (
-      <MapLegendSelf>
-        <LegendTitle>{scale(1)} In </LegendTitle>
-        <LegendTitle>{scale(0)} Out</LegendTitle>
-        <LegendTitle>{props.description}</LegendTitle>
+      <MapLegendSelf type='boolean'>
+        <LegendItem>
+          <svg width={16} height={16}>
+            <rect fill={scale(1)} width={16} height={16} />
+          </svg>
+        </LegendItem>
+        <LegendTitle type='boolean'>{props.description}</LegendTitle>
       </MapLegendSelf>
     );
   }
@@ -77,7 +81,7 @@ export default function MapLegend (props) {
   const unit = relatedFilter && relatedFilter.unit ? ` (${relatedFilter.unit})` : '';
 
   return (
-    <MapLegendSelf>
+    <MapLegendSelf type='linear'>
       <LegendLinear
         scale={scale}
         steps={props.scale.domain}
@@ -96,7 +100,7 @@ export default function MapLegend (props) {
       </LegendLinear>
       <InputLabel>{min}</InputLabel>
       <InputLabel align='right'>{max}</InputLabel>
-      <LegendTitle>{props.description}{unit}</LegendTitle>
+      <LegendTitle type='linear'>{props.description}{unit}</LegendTitle>
     </MapLegendSelf>
   );
 }
