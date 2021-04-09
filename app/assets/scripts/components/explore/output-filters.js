@@ -29,7 +29,9 @@ function OutputFilters (props) {
   ];
 
   return (
-    <Accordion>
+    <Accordion
+      initialState={[true]}
+    >
       {({ checkExpanded, setExpanded }) => (
         <AccordionFold
           forwardedAs={FormGroupWrapper}
