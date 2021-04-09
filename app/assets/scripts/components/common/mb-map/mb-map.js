@@ -441,9 +441,7 @@ function MbMap (props) {
     setFocusZone
   } = useContext(MapContext);
 
-  const {
-    filterRanges
-  } = useContext(FormContext);
+  const { filtersLists, filterRanges } = useContext(FormContext);
 
   const visibleRaster = mapLayers.filter(layer => layer.type === 'raster' && layer.visible && layer.id !== 'FILTERED_LAYER_ID');
   let rasterRange = null;
@@ -612,8 +610,25 @@ function MbMap (props) {
 
   return (
     <MapsContainer>
-      {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title} /> : ''}
-      {selectedResource === 'Off-Shore Wind' && <MapLegend scale={{ domain: 1, colorArray: ['#d5d5d5'] }} width={200} description='Exclusive Economic Zone' />}
+      {filtersLists && visibleRaster.length ? (
+        <MapLegend
+          min={rasterRange && rasterRange.min}
+          max={rasterRange && rasterRange.max}
+          description={visibleRaster[0].title}
+          type={
+            (filtersLists.find((l) => l.layer === visibleRaster[0].id)).input.type
+          }
+        />
+      ) : (
+        ''
+      )}
+      {selectedResource === 'Off-Shore Wind' && (
+        <MapLegend
+          scale={{ domain: 1, colorArray: ['#d5d5d5'] }}
+          width={200}
+          description='Exclusive Economic Zone'
+        />
+      )}
       <SingleMapContainer ref={mapContainer} />
       {map && popoverCoods && (
         <MapPopover

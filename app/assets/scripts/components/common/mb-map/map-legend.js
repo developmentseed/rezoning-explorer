@@ -44,6 +44,14 @@ const InputLabel = styled.span`
 `;
 
 export default function MapLegend (props) {
+  if (props.type === 'boolean') {
+    return (
+      <MapLegendSelf>
+        <LegendTitle>{props.description} (boolean)</LegendTitle>
+      </MapLegendSelf>
+    );
+  }
+
   // Default legend scale uses colormap with "viridis." Logic allows for custom colormaps passed to legends, and for custom ordinal color scales
   let scale;
   if (props.scale.colorArray) {
@@ -91,6 +99,7 @@ MapLegend.propTypes = {
   min: T.number,
   max: T.number,
   width: T.oneOfType([T.string, T.number]),
+  type: T.string,
   scale: T.shape({
     domain: T.number,
     colorMap: T.string,
