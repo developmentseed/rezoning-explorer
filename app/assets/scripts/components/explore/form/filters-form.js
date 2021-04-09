@@ -160,13 +160,7 @@ function FiltersForm (props) {
                     )}
                     renderBody={({ isFoldExpanded }) =>
                       list.sort(([a, _a], [b, _b]) => {
-                        if (a.priority && b.priority) {
-                          return 0;
-                        } else if (a.priority && !b.priority) {
-                          return -1;
-                        } else if (!a.priority && b.priority) {
-                          return 1;
-                        }
+                        return a.priority - b.priority
                       }).filter(([f, _]) => f.input.range[0] !== f.input.range[1])
                         .map(
                           ([filter, setFilter], ind) => {
