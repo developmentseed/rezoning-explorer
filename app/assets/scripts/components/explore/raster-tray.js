@@ -166,17 +166,14 @@ function RasterTray (props) {
         }
 
         <Accordion
-          initialState={[
-            false,
-            true,
-            ...Object.keys(categorizedLayers).filter(cat => cat).slice(2).map(_ => false)
-          ]}
           allowMultiple
         >
           {({ checkExpanded, setExpanded }) => {
             return (
-              Object.entries(categorizedLayers).map(([category, layers], idx) => {
-                return (category !== 'undefined' &&
+              Object.entries(categorizedLayers)
+                .filter(cat => cat !== 'undefined')
+                .map(([category, layers], idx) => {
+                  return (category !== 'undefined' &&
                  <AccordionFold
                    key={category}
                    isFoldExpanded={checkExpanded(idx)}
@@ -203,8 +200,8 @@ function RasterTray (props) {
                      )
                    )}
                  />
-                );
-              }));
+                  );
+                }));
           }}
 
         </Accordion>
