@@ -248,6 +248,7 @@ function QueryForm (props) {
         <FiltersForm
           name='Filters'
           icon='filter'
+          disabled={!area || !resource}
           setPreset={(preset) => {
             if (preset === 'reset') {
               initialize(filtersLists, filtersInd, {
@@ -275,6 +276,7 @@ function QueryForm (props) {
           name='Economics'
           icon='disc-dollar'
           lcoe={lcoeInd}
+          disabled={!area || !resource}
           // setLcoe={setLcoe}
           presets={presets.lcoe}
           setPreset={(preset) => {
@@ -288,12 +290,12 @@ function QueryForm (props) {
               });
             }
           }}
-
         />
         <WeightsForm
           name='weights'
           icon='sliders-horizontal'
           weights={weightsInd}
+          disabled={!area || !resource}
           presets={presets.weights}
           setPreset={(preset) => {
             if (preset === 'reset') {
@@ -306,15 +308,13 @@ function QueryForm (props) {
               });
             }
           }}
-
         />
-
       </TabbedBlockBody>
-
       <SubmissionSection>
         <Button
           size='small'
           type='reset'
+          disabled={!area || !resource}
           onClick={resetClick}
           variation='primary-raised-light'
           useIcon='arrow-loop'
@@ -324,9 +324,11 @@ function QueryForm (props) {
         <Button
           size='small'
           type='submit'
+          disabled={!area || !resource}
           onClick={applyClick}
           variation='primary-raised-dark'
           useIcon='tick--small'
+          title={!area || !resource ? 'Both area and resource must be set to generate zones' : 'Generate Zones Analysis'}
         >
           Generate Zones
         </Button>
