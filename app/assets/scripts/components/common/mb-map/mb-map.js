@@ -97,7 +97,7 @@ const getResourceLayerName = resource => {
 
 const layerDefaultVisibility = id => {
   return id === ZONES_BOUNDARIES_LAYER_ID || id === FILTERED_LAYER_ID;
-}
+};
 
 const MapsContainer = styled.div`
   position: relative;
@@ -571,7 +571,7 @@ function MbMap (props) {
 
     // Disable all layers besides zones boundaries
     setMapLayers(mapLayers.map(layer => {
-      const visible = layerDefaultVisibility(layer.id)
+      const visible = layerDefaultVisibility(layer.id);
       map.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none');
       return {
         ...layer,
