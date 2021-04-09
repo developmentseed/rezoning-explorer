@@ -44,14 +44,6 @@ const InputLabel = styled.span`
 `;
 
 export default function MapLegend (props) {
-  if (props.type === 'boolean') {
-    return (
-      <MapLegendSelf>
-        <LegendTitle>{props.description} (boolean)</LegendTitle>
-      </MapLegendSelf>
-    );
-  }
-
   // Default legend scale uses colormap with "viridis." Logic allows for custom colormaps passed to legends, and for custom ordinal color scales
   let scale;
   if (props.scale.colorArray) {
@@ -64,6 +56,16 @@ export default function MapLegend (props) {
       domain: Array(props.scale.domain).fill(0).map((a, i) => i / props.scale.domain),
       range: colormap({ colormap: props.scale.colorMap, nshades: props.scale.domain })
     });
+  }
+
+  if (props.type === 'boolean') {
+    return (
+      <MapLegendSelf>
+        <LegendTitle>{scale(1)} In </LegendTitle>
+        <LegendTitle>{scale(0)} Out</LegendTitle>
+        <LegendTitle>{props.description}</LegendTitle>
+      </MapLegendSelf>
+    );
   }
 
   const min = props.min !== undefined ? props.min.toFixed(1) : '';
