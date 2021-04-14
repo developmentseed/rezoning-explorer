@@ -64,4 +64,4 @@ WeightsForm.propTypes = {
   disabled: T.bool
 };
 
-export default WeightsForm;
+export default React.memo(WeightsForm);

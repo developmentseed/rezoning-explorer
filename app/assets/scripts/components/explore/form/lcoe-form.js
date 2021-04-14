@@ -64,4 +64,4 @@ LCOEForm.propTypes = {
   disabled: T.bool
 };
 
-export default LCOEForm;
+export default React.memo(LCOEForm);
