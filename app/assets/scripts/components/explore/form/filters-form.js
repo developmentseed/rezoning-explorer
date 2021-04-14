@@ -7,7 +7,6 @@ import {
   PanelOption,
   OptionHeadline,
   PanelOptionTitle,
-  InactiveMessage,
   EmptyState
 } from '../../../styles/form/form';
 import FormIntro from './form-intro';
@@ -37,21 +36,18 @@ function FiltersForm (props) {
     filters,
     checkIncluded,
     resource,
-    outputFilters,
     active,
     disabled
   } = props;
 
   return (
     <>
-      {
-        disabled &&
-        <EmptyState>Select Area and Resource to view and interact with input parameters.</EmptyState>
-      }
-      <FormWrapper
-        active={active}
-        disabled={disabled}
-      >
+      {disabled && (
+        <EmptyState>
+          Select Area and Resource to view and interact with input parameters.
+        </EmptyState>
+      )}
+      <FormWrapper active={active} disabled={disabled}>
         <FormIntro
           formTitle='Spatial Filters'
           introText='This step identifies areas suitable for solar PV (or wind or offshore wind) development by applying spatial filters. Suitable areas will then be used to generate solar energy zones, which can be scored with user-provided weights and economic assumptions.'
@@ -73,63 +69,7 @@ function FiltersForm (props) {
           allowMultiple
         >
           {({ checkExpanded, setExpanded }) => (
-            /* Output filters, not toggleable */
             <>
-              <AccordionFold
-                forwardedAs={FormGroupWrapper}
-                isFoldExpanded={checkExpanded(0)}
-                setFoldExpanded={(v) => setExpanded(0, v)}
-                renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                  <AccordionFoldTrigger
-                    isExpanded={isFoldExpanded}
-                    onClick={() => setFoldExpanded(!isFoldExpanded)}
-                  >
-                    <Heading size='small' variation='primary'>
-                      {makeTitleCase('Output Filters')}
-                    </Heading>
-                  </AccordionFoldTrigger>
-                )}
-                renderBody={({ isFoldExpanded }) => (
-                  <>
-                    {
-                      outputFilters
-                        .map(([filterObject, setFilterObject, inactiveMessage]) => {
-                          const onChange = useCallback(
-                            (value) => {
-                              setFilterObject({
-                                ...filterObject,
-                                input: {
-                                  ...filterObject.input,
-                                  value
-                                }
-                              }
-                              );
-                            }, [filterObject]);
-                          return (
-                            <PanelOption key={filterObject.name} hidden={!isFoldExpanded}>
-                              <OptionHeadline>
-                                <PanelOptionTitle>{`${filterObject.name}`.concat(filterObject.unit ? ` (${filterObject.unit})` : '')}</PanelOptionTitle>
-                                {filterObject.info && (
-                                  <InfoButton info={filterObject.info} id={filterObject.name}>
-                                  Info
-                                  </InfoButton>
-                                )}
-                              </OptionHeadline>
-                              {filterObject.active
-                                ? (
-                                  <FormInput
-                                    option={filterObject}
-                                    onChange={onChange}
-                                  />) : <InactiveMessage>{inactiveMessage}</InactiveMessage>}
-                            </PanelOption>
-
-                          );
-                        })
-                    }
-                  </>
-                )}
-              />
-
               {Object.entries(
                 filters.reduce((accum, filt) => {
                   const [get] = filt;
@@ -159,50 +99,51 @@ function FiltersForm (props) {
                       </AccordionFoldTrigger>
                     )}
                     renderBody={({ isFoldExpanded }) =>
-                      list.sort(([a, _a], [b, _b]) => {
-                        if (a.priority && b.priority) {
-                          return 0;
-                        } else if (a.priority && !b.priority) {
-                          return -1;
-                        } else if (!a.priority && b.priority) {
-                          return 1;
-                        }
-                      }).filter(([f, _]) => f.input.range[0] !== f.input.range[1])
-                        .map(
-                          ([filter, setFilter], ind) => {
-                            const inputOnChange = useCallback(
-
-                              (value) => {
-                                if (filter.active) {
-                                  setFilter({
-                                    ...filter,
-                                    input: {
-                                      ...filter.input,
-                                      value
-                                    }
-                                  }
-                                  );
-                                }
-                              }
-
-                              , [filter]);
-
-                            const switchOnChange = useCallback(
-                              () => {
+                      list
+                        .sort(([a, _a], [b, _b]) => {
+                          if (a.priority && b.priority) {
+                            return 0;
+                          } else if (a.priority && !b.priority) {
+                            return -1;
+                          } else if (!a.priority && b.priority) {
+                            return 1;
+                          }
+                        })
+                        .filter(
+                          ([f, _]) => f.input.range[0] !== f.input.range[1]
+                        )
+                        .map(([filter, setFilter], ind) => {
+                          const inputOnChange = useCallback(
+                            (value) => {
+                              if (filter.active) {
                                 setFilter({
-
                                   ...filter,
-                                  active: !filter.active,
                                   input: {
                                     ...filter.input,
-                                    value: filter.input.type === BOOL
-                                      ? !filter.active
-                                      : filter.input.value
+                                    value
                                   }
                                 });
                               }
-                              , [filter]);
-                            return (checkIncluded(filter, resource) && (
+                            },
+
+                            [filter]
+                          );
+
+                          const switchOnChange = useCallback(() => {
+                            setFilter({
+                              ...filter,
+                              active: !filter.active,
+                              input: {
+                                ...filter.input,
+                                value:
+                                  filter.input.type === BOOL
+                                    ? !filter.active
+                                    : filter.input.value
+                              }
+                            });
+                          }, [filter]);
+                          return (
+                            checkIncluded(filter, resource) && (
                               <PanelOption
                                 key={filter.name}
                                 hidden={!isFoldExpanded}
@@ -214,8 +155,11 @@ function FiltersForm (props) {
                                     )}
                                   </PanelOptionTitle>
                                   {filter.info && (
-                                    <InfoButton info={filter.info} id={filter.name}>
-                                    Info
+                                    <InfoButton
+                                      info={filter.info}
+                                      id={filter.name}
+                                    >
+                                      Info
                                     </InfoButton>
                                   )}
 
@@ -223,15 +167,16 @@ function FiltersForm (props) {
                                     <FormSwitch
                                       hideText
                                       name={`toggle-${filter.name.replace(
-                                    / /g,
-                                    '-'
-                                  )}`}
+                                        / /g,
+                                        '-'
+                                      )}`}
                                       disabled={filter.disabled}
                                       checked={filter.active}
                                       onChange={switchOnChange}
                                     >
-                                  Toggle filter
-                                    </FormSwitch>)}
+                                      Toggle filter
+                                    </FormSwitch>
+                                  )}
                                 </OptionHeadline>
                                 <FormInput
                                   option={filter}
@@ -239,8 +184,8 @@ function FiltersForm (props) {
                                 />
                               </PanelOption>
                             )
-                            );
-                          })}
+                          );
+                        })}
                   />
                 );
               })}

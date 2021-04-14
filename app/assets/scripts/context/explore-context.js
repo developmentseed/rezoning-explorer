@@ -72,7 +72,7 @@ export function ExploreProvider (props) {
         id: 'zone-score-range',
         active: true,
         isRange: true,
-        info: 'Filter zones by calculated zone score',
+        info: 'A sum of scores for multiple criteria normalized from 0 to 1 and weighted by user-defined weights for each zone. 1 is desired whereas 0 is not. The zone score filter excludes zones with scores below the user-defined threshold.',
         input: {
           value: range ? { min: range[0], max: range[1] } : { min: 0, max: 1 },
           type: SLIDER,
@@ -95,7 +95,7 @@ export function ExploreProvider (props) {
         active: range && true,
         isRange: true,
         unit: 'USD/MWh',
-        info: 'Filter zones by calculated LCOE',
+        info: 'The LCOE filter excludes zones with LCOE estimates below the user-defined threshold.',
         input: {
           value: range ? { min: range[0], max: range[1] } : null,
           type: SLIDER,

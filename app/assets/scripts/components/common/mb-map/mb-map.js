@@ -43,7 +43,6 @@ export const outputLayers = [
     type: 'raster',
     nonexclusive: true,
     visible: false,
-    category: 'output',
     info: 'Satellite layer'
   },
   {

@@ -4,11 +4,12 @@ import styled from 'styled-components';
 import ExploreStats from './explore-stats';
 import ExploreZones from './explore-zones';
 import ExploreContext from '../../context/explore-context';
+import OutputFilters from './output-filters';
 
 const PanelInner = styled.div`
   flex: 1;
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto 1fr;
   padding: 1rem 1.5rem;
 `;
 
@@ -30,6 +31,7 @@ function ZoneAnalysisPanel (props) {
 
   return (
     <PanelInner>
+      <OutputFilters />
       <ExploreStats zones={filteredZones} active={inputTouched} />
       {currentZones && (
         <ExploreZones active={inputTouched} currentZones={filteredZones} />
