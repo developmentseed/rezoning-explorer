@@ -153,7 +153,7 @@ export default function MapLegend({
         <>
           <LegendItem>
             <svg width={16} height={16}>
-              <rect fill='#d5d5d5' width={16} height={16} />
+              <rect fill='#d5d5d5' stroke='#333333' width={16} height={16} />
             </svg>
           </LegendItem>
           <LegendTitle type='boolean'>Exclusive Economic Zone</LegendTitle>
