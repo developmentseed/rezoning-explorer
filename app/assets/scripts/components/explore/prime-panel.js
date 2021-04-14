@@ -8,7 +8,7 @@ import MapContext from '../../context/map-context';
 import FormContext from '../../context/form-context';
 
 import ModalSelect from './modal-select';
-import { ModalHeader } from '../common/modal';
+import { ModalHeadline } from '@devseed-ui/modal';
 import ModalSelectArea from './modal-select-area';
 
 import Button from '../../styles/button/button';
@@ -68,9 +68,7 @@ function ExpMapPrimePanel (props) {
     gridMode,
     setGridMode,
     gridSize, setGridSize,
-    maxZoneScore, setMaxZoneScore,
-    updateFilteredLayer,
-    maxLCOE, setMaxLCOE
+    updateFilteredLayer
   } = useContext(ExploreContext);
   const {
     showSelectAreaModal,
@@ -223,10 +221,6 @@ function ExpMapPrimePanel (props) {
                 setGridMode={setGridMode}
                 gridSize={gridSize}
                 setGridSize={setGridSize}
-                maxZoneScore={maxZoneScore}
-                setMaxZoneScore={setMaxZoneScore}
-                maxLCOE={maxLCOE}
-                setMaxLCOE={setMaxLCOE}
                 onAreaEdit={() => setShowSelectAreaModal(true)}
                 onResourceEdit={() => setShowSelectResourceModal(true)}
                 onInputTouched={(status) => {
@@ -244,16 +238,20 @@ function ExpMapPrimePanel (props) {
       <ModalSelect
         revealed={showSelectResourceModal && !showSelectAreaModal}
         onOverlayClick={() => {
-          if (selectedResource) {
-            setShowSelectResourceModal(false);
-          }
+          setShowSelectResourceModal(false);
+        }}
+        onCloseClick={() => {
+          setShowSelectResourceModal(false);
         }}
         data={availableResources}
-        renderHeader={() => (
-          <ModalHeader
+        renderHeadline={() => (
+          <ModalHeadline
             id='select-resource-modal-header'
             title='Select Resource'
-          />
+            style={{ flex: 1, textAlign: 'center' }}
+          >
+            <h1>Select Resource</h1>
+          </ModalHeadline>
         )}
         renderCard={(resource) => (
           <Card

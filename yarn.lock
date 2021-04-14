@@ -873,10 +873,17 @@
     core-js-pure "^3.0.0"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.1.2", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.1.2", "@babel/runtime@^7.8.4":
   version "7.10.4"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.10.4.tgz#a6724f1a6b8d2f6ea5236dbfe58c7d7ea9c5eb99"
   integrity sha512-UpTN5yUJr9b4EX2CnGNWIvER7Ab83ibv0pcvvHc4UOdrBI5jb8bj+32cCwPX6xu0mt2daFNjYhoi+X7beH0RSw==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
+"@babel/runtime@^7.12.5", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+  version "7.13.10"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.13.10.tgz#47d42a57b6095f4468da440388fdbad8bebf0d7d"
+  integrity sha512-4QPkjJq6Ns3V/RgpEahRk+AGfL0eO6RHHtTWoNNr5mO49G6B5+X6d6THgWEAvTrznU5xYpbAlVKRYcsCgh/Akw==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -982,15 +989,6 @@
   dependencies:
     lodash.get "^4.4.2"
 
-"@devseed-ui/button@2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@devseed-ui/button/-/button-2.4.0.tgz#f0e90f2efb7f3e976b725384070bd9799a22206d"
-  integrity sha512-yBxmXU5M0ltqjk+2lRf5egTk51skMvrAy7m/wYnzmOWiNfC/W7dgh7EqAvSnzKdGFr+deP9QHo9WilYiteXfQw==
-  dependencies:
-    "@devseed-ui/base" "^2.2.0"
-    "@devseed-ui/collecticons" "0.12.0"
-    "@devseed-ui/helpers" "^2.3.0"
-
 "@devseed-ui/button@2.4.2", "@devseed-ui/button@^2.4.2":
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/@devseed-ui/button/-/button-2.4.2.tgz#62c1156340d54f3a94541f9902163fda977a14a8"
@@ -1042,14 +1040,20 @@
     "@devseed-ui/theme" "2.3.0"
 
 "@devseed-ui/modal@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@devseed-ui/modal/-/modal-1.0.3.tgz#394f48e0025743729de8af6325a85bb3510d2045"
-  integrity sha512-IWLiXJXCwFK/kYu7ZJcjFXwoJWrThlpWI3rKt4RyJVq6sfcU7klTx2/OTz69JnrQDhbV+0AkykulpLW1WldJ+A==
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@devseed-ui/modal/-/modal-1.1.0.tgz#971a267023a9418594efe571d663516603d7768e"
+  integrity sha512-vyILgGO4/goog8vBCDHke6LF/dJSdezUbljRIdTjSL5mOWa0ANIfbwKto3U4/pEqgSl/B9Bm//QpShuFTZ9UVA==
   dependencies:
-    "@devseed-ui/base" "2.2.0"
-    "@devseed-ui/button" "2.4.0"
-    "@devseed-ui/helpers" "2.3.0"
+    "@devseed-ui/theme-provider" "^2.4.0"
     react-transition-group "^4.3.0"
+
+"@devseed-ui/theme-provider@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@devseed-ui/theme-provider/-/theme-provider-2.4.0.tgz#69685a38fc9e2a444e414b7adbbb0e661bbc377e"
+  integrity sha512-pJpd7jwV0HEu2EDWUQFMXyCE7RR5HIR+j9jNFHMvhl/ceL5YlzIxkN/66g9uxyM4DIWs+Y9Xco3OpLMT+4fZbA==
+  dependencies:
+    lodash.get "^4.4.2"
+    polished "^3.4.2"
 
 "@devseed-ui/theme@2.3.0":
   version "2.3.0"
@@ -3955,11 +3959,6 @@ cssstyle@^2.2.0:
   dependencies:
     cssom "~0.3.6"
 
-csstype@^2.6.7:
-  version "2.6.11"
-  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.11.tgz#452f4d024149ecf260a852b025e36562a253ffc5"
-  integrity sha512-l8YyEC9NBkSm783PFTvh0FmJy7s5pFKrDp49ZL7zBGX3fWkO+N4EEyan1qqp8cwPLDcD0OSdyY6hAMoxp34JFw==
-
 csstype@^3.0.2:
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.5.tgz#7fdec6a28a67ae18647c51668a9ff95bb2fa7bb8"
@@ -4690,12 +4689,12 @@ dom-css@^2.0.0:
     to-camel-case "1.0.0"
 
 dom-helpers@^5.0.1:
-  version "5.1.4"
-  resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-5.1.4.tgz#4609680ab5c79a45f2531441f1949b79d6587f4b"
-  integrity sha512-TjMyeVUvNEnOnhzs6uAn9Ya47GmMo3qq7m+Lr/3ON0Rs5kHvb8I+SQYjLUSYn7qhEm0QjW0yrBkvz9yOrwwz1A==
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-5.2.0.tgz#57fd054c5f8f34c52a3eeffdb7e7e93cd357d95b"
+  integrity sha512-Ru5o9+V8CpunKnz5LGgWXkmrH/20cGKwcHwS4m73zIvs54CN9epEmT/HLqFJW3kXpakAFkEdzgy1hzlJe3E4OQ==
   dependencies:
     "@babel/runtime" "^7.8.7"
-    csstype "^2.6.7"
+    csstype "^3.0.2"
 
 dom-serializer@0:
   version "0.2.2"
@@ -10289,12 +10288,19 @@ png-js@^1.0.0:
   resolved "https://registry.yarnpkg.com/png-js/-/png-js-1.0.0.tgz#e5484f1e8156996e383aceebb3789fd75df1874d"
   integrity sha512-k+YsbhpA9e+EFfKjTCH3VW6aoKlyNYI6NYdTfDL4CIvFnvsuO84ttonmZE7rc+v23SLTH8XX+5w/Ak9v0xGY4g==
 
-polished@^3.4.1, polished@^3.4.2:
+polished@^3.4.1:
   version "3.6.5"
   resolved "https://registry.yarnpkg.com/polished/-/polished-3.6.5.tgz#dbefdde64c675935ec55119fe2a2ab627ca82e9c"
   integrity sha512-VwhC9MlhW7O5dg/z7k32dabcAFW1VI2+7fSe8cE/kXcfL7mVdoa5UxciYGW2sJU78ldDLT6+ROEKIZKFNTnUXQ==
   dependencies:
     "@babel/runtime" "^7.9.2"
+
+polished@^3.4.2:
+  version "3.7.1"
+  resolved "https://registry.yarnpkg.com/polished/-/polished-3.7.1.tgz#d1addc87ee16eb5b413c6165eda37600cccb9c11"
+  integrity sha512-/QgHrNGYwIA4mwxJ/7FSvalUJsm7KNfnXiScVSEG2Xa5qxDeBn4nmdjN2pW00mkM2Tts64ktc47U8F7Ed1BRAA==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
 
 popper.js@^1.16.0:
   version "1.16.1"
@@ -11030,9 +11036,9 @@ regenerator-runtime@^0.11.0:
   integrity sha512-MguG95oij0fC3QV3URf4V2SDYGJhJnJGqvIIgdECeODCT98wSWDAJ94SSuVpYQUoTcGUIL6L4yNB7j1DFFHSBg==
 
 regenerator-runtime@^0.13.4:
-  version "0.13.5"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.5.tgz#d878a1d094b4306d10b9096484b33ebd55e26697"
-  integrity sha512-ZS5w8CpKFinUzOwW3c83oPeVXoNsrLsaCoLtJvAClH135j/R77RuymhiSErhm2lKcwSCIpmvIWSbDkIfAqKQlA==
+  version "0.13.7"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.7.tgz#cac2dacc8a1ea675feaabaeb8ae833898ae46f55"
+  integrity sha512-a54FxoJDIr27pgf7IgeQGxmqUNYrcV338lf/6gH456HZ/PhX+5BcwHXG9ajESmwe6WRO0tAzRUrRmNONWgkrew==
 
 regenerator-transform@^0.14.2:
   version "0.14.5"

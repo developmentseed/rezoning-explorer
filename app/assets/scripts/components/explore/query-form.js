@@ -64,9 +64,7 @@ function QueryForm (props) {
     onSelectionChange,
     gridMode,
     setGridMode,
-    gridSize, setGridSize,
-    maxZoneScore, setMaxZoneScore,
-    maxLCOE, setMaxLCOE
+    gridSize, setGridSize
   } = props;
 
   const firstLoad = useRef(true);
@@ -248,6 +246,7 @@ function QueryForm (props) {
         <FiltersForm
           name='Filters'
           icon='filter'
+          disabled={!area || !resource}
           setPreset={(preset) => {
             if (preset === 'reset') {
               initialize(filtersLists, filtersInd, {
@@ -264,17 +263,12 @@ function QueryForm (props) {
           filters={filtersInd}
           checkIncluded={checkIncluded}
           resource={resource}
-          outputFilters={
-            [
-              [maxZoneScore, setMaxZoneScore, 'Run analysis to filter on zone score'],
-              [maxLCOE, setMaxLCOE, 'Run analysis to filter on LCOE']
-            ]
-          }
         />
         <LCOEForm
           name='Economics'
           icon='disc-dollar'
           lcoe={lcoeInd}
+          disabled={!area || !resource}
           // setLcoe={setLcoe}
           presets={presets.lcoe}
           setPreset={(preset) => {
@@ -288,12 +282,12 @@ function QueryForm (props) {
               });
             }
           }}
-
         />
         <WeightsForm
           name='weights'
           icon='sliders-horizontal'
           weights={weightsInd}
+          disabled={!area || !resource}
           presets={presets.weights}
           setPreset={(preset) => {
             if (preset === 'reset') {
@@ -306,15 +300,13 @@ function QueryForm (props) {
               });
             }
           }}
-
         />
-
       </TabbedBlockBody>
-
       <SubmissionSection>
         <Button
           size='small'
           type='reset'
+          disabled={!area || !resource}
           onClick={resetClick}
           variation='primary-raised-light'
           useIcon='arrow-loop'
@@ -324,9 +316,11 @@ function QueryForm (props) {
         <Button
           size='small'
           type='submit'
+          disabled={!area || !resource}
           onClick={applyClick}
           variation='primary-raised-dark'
           useIcon='tick--small'
+          title={!area || !resource ? 'Both area and resource must be set to generate zones' : 'Generate Zones Analysis'}
         >
           Generate Zones
         </Button>
@@ -355,11 +349,7 @@ QueryForm.propTypes = {
   gridMode: T.bool,
   setGridMode: T.func,
   gridSize: T.number,
-  setGridSize: T.func,
-  maxZoneScore: T.object,
-  setMaxZoneScore: T.func,
-  maxLCOE: T.object,
-  setMaxLCOE: T.func
+  setGridSize: T.func
 };
 
 export default QueryForm;
