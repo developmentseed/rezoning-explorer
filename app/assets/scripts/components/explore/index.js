@@ -11,7 +11,7 @@ function ExploreComponent () {
   );
 }
 if (process.env.NODE_ENV === 'development') {
-  ExploreComponent.whyDidYouRender = true;
+  ExploreComponent.whyDidYouRender = false;
 }
 
 export default ExploreComponent;

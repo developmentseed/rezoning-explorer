@@ -247,19 +247,6 @@ function QueryForm (props) {
           name='Filters'
           icon='filter'
           disabled={!area || !resource}
-          setPreset={(preset) => {
-            if (preset === 'reset') {
-              initialize(filtersLists, filtersInd, {
-                reset: true,
-                apiRange: filterRanges.getData()
-              });
-            } else {
-              initialize(presets.filters[preset], filtersInd, {
-                reset: true,
-                apiRange: filterRanges.getData()
-              });
-            }
-          }}
           filters={filtersInd}
           checkIncluded={checkIncluded}
           resource={resource}
@@ -288,18 +275,6 @@ function QueryForm (props) {
           icon='sliders-horizontal'
           weights={weightsInd}
           disabled={!area || !resource}
-          presets={presets.weights}
-          setPreset={(preset) => {
-            if (preset === 'reset') {
-              initialize(weightsList, weightsInd, {
-                reset: true
-              });
-            } else {
-              initialize(presets.weights[preset], weightsInd, {
-                reset: true
-              });
-            }
-          }}
         />
       </TabbedBlockBody>
       <SubmissionSection>

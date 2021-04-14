@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState, useReducer } from 'react';
+import React, { createContext, useContext, useEffect, useState, useReducer, useMemo } from 'react';
 import T from 'prop-types';
 import * as topojson from 'topojson-client';
 import bbox from '@turf/bbox';
@@ -58,6 +58,7 @@ const {
   DEFAULT_RANGE
 } = INPUT_CONSTANTS;
 const maskTypes = [BOOL];
+
 const ExploreContext = createContext({});
 
 export function ExploreProvider (props) {
@@ -380,6 +381,29 @@ export function ExploreProvider (props) {
 
 ExploreProvider.propTypes = {
   children: T.node
+};
+
+// Check if consumer function is used properly
+const useExploreContext = (fnName) => {
+  const context = useContext(ExploreContext);
+
+  if (!context) {
+    throw new Error(
+      `The \`${fnName}\` hook must be used inside the <ApiMetaContext> component's context.`
+    );
+  }
+
+  return context;
+};
+
+export const useApiMeta = () => {
+  const { apiLimits, setApiLimits } = useExploreContext('useApiMeta');
+
+  return useMemo(
+    () => ({
+    }),
+    []
+  );
 };
 
 export default ExploreContext;
