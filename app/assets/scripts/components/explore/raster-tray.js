@@ -154,7 +154,7 @@ function RasterTray (props) {
       >
         {
           // Non categorized layers
-          categorizedLyers[undefined] && categorizedLayers[undefined].map(l => (
+          categorizedLayers[undefined] && categorizedLayers[undefined].map(l => (
             <LayerControl
               key={l.name}
               {...l}
@@ -205,16 +205,6 @@ function RasterTray (props) {
           }}
 
         </Accordion>
-
-        {/* layers.map(l => (
-          <LayerControl
-            key={l.name}
-            {...l}
-            onLayerKnobChange={onLayerKnobChange}
-            onVisibilityToggle={onVisibilityToggle}
-          />
-        )
-        ) */}
       </LayersWrapper>
     </TrayWrapper>
   );
