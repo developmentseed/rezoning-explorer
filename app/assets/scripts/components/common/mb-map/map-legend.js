@@ -7,8 +7,9 @@ import { glsp } from '../../../styles/utils/theme-values';
 import { cardSkin } from '../../../styles/skins';
 
 import { LegendLinear, LegendItem } from '@visx/legend';
-import { scaleLinear, scaleOrdinal } from '@visx/scale';
+import { scaleLinear } from '@visx/scale';
 import colormap from 'colormap';
+import MakiIcon from '../maki-icon';
 
 const MapLegendSelf = styled.div`
   ${cardSkin}
@@ -17,7 +18,8 @@ const MapLegendSelf = styled.div`
   padding: ${glsp(0.75)};
   margin: ${glsp(0.5)};
   display: grid;
-  grid-template-columns: ${({ type }) => (type === 'linear' ? '1fr 1fr' : 'auto 1fr')};
+  grid-template-columns: ${({ type }) =>
+    type === 'linear' ? '1fr 1fr' : 'auto 1fr'};
   grid-gap: ${({ type }) => (type === 'linear' ? '0.25rem' : '0.75rem')};
   width: 14rem;
   svg {
@@ -26,8 +28,8 @@ const MapLegendSelf = styled.div`
 `;
 
 const LegendTitle = styled.div`
-  grid-column: ${({ type }) => (type === 'linear' && 'span 2')};
-  text-align: ${({ type }) => (type === 'linear' && 'center')};
+  grid-column: ${({ type }) => type === 'linear' && 'span 2'};
+  text-align: ${({ type }) => type === 'linear' && 'center'};
 `;
 
 const LegendLabels = styled.div`
@@ -36,7 +38,7 @@ const LegendLabels = styled.div`
 `;
 
 const LegendLabelsStyled = styled(LegendLabels)`
-    grid-column: span 2;
+  grid-column: span 2;
 `;
 
 const InputLabel = styled.span`
@@ -45,83 +47,130 @@ const InputLabel = styled.span`
   font-size: 0.75rem;
 `;
 
-export default function MapLegend (props) {
-  // Default legend scale uses colormap with "viridis." Logic allows for custom colormaps passed to legends, and for custom ordinal color scales
-  let scale;
-  if (props.scale.colorArray) {
-    scale = scaleOrdinal({
-      domain: Array(props.scale.domain).fill(0).map((a, i) => i / props.scale.domain),
-      range: props.scale.colorArray
-    });
-  } else {
-    scale = scaleLinear({
-      domain: Array(props.scale.domain).fill(0).map((a, i) => i / props.scale.domain),
-      range: colormap({ colormap: props.scale.colorMap, nshades: props.scale.domain })
-    });
-  }
+function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
+  const visibleRaster = mapLayers.filter(
+    (layer) =>
+      layer.type === 'raster' &&
+      layer.visible &&
+      layer.id !== 'FILTERED_LAYER_ID'
+  );
 
-  const { relatedFilter } = props;
+  if (visibleRaster.length === 0) return null;
+
+  const label = visibleRaster[0].title;
+
+  const rasterRange = filterRanges.getData()[visibleRaster[0].id];
+  const rasterFilter = filtersLists.find(
+    (l) => l.layer === visibleRaster[0].id
+  );
+  const unit =
+    rasterFilter && rasterFilter.unit ? ` (${rasterFilter.unit})` : '';
+
+  // Default legend scale uses colormap with "viridis." Logic allows for custom colormaps passed to legends,
+  // and for custom ordinal color scales
+  const domain = 50;
+  const colorArray = null;
+
+  const scale = scaleLinear({
+    domain: Array(domain)
+      .fill(0)
+      .map((a, i) => i / domain),
+    range: colormap({
+      colormap: 'viridis',
+      nshades: domain
+    })
+  });
 
   // Show different legend if filter type is boolean
-  if (get(relatedFilter, 'input.type') === 'boolean') {
+  if (get(rasterFilter, 'input.type') === 'boolean') {
     return (
-      <MapLegendSelf type='boolean'>
+      <>
         <LegendItem>
           <svg width={16} height={16}>
             <rect fill={scale(1)} width={16} height={16} />
           </svg>
         </LegendItem>
-        <LegendTitle type='boolean'>{props.description}</LegendTitle>
-      </MapLegendSelf>
+        <LegendTitle type='boolean'>{label}</LegendTitle>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <LegendLinear scale={scale} steps={domain}>
+          {(labels) => (
+            <LegendLabelsStyled>
+              {labels.map((label, i) => (
+                <LegendItem key={`legend-linear-${label.datum}`}>
+                  <svg width={4} height={10}>
+                    <rect
+                      fill={label.value}
+                      stroke={colorArray && 'black'}
+                      width={4}
+                      height={10}
+                    />
+                  </svg>
+                </LegendItem>
+              ))}
+            </LegendLabelsStyled>
+          )}
+        </LegendLinear>
+        <InputLabel>{rasterRange.min.toFixed(1)}</InputLabel>
+        <InputLabel align='right'>{rasterRange.max.toFixed(1)}</InputLabel>
+        <LegendTitle type='linear'>
+          {label}
+          {unit}
+        </LegendTitle>
+      </>
     );
   }
+}
 
-  const min = props.min !== undefined ? props.min.toFixed(1) : '';
-  const max = props.max !== undefined ? props.max.toFixed(1) : '';
-  const unit = relatedFilter && relatedFilter.unit ? ` (${relatedFilter.unit})` : '';
+RasterLegendItem.propTypes = {
+  mapLayers: T.array,
+  filterRanges: T.array,
+  filtersLists: T.array
+};
 
+export default function MapLegend({
+  selectedResource,
+  mapLayers,
+  filtersLists,
+  filterRanges
+}) {
   return (
-    <MapLegendSelf type='linear'>
-      <LegendLinear
-        scale={scale}
-        steps={props.scale.domain}
-      >
-        {labels => (
-          <LegendLabelsStyled>
-            {labels.map((label, i) => (
-              <LegendItem key={`legend-linear-${label.datum}`}>
-                <svg width={props.width || 4} height={10}>
-                  <rect fill={label.value} stroke={props.scale.colorArray && 'black'} width={props.width || 4} height={10} />
-                </svg>
-              </LegendItem>
-            ))}
-          </LegendLabelsStyled>
-        )}
-      </LegendLinear>
-      <InputLabel>{min}</InputLabel>
-      <InputLabel align='right'>{max}</InputLabel>
-      <LegendTitle type='linear'>{props.description}{unit}</LegendTitle>
+    <MapLegendSelf type='boolean'>
+      {mapLayers
+        .filter(({ type, visible }) => type === 'symbol' && visible)
+        .map(({ id, symbol, name }) => (
+          <>
+            <LegendItem>
+              <MakiIcon key={id} id={symbol} />
+            </LegendItem>
+            <LegendTitle>{name}</LegendTitle>
+          </>
+        ))}
+      {selectedResource === 'Off-Shore Wind' && (
+        <>
+          <LegendItem>
+            <svg width={16} height={16}>
+              <rect fill='#d5d5d5' width={16} height={16} />
+            </svg>
+          </LegendItem>
+          <LegendTitle type='boolean'>Exclusive Economic Zone</LegendTitle>
+        </>
+      )}
+      <RasterLegendItem
+        mapLayers={mapLayers}
+        filterRanges={filterRanges}
+        filtersLists={filtersLists}
+      />
     </MapLegendSelf>
   );
 }
 
 MapLegend.propTypes = {
-  description: T.string,
-  relatedFilter: T.object,
-  min: T.number,
-  max: T.number,
-  width: T.oneOfType([T.string, T.number]),
-  scale: T.shape({
-    domain: T.number,
-    colorMap: T.string,
-    colorArray: T.array
-  })
-};
-
-MapLegend.defaultProps = {
-  scale: {
-    domain: 50,
-    colorMap: 'viridis',
-    colorArray: null
-  }
+  selectedResource: T.string.isRequired,
+  mapLayers: T.array.isRequired,
+  filtersLists: T.array.isRequired,
+  filterRanges: T.array.isRequired
 };

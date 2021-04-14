@@ -443,12 +443,6 @@ function MbMap (props) {
 
   const { filtersLists, filterRanges } = useContext(FormContext);
 
-  const visibleRaster = mapLayers.filter(layer => layer.type === 'raster' && layer.visible && layer.id !== 'FILTERED_LAYER_ID');
-  let rasterRange = null;
-  if (visibleRaster.length > 0) {
-    rasterRange = filterRanges.getData()[visibleRaster[0].id];
-  }
-
   // Initialize map on mount
   useEffect(() => {
     if (!map) {
@@ -610,23 +604,12 @@ function MbMap (props) {
 
   return (
     <MapsContainer>
-      {filtersLists && visibleRaster.length ? (
+      {selectedResource && mapLayers && filtersLists && filterRanges && (
         <MapLegend
-          min={rasterRange && rasterRange.min}
-          max={rasterRange && rasterRange.max}
-          description={visibleRaster[0].title}
-          relatedFilter={
-            (filtersLists.find((l) => l.layer === visibleRaster[0].id))
-          }
-        />
-      ) : (
-        ''
-      )}
-      {selectedResource === 'Off-Shore Wind' && (
-        <MapLegend
-          scale={{ domain: 1, colorArray: ['#d5d5d5'] }}
-          width={200}
-          description='Exclusive Economic Zone'
+          selectedResource={selectedResource}
+          filtersLists={filtersLists}
+          mapLayers={mapLayers}
+          filterRanges={filterRanges}
         />
       )}
       <SingleMapContainer ref={mapContainer} />
@@ -636,11 +619,16 @@ function MbMap (props) {
           lngLat={popoverCoods.coords}
           closeButton={false}
           offset={[15, 15]}
-          content={<>{renderZoneDetailsList(popoverCoods.zoneFeature, ['lcoe', 'zone_score'])}</>}
+          content={
+            <>
+              {renderZoneDetailsList(popoverCoods.zoneFeature, [
+                'lcoe',
+                'zone_score'
+              ])}
+            </>
+          }
           footerContent={
-            <a>
-              Click zone to view more details in the right panel.
-            </a>
+            <a>Click zone to view more details in the right panel.</a>
           }
         />
       )}
