@@ -1,9 +1,10 @@
 import React from 'react';
 import T from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import get from 'lodash.get';
 
 import { glsp } from '../../../styles/utils/theme-values';
+import { themeVal } from '../../../styles/utils/general';
 import { cardSkin } from '../../../styles/skins';
 
 import { LegendLinear, LegendItem } from '@visx/legend';
@@ -18,9 +19,8 @@ const MapLegendSelf = styled.div`
   padding: ${glsp(0.75)};
   margin: ${glsp(0.5)};
   display: grid;
-  grid-template-columns: ${({ type }) =>
-    type === 'linear' ? '1fr 1fr' : 'auto 1fr'};
-  grid-gap: ${({ type }) => (type === 'linear' ? '0.25rem' : '0.75rem')};
+  grid-template-columns: 1rem 1fr;
+  grid-gap: 0.75rem;
   width: 14rem;
   svg {
     display: block;
@@ -28,8 +28,12 @@ const MapLegendSelf = styled.div`
 `;
 
 const LegendTitle = styled.div`
-  grid-column: ${({ type }) => type === 'linear' && 'span 2'};
-  text-align: ${({ type }) => type === 'linear' && 'center'};
+  ${({ type }) => type === 'linear' && css`
+    grid-column: span 2;
+    text-align: center;
+    border-top: 1px solid ${themeVal('color.baseAlphaC')};
+    padding-top: ${glsp(0.75)};
+  `};
 `;
 
 const LegendLabels = styled.div`
@@ -96,6 +100,10 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
   } else {
     return (
       <>
+        <LegendTitle type='linear'>
+          {label}
+          {unit}
+        </LegendTitle>
         <LegendLinear scale={scale} steps={domain}>
           {(labels) => (
             <LegendLabelsStyled>
@@ -116,10 +124,6 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
         </LegendLinear>
         <InputLabel>{rasterRange.min.toFixed(1)}</InputLabel>
         <InputLabel align='right'>{rasterRange.max.toFixed(1)}</InputLabel>
-        <LegendTitle type='linear'>
-          {label}
-          {unit}
-        </LegendTitle>
       </>
     );
   }
@@ -138,7 +142,7 @@ export default function MapLegend({
   filterRanges
 }) {
   return (
-    <MapLegendSelf type='boolean'>
+    <MapLegendSelf>
       {mapLayers
         .filter(({ type, visible }) => type === 'symbol' && visible)
         .map(({ id, symbol, name }) => (
