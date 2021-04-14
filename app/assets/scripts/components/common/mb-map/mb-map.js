@@ -608,11 +608,10 @@ function MbMap (props) {
     ]
     );
   }, [maxZoneScore, maxLCOE, currentZones]);
-  console.log(visibleRaster)
 
   return (
     <MapsContainer>
-      {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title} units={visibleRaster[0].units}/> : ''}
+      {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title} units={visibleRaster[0].units} /> : ''}
       {selectedResource === 'Off-Shore Wind' && <MapLegend scale={{ domain: 1, colorArray: ['#d5d5d5'] }} width={200} description='Exclusive Economic Zone' />}
       <SingleMapContainer ref={mapContainer} />
       {map && popoverCoods && (

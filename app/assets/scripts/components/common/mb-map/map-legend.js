@@ -83,7 +83,7 @@ export default function MapLegend (props) {
       </LegendLinear>
       <InputLabel>{min}</InputLabel>
       <InputLabel align='right'>{max}</InputLabel>
-      <LegendTitle>{props.description}{units ? ` (${units})` : ''}}</LegendTitle>
+      <LegendTitle>{props.description}{units ? ` (${units})` : ''}</LegendTitle>
     </MapLegendSelf>
   );
 }
