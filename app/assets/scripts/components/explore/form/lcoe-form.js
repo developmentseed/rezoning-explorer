@@ -24,7 +24,8 @@ function LCOEForm (props) {
     }
     accum[c.category].push(cost);
     return accum;
-  }, {}));
+  }, {}))
+    .sort(([cat]) => cat === 'Basic' ? -1 : 1);
 
   return (
     <FormWrapper active={active}>
