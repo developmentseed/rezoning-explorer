@@ -215,5 +215,4 @@ if (process.env.NODE_ENV === 'development') {
   FiltersForm.whyDidYouRender = false;
 }
 
-
 export default FiltersForm;

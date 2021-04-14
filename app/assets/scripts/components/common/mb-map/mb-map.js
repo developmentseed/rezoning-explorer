@@ -638,5 +638,4 @@ if (process.env.NODE_ENV === 'development') {
   MbMap.whyDidYouRender = false;
 }
 
-
 export default withTheme(MbMap);

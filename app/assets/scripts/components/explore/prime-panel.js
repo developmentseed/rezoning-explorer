@@ -99,7 +99,7 @@ function ExpMapPrimePanel (props) {
     setZonesGenerated(false);
   }, []);
 
-  const _updateFilteredLayer = useCallback(updateFilteredLayer, [])
+  const _updateFilteredLayer = useCallback(updateFilteredLayer, []);
 
   return (
     <>

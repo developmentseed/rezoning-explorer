@@ -383,27 +383,4 @@ ExploreProvider.propTypes = {
   children: T.node
 };
 
-// Check if consumer function is used properly
-const useExploreContext = (fnName) => {
-  const context = useContext(ExploreContext);
-
-  if (!context) {
-    throw new Error(
-      `The \`${fnName}\` hook must be used inside the <ApiMetaContext> component's context.`
-    );
-  }
-
-  return context;
-};
-
-export const useApiMeta = () => {
-  const { apiLimits, setApiLimits } = useExploreContext('useApiMeta');
-
-  return useMemo(
-    () => ({
-    }),
-    []
-  );
-};
-
 export default ExploreContext;

@@ -181,24 +181,21 @@ function QueryForm (props) {
   }, [resource]);
 
   const renderFiltersForm = useMemo(() => (
-        <FiltersForm
-          name='Filters'
-          icon='filter'
-          disabled={!area || !resource}
-          filters={filtersInd}
-          checkIncluded={checkIncluded}
-          resource={resource}
-        />
+    <FiltersForm
+      name='Filters'
+      icon='filter'
+      disabled={!area || !resource}
+      filters={filtersInd}
+      checkIncluded={checkIncluded}
+      resource={resource}
+    />
 
-  ),[...filtersInd.map(([f]) => f.input.value), resource])
-
+  ), [...filtersInd.map(([f]) => f.input.value), resource]);
 
   /* Wait until elements have mounted and been parsed to render the query form */
   if (firstLoad.current) {
     return null;
   }
-
-
 
   return (
     <PanelBlock>
@@ -269,7 +266,7 @@ function QueryForm (props) {
           filters={filtersInd}
           checkIncluded={checkIncluded}
           resource={resource}
-        />*/}
+        /> */}
         <LCOEForm
           name='Economics'
           icon='disc-dollar'

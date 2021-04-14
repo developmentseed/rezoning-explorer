@@ -1,4 +1,4 @@
-import React, { useState, useContext, useCallback }  from 'react';
+import React, { useState, useContext, useCallback } from 'react';
 import styled from 'styled-components';
 import App from '../common/app';
 import {
@@ -48,8 +48,8 @@ function Explore () {
   const zoneData = currentZones.isReady() ? currentZones.getData() : null;
 
   const onPanelChange = useCallback(() => {
-    setTriggerResize(!triggerResize)
-  }, [triggerResize])
+    setTriggerResize(!triggerResize);
+  }, [triggerResize]);
   return (
     <App
       pageTitle='Explore'
