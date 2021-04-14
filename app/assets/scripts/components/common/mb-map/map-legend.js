@@ -56,7 +56,8 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
     (layer) =>
       layer.type === 'raster' &&
       layer.visible &&
-      layer.id !== 'FILTERED_LAYER_ID'
+      layer.id !== 'FILTERED_LAYER_ID' &&
+      layer.id !== 'satellite'
   );
 
   if (visibleRaster.length === 0) return null;
