@@ -33,6 +33,7 @@ import GlobalContext from '../../../context/global-context';
 import { toTitleCase } from '../../../utils/format';
 import exportZonesCsv from './csv';
 import exportZonesGeoJSON from './geojson';
+import exportCountryMap from './country-map';
 
 const { apiEndpoint } = config;
 
@@ -50,7 +51,7 @@ const ExportWrapper = styled.div`
 const timestamp = () => format(Date.now(), 'yyyyMMdd-hhmmss');
 
 // Get lcoe values from search string
-function getLcoeValues (location, selectedResource, lcoeList) {
+function getLcoeValues(location, selectedResource, lcoeList) {
   const lcoeSchema = lcoeList.reduce((acc, l) => {
     acc[l.id] = {
       accessor: l.id,
@@ -67,7 +68,7 @@ function getLcoeValues (location, selectedResource, lcoeList) {
 }
 
 // Get weight values from search string
-function getWeightValues (location, selectedResource, weightsList) {
+function getWeightValues(location, selectedResource, weightsList) {
   const weightsSchema = weightsList.reduce((acc, w) => {
     acc[w.id] = {
       accessor: w.id,
@@ -84,7 +85,7 @@ function getWeightValues (location, selectedResource, weightsList) {
 }
 
 // Get filter values from search string
-function getFilterValues (
+function getFilterValues(
   location,
   selectedResource,
   filtersLists,
@@ -117,10 +118,13 @@ function getFilterValues (
  *
  * Reference: https://stackoverflow.com/questions/49807311/how-to-get-usable-canvas-from-mapbox-gl-js
  */
-async function exportMapImage (selectedArea) {
+async function exportMapImage(selectedArea) {
   const canvas = document.getElementsByClassName('mapboxgl-canvas')[0];
   const dataURL = canvas.toDataURL('image/png');
-  saveAs(dataURItoBlob(dataURL), `WBG-REZoning-${selectedArea.id}-map-snapshot-${timestamp()}.png`);
+  saveAs(
+    dataURItoBlob(dataURL),
+    `WBG-REZoning-${selectedArea.id}-map-snapshot-${timestamp()}.png`
+  );
 }
 
 /**
@@ -139,7 +143,7 @@ const ExportZonesButton = (props) => {
 
   // This will parse current querystring to get values for filters/weights/lcoe
   // an pass to a function to generate the PDF
-  function onExportPDFClick () {
+  function onExportPDFClick() {
     const mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
     const mapDataURL = mapCanvas.toDataURL('image/png');
     const mapAspectRatio = mapCanvas.height / mapCanvas.width;
@@ -197,7 +201,7 @@ const ExportZonesButton = (props) => {
     exportPDF(data);
   }
 
-  async function onRawDataClick (operation) {
+  async function onRawDataClick(operation) {
     if (selectedArea.type !== 'country') {
       toasts.error(
         'Raw data exports are restricted to countries at the moment.'
@@ -290,6 +294,13 @@ const ExportZonesButton = (props) => {
             disabled={selectedArea.type !== 'country'}
           >
             Resource layers (link)
+          </DropMenuItem>
+          <DropMenuItem
+            data-dropdown='click.close'
+            useIcon='page-label'
+            onClick={() => exportCountryMap({ selectedArea })}
+          >
+            PDF Country Map
           </DropMenuItem>
           <DropMenuItem
             data-dropdown='click.close'

@@ -142,7 +142,7 @@ export default function MapLegend({
   filterRanges
 }) {
   return (
-    <MapLegendSelf>
+    <MapLegendSelf id='map-legend'>
       {mapLayers
         .filter(({ type, visible }) => type === 'symbol' && visible)
         .map(({ id, symbol, name }) => (
