@@ -44,7 +44,7 @@ export const outputLayers = [
     nonexclusive: true,
     visible: false,
     category: 'output',
-    info: 'Satellite layer',
+    info: 'Satellite layer'
   },
   {
     id: FILTERED_LAYER_ID,
