@@ -61,6 +61,8 @@ export default function MapLegend (props) {
   const min = props.min !== undefined ? props.min.toFixed(1) : '';
   const max = props.max !== undefined ? props.max.toFixed(1) : '';
 
+  const { units } = props;
+
   return (
     <MapLegendSelf>
       <LegendLinear
@@ -81,7 +83,7 @@ export default function MapLegend (props) {
       </LegendLinear>
       <InputLabel>{min}</InputLabel>
       <InputLabel align='right'>{max}</InputLabel>
-      <LegendTitle>{props.description}</LegendTitle>
+      <LegendTitle>{props.description}{units ? ` (${units})` : ''}}</LegendTitle>
     </MapLegendSelf>
   );
 }
@@ -95,7 +97,8 @@ MapLegend.propTypes = {
     domain: T.number,
     colorMap: T.string,
     colorArray: T.array
-  })
+  }),
+  units: T.string
 };
 
 MapLegend.defaultProps = {
