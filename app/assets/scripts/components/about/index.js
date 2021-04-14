@@ -92,15 +92,15 @@ function Explore () {
       <Inpage>
         <InpageHeader>
           <InpageHeaderInner>
-            <InpageTitle>About REZoning</InpageTitle>
+            <InpageTitle>About ReZoning</InpageTitle>
           </InpageHeaderInner>
         </InpageHeader>
         <InpageBody>
           <AboutPageBodyInner>
-            <p>The Renewable Energy Zoning (REZoning) tool is an interactive platform designed to identify, visualize and rank zones that are most suitable for the development of solar, onshore or offshore wind projects. Users can customize the spatial filters and economic parameters to meet their specific needs or to best represent the country context.</p>
+            <p>The Renewable Energy Zoning (ReZoning) tool is an interactive platform designed to identify, visualize and rank zones that are most suitable for the development of solar, onshore or offshore wind projects. Users can customize the spatial filters and economic parameters to meet their specific needs or to best represent the country context.</p>
             <p>Inspired by <a rel='noreferrer' target='_blank' href='https://mapre.lbl.gov/'>Berkley’s MapRE</a> and developed by <a rel='noreferrer' target='_blank' href='https://esmap.org/'>ESMAP</a> the tool bring together complex spatial analysis and economic calculations into an online, user-friendly environment that allows users and decision makers to obtain insights into the technical and economic potential of renewable energy resources for any country.</p>
             <p>
-            The REZoning tool is powered by global geospatial datasets and baseline assumptions for the economic parameters. No input dataset, nor simulation outcome produced by the tool represents the official position of the World Bank Group. A list of the input datasets can be found here (link to ED.info datasets) and the methodology is thoroughly described here (link to github).
+            The ReZoning tool is powered by global geospatial datasets and baseline assumptions for the economic parameters. No input dataset, nor simulation outcome produced by the tool represents the official position of the World Bank Group. A list of the input datasets can be found here (link to ED.info datasets) and the methodology is thoroughly described here (link to github).
             </p>
           </AboutPageBodyInner>
           <InpageBodyInner>
@@ -133,6 +133,21 @@ function Explore () {
                     src='/assets/graphics/content/logos/logo-esmap.png'
                   />
                   <span>ESMAP</span>
+                </a>
+              </dd>
+              <dd>
+                <a
+                  href='https://www.ucsb.edu/'
+                  title='Visit University of California Santa Barbara'
+                  className='logo-ucsb'
+                  target='_blank'
+                  rel='noreferrer'
+                >
+                  <img
+                    alt='UCSB Logo'
+                    src='/assets/graphics/content/logos/logo-ucsb.png'
+                  />
+                  <span>University of California Santa Barbara</span>
                 </a>
               </dd>
             </LogoList>
