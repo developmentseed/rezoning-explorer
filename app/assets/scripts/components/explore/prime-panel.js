@@ -144,6 +144,7 @@ function ExpMapPrimePanel (props) {
                 show={showRasterPanel}
                 className='raster-tray'
                 layers={mapLayers}
+                resource={selectedResource}
                 onLayerKnobChange={(layer, knob) => {
                   // Check if changes are applied to zones layer, which
                   // have conditional paint properties due to filters
