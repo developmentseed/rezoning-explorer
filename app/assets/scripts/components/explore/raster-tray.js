@@ -209,16 +209,6 @@ function RasterTray (props) {
           }}
 
         </Accordion>
-
-        {/* layers.map(l => (
-          <LayerControl
-            key={l.name}
-            {...l}
-            onLayerKnobChange={onLayerKnobChange}
-            onVisibilityToggle={onVisibilityToggle}
-          />
-        )
-        ) */}
       </LayersWrapper>
     </TrayWrapper>
   );
