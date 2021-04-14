@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useCallback }  from 'react';
 import styled from 'styled-components';
 import App from '../common/app';
 import {
@@ -46,6 +46,10 @@ function Explore () {
   const [triggerResize, setTriggerResize] = useState(true);
   const { selectedArea, selectedResource, tourStep, setTourStep, currentZones } = useContext(ExploreContext);
   const zoneData = currentZones.isReady() ? currentZones.getData() : null;
+
+  const onPanelChange = useCallback(() => {
+    setTriggerResize(!triggerResize)
+  }, [triggerResize])
   return (
     <App
       pageTitle='Explore'
@@ -69,9 +73,7 @@ function Explore () {
               <FormProvider>
 
                 <PrimePanel
-                  onPanelChange={() => {
-                    setTriggerResize(!triggerResize);
-                  }}
+                  onPanelChange={onPanelChange}
                 />
 
                 <ExploreCarto
@@ -80,9 +82,7 @@ function Explore () {
                 />
 
                 <SecPanel
-                  onPanelChange={() => {
-                    setTriggerResize(!triggerResize);
-                  }}
+                  onPanelChange={onPanelChange}
                 />
               </FormProvider>
             </MapProvider>

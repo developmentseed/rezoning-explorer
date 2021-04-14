@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useCallback } from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import Panel from '../common/panel';
@@ -90,6 +90,16 @@ function ExpMapPrimePanel (props) {
   } = useContext(MapContext);
 
   const [showRasterPanel, setShowRasterPanel] = useState(false);
+  const onAreaEdit = useCallback(() => setShowSelectAreaModal(true), []);
+  const onResourceEdit = useCallback(() => setShowSelectResourceModal(true), []);
+  const onInputTouched = useCallback((status) => {
+    setInputTouched(true);
+  }, []);
+  const onSelectionChange = useCallback(() => {
+    setZonesGenerated(false);
+  }, []);
+
+  const _updateFilteredLayer = useCallback(updateFilteredLayer, [])
 
   return (
     <>
@@ -214,21 +224,17 @@ function ExpMapPrimePanel (props) {
                 filtersLists={filtersLists}
                 filterRanges={filterRanges}
                 presets={presets}
-                updateFilteredLayer={updateFilteredLayer}
                 weightsList={weightsList}
                 lcoeList={lcoeList}
                 gridMode={gridMode}
                 setGridMode={setGridMode}
                 gridSize={gridSize}
                 setGridSize={setGridSize}
-                onAreaEdit={() => setShowSelectAreaModal(true)}
-                onResourceEdit={() => setShowSelectResourceModal(true)}
-                onInputTouched={(status) => {
-                  setInputTouched(true);
-                }}
-                onSelectionChange={() => {
-                  setZonesGenerated(false);
-                }}
+                updateFilteredLayer={_updateFilteredLayer}
+                onAreaEdit={onAreaEdit}
+                onResourceEdit={onResourceEdit}
+                onInputTouched={onInputTouched}
+                onSelectionChange={onSelectionChange}
               />
             ) : (
               <></>
@@ -286,4 +292,8 @@ ExpMapPrimePanel.propTypes = {
   onPanelChange: T.func
 };
 
-export default ExpMapPrimePanel;
+if (process.env.NODE_ENV === 'development') {
+  ExpMapPrimePanel.whyDidYouRender = false;
+}
+
+export default React.memo(ExpMapPrimePanel);

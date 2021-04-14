@@ -212,7 +212,7 @@ FiltersForm.propTypes = {
   disabled: T.bool
 };
 if (process.env.NODE_ENV === 'development') {
-  FiltersForm.whyDidYouRender = true;
+  FiltersForm.whyDidYouRender = false;
 }
 
 

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
@@ -180,10 +180,25 @@ function QueryForm (props) {
     }
   }, [resource]);
 
+  const renderFiltersForm = useMemo(() => (
+        <FiltersForm
+          name='Filters'
+          icon='filter'
+          disabled={!area || !resource}
+          filters={filtersInd}
+          checkIncluded={checkIncluded}
+          resource={resource}
+        />
+
+  ),[...filtersInd.map(([f]) => f.input.value), resource])
+
+
   /* Wait until elements have mounted and been parsed to render the query form */
   if (firstLoad.current) {
     return null;
   }
+
+
 
   return (
     <PanelBlock>
@@ -243,6 +258,10 @@ function QueryForm (props) {
       </PanelBlockHeader>
 
       <TabbedBlockBody>
+        {
+          renderFiltersForm
+        }
+        {/*
         <FiltersForm
           name='Filters'
           icon='filter'
@@ -250,7 +269,7 @@ function QueryForm (props) {
           filters={filtersInd}
           checkIncluded={checkIncluded}
           resource={resource}
-        />
+        />*/}
         <LCOEForm
           name='Economics'
           icon='disc-dollar'
@@ -327,4 +346,4 @@ QueryForm.propTypes = {
   setGridSize: T.func
 };
 
-export default QueryForm;
+export default React.memo(QueryForm);

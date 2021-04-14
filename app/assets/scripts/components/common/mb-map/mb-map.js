@@ -634,5 +634,9 @@ function MbMap (props) {
 MbMap.propTypes = {
   triggerResize: T.bool
 };
+if (process.env.NODE_ENV === 'development') {
+  MbMap.whyDidYouRender = false;
+}
+
 
 export default withTheme(MbMap);
