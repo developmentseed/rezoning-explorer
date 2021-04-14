@@ -326,5 +326,8 @@ QueryForm.propTypes = {
   gridSize: T.number,
   setGridSize: T.func
 };
+if (process.env.NODE_ENV === 'development') {
+  QueryForm.whyDidYouRender = true;
+}
 
 export default React.memo(QueryForm);
