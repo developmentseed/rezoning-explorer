@@ -173,7 +173,7 @@ function RasterTray (props) {
                     renderBody={({ isFoldExpanded }) => (
                       layers.map(l => (
                         <LayerControl
-                          key={l.name}
+                          key={l.id}
                           {...l}
                           onLayerKnobChange={onLayerKnobChange}
                           onVisibilityToggle={onVisibilityToggle}
