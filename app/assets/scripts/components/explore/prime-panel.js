@@ -80,8 +80,7 @@ function ExpMapPrimePanel (props) {
     filtersLists,
     weightsList,
     lcoeList,
-    filterRanges,
-    presets
+    filterRanges
   } = useContext(FormContext);
 
   const {
@@ -224,7 +223,6 @@ function ExpMapPrimePanel (props) {
                 resource={selectedResource}
                 filtersLists={filtersLists}
                 filterRanges={filterRanges}
-                presets={presets}
                 weightsList={weightsList}
                 lcoeList={lcoeList}
                 gridMode={gridMode}

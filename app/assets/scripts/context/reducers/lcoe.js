@@ -33,6 +33,7 @@ export async function fetchLcoe (dispatch) {
           id,
           name: cost.title,
           info: cost.description,
+          category: cost.category,
           input: {
             type,
             ...opts,
