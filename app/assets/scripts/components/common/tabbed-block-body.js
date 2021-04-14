@@ -232,4 +232,4 @@ function TabbedBlock (props) {
 TabbedBlock.propTypes = {
   children: T.node.isRequired
 };
-export default TabbedBlock;
+export default React.memo(TabbedBlock);

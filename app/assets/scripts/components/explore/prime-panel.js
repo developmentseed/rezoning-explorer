@@ -293,8 +293,5 @@ ExpMapPrimePanel.propTypes = {
   onPanelChange: T.func
 };
 
-if (process.env.NODE_ENV === 'development') {
-  ExpMapPrimePanel.whyDidYouRender = false;
-}
 
 export default React.memo(ExpMapPrimePanel);

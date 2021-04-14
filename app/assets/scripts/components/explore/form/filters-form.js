@@ -212,7 +212,7 @@ FiltersForm.propTypes = {
   disabled: T.bool
 };
 if (process.env.NODE_ENV === 'development') {
-  FiltersForm.whyDidYouRender = false;
+  FiltersForm.whyDidYouRender = true;
 }
 
-export default FiltersForm;
+export default React.memo(FiltersForm);
