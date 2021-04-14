@@ -9,6 +9,7 @@ import SliderGroup from '../common/slider-group';
 import { Accordion, AccordionFold, AccordionFoldTrigger } from '../../components/accordion';
 import Heading from '../../styles/type/heading';
 import { makeTitleCase } from '../../styles/utils/general';
+import { apiResourceNameMap } from '../../components/explore/panel-data';
 
 const TrayWrapper = styled(ShadowScrollbar)`
   padding: 0.25rem;
@@ -127,13 +128,16 @@ LayerControl.propTypes = {
 };
 
 function RasterTray (props) {
-  const { show, layers, onLayerKnobChange, onVisibilityToggle, className } = props;
+  const { show, layers, onLayerKnobChange, onVisibilityToggle, className, resource } = props;
 
   const categorizedLayers = layers.reduce((cats, layer) => {
-    if (!cats[layer.category]) {
-      cats[layer.category] = [];
+    if (!resource || !layer.energy_type ||
+    layer.energy_type.includes(apiResourceNameMap[resource])) {
+      if (!cats[layer.category]) {
+        cats[layer.category] = [];
+      }
+      cats[layer.category].push(layer);
     }
-    cats[layer.category].push(layer);
     return cats;
   }, {});
   return (
@@ -173,7 +177,7 @@ function RasterTray (props) {
                     renderBody={({ isFoldExpanded }) => (
                       layers.map(l => (
                         <LayerControl
-                          key={l.name}
+                          key={l.id}
                           {...l}
                           onLayerKnobChange={onLayerKnobChange}
                           onVisibilityToggle={onVisibilityToggle}
@@ -208,7 +212,8 @@ RasterTray.propTypes = {
   layers: T.array,
   onLayerKnobChange: T.func,
   onVisibilityToggle: T.func,
-  className: T.string
+  className: T.string,
+  resource: T.string
 };
 
 export default RasterTray;

@@ -41,6 +41,7 @@ export async function fetchLcoe (dispatch) {
             default: cost.default
 
           }
+
         });
       }
       );
