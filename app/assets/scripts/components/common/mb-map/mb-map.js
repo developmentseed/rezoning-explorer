@@ -47,11 +47,11 @@ export const outputLayers = [
   },
   {
     id: FILTERED_LAYER_ID,
-    name: 'Selected Area',
+    name: 'Suitable Areas',
     type: 'raster',
     visible: true,
     category: 'output',
-    info: 'Filtered selected area',
+    info: 'Filtered suitable area',
     disabled: true
   },
   {
@@ -92,6 +92,10 @@ const getResourceLayerName = resource => {
     case RESOURCES.OFFSHORE:
       return 'gwa-speed-100';
   }
+};
+
+const layerDefaultVisibility = id => {
+  return id === ZONES_BOUNDARIES_LAYER_ID || id === FILTERED_LAYER_ID;
 };
 
 const MapsContainer = styled.div`
@@ -457,6 +461,9 @@ function MbMap (props) {
     }
   }, [map]);
 
+  /*
+   * Initialize map layers on receipt of input layers
+  */
   useEffect(() => {
     if (map && inputLayers.isReady() && selectedArea) {
       const layers = inputLayers.getData();
@@ -558,6 +565,9 @@ function MbMap (props) {
 
   // Update zone boundaries on change
 
+  /*
+   * Update visibility of layers on new zones
+  */
   useEffect(() => {
     if (!map || !currentZones.isReady()) return;
     // Update GeoJSON source, applying hover effect if any
@@ -574,7 +584,7 @@ function MbMap (props) {
 
     // Disable all layers besides zones boundaries
     setMapLayers(mapLayers.map(layer => {
-      const visible = layer.id === ZONES_BOUNDARIES_LAYER_ID;
+      const visible = layerDefaultVisibility(layer.id);
       map.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none');
       return {
         ...layer,
