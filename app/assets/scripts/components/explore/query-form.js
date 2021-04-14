@@ -57,7 +57,6 @@ function QueryForm (props) {
     lcoeList,
     updateFilteredLayer,
     filterRanges,
-    presets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
@@ -307,11 +306,6 @@ QueryForm.propTypes = {
   lcoeList: T.array,
   updateFilteredLayer: T.func,
   filterRanges: T.object,
-  presets: T.shape({
-    weights: T.object,
-    lcoe: T.object,
-    filters: T.object
-  }),
   onResourceEdit: T.func,
   onAreaEdit: T.func,
   onInputTouched: T.func,
