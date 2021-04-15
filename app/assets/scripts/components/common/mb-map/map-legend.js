@@ -136,6 +136,32 @@ RasterLegendItem.propTypes = {
   filtersLists: T.array
 };
 
+function FilteredAreaLegendItem({ mapLayers }) {
+  const filteredAreasVisible = mapLayers.filter(
+    (layer) =>
+      layer.id === 'FILTERED_LAYER_ID' &&
+      layer.disabled === false &&
+      layer.visible === true
+  );
+  if (filteredAreasVisible.length === 0) return null;
+  else {
+  return (
+    <>
+      <LegendItem>
+        <svg width={16} height={16}>
+          <rect fill='#ff00a0' width={16} height={16} />
+        </svg>
+      </LegendItem>
+      <LegendTitle type='boolean'>Suitable Areas</LegendTitle>
+    </>
+  );
+}
+}
+
+FilteredAreaLegendItem.propTypes = {
+  mapLayers: T.array
+};
+
 export default function MapLegend({
   selectedResource,
   mapLayers,
@@ -164,6 +190,9 @@ export default function MapLegend({
           <LegendTitle type='boolean'>Exclusive Economic Zone</LegendTitle>
         </>
       )}
+      <FilteredAreaLegendItem
+        mapLayers={mapLayers}
+      />
       <RasterLegendItem
         mapLayers={mapLayers}
         filterRanges={filterRanges}
