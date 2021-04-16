@@ -6,6 +6,8 @@ import get from 'lodash.get';
 import { glsp } from '../../../styles/utils/theme-values';
 import { themeVal } from '../../../styles/utils/general';
 import { cardSkin } from '../../../styles/skins';
+import { COLOR_SCALE } from '../../../styles/zoneScoreColors';
+import { ZONES_BOUNDARIES_LAYER_ID } from '../mb-map/mb-map';
 
 import { LegendLinear, LegendItem } from '@visx/legend';
 import { scaleLinear } from '@visx/scale';
@@ -28,9 +30,11 @@ const MapLegendSelf = styled.div`
 `;
 
 const LegendTitle = styled.div`
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: .5px;
   ${({ type }) => type === 'linear' && css`
     grid-column: span 2;
-    text-align: center;
     border-top: 1px solid ${themeVal('color.baseAlphaC')};
     padding-top: ${glsp(0.75)};
   `};
@@ -156,9 +160,52 @@ function FilteredAreaLegendItem({ mapLayers }) {
     </>
   );
 }
-}
 
 FilteredAreaLegendItem.propTypes = {
+  mapLayers: T.array
+};
+
+function ZoneScoreLegendItem({ mapLayers }) {
+  const zoneScoreVisible = mapLayers.filter(
+    (layer) =>
+      layer.id === ZONES_BOUNDARIES_LAYER_ID &&
+      layer.disabled === false &&
+      layer.visible === true
+  );
+  const scale = scaleLinear({
+    domain: Array(10)
+      .fill(0)
+      .map((a, i) => i / 2),
+    range: COLOR_SCALE
+  });
+  if (zoneScoreVisible.length === 0) return null;
+  return (
+    <>
+      <LegendTitle type='linear'>Zone Score</LegendTitle>
+      <LegendLinear scale={scale} steps={10}>
+        {(labels) => (
+          <LegendLabelsStyled>
+            {labels.map((label, i) => (
+              <LegendItem key={`legend-linear-${label.datum}`}>
+                <svg width={20} height={10}>
+                  <rect
+                    fill={label.value}
+                    width={20}
+                    height={10}
+                  />
+                </svg>
+              </LegendItem>
+            ))}
+          </LegendLabelsStyled>
+        )}
+      </LegendLinear>
+      <InputLabel>0</InputLabel>
+      <InputLabel align='right'>1</InputLabel>
+    </>
+  );
+}
+
+ZoneScoreLegendItem.propTypes = {
   mapLayers: T.array
 };
 
@@ -197,6 +244,9 @@ export default function MapLegend({
         mapLayers={mapLayers}
         filterRanges={filterRanges}
         filtersLists={filtersLists}
+      />
+      <ZoneScoreLegendItem
+        mapLayers={mapLayers}
       />
     </MapLegendSelf>
   );

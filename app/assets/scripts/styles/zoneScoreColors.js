@@ -1,4 +1,4 @@
-const COLOR_SCALE = [
+export const COLOR_SCALE = [
   '#c2ffe2',
   '#9febe6',
   '#7bd7eb',
