@@ -243,6 +243,18 @@ export default function MapLegend({
             <LegendTitle>{name}</LegendTitle>
           </LegendItemWrapper>
         ))}
+      {mapLayers
+        .filter(({ type, visible }) => type === 'line' && visible)
+        .map(({ id, name, color }) => (
+          <LegendItemWrapper key={id}>
+            <LegendItem>
+              <svg width={16} height={16}>
+                <rect fill={color} width={16} height={16} />
+              </svg>
+            </LegendItem>
+            <LegendTitle>{name}</LegendTitle>
+          </LegendItemWrapper>
+        ))}
       {selectedResource === 'Off-Shore Wind' && (
         <LegendItemWrapper>
           <LegendItem>
