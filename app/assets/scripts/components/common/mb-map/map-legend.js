@@ -66,7 +66,7 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
 
   if (visibleRaster.length === 0) return null;
 
-  const label = visibleRaster[0].title;
+  const label = visibleRaster[0].title || visibleRaster[0].name;
 
   const rasterRange = filterRanges.getData()[visibleRaster[0].id];
   const rasterFilter = filtersLists.find(
