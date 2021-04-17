@@ -127,8 +127,13 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
             </LegendLabelsStyled>
           )}
         </LegendLinear>
-        <InputLabel>{rasterRange.min.toFixed(1) || 0}</InputLabel>
-        <InputLabel align='right'>{rasterRange.max.toFixed(1)}</InputLabel>
+        {
+          rasterRange &&
+          <>
+            <InputLabel>{rasterRange.min.toFixed(1) || 0}</InputLabel>
+            <InputLabel align='right'>{rasterRange.max.toFixed(1) || 1}</InputLabel>
+          </>
+        }
       </>
     );
   }
