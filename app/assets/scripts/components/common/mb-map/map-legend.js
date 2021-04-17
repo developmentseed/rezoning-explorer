@@ -5,6 +5,7 @@ import get from 'lodash.get';
 
 import { glsp } from '../../../styles/utils/theme-values';
 import { themeVal } from '../../../styles/utils/general';
+import { truncated } from '../../../styles/helpers/index';
 import { cardSkin } from '../../../styles/skins';
 import { COLOR_SCALE } from '../../../styles/zoneScoreColors';
 import { ZONES_BOUNDARIES_LAYER_ID } from '../mb-map/mb-map';
@@ -18,11 +19,11 @@ const MapLegendSelf = styled.div`
   ${cardSkin}
   z-index: 10;
   font-size: 0.875rem;
-  padding: ${glsp(0.75)};
+  padding: ${glsp()} ${glsp(0.75)};
   margin: ${glsp(0.5)};
   display: grid;
   grid-gap: 0.75rem;
-  width: 14rem;
+  width: ${({ wide }) => wide ? '26.5rem' : '14rem'};
   svg {
     display: block;
   }
@@ -42,12 +43,24 @@ const LegendItemWrapper = styled.div`
       grid-column: span 2;
     }
   `}
+  ${({ type }) => type === 'multiselect' && css`
+    grid-template-columns: 1rem 1fr 1rem 1fr;
+    grid-template-rows: 1.5rem;
+    grid-auto-rows: 1rem;
+    grid-gap: 0.5rem 0.75rem;
+    ${LegendTitle} {
+      ${truncated}
+      text-transform: none;
+      letter-spacing: 0;
+      align-self: center;
+    }
+  `}
 `;
 
 const LegendTitle = styled.div`
   text-transform: uppercase;
   font-size: 0.75rem;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
 `;
 
 const LegendLabels = styled.div`
@@ -100,6 +113,32 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
     })
   });
 
+  const landCoverColor = [
+    [0, 0, 0],
+    [255, 255, 100],
+    [170, 240, 240],
+    [220, 240, 100],
+    [200, 200, 100],
+    [0, 100, 0],
+    [0, 160, 0],
+    [0, 60, 0],
+    [40, 80, 0],
+    [120, 130, 0],
+    [140, 160, 0],
+    [190, 150, 0],
+    [150, 100, 0],
+    [255, 180, 50],
+    [255, 220, 210],
+    [255, 235, 175],
+    [0, 120, 90],
+    [0, 150, 120],
+    [0, 220, 130],
+    [195, 20, 0],
+    [255, 245, 215],
+    [0, 70, 200],
+    [255, 255, 255]
+  ];
+
   // Show different legend if filter type is boolean
   if (get(rasterFilter, 'input.type') === 'boolean') {
     return (
@@ -110,6 +149,22 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
           </svg>
         </LegendItem>
         <LegendTitle>{label}</LegendTitle>
+      </LegendItemWrapper>
+    );
+  } else if (visibleRaster[0].id === 'land-cover') {
+    return (
+      <LegendItemWrapper type='multiselect'>
+        <LegendTitle style={{ gridColumn: 'span 4', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Land Cover</LegendTitle>
+        {rasterFilter.options.map((option, i) => (
+          <>
+            <LegendItem key={option} title={option}>
+              <svg width={16} height={16}>
+                <rect fill={`rgb(${landCoverColor[i]})`} width={16} height={16} />
+              </svg>
+            </LegendItem>
+            <LegendTitle title={option}>{option}</LegendTitle>
+          </>
+        ))}
       </LegendItemWrapper>
     );
   } else {
@@ -181,7 +236,7 @@ FilteredAreaLegendItem.propTypes = {
   mapLayers: T.array
 };
 
-function ZoneScoreLegendItem({ mapLayers }) {
+function ZoneScoreLegendItem({ mapLayers, wide }) {
   const zoneScoreVisible = mapLayers.filter(
     (layer) =>
       layer.id === ZONES_BOUNDARIES_LAYER_ID &&
@@ -203,10 +258,10 @@ function ZoneScoreLegendItem({ mapLayers }) {
           <LegendLabelsStyled>
             {labels.map((label, i) => (
               <LegendItem key={`legend-linear-${label.datum}`}>
-                <svg width={20} height={10}>
+                <svg width={wide ? 40 : 20} height={10}>
                   <rect
                     fill={label.value}
-                    width={20}
+                    width={wide ? 40 : 20}
                     height={10}
                   />
                 </svg>
@@ -222,7 +277,8 @@ function ZoneScoreLegendItem({ mapLayers }) {
 }
 
 ZoneScoreLegendItem.propTypes = {
-  mapLayers: T.array
+  mapLayers: T.array,
+  wide: T.bool
 };
 
 export default function MapLegend({
@@ -231,8 +287,9 @@ export default function MapLegend({
   filtersLists,
   filterRanges
 }) {
+  const landCoverVisible = mapLayers.filter(({ id, visible }) => id === 'land-cover' && visible).length > 0;
   return (
-    <MapLegendSelf>
+    <MapLegendSelf wide={landCoverVisible}>
       {mapLayers
         .filter(({ type, visible }) => type === 'symbol' && visible)
         .map(({ id, symbol, name }) => (
@@ -275,6 +332,7 @@ export default function MapLegend({
       />
       <ZoneScoreLegendItem
         mapLayers={mapLayers}
+        wide={landCoverVisible}
       />
     </MapLegendSelf>
   );
