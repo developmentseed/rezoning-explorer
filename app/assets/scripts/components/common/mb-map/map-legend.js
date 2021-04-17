@@ -149,16 +149,17 @@ function FilteredAreaLegendItem({ mapLayers }) {
   );
   if (filteredAreasVisible.length === 0) return null;
   else {
-  return (
-    <>
-      <LegendItem>
-        <svg width={16} height={16}>
-          <rect fill='#ff00a0' width={16} height={16} />
-        </svg>
-      </LegendItem>
-      <LegendTitle type='boolean'>Suitable Areas</LegendTitle>
-    </>
-  );
+    return (
+      <>
+        <LegendItem>
+          <svg width={16} height={16}>
+            <rect fill='#ff00a0' width={16} height={16} />
+          </svg>
+        </LegendItem>
+        <LegendTitle type='boolean'>Suitable Areas</LegendTitle>
+      </>
+    );
+  }
 }
 
 FilteredAreaLegendItem.propTypes = {
