@@ -21,7 +21,6 @@ const MapLegendSelf = styled.div`
   padding: ${glsp(0.75)};
   margin: ${glsp(0.5)};
   display: grid;
-  grid-template-columns: 1rem 1fr;
   grid-gap: 0.75rem;
   width: 14rem;
   svg {
@@ -29,15 +28,26 @@ const MapLegendSelf = styled.div`
   }
 `;
 
+const LegendItemWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1rem 1fr;
+  grid-gap: 0.75rem;
+  width: 100%;
+  ${({ type }) => type === 'linear' && css`
+    &:not(:only-of-type) {
+      border-top: 1px solid ${themeVal('color.baseAlphaC')};
+      padding-top: ${glsp(0.75)};
+    }
+    ${LegendTitle} {
+      grid-column: span 2;
+    }
+  `}
+`;
+
 const LegendTitle = styled.div`
   text-transform: uppercase;
   font-size: 0.75rem;
   letter-spacing: .5px;
-  ${({ type }) => type === 'linear' && css`
-    grid-column: span 2;
-    border-top: 1px solid ${themeVal('color.baseAlphaC')};
-    padding-top: ${glsp(0.75)};
-  `};
 `;
 
 const LegendLabels = styled.div`
@@ -93,19 +103,19 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
   // Show different legend if filter type is boolean
   if (get(rasterFilter, 'input.type') === 'boolean') {
     return (
-      <>
+      <LegendItemWrapper>
         <LegendItem>
           <svg width={16} height={16}>
             <rect fill={scale(1)} width={16} height={16} />
           </svg>
         </LegendItem>
-        <LegendTitle type='boolean'>{label}</LegendTitle>
-      </>
+        <LegendTitle>{label}</LegendTitle>
+      </LegendItemWrapper>
     );
   } else {
     return (
-      <>
-        <LegendTitle type='linear'>
+      <LegendItemWrapper type='linear'>
+        <LegendTitle>
           {label}
           {unit}
         </LegendTitle>
@@ -134,7 +144,7 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
             <InputLabel align='right'>{rasterRange.max.toFixed(1) || 1}</InputLabel>
           </>
         }
-      </>
+      </LegendItemWrapper>
     );
   }
 }
@@ -155,14 +165,14 @@ function FilteredAreaLegendItem({ mapLayers }) {
   if (filteredAreasVisible.length === 0) return null;
   else {
     return (
-      <>
+      <LegendItemWrapper>
         <LegendItem>
           <svg width={16} height={16}>
             <rect fill='#ff00a0' width={16} height={16} />
           </svg>
         </LegendItem>
         <LegendTitle type='boolean'>Suitable Areas</LegendTitle>
-      </>
+      </LegendItemWrapper>
     );
   }
 }
@@ -186,8 +196,8 @@ function ZoneScoreLegendItem({ mapLayers }) {
   });
   if (zoneScoreVisible.length === 0) return null;
   return (
-    <>
-      <LegendTitle type='linear'>Zone Score</LegendTitle>
+    <LegendItemWrapper type='linear'>
+      <LegendTitle>Zone Score</LegendTitle>
       <LegendLinear scale={scale} steps={10}>
         {(labels) => (
           <LegendLabelsStyled>
@@ -207,7 +217,7 @@ function ZoneScoreLegendItem({ mapLayers }) {
       </LegendLinear>
       <InputLabel>0</InputLabel>
       <InputLabel align='right'>1</InputLabel>
-    </>
+    </LegendItemWrapper>
   );
 }
 
@@ -226,22 +236,22 @@ export default function MapLegend({
       {mapLayers
         .filter(({ type, visible }) => type === 'symbol' && visible)
         .map(({ id, symbol, name }) => (
-          <>
+          <LegendItemWrapper key={id}>
             <LegendItem>
-              <MakiIcon key={id} id={symbol} />
+              <MakiIcon id={symbol} />
             </LegendItem>
             <LegendTitle>{name}</LegendTitle>
-          </>
+          </LegendItemWrapper>
         ))}
       {selectedResource === 'Off-Shore Wind' && (
-        <>
+        <LegendItemWrapper>
           <LegendItem>
             <svg width={16} height={16}>
               <rect fill='#d5d5d5' stroke='#333333' width={16} height={16} />
             </svg>
           </LegendItem>
           <LegendTitle type='boolean'>Exclusive Economic Zone</LegendTitle>
-        </>
+        </LegendItemWrapper>
       )}
       <FilteredAreaLegendItem
         mapLayers={mapLayers}
