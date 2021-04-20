@@ -601,17 +601,26 @@ function MbMap (props) {
     ]
     );
   }, [maxZoneScore, maxLCOE, currentZones]);
-
   return (
     <MapsContainer>
-      {selectedResource && mapLayers && filtersLists && filterRanges && (
-        <MapLegend
-          selectedResource={selectedResource}
-          filtersLists={filtersLists}
-          mapLayers={mapLayers}
-          filterRanges={filterRanges}
-        />
-      )}
+      {
+        selectedResource &&
+        mapLayers &&
+        filtersLists &&
+        filterRanges &&
+        mapLayers.some(({ visible, disabled, id }) =>
+          (visible === true) &&
+          (!disabled) &&
+          (id !== 'satellite')
+        ) && (
+          <MapLegend
+            selectedResource={selectedResource}
+            filtersLists={filtersLists}
+            mapLayers={mapLayers}
+            filterRanges={filterRanges}
+          />
+        )
+      }
       <SingleMapContainer ref={mapContainer} />
       {map && popoverCoods && (
         <MapPopover
