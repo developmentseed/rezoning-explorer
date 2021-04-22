@@ -3,7 +3,6 @@ import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import get from 'lodash.get';
 
-import Button from '../../../styles/button/button';
 import { AccordionFoldTrigger } from '../../../components/accordion';
 import { glsp } from '../../../styles/utils/theme-values';
 import { themeVal } from '../../../styles/utils/general';
