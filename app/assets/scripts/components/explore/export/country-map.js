@@ -38,6 +38,13 @@ export default async function exportCountryMap({ selectedArea }) {
   // Create stream
   const stream = doc.pipe(blobStream());
 
+  // Left Title
+  doc
+    .fillColor(options.baseFontColor)
+    // .font(boldFont)
+    .fontSize(20)
+    .text(selectedArea.name, options.margin, (options.margin / 2));
+
   const mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
   const mapImage = mapCanvas.toDataURL('image/png');
   const mapAspectRatio = mapCanvas.height / mapCanvas.width;
