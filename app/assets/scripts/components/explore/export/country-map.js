@@ -49,7 +49,12 @@ export default async function exportCountryMap({ selectedArea }) {
 
   const legendCanvas = await html2canvas(document.querySelector('#map-legend'));
   const legendImage = legendCanvas.toDataURL('image/png');
-  doc.image(legendImage, options.margin, options.headerHeight);
+  doc.image(legendImage, (doc.page.width - options.margin - 140), (doc.page.height - options.margin - 68), { width: 140 });
+
+  // Add Scale
+  const scaleCanvas = await html2canvas(document.querySelector('.mapboxgl-ctrl-scale'));
+  const scaleImage = scaleCanvas.toDataURL('image/png');
+  doc.image(scaleImage, options.margin + 20, (doc.page.height - options.margin - 20), { width: 100 });
 
   // Finalize PDF file
   doc.end();
