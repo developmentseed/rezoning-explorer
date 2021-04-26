@@ -47,7 +47,10 @@ export default async function exportCountryMap({ selectedArea }) {
     fit: [doc.page.width, mapHeight]
   });
 
-  const legendCanvas = await html2canvas(document.querySelector('#map-legend'));
+  // Add legend
+  const legendNode = document.querySelector('#map-legend');
+  legendNode.style.backgroundColor = '#FFFFFF';
+  const legendCanvas = await html2canvas(legendNode);
   const legendImage = legendCanvas.toDataURL('image/png');
   doc.image(legendImage, (doc.page.width - options.margin - 140), (doc.page.height - options.margin - 68), { width: 140 });
 
