@@ -31,7 +31,13 @@ const options = {
   }
 };
 
-export default async function exportCountryMap({ selectedArea }) {
+export default async function exportCountryMap(selectedArea, map, setMap) {
+  // Zoom to country bounds
+  map.fitBounds(selectedArea.bounds, { padding: 20 });
+  setMap(map);
+
+  // TODO - don't execute anything below until (map.resize.__moving = false && map.resize__zom = false) or some other method of ensuring fitBounds is complete
+
   // Create a document
   const doc = new PDFDocument(pdfDocumentOptions);
 

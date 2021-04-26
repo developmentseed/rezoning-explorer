@@ -34,6 +34,7 @@ import { toTitleCase } from '../../../utils/format';
 import exportZonesCsv from './csv';
 import exportZonesGeoJSON from './geojson';
 import exportCountryMap from './country-map';
+import MapContext from '../../../context/map-context';
 
 const { apiEndpoint } = config;
 
@@ -138,6 +139,8 @@ const ExportZonesButton = (props) => {
   const { filtersLists, weightsList, lcoeList, filterRanges } = useContext(
     FormContext
   );
+
+  const { map, setMap } = useContext(MapContext);
 
   const { setDownload } = useContext(GlobalContext);
 
@@ -298,7 +301,7 @@ const ExportZonesButton = (props) => {
           <DropMenuItem
             data-dropdown='click.close'
             useIcon='page-label'
-            onClick={() => exportCountryMap({ selectedArea })}
+            onClick={() => exportCountryMap(selectedArea, map, setMap)}
           >
             PDF Country Map
           </DropMenuItem>
@@ -348,7 +351,7 @@ const ExportZonesButton = (props) => {
           <DropMenuItem
             data-dropdown='click.close'
             useIcon='picture'
-            onClick={() => exportMapImage(selectedArea)}
+            onClick={() => exportMapImage(selectedArea, map, setMap)}
           >
             Map (.png)
           </DropMenuItem>
