@@ -8,7 +8,7 @@ import html2canvas from 'html2canvas';
 
 // Base PDF options
 const pdfDocumentOptions = {
-  size: 'A4',
+  size: 'LETTER',
   layout: 'landscape',
   margin: 40,
   bufferPages: true
@@ -20,7 +20,7 @@ const options = {
   baseFontColor: '#374863',
   secondaryFontColor: '#6d788f',
   primaryColor: '#23A6F5',
-  headerHeight: 96,
+  headerHeight: 0,
   colWidthTwoCol: 252,
   gutterTwoCol: 28,
   colWidthThreeCol: 160,
