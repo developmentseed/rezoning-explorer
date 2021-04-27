@@ -57,34 +57,39 @@ function LCOEForm (props) {
                   )}
                   renderBody={({ isFoldExpanded }) => (
                     <>
-                      {list.map(([cost, setCost], ind) => {
-                        const onChange = useCallback(
-                          (v) => setCost({
-                            ...cost,
-                            input: {
-                              ...cost.input,
-                              value: v
-                            }
-                          })
+                      {list
+                        .sort(([a, _a], [b, _b]) => {
+                          return a.priority - b.priority;
+                        })
 
-                        );
-                        return (
-                          <PanelOption key={cost.name} hidden={!isFoldExpanded}>
-                            <OptionHeadline>
-                              <PanelOptionTitle>{cost.name}</PanelOptionTitle>
-                              {cost.info &&
+                        .map(([cost, setCost], ind) => {
+                          const onChange = useCallback(
+                            (v) => setCost({
+                              ...cost,
+                              input: {
+                                ...cost.input,
+                                value: v
+                              }
+                            })
+
+                          );
+                          return (
+                            <PanelOption key={cost.name} hidden={!isFoldExpanded}>
+                              <OptionHeadline>
+                                <PanelOptionTitle>{cost.name}</PanelOptionTitle>
+                                {cost.info &&
                             <InfoButton info={cost.info} id={cost.name}>
                               Info
                             </InfoButton>}
-                            </OptionHeadline>
+                              </OptionHeadline>
 
-                            <FormInput
-                              option={cost}
-                              onChange={onChange}
-                            />
-                          </PanelOption>
-                        );
-                      })}
+                              <FormInput
+                                option={cost}
+                                onChange={onChange}
+                              />
+                            </PanelOption>
+                          );
+                        })}
                     </>
                   )}
 
