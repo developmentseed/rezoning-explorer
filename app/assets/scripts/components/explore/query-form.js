@@ -57,7 +57,6 @@ function QueryForm (props) {
     lcoeList,
     updateFilteredLayer,
     filterRanges,
-    presets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
@@ -247,19 +246,6 @@ function QueryForm (props) {
           name='Filters'
           icon='filter'
           disabled={!area || !resource}
-          setPreset={(preset) => {
-            if (preset === 'reset') {
-              initialize(filtersLists, filtersInd, {
-                reset: true,
-                apiRange: filterRanges.getData()
-              });
-            } else {
-              initialize(presets.filters[preset], filtersInd, {
-                reset: true,
-                apiRange: filterRanges.getData()
-              });
-            }
-          }}
           filters={filtersInd}
           checkIncluded={checkIncluded}
           resource={resource}
@@ -269,37 +255,12 @@ function QueryForm (props) {
           icon='disc-dollar'
           lcoe={lcoeInd}
           disabled={!area || !resource}
-          // setLcoe={setLcoe}
-          presets={presets.lcoe}
-          setPreset={(preset) => {
-            if (preset === 'reset') {
-              initialize(lcoeList, lcoeInd, {
-                reset: true
-              });
-            } else {
-              initialize(presets.lcoe[preset], lcoeInd, {
-                reset: true
-              });
-            }
-          }}
         />
         <WeightsForm
           name='weights'
           icon='sliders-horizontal'
           weights={weightsInd}
           disabled={!area || !resource}
-          presets={presets.weights}
-          setPreset={(preset) => {
-            if (preset === 'reset') {
-              initialize(weightsList, weightsInd, {
-                reset: true
-              });
-            } else {
-              initialize(presets.weights[preset], weightsInd, {
-                reset: true
-              });
-            }
-          }}
         />
       </TabbedBlockBody>
       <SubmissionSection>
@@ -337,11 +298,6 @@ QueryForm.propTypes = {
   lcoeList: T.array,
   updateFilteredLayer: T.func,
   filterRanges: T.object,
-  presets: T.shape({
-    weights: T.object,
-    lcoe: T.object,
-    filters: T.object
-  }),
   onResourceEdit: T.func,
   onAreaEdit: T.func,
   onInputTouched: T.func,

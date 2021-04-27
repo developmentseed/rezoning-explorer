@@ -4,9 +4,6 @@ import { fetchFilterRanges, filterRangesReducer } from './reducers/filter-ranges
 import { fetchFilters, filtersReducer } from './reducers/filters';
 import { fetchWeights, weightsReducer } from './reducers/weights';
 import { fetchLcoe, lcoeReducer } from './reducers/lcoe';
-import {
-  presets
-} from '../components/explore/panel-data';
 import ExploreContext from './explore-context';
 import { initialApiRequestState } from './contexeed';
 import {
@@ -52,23 +49,6 @@ export function FormProvider (props) {
   }, [selectedAreaId, selectedResource]);
 
   useEffect(() => {
-    if (!lcoeList.isReady()) {
-      return;
-    }
-
-    presets.lcoe = {
-      Default: lcoeList.getData()
-        .map(cost => ({
-          ...cost,
-          input: {
-            ...cost.input,
-            value: cost.default || 1
-          }
-        }))
-    };
-  }, [lcoeList]);
-
-  useEffect(() => {
     fetchFilterRanges(selectedAreaId, dispatchFilterRanges);
   }, [selectedAreaId]);
 
@@ -93,9 +73,8 @@ export function FormProvider (props) {
           {
             filtersLists: filtersList.isReady() ? filtersList.getData() : null,
             weightsList: weightsList.isReady() ? weightsList.getData() : null,
-            lcoeList: (lcoeList.isReady() && presets.lcoe) ? lcoeList.getData() : null,
+            lcoeList: lcoeList.isReady() ? lcoeList.getData() : null,
             filterRanges,
-            presets,
             inputTouched,
             setInputTouched,
             zonesGenerated,

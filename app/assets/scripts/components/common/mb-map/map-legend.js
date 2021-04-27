@@ -49,30 +49,29 @@ const LegendItemWrapper = styled.div`
   grid-template-columns: 1rem 1fr;
   grid-gap: 0.75rem;
   width: 100%;
-  ${({ type }) =>
-    type === 'linear' &&
-    css`
-      &:not(:only-of-type) {
-        border-top: 1px solid ${themeVal('color.baseAlphaC')};
-        padding-top: ${glsp(0.75)};
-      }
-      ${LegendTitle} {
-        grid-column: span 2;
-      }
-    `}
-  ${({ type }) =>
-    type === 'multiselect' &&
-    css`
-      grid-template-columns: 1rem 1fr 1rem 1fr;
-      grid-template-rows: 1.5rem;
-      grid-auto-rows: 1rem;
-      grid-gap: 0.5rem 0.75rem;
-      /* eslint-disable-next-line */
-      ${LegendTitle} {
-        ${truncated}
-        align-self: center;
-      }
-    `}
+  ${({ type }) => type === 'linear' && css`
+    &:not(:only-of-type) {
+      border-top: 1px solid ${themeVal('color.baseAlphaC')};
+      padding-top: ${glsp(0.75)};
+    }
+    ${LegendTitle} {
+      grid-column: span 2;
+    }
+  `}
+  ${({ type }) => type === 'multiselect' && css`
+    grid-template-columns: 1rem 1fr 1rem 1fr;
+    grid-template-rows: 1.5rem;
+    grid-auto-rows: 1rem;
+    grid-gap: 0.5rem 0.75rem;
+    /* stylelint-disable no-duplicate-selectors */
+    ${LegendTitle} {
+      ${truncated}
+      text-transform: none;
+      letter-spacing: 0;
+      align-self: center;
+    }
+    /* stylelint-enable no-duplicate-selectors */
+  `}
 `;
 
 const LegendTitle = styled.div``;
