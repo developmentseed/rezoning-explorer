@@ -14,7 +14,12 @@ import media from '../../styles/utils/media-queries';
 import PrimePanel from './prime-panel';
 import SecPanel from './sec-panel';
 
-import ExploreContext from '../../context/explore-context';
+import {
+  useArea,
+  useResource,
+  useTourStep,
+  useZone
+} from '../../context/explore-context';
 import Tour from '../common/tour';
 import { MapProvider } from '../../context/map-context';
 import { FormProvider } from '../../context/form-context';
@@ -44,7 +49,12 @@ const ExploreCanvas = styled.div`
 
 function Explore () {
   const [triggerResize, setTriggerResize] = useState(true);
-  const { selectedArea, selectedResource, tourStep, setTourStep, currentZones } = useContext(ExploreContext);
+
+  const { selectedArea } = useArea();
+  const { selectedResource } = useResource();
+  const { tourStep, setTourStep } = useTourStep();
+  const { currentZones } = useZone();
+
   const zoneData = currentZones.isReady() ? currentZones.getData() : null;
 
   const onPanelChange = useCallback(() => {
