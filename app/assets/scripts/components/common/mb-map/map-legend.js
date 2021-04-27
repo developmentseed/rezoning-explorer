@@ -48,13 +48,14 @@ const LegendItemWrapper = styled.div`
     grid-template-rows: 1.5rem;
     grid-auto-rows: 1rem;
     grid-gap: 0.5rem 0.75rem;
-    /* eslint-disable-next-line */
+    /* stylelint-disable no-duplicate-selectors */
     ${LegendTitle} {
       ${truncated}
       text-transform: none;
       letter-spacing: 0;
       align-self: center;
     }
+    /* stylelint-enable no-duplicate-selectors */
   `}
 `;
 
