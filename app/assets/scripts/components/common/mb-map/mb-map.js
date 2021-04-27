@@ -444,15 +444,7 @@ function MbMap (props) {
     setFocusZone
   } = useContext(MapContext);
 
-  const {
-    filterRanges
-  } = useContext(FormContext);
-
-  const visibleRaster = mapLayers.filter(layer => layer.type === 'raster' && layer.visible && layer.id !== 'FILTERED_LAYER_ID');
-  let rasterRange = null;
-  if (visibleRaster.length > 0) {
-    rasterRange = filterRanges.getData()[visibleRaster[0].id];
-  }
+  const { filtersLists, filterRanges } = useContext(FormContext);
 
   // Initialize map on mount
   useEffect(() => {
@@ -618,11 +610,26 @@ function MbMap (props) {
     ]
     );
   }, [maxZoneScore, maxLCOE, currentZones]);
-
   return (
     <MapsContainer>
-      {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title} /> : ''}
-      {selectedResource === 'Off-Shore Wind' && <MapLegend scale={{ domain: 1, colorArray: ['#d5d5d5'] }} width={200} description='Exclusive Economic Zone' />}
+      {
+        selectedResource &&
+        mapLayers &&
+        filtersLists &&
+        filterRanges &&
+        mapLayers.some(({ visible, disabled, id }) =>
+          (visible === true) &&
+          (!disabled) &&
+          (id !== 'satellite')
+        ) && (
+          <MapLegend
+            selectedResource={selectedResource}
+            filtersLists={filtersLists}
+            mapLayers={mapLayers}
+            filterRanges={filterRanges}
+          />
+        )
+      }
       <SingleMapContainer ref={mapContainer} />
       {map && popoverCoods && (
         <MapPopover
@@ -630,11 +637,16 @@ function MbMap (props) {
           lngLat={popoverCoods.coords}
           closeButton={false}
           offset={[15, 15]}
-          content={<>{renderZoneDetailsList(popoverCoods.zoneFeature, ['lcoe', 'zone_score'])}</>}
+          content={
+            <>
+              {renderZoneDetailsList(popoverCoods.zoneFeature, [
+                'lcoe',
+                'zone_score'
+              ])}
+            </>
+          }
           footerContent={
-            <a>
-              Click zone to view more details in the right panel.
-            </a>
+            <a>Click zone to view more details in the right panel.</a>
           }
         />
       )}
