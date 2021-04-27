@@ -31,18 +31,22 @@ const MapLegendSelf = styled.div`
   svg {
     display: block;
   }
-  & > *:not(:first-child) {
+  > *:not(:first-child) {
     display: none;
   }
   ${({ isExpanded }) =>
     isExpanded &&
     css`
       grid-auto-rows: max-content;
+      /* stylelint-disable no-duplicate-selectors */
       > *:not(:first-child) {
         display: inherit;
       }
+      /* stylelint-enable no-duplicate-selectors */
     `}
 `;
+
+const LegendTitle = styled.div`${null}`;
 
 const LegendItemWrapper = styled.div`
   display: grid;
@@ -73,8 +77,6 @@ const LegendItemWrapper = styled.div`
     /* stylelint-enable no-duplicate-selectors */
   `}
 `;
-
-const LegendTitle = styled.div``;
 
 const LegendLabels = styled.div`
   display: flex;
