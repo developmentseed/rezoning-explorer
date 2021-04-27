@@ -46,36 +46,42 @@ const MapLegendSelf = styled.div`
     `}
 `;
 
-const LegendTitle = styled.div`${null}`;
+const LegendTitle = styled.div`
+  ${null}
+`;
 
 const LegendItemWrapper = styled.div`
   display: grid;
   grid-template-columns: 1rem 1fr;
   grid-gap: 0.75rem;
   width: 100%;
-  ${({ type }) => type === 'linear' && css`
-    &:not(:only-of-type) {
-      border-top: 1px solid ${themeVal('color.baseAlphaC')};
-      padding-top: ${glsp(0.75)};
-    }
-    ${LegendTitle} {
-      grid-column: span 2;
-    }
-  `}
-  ${({ type }) => type === 'multiselect' && css`
-    grid-template-columns: 1rem 1fr 1rem 1fr;
-    grid-template-rows: 1.5rem;
-    grid-auto-rows: 1rem;
-    grid-gap: 0.5rem 0.75rem;
-    /* stylelint-disable no-duplicate-selectors */
-    ${LegendTitle} {
-      ${truncated}
-      text-transform: none;
-      letter-spacing: 0;
-      align-self: center;
-    }
-    /* stylelint-enable no-duplicate-selectors */
-  `}
+  ${({ type }) =>
+    type === 'linear' &&
+    css`
+      &:not(:only-of-type) {
+        border-top: 1px solid ${themeVal('color.baseAlphaC')};
+        padding-top: ${glsp(0.75)};
+      }
+      ${LegendTitle} {
+        grid-column: span 2;
+      }
+    `}
+  ${({ type }) =>
+    type === 'multiselect' &&
+    css`
+      grid-template-columns: 1rem 1fr 1rem 1fr;
+      grid-template-rows: 1.5rem;
+      grid-auto-rows: 1rem;
+      grid-gap: 0.5rem 0.75rem;
+      /* stylelint-disable no-duplicate-selectors */
+      ${LegendTitle} {
+        ${truncated}
+        text-transform: none;
+        letter-spacing: 0;
+        align-self: center;
+      }
+      /* stylelint-enable no-duplicate-selectors */
+    `}
 `;
 
 const LegendLabels = styled.div`
@@ -120,7 +126,11 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
     (l) => l.layer === visibleRaster[0].id
   );
   const unit =
-    rasterFilter && rasterFilter.unit ? ` (${rasterFilter.unit})` : '';
+    rasterFilter && rasterFilter.unit
+      ? ` (${rasterFilter.unit})`
+      : visibleRaster[0].units
+        ? ` (${visibleRaster[0].units})`
+        : '';
 
   // Default legend scale uses colormap with "viridis." Logic allows for custom colormaps passed to legends,
   // and for custom ordinal color scales
