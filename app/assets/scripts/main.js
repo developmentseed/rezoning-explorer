@@ -15,7 +15,6 @@ import theme from './styles/theme/theme';
 
 // Views
 import Home from './components/home';
-import Sandbox from './components/sandbox';
 import Explore from './components/explore';
 import About from './components/about';
 
@@ -37,7 +36,6 @@ function Root () {
           <GlobalStyles innerHeight={windowHeight} />
           <Switch>
             <Route exact path='/' component={Home} />
-            <Route exact path='/sandbox' component={Sandbox} />
             <Route exact path='/explore' component={Explore} />
             <Route exact path='/about' component={About} />
           </Switch>
