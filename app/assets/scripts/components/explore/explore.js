@@ -94,7 +94,7 @@ function Explore () {
 }
 
 if (process.env.NODE_ENV === 'development') {
-  Explore.whyDidYouRender = false;
+  Explore.whyDidYouRender = true;
 }
 
 export default Explore;
