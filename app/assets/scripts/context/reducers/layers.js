@@ -20,7 +20,8 @@ export async function fetchInputLayers (dispatch) {
 
     const layerList = Object.keys(layers).map(id => ({
       id,
-      ...layers[id]
+      ...layers[id],
+      energy_type: layers[id].energy_type || ['solar']
     }));
 
     dispatch({ type: 'RECEIVE_LAYERS', data: layerList });

@@ -33,6 +33,8 @@ export async function fetchLcoe (dispatch) {
           id,
           name: cost.title,
           info: cost.description,
+          category: cost.category,
+          priority: cost.priority || 1,
           input: {
             type,
             ...opts,
@@ -41,6 +43,7 @@ export async function fetchLcoe (dispatch) {
             default: cost.default
 
           }
+
         });
       }
       );

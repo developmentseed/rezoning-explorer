@@ -80,8 +80,7 @@ function ExpMapPrimePanel (props) {
     filtersLists,
     weightsList,
     lcoeList,
-    filterRanges,
-    presets
+    filterRanges
   } = useContext(FormContext);
 
   const {
@@ -134,6 +133,7 @@ function ExpMapPrimePanel (props) {
                 show={showRasterPanel}
                 className='raster-tray'
                 layers={mapLayers}
+                resource={selectedResource}
                 onLayerKnobChange={(layer, knob) => {
                   // Check if changes are applied to zones layer, which
                   // have conditional paint properties due to filters
@@ -213,7 +213,6 @@ function ExpMapPrimePanel (props) {
                 resource={selectedResource}
                 filtersLists={filtersLists}
                 filterRanges={filterRanges}
-                presets={presets}
                 updateFilteredLayer={updateFilteredLayer}
                 weightsList={weightsList}
                 lcoeList={lcoeList}
