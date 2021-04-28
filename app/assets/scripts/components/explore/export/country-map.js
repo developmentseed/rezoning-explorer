@@ -5,7 +5,7 @@ import { getTimestamp } from '../../../utils/format';
 import {
   hideGlobalLoading,
   showGlobalLoadingMessage
-} from '../../common/global-loading'
+} from '../../common/global-loading';
 import html2canvas from 'html2canvas';
 
 /* eslint-disable camelcase */
@@ -60,16 +60,25 @@ export default async function exportCountryMap(selectedArea, map, setMap) {
       .fontSize(20)
       .text(selectedArea.name, options.margin, (options.margin / 2));
 
+    // Add Map to clipped rectangle
     const mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
     const mapImage = mapCanvas.toDataURL('image/png');
-    const mapAspectRatio = mapCanvas.height / mapCanvas.width;
-    const mapWidth = options.colWidthThreeCol * 2 + options.gutterThreeCol;
-    const mapHeight = mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio;
-    doc.image(mapImage, options.margin, options.margin, {
-      cover: [doc.page.width - (options.margin * 2), doc.page.height - (options.margin * 2)],
+    const overflow = false;
+
+    const mapContainer = {
+      cover: [doc.page.width - (options.margin * 2), doc.page.height - (options.margin * 2) - 20],
       align: 'center',
       valign: 'center'
-    });
+    };
+
+    if (!overflow && mapContainer.cover) {
+      doc.save();
+      doc.rect(options.margin, options.margin + 20, mapContainer.cover[0], mapContainer.cover[1]).clip();
+    }
+
+    doc.image(mapImage, options.margin, options.margin + 20, mapContainer);
+
+    if (!overflow && mapContainer.cover) doc.restore();
 
     // Add legend
     const legendNode = document.querySelector('#map-legend');
