@@ -162,6 +162,7 @@ function QueryForm (props) {
   useEffect(onInputTouched, [area, resource]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
 
+
   /* Update capacity factor options based on
    * what the current resource is
    */
@@ -172,6 +173,7 @@ function QueryForm (props) {
         capacity.input.availableOptions = capacity.input.options[apiResourceNameMap[resource]];
         capacity.input.value = capacity.input.availableOptions[0];
         setCapacity(capacity);
+
       } catch (err) {
         /* eslint-disable-next-line */
         console.error(err);
