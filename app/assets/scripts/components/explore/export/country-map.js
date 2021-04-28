@@ -38,6 +38,152 @@ const options = {
   }
 };
 
+// fetch fonts & images on init for use in PDF
+let baseFont, boldFont, REZLogo, WBGLogo, ESMAPLogo;
+async function initStyles () {
+  await fetch('/assets/fonts/IBM-Plex-Sans-regular.ttf')
+    .then((response) => response.arrayBuffer())
+    .then((font) => {
+      baseFont = font;
+    });
+
+  await fetch('/assets/fonts/IBM-Plex-Sans-Semibold.ttf')
+    .then((response) => response.arrayBuffer())
+    .then((font) => {
+      boldFont = font;
+    });
+  await fetch('/assets/graphics/content/logos/logo-rezoning.png')
+    .then((response) => response.arrayBuffer())
+    .then((logo) => {
+      REZLogo = logo;
+    });
+  await fetch('/assets/graphics/content/logos/logo-wbg.png')
+    .then((response) => response.arrayBuffer())
+    .then((logo) => {
+      WBGLogo = logo;
+    });
+  await fetch('/assets/graphics/content/logos/logo-esmap.png')
+    .then((response) => response.arrayBuffer())
+    .then((logo) => {
+      ESMAPLogo = logo;
+    });
+}
+
+function drawHeader (doc, selectedArea) {
+  // Title
+  doc
+    .fillColor(options.baseFontColor)
+    .font(boldFont)
+    .fontSize(20)
+    .text(selectedArea.name, options.margin, (options.margin / 2));
+
+  // Logos
+  doc.image(
+    REZLogo,
+    (doc.page.width - (options.margin * 8)),
+    (options.margin / 2),
+    {
+      height: 18
+    }
+  );
+  doc
+    .fillColor(options.primaryColor)
+    .font(boldFont)
+    .fontSize(10)
+    .text(
+      'REZoning',
+      (doc.page.width - (options.margin * 8)) + 20,
+      (options.margin / 2) + 2,
+      {
+        align: 'left',
+        link: 'https://rezoning.surge.sh'
+      }
+    );
+  doc.image(
+    WBGLogo,
+    (doc.page.width - (options.margin * 6)) + 10,
+    (options.margin / 2),
+    {
+      height: 18
+    }
+  );
+  doc.image(
+    ESMAPLogo,
+    (doc.page.width - (options.margin * 3)) + 6,
+    (options.margin / 2),
+    {
+      height: 18
+    }
+  );
+}
+
+async function drawMap(doc) {
+  // Add Map to clipped rectangle
+  const mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
+  const mapImage = mapCanvas.toDataURL('image/png');
+  const overflow = false;
+
+  const mapContainer = {
+    cover: [doc.page.width - (options.margin * 2), doc.page.height - (options.margin * 2) - 20],
+    align: 'center',
+    valign: 'center'
+  };
+
+  if (!overflow && mapContainer.cover) {
+    doc.save();
+    doc.rect(options.margin, options.margin + 20, mapContainer.cover[0], mapContainer.cover[1]).clip();
+  }
+
+  doc.image(mapImage, options.margin, options.margin + 20, mapContainer);
+
+  if (!overflow && mapContainer.cover) doc.restore();
+}
+
+function drawFooter(doc) {
+  // Left attribution
+  doc
+    .fillColor(options.baseFontColor)
+    .font(baseFont)
+    .fontSize(6)
+    .text(
+      'This map is publshed by the World Bank Group, funded by ESMAP, and was dynamically genearted from the REZoning application. For more information, please visit https://rezoning.surge.sh',
+      options.margin,
+      doc.page.height - (options.margin / 2),
+      {
+        height: 16,
+        align: 'left',
+        link: 'https://rezoning.surge.sh'
+      }
+    );
+
+  // Right license
+  doc
+    .fillColor(options.baseFontColor)
+    .text(
+      'Creative Commons BY 4.0',
+      doc.page.width - options.colWidthTwoCol - options.margin,
+      doc.page.height - (options.margin / 2),
+      {
+        width: options.colWidthTwoCol,
+        height: 16,
+        align: 'right',
+        link: 'https://creativecommons.org/licenses/by/4.0/'
+      }
+    );
+
+  // Right date
+  doc.text(
+    new Date().getFullYear(),
+    doc.page.width - options.colWidthTwoCol - options.margin,
+    doc.page.height - ((options.margin / 2) + 12),
+    {
+      width: options.colWidthTwoCol,
+      height: 16,
+      align: 'right'
+    }
+  );
+}
+
 export default async function exportCountryMap(selectedArea, map, setMap) {
   // Zoom to country bounds
   showGlobalLoadingMessage('Generating PDF Export...');
@@ -47,45 +193,26 @@ export default async function exportCountryMap(selectedArea, map, setMap) {
     // Give unloaded layers time to load
     await new Promise(resolve => setTimeout(resolve, MIN_TIMEOUT));
 
+    // Load styles
+    await initStyles();
+
     // Create a document
     const doc = new PDFDocument(pdfDocumentOptions);
 
     // Create stream
     const stream = doc.pipe(blobStream());
 
-    // Left Title
-    doc
-      .fillColor(options.baseFontColor)
-      // .font(boldFont)
-      .fontSize(20)
-      .text(selectedArea.name, options.margin, (options.margin / 2));
-
-    // Add Map to clipped rectangle
-    const mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
-    const mapImage = mapCanvas.toDataURL('image/png');
-    const overflow = false;
-
-    const mapContainer = {
-      cover: [doc.page.width - (options.margin * 2), doc.page.height - (options.margin * 2) - 20],
-      align: 'center',
-      valign: 'center'
-    };
-
-    if (!overflow && mapContainer.cover) {
-      doc.save();
-      doc.rect(options.margin, options.margin + 20, mapContainer.cover[0], mapContainer.cover[1]).clip();
-    }
-
-    doc.image(mapImage, options.margin, options.margin + 20, mapContainer);
-
-    if (!overflow && mapContainer.cover) doc.restore();
+    // Add Sections
+    drawHeader(doc, selectedArea);
+    drawMap(doc);
+    drawFooter(doc);
 
     // Add legend
     const legendNode = document.querySelector('#map-legend');
     legendNode.style.backgroundColor = '#FFFFFF';
     const legendCanvas = await html2canvas(legendNode);
     const legendImage = legendCanvas.toDataURL('image/png');
-    doc.image(legendImage, (doc.page.width - options.margin - 140), (doc.page.height - options.margin - 68), { width: 140 });
+    doc.image(legendImage, (doc.page.width - options.margin - 150), (doc.page.height - (options.margin * 3.5)), { width: 140 });
 
     // Add Scale
     const scaleCanvas = await html2canvas(document.querySelector('.mapboxgl-ctrl-scale'));
