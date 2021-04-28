@@ -2,6 +2,10 @@ import PDFDocument from '../../../utils/pdfkit';
 import blobStream from 'blob-stream';
 import { saveAs } from 'file-saver';
 import { getTimestamp } from '../../../utils/format';
+import {
+  hideGlobalLoading,
+  showGlobalLoadingMessage
+} from '../../common/global-loading'
 import html2canvas from 'html2canvas';
 
 /* eslint-disable camelcase */
@@ -33,6 +37,7 @@ const options = {
 
 export default async function exportCountryMap(selectedArea, map, setMap) {
   // Zoom to country bounds
+  showGlobalLoadingMessage('Generating PDF Export...');
   return map.fitBounds(selectedArea.bounds, { padding: 20 }).once('moveend', async () => {
     setMap(map);
 
@@ -72,6 +77,8 @@ export default async function exportCountryMap(selectedArea, map, setMap) {
 
     // Finalize PDF file
     doc.end();
+
+    hideGlobalLoading();
 
     return await stream.on('finish', function () {
       saveAs(
