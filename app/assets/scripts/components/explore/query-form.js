@@ -145,7 +145,7 @@ function QueryForm (props) {
 
     updateFilteredLayer(filters, weightsValues, lcoeValues);
   };
-  useEffect(() => {
+  useEffect((oldRange, oldResource) => {
     /* When filter ranges update we should reset to match ranges */
     initialize(filtersLists, filtersInd, {
       // On first load, we do not reset. Set values from url
@@ -162,7 +162,6 @@ function QueryForm (props) {
   useEffect(onInputTouched, [area, resource]);
   useEffect(onSelectionChange, [area, resource, gridSize]);
 
-
   /* Update capacity factor options based on
    * what the current resource is
    */
@@ -173,7 +172,6 @@ function QueryForm (props) {
         capacity.input.availableOptions = capacity.input.options[apiResourceNameMap[resource]];
         capacity.input.value = capacity.input.availableOptions[0];
         setCapacity(capacity);
-
       } catch (err) {
         /* eslint-disable-next-line */
         console.error(err);

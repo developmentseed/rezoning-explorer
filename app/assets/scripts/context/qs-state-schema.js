@@ -27,6 +27,30 @@ export const castByFilterType = (type) => {
   }
 };
 
+/* eslint-disable camelcase */
+export const accessResourceDefault = (object, resource, range) => {
+  const { resource_defaults } = object;
+
+  if (!resource_defaults) {
+    return null;
+  }
+  if (Array.isArray(resource_defaults)) {
+    const [min, max] = resource_defaults;
+    return (
+      {
+        min: min || range[0],
+        max: max || range[1]
+      });
+  } else {
+    const [min, max] = resource_defaults[resource] || [];
+    return (
+      {
+        min: min || range[0],
+        max: max || range[1]
+      });
+  }
+};
+
 export const initByType = (obj, ranges, resource) => {
   // Api filter schema includes layer property
   // Use to resolve correct range from api /filter/{country}/layers
@@ -48,7 +72,7 @@ export const initByType = (obj, ranges, resource) => {
         unit: input.unit,
         value:
           input.value ||
-          input.default ||
+          accessResourceDefault(obj, resource, range) ||
           (obj.isRange ? { min: range[0], max: range[1] } : range[0])
       };
     case TEXT:
@@ -68,7 +92,7 @@ export const initByType = (obj, ranges, resource) => {
       return {
         ...input,
         // For multi select, select all by default
-        value: input.value || input.options.map((e, i) => i),
+        value: input.value || input.resource_defaults || input.options.map((e, i) => i),
         unit: null
       };
     case DROPDOWN:

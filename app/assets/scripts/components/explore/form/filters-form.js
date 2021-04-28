@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import T from 'prop-types';
 
 import {
@@ -16,7 +16,7 @@ import { makeTitleCase } from '../../../styles/utils/general';
 
 import InfoButton from '../../common/info-button';
 import { FormSwitch } from '../../../styles/form/switch';
-import { INPUT_CONSTANTS, appToApiResourceNameMap } from '../panel-data';
+import { INPUT_CONSTANTS } from '../panel-data';
 
 import FormInput from './form-input';
 
@@ -39,54 +39,6 @@ function FiltersForm (props) {
     active,
     disabled
   } = props;
-
-  useEffect(() => {
-    if (!resource) {
-      return;
-    }
-    filters.forEach(([filt, setFilt]) => {
-      /* eslint-disable camelcase */
-      const { resource_defaults } = filt;
-      if (!resource_defaults) {
-        return null;
-      } else if (filt.id === 'f_land_cover') {
-        // THis should be array of int
-        setFilt({
-          ...filt,
-          input: {
-            ...filt.input,
-            value: {
-              resource_defaults
-            }
-          }
-        });
-      } else if (Array.isArray(resource_defaults)) {
-        const [min, max] = resource_defaults;
-        setFilt({
-          ...filt,
-          input: {
-            ...filt.input,
-            value: {
-              min: min || filt.input.range[0],
-              max: max || filt.input.range[1]
-            }
-          }
-        });
-      } else {
-        const [min, max] = resource_defaults[appToApiResourceNameMap[resource]] || [];
-        setFilt({
-          ...filt,
-          input: {
-            ...filt.input,
-            value: {
-              min: min || filt.input.range[0],
-              max: max || filt.input.range[1]
-            }
-          }
-        });
-      }
-    });
-  }, [resource]);
 
   return (
     <>
