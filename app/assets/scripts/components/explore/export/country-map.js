@@ -10,6 +10,9 @@ import html2canvas from 'html2canvas';
 
 /* eslint-disable camelcase */
 
+// Timeout for map to load
+const MIN_TIMEOUT = 5000;
+
 // Base PDF options
 const pdfDocumentOptions = {
   size: 'LETTER',
@@ -40,6 +43,9 @@ export default async function exportCountryMap(selectedArea, map, setMap) {
   showGlobalLoadingMessage('Generating PDF Export...');
   return map.fitBounds(selectedArea.bounds, { padding: 20 }).once('moveend', async () => {
     setMap(map);
+
+    // Give unloaded layers time to load
+    await new Promise(resolve => setTimeout(resolve, MIN_TIMEOUT));
 
     // Create a document
     const doc = new PDFDocument(pdfDocumentOptions);
