@@ -42,7 +42,7 @@ function FiltersForm (props) {
 
   useEffect(() => {
     if (!resource) {
-      return
+      return;
     }
     filters.forEach(([filt, setFilt]) => {
       /* eslint-disable camelcase */
@@ -50,10 +50,17 @@ function FiltersForm (props) {
       if (!resource_defaults) {
         return null;
       } else if (filt.id === 'f_land_cover') {
-
-
+        setFilt({
+          ...filt,
+          input: {
+            ...filt.input,
+            value: {
+              resource_defaults
+            }
+          }
+        });
       } else if (Array.isArray(resource_defaults)) {
-        const [min, max] = resource_defaults
+        const [min, max] = resource_defaults;
         setFilt({
           ...filt,
           input: {
