@@ -48,6 +48,9 @@ const HomeInpage = styled(Inpage)`
     }
   
   `};
+  ${InpageBody} {
+    z-index: 1;
+  }
 `;
 
 const CTAButtons = styled.div`
