@@ -50,6 +50,7 @@ function FiltersForm (props) {
       if (!resource_defaults) {
         return null;
       } else if (filt.id === 'f_land_cover') {
+        // THis should be array of int
         setFilt({
           ...filt,
           input: {
