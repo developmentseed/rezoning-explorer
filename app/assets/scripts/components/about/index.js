@@ -126,14 +126,15 @@ function About () {
                 <a href='https://www.lbl.gov/' target='_blank' rel='noreferrer'>
                   Berkely Lab
                 </a>{' '}
-                and{' '}
+                and the{' '}
                 <a href='https://www.ucsb.edu/' target='_blank' rel='noreferrer'>
                   University of California Santa Barbara's (UCSB)
                 </a>{' '}
+                platform{' '}
                 <a href='https://mapre.lbl.gov/' target='_blank' rel='noreferrer'>
                   Multi-criteria Analysis for Planning Renewable Energy (MapRE)
                 </a>{' '}
-                platform and developed by ESMAP in partnership with UCSB, the tool
+                and developed by ESMAP in partnership with UCSB, the tool
                 brings together spatial analysis and economic calculations into an
                 online, user-friendly environment that allows users and decision
                 makers to obtain insights into the technical and economic
@@ -226,7 +227,7 @@ function About () {
                 >
                   <img
                     alt='WBG Logo'
-                    src='/assets/graphics/content/logos/logo-wbg.png'
+                    src='/assets/graphics/content/logos/logo-wbg-GOST.png'
                   />
                   <span>World Bank Group</span>
                 </a>
@@ -259,6 +260,21 @@ function About () {
                     src='/assets/graphics/content/logos/logo-ucsb.png'
                   />
                   <span>University of California Santa Barbara</span>
+                </a>
+              </dd>
+              <dd>
+                <a
+                  href='https://www.lbl.gov/'
+                  title='Visit Lawrence Berkely National Laboratory'
+                  className='logo-lbl'
+                  target='_blank'
+                  rel='noreferrer'
+                >
+                  <img
+                    alt='Lawrence Berkley Lab Logo'
+                    src='/assets/graphics/content/logos/logo-lbl.jpeg'
+                  />
+                  <span>Lawrence Berkely Lab</span>
                 </a>
               </dd>
             </LogoList>
