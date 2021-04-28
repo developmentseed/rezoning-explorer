@@ -66,7 +66,9 @@ export default async function exportCountryMap(selectedArea, map, setMap) {
     const mapWidth = options.colWidthThreeCol * 2 + options.gutterThreeCol;
     const mapHeight = mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio;
     doc.image(mapImage, options.margin, options.margin, {
-      fit: [doc.page.width, doc.page.height - (options.margin * 2)]
+      cover: [doc.page.width - (options.margin * 2), doc.page.height - (options.margin * 2)],
+      align: 'center',
+      valign: 'center'
     });
 
     // Add legend
