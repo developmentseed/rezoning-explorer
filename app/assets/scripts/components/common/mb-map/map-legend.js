@@ -208,7 +208,7 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
 
 RasterLegendItem.propTypes = {
   mapLayers: T.array,
-  filterRanges: T.array,
+  filterRanges: T.object,
   filtersLists: T.array
 };
 
@@ -344,5 +344,5 @@ MapLegend.propTypes = {
   selectedResource: T.string.isRequired,
   mapLayers: T.array.isRequired,
   filtersLists: T.array.isRequired,
-  filterRanges: T.array.isRequired
+  filterRanges: T.object.isRequired
 };
