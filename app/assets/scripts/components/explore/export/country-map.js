@@ -194,7 +194,7 @@ function drawFooter(doc) {
 export default async function exportCountryMap(selectedArea, map, setMap) {
   // Zoom to country bounds
   showGlobalLoadingMessage('Generating PDF Export...');
-  return map.fitBounds(selectedArea.bounds, { padding: 20 }).once('moveend', async () => {
+  return map.fitBounds(selectedArea.bounds, { padding: 80 }).once('moveend', async () => {
     setMap(map);
 
     // Give unloaded layers time to load
@@ -224,7 +224,7 @@ export default async function exportCountryMap(selectedArea, map, setMap) {
     // Add Scale
     const scaleCanvas = await html2canvas(document.querySelector('.mapboxgl-ctrl-scale'));
     const scaleImage = scaleCanvas.toDataURL('image/png');
-    doc.image(scaleImage, options.margin + 20, (doc.page.height - options.margin - 20), { width: 100 });
+    doc.image(scaleImage, options.margin + 10, (doc.page.height - options.margin - 20), { width: 100 });
 
     // Finalize PDF file
     doc.end();
