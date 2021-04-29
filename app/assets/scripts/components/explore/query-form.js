@@ -95,7 +95,7 @@ function QueryForm (props) {
           input: {
             ...initByType(object,
               apiRange || {},
-              apiResourceNameMap[resource])
+             apiResourceNameMap[resource])
           }
         };
         setObject(updated);
@@ -145,7 +145,7 @@ function QueryForm (props) {
 
     updateFilteredLayer(filters, weightsValues, lcoeValues);
   };
-  useEffect((oldRange, oldResource) => {
+  useEffect(() => {
     /* When filter ranges update we should reset to match ranges */
     initialize(filtersLists, filtersInd, {
       // On first load, we do not reset. Set values from url
