@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
@@ -120,16 +120,16 @@ function QueryForm (props) {
     return [cost, setCost];
   });
 
-  const resetClick = () => {
+  const resetClick = useCallback(() => {
     initialize(filtersLists, filtersInd, { reset: true });
     initialize(weightsList, weightsInd, { reset: true });
     initialize(lcoeList, lcoeInd, { reset: true });
-  };
+  }, [filtersLists, filtersInd, weightsList, weightsInd, lcoeList, lcoeInd]);
 
   /* Reduce filters, weights, and lcoe
    * Call function to send values to api
    */
-  const applyClick = () => {
+  const applyClick = useCallback(() => {
     const weightsValues = weightsInd.reduce((accum, [weight, _]) => ({
       ...accum,
       [weight.id || weight.name]: castByFilterType(weight.input.type)(weight.input.value)
@@ -144,7 +144,8 @@ function QueryForm (props) {
     const filters = filtersInd.map(([filter, _]) => filter);
 
     updateFilteredLayer(filters, weightsValues, lcoeValues);
-  };
+  }, [weightsInd, lcoeInd, filtersInd]);
+
   useEffect(() => {
     /* When filter ranges update we should reset to match ranges */
     initialize(filtersLists, filtersInd, {
