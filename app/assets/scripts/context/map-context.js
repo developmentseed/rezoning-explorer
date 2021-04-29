@@ -1,8 +1,14 @@
-import React, { createContext, useState, useReducer, useEffect, useMemo } from 'react';
+import React, {
+  createContext,
+  useState,
+  useReducer,
+  useEffect,
+  useMemo,
+  useContext
+} from 'react';
 import T from 'prop-types';
 import { fetchInputLayers, inputLayersReducer } from './reducers/layers';
 import { initialApiRequestState } from './contexeed';
-import { useContext } from 'react';
 
 const MapContext = createContext({});
 export function MapProvider(props) {
@@ -58,21 +64,67 @@ export const useMapContext = (fnName) => {
   return context;
 };
 
-export const useMapLayers = () => {
-  const { map, mapLayers, setMapLayers } = useMapContext('useMapLAyers');
+export const useMap = () => {
+  const { map, setMap } = useMapContext('useMap');
 
   return useMemo(
     () => ({
       map,
+      setMap
+    }),
+    [map, setMap]
+  );
+};
+
+export const useMapLayers = () => {
+  const { mapLayers, setMapLayers } = useMapContext('useMapLayers');
+
+  return useMemo(
+    () => ({
       mapLayers,
       setMapLayers
     }),
-    [map, mapLayers]
+    [mapLayers]
+  );
+};
+
+export const useInputLayers = () => {
+  const { inputLayers } = useMapContext('useInputLayers');
+
+  return useMemo(
+    () => ({
+      inputLayers
+    }),
+    [inputLayers]
+  );
+};
+
+export const useHoveredFeature = () => {
+  const { hoveredFeature, setHoveredFeature } = useMapContext(
+    'useHoveredFeature'
+  );
+
+  return useMemo(
+    () => ({
+      hoveredFeature,
+      setHoveredFeature
+    }),
+    [hoveredFeature]
+  );
+};
+
+export const useFocusZone = () => {
+  const { focusZone, setFocusZone } = useMapContext('useFocusZone');
+
+  return useMemo(
+    () => ({
+      focusZone,
+      setFocusZone
+    }),
+    [focusZone]
   );
 };
 
 MapProvider.propTypes = {
   children: T.node
 };
-
-export default MapContext;

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import { Subheading } from '../../styles/type/heading';
@@ -8,7 +8,7 @@ import FocusZone, { formatIndicator } from './focus-zone';
 import Button from '../../styles/button/button';
 import collecticon from '../../styles/collecticons';
 import get from 'lodash.get';
-import MapContext from '../../context/map-context';
+import  { useFocusZone, useHoveredFeature } from '../../context/map-context';
 
 import { FormCheckable } from '../../styles/form/checkable';
 
@@ -152,7 +152,8 @@ const columns = [{ id: 'lcoe', name: 'LCOE' }, { id: 'zone_score', name: 'SCORE'
 function ExploreZones (props) {
   const { active, currentZones } = props;
 
-  const { hoveredFeature, setHoveredFeature, focusZone, setFocusZone } = useContext(MapContext);
+  const { hoveredFeature, setHoveredFeature } = useHoveredFeature();
+  const { focusZone, setFocusZone } = useFocusZone();
 
   const [selectedZones, setSelectedZones] = useState(currentZones.reduce((accum, zone) => ({ ...accum, [zone.id]: false }), {}));
 

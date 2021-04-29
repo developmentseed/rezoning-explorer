@@ -16,7 +16,13 @@ import {
   useZones
 } from '../../../context/explore-context';
 import FormContext from '../../../context/form-context';
-import MapContext from '../../../context/map-context';
+import {
+  useFocusZone,
+  useHoveredFeature,
+  useMap,
+  useMapLayers,
+  useInputLayers
+} from '../../../context/map-context';
 import theme from '../../../styles/theme/theme';
 import { rgba } from 'polished';
 import { RESOURCES } from '../../explore/panel-data';
@@ -445,16 +451,15 @@ function MbMap(props) {
 
   const { currentZones, maxZoneScore, maxLCOE } = useZones();
 
-  const {
-    hoveredFeature,
-    setHoveredFeature,
-    map,
-    setMap,
-    inputLayers,
-    mapLayers,
-    setMapLayers,
-    setFocusZone
-  } = useContext(MapContext);
+  const { hoveredFeature, setHoveredFeature } = useHoveredFeature();
+
+  const { map, setMap } = useMap();
+
+  const { inputLayers } = useInputLayers();
+
+  const { mapLayers, setMapLayers } = useMapLayers();
+
+  const { setFocusZone } = useFocusZone();
 
   const { filtersLists, filterRanges } = useContext(FormContext);
 

@@ -1,11 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 import Histogram from '../common/histogram';
 import { themeVal } from '../../styles/utils/general';
 import MbMap from '../common/mb-map/mb-map';
-import MapContext from '../../context/map-context';
-// import ExploreContext from '../../context/explore-context';
+import { useFocusZone, useHoveredFeature } from '../../context/map-context';
 
 const ExploreCarto = styled.section`
   position: relative;
@@ -19,9 +18,8 @@ const ExploreCarto = styled.section`
 
 function Carto(props) {
   const { triggerResize, zoneData } = props;
-  const { setFocusZone, setHoveredFeature, hoveredFeature } = useContext(
-    MapContext
-  );
+  const { setFocusZone } = useFocusZone();
+  const { setHoveredFeature, hoveredFeature } = useHoveredFeature();
 
   return (
     <ExploreCarto>
