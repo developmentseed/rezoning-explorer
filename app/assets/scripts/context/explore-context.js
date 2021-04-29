@@ -4,8 +4,7 @@ import React, {
   useState,
   useReducer,
   useMemo,
-  useContext,
-  useCallback
+  useContext
 } from 'react';
 import T from 'prop-types';
 import * as topojson from 'topojson-client';
@@ -459,14 +458,24 @@ export const useResource = () => {
   );
 };
 
-export const useZone = () => {
-  const { currentZones } = useExploreContext('useZone');
+export const useZones = () => {
+  const {
+    currentZones,
+    maxZoneScore,
+    setMaxZoneScore,
+    maxLCOE,
+    setMaxLCOE
+  } = useExploreContext('useZones');
 
   return useMemo(
     () => ({
-      currentZones
+      currentZones,
+      maxZoneScore,
+      setMaxZoneScore,
+      maxLCOE,
+      setMaxLCOE
     }),
-    [currentZones]
+    [currentZones, maxZoneScore, setMaxZoneScore, maxLCOE, setMaxLCOE]
   );
 };
 
@@ -498,15 +507,27 @@ export const useGrid = () => {
   );
 };
 
-export const useUpdateFilteredLayer = () => {
-  const { updateFilteredLayer } = useExploreContext('useUpdateFilteredLayer');
+export const useFilteredLayer = () => {
+  const { updateFilteredLayer, filteredLayerUrl } = useExploreContext(
+    'useFilteredLayer'
+  );
 
   return useMemo(
     () => ({
+      filteredLayerUrl,
       updateFilteredLayer
     }),
-    [updateFilteredLayer]
+    [filteredLayerUrl, updateFilteredLayer]
   );
 };
 
-export default ExploreContext;
+export const useOutputLayer = () => {
+  const { outputLayerUrl } = useExploreContext('useOutputLayer');
+
+  return useMemo(
+    () => ({
+      outputLayerUrl
+    }),
+    [outputLayerUrl]
+  );
+};

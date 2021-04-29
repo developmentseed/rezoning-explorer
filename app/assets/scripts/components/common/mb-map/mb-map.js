@@ -8,7 +8,13 @@ import { resizeMap } from './mb-map-utils';
 import MapPopover from '../mb-popover';
 import { featureCollection } from '@turf/helpers';
 
-import ExploreContext from '../../../context/explore-context';
+import {
+  useArea,
+  useFilteredLayer,
+  useResource,
+  useOutputLayer,
+  useZones
+} from '../../../context/explore-context';
 import FormContext from '../../../context/form-context';
 import MapContext from '../../../context/map-context';
 import theme from '../../../styles/theme/theme';
@@ -76,15 +82,12 @@ export const outputLayers = [
     type: 'vector',
     category: 'output',
     info: 'Zone Boundaries',
-    stops: [
-      rgba(theme.main.color.base, 0),
-      rgba(theme.main.color.base, 1)
-    ],
+    stops: [rgba(theme.main.color.base, 0), rgba(theme.main.color.base, 1)],
     visible: true,
     disabled: true
   }
 ];
-const getResourceLayerName = resource => {
+const getResourceLayerName = (resource) => {
   switch (resource) {
     case RESOURCES.SOLAR:
       return 'gsa-pvout';
@@ -94,7 +97,7 @@ const getResourceLayerName = resource => {
   }
 };
 
-const layerDefaultVisibility = id => {
+const layerDefaultVisibility = (id) => {
   return id === ZONES_BOUNDARIES_LAYER_ID || id === FILTERED_LAYER_ID;
 };
 
@@ -166,7 +169,10 @@ const initializeMap = ({
   map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
   // Add scale
-  map.addControl(new mapboxgl.ScaleControl({ maxWidth: 224, unit: 'metric' }), 'bottom-left');
+  map.addControl(
+    new mapboxgl.ScaleControl({ maxWidth: 224, unit: 'metric' }),
+    'bottom-left'
+  );
 
   map.on('load', () => {
     // This map style has a 'background' layer underneath the satellite layer
@@ -329,17 +335,21 @@ const initializeMap = ({
 
 const addInputLayersToMap = (map, layers, selectedArea, resource) => {
   // Off-shore mask flag
-  const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
+  const offshoreWindMask =
+    resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
 
   // If area of country type, prepare path string to add to URL
-  const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
+  const countryPath =
+    selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
 
   layers.forEach((layer) => {
     const { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
     const source = map.getSource(`${layerId}_source`);
 
     /* some layers have existing tiles */
-    const tiles = layerTiles || `${config.apiEndpoint}/layers${countryPath}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
+    const tiles =
+      layerTiles ||
+      `${config.apiEndpoint}/layers${countryPath}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
 
     /* If source exists, replace the tiles and return */
     if (source) {
@@ -403,41 +413,43 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
         tileSize: 256
       });
 
-      map.addLayer({
-        id: layerId,
-        type: 'raster',
-        source: `${layerId}_source`,
-        layout: {
-          visibility: layer.visible ? 'visible' : 'none'
+      map.addLayer(
+        {
+          id: layerId,
+          type: 'raster',
+          source: `${layerId}_source`,
+          layout: {
+            visibility: layer.visible ? 'visible' : 'none'
+          },
+          paint: {
+            'raster-opacity': 0.75
+          },
+          minzoom: 0,
+          maxzoom: 22
         },
-        paint: {
-          'raster-opacity': 0.75
-        },
-        minzoom: 0,
-        maxzoom: 22
-      }, ZONES_BOUNDARIES_LAYER_ID);
+        ZONES_BOUNDARIES_LAYER_ID
+      );
     }
   });
 };
 
-function MbMap (props) {
+function MbMap(props) {
   const { triggerResize } = props;
   const mapContainer = useRef(null);
   const [popoverCoods, setPopoverCoords] = useState(null);
 
-  const {
-    selectedArea,
-    selectedResource,
-    filteredLayerUrl,
-    currentZones,
-    outputLayerUrl,
-    maxZoneScore,
-    maxLCOE
-  } = useContext(ExploreContext);
+  const { selectedArea } = useArea();
+  const { selectedResource } = useResource();
+  const { filteredLayerUrl } = useFilteredLayer();
+  const { outputLayerUrl } = useOutputLayer();
+
+  const { currentZones, maxZoneScore, maxLCOE } = useZones();
 
   const {
-    hoveredFeature, setHoveredFeature,
-    map, setMap,
+    hoveredFeature,
+    setHoveredFeature,
+    map,
+    setMap,
     inputLayers,
     mapLayers,
     setMapLayers,
@@ -449,18 +461,25 @@ function MbMap (props) {
   // Initialize map on mount
   useEffect(() => {
     if (!map) {
-      initializeMap({ setMap, mapContainer, selectedArea, setPopoverCoords, setHoveredFeature, setFocusZone });
+      initializeMap({
+        setMap,
+        mapContainer,
+        selectedArea,
+        setPopoverCoords,
+        setHoveredFeature,
+        setFocusZone
+      });
     }
   }, [map]);
 
   /*
    * Initialize map layers on receipt of input layers
-  */
+   */
   useEffect(() => {
     if (map && inputLayers.isReady() && selectedArea) {
       const layers = inputLayers.getData();
       const initializedLayers = [
-        ...layers.map(l => ({
+        ...layers.map((l) => ({
           ...l,
           name: l.title,
           type: l.type,
@@ -469,7 +488,12 @@ function MbMap (props) {
           visible: l.id === getResourceLayerName(selectedResource)
         }))
       ];
-      addInputLayersToMap(map, initializedLayers, selectedArea, selectedResource);
+      addInputLayersToMap(
+        map,
+        initializedLayers,
+        selectedArea,
+        selectedResource
+      );
       setMapLayers([...outputLayers, ...initializedLayers]);
     }
   }, [map, selectedArea, selectedResource, inputLayers]);
@@ -495,8 +519,14 @@ function MbMap (props) {
   useEffect(() => {
     // Map must be loaded
     if (!map) return;
-    if (selectedArea && selectedArea.eez && selectedResource === 'Off-Shore Wind') {
-      map.getSource(EEZ_BOUNDARIES_SOURCE_ID).setData(featureCollection(selectedArea.eez));
+    if (
+      selectedArea &&
+      selectedArea.eez &&
+      selectedResource === 'Off-Shore Wind'
+    ) {
+      map
+        .getSource(EEZ_BOUNDARIES_SOURCE_ID)
+        .setData(featureCollection(selectedArea.eez));
     } else {
       map.getSource(EEZ_BOUNDARIES_SOURCE_ID).setData(featureCollection([]));
     }
@@ -520,16 +550,17 @@ function MbMap (props) {
 
     map.setLayoutProperty(FILTERED_LAYER_ID, 'visibility', 'visible');
 
-    setMapLayers(mapLayers.map(layer => {
-      if (layer.category === 'output') {
-        layer.disabled = false;
-        if (layer.visible) {
-          map.setLayoutProperty(layer.id, 'visibility', 'visible');
-          layer.visible = true;
+    setMapLayers(
+      mapLayers.map((layer) => {
+        if (layer.category === 'output') {
+          layer.disabled = false;
+          if (layer.visible) {
+            map.setLayoutProperty(layer.id, 'visibility', 'visible');
+            layer.visible = true;
+          }
         }
-      }
-      return layer;
-    })
+        return layer;
+      })
     );
   }, [filteredLayerUrl]);
 
@@ -550,7 +581,6 @@ function MbMap (props) {
           ...style.sources[ZONE_SCORE_SOURCE_ID],
           tiles: [`${config.apiEndpoint}/score/${outputLayerUrl}`]
         }
-
       }
     });
   }, [outputLayerUrl]);
@@ -559,13 +589,13 @@ function MbMap (props) {
 
   /*
    * Update visibility of layers on new zones
-  */
+   */
   useEffect(() => {
     if (!map || !currentZones.isReady()) return;
     // Update GeoJSON source, applying hover effect if any
     map.getSource(ZONES_BOUNDARIES_SOURCE_ID).setData({
       type: 'FeatureCollection',
-      features: currentZones.getData().map(z => ({
+      features: currentZones.getData().map((z) => ({
         ...z,
         properties: {
           ...z.properties,
@@ -575,23 +605,35 @@ function MbMap (props) {
     });
 
     // Disable all layers besides zones boundaries
-    setMapLayers(mapLayers.map(layer => {
-      const visible = layerDefaultVisibility(layer.id);
-      map.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none');
-      return {
-        ...layer,
-        visible
-      };
-    }));
+    setMapLayers(
+      mapLayers.map((layer) => {
+        const visible = layerDefaultVisibility(layer.id);
+        map.setLayoutProperty(
+          layer.id,
+          'visibility',
+          visible ? 'visible' : 'none'
+        );
+        return {
+          ...layer,
+          visible
+        };
+      })
+    );
   }, [currentZones]);
 
   useEffect(() => {
     if (!map) return;
 
-    map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeature || null }, { hover: true });
+    map.setFeatureState(
+      { source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeature || null },
+      { hover: true }
+    );
 
     return () => {
-      map.setFeatureState({ source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeature || null }, { hover: false });
+      map.setFeatureState(
+        { source: ZONES_BOUNDARIES_SOURCE_ID, id: hoveredFeature || null },
+        { hover: false }
+      );
     };
   }, [hoveredFeature]);
 
@@ -603,24 +645,23 @@ function MbMap (props) {
       'all',
       ['>=', ['get', 'zone_score'], maxZoneScore.input.value.min],
       ['<=', ['get', 'zone_score'], maxZoneScore.input.value.max],
-      ...(maxLCOE.active ? [
-        ['>=', ['get', 'lcoe'], maxLCOE.input.value.min],
-        ['<=', ['get', 'lcoe'], maxLCOE.input.value.max]
-      ] : [])
-    ]
-    );
+      ...(maxLCOE.active
+        ? [
+            ['>=', ['get', 'lcoe'], maxLCOE.input.value.min],
+            ['<=', ['get', 'lcoe'], maxLCOE.input.value.max]
+          ]
+        : [])
+    ]);
   }, [maxZoneScore, maxLCOE, currentZones]);
   return (
     <MapsContainer>
-      {
-        selectedResource &&
+      {selectedResource &&
         mapLayers &&
         filtersLists &&
         filterRanges &&
-        mapLayers.some(({ visible, disabled, id }) =>
-          (visible === true) &&
-          (!disabled) &&
-          (id !== 'satellite')
+        mapLayers.some(
+          ({ visible, disabled, id }) =>
+            visible === true && !disabled && id !== 'satellite'
         ) && (
           <MapLegend
             selectedResource={selectedResource}
@@ -628,8 +669,7 @@ function MbMap (props) {
             mapLayers={mapLayers}
             filterRanges={filterRanges}
           />
-        )
-      }
+        )}
       <SingleMapContainer ref={mapContainer} />
       {map && popoverCoods && (
         <MapPopover

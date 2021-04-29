@@ -8,7 +8,7 @@ import ExploreContext, {
   useGrid,
   useResource,
   useTourStep,
-  useUpdateFilteredLayer
+  useFilteredLayer
 } from '../../context/explore-context';
 import MapContext, { useMapLayers } from '../../context/map-context';
 import FormContext, {
@@ -92,7 +92,7 @@ function ExpMapPrimePanel(props) {
 
   const { gridMode, setGridMode, gridSize, setGridSize } = useGrid();
 
-  const { updateFilteredLayer } = useUpdateFilteredLayer();
+  const { updateFilteredLayer } = useFilteredLayer();
 
   const { map, mapLayers, setMapLayers } = useMapLayers();
 

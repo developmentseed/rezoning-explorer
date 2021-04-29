@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 import ExploreStats from './explore-stats';
 import ExploreZones from './explore-zones';
-import ExploreContext from '../../context/explore-context';
+import { useZones } from '../../context/explore-context';
 import OutputFilters from './output-filters';
 
 const PanelInner = styled.div`
@@ -18,7 +18,7 @@ function ZoneAnalysisPanel (props) {
   const {
     maxZoneScore: { input: { value: maxZoneScore } },
     maxLCOE: { input: { value: maxLCOE } }
-  } = useContext(ExploreContext);
+  } = useZones();
 
   const filteredZones = currentZones && currentZones.filter(z => {
     /* eslint-disable camelcase */

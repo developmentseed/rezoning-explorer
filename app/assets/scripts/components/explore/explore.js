@@ -18,7 +18,7 @@ import {
   useArea,
   useResource,
   useTourStep,
-  useZone
+  useZones
 } from '../../context/explore-context';
 import Tour from '../common/tour';
 import { MapProvider } from '../../context/map-context';
@@ -53,7 +53,7 @@ function Explore () {
   const { selectedArea } = useArea();
   const { selectedResource } = useResource();
   const { tourStep, setTourStep } = useTourStep();
-  const { currentZones } = useZone();
+  const { currentZones } = useZones();
 
   const zoneData = currentZones.isReady() ? currentZones.getData() : null;
 

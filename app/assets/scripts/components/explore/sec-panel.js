@@ -14,7 +14,7 @@ import Heading from '../../styles/type/heading';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import Prose from '../../styles/type/prose';
 
-import ExploreContext from '../../context/explore-context';
+import { useZones } from '../../context/explore-context';
 import FormContext from '../../context/form-context';
 
 import ZoneAnalysisPanel from './zone-analysis-panel';
@@ -34,7 +34,7 @@ const PreAnalysisMessage = styled(Prose)`
 
 function ExpMapSecPanel (props) {
   const { onPanelChange } = props;
-  const { currentZones } = useContext(ExploreContext);
+  const { currentZones } = useZones();
   const { inputTouched } = useContext(FormContext);
 
   return (

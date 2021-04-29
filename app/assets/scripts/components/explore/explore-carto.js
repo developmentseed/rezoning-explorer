@@ -17,55 +17,31 @@ const ExploreCarto = styled.section`
   overflow: hidden;
 `;
 
-function Carto (props) {
-  const {
-    triggerResize,
-    zoneData
-  } = props;
-  const { setFocusZone, setHoveredFeature, hoveredFeature } = useContext(MapContext);
-  /*
-   * Disable filtering temporarily
-  const {
-    maxZoneScore: { input: { value: maxZoneScore } },
-    maxLCOE: { input: { value: maxLCOE } }
-  } = useContext(ExploreContext);
-  */
+function Carto(props) {
+  const { triggerResize, zoneData } = props;
+  const { setFocusZone, setHoveredFeature, hoveredFeature } = useContext(
+    MapContext
+  );
 
   return (
     <ExploreCarto>
-      <MbMap
-        triggerResize={triggerResize}
-      />
-      { zoneData && (
+      <MbMap triggerResize={triggerResize} />
+      {zoneData && (
         <Histogram
           yProp='lcoe'
           xProp={['zone_output', 'lcoe']}
-          data={
-            zoneData
-              /* Disable histogram filtering temporarily
-               * .filter(datum => {
-                const { zone_score, lcoe } = datum.properties.summary;
-                const zs = zone_score >= maxZoneScore.min && zone_score <= maxZoneScore.max;
-                const zl = maxLCOE.max ? (lcoe >= maxLCOE.min && lcoe <= maxLCOE.max) : true;
-                return zs && zl;
-              }) */
-              .map(datum => ({ ...datum.properties.summary, color: datum.properties.color, ...datum }))
-          }
-          onBarClick={
-            (e) => setFocusZone(e)
-          }
-          onBarMouseOver={
-            (e) => setHoveredFeature(e.id)
-          }
-          onBarMouseOut={
-            (e) => setHoveredFeature(null)
-          }
+          data={zoneData.map((datum) => ({
+            ...datum.properties.summary,
+            color: datum.properties.color,
+            ...datum
+          }))}
+          onBarClick={(e) => setFocusZone(e)}
+          onBarMouseOver={(e) => setHoveredFeature(e.id)}
+          onBarMouseOut={(e) => setHoveredFeature(null)}
           hoveredBar={hoveredFeature}
-
         />
       )}
     </ExploreCarto>
-
   );
 }
 Carto.propTypes = {

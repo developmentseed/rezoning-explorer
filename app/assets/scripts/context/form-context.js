@@ -1,5 +1,6 @@
 import React, {
   useContext,
+  useMemo,
   createContext,
   useReducer,
   useEffect,
@@ -13,22 +14,15 @@ import {
 import { fetchFilters, filtersReducer } from './reducers/filters';
 import { fetchWeights, weightsReducer } from './reducers/weights';
 import { fetchLcoe, lcoeReducer } from './reducers/lcoe';
-import ExploreContext, {
-  useArea,
-  useResource,
-  useZone
-} from './explore-context';
+import { useArea, useResource, useZones } from './explore-context';
 import { initialApiRequestState } from './contexeed';
 import { hideGlobalLoading } from '../components/common/global-loading';
-import { useMemo } from 'react';
 
 const FormContext = createContext({});
 export function FormProvider(props) {
-  // const { selectedAreaId, selectedResource, currentZones } = useContext(ExploreContext);
-
   const { selectedAreaId } = useArea();
   const { selectedResource } = useResource();
-  const { currentZones } = useZone();
+  const { currentZones } = useZones();
 
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
