@@ -9,7 +9,10 @@ import { themeVal } from '../../../styles/utils/general';
 import { truncated } from '../../../styles/helpers/index';
 import { cardSkin } from '../../../styles/skins';
 import { COLOR_SCALE } from '../../../styles/zoneScoreColors';
-import { ZONES_BOUNDARIES_LAYER_ID } from '../mb-map/mb-map';
+import {
+  ZONES_BOUNDARIES_LAYER_ID,
+  LCOE_LAYER_LAYER_ID
+} from '../mb-map/mb-map';
 
 import { LegendLinear, LegendItem } from '@visx/legend';
 import { scaleLinear } from '@visx/scale';
@@ -121,10 +124,16 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
 
   const label = visibleRaster[0].title || visibleRaster[0].name;
 
-  const rasterRange = filterRanges.getData()[visibleRaster[0].id] || visibleRaster[0].range;
+  const rasterRange =
+    filterRanges.getData()[visibleRaster[0].id] ||
+    (visibleRaster[0].id === LCOE_LAYER_LAYER_ID
+      ? filterRanges.getData()[1].total
+      : visibleRaster[0].range);
+
   const rasterFilter = filtersLists.find(
     (l) => l.layer === visibleRaster[0].id
   );
+
   const unit =
     rasterFilter && rasterFilter.unit
       ? ` (${rasterFilter.unit})`
