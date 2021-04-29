@@ -95,7 +95,7 @@ function QueryForm (props) {
           input: {
             ...initByType(object,
               apiRange || {},
-             apiResourceNameMap[resource])
+              apiResourceNameMap[resource])
           }
         };
         setObject(updated);
