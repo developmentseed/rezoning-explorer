@@ -42,6 +42,15 @@ const HomeInpage = styled(Inpage)`
       max-width: 40rem;
     }
   `}
+  ${media.xlargeUp`
+    ${InpageBodyInner} {
+      max-width: 56rem;
+    }
+  
+  `}
+  ${InpageBody} {
+    z-index: 1;
+  }
 `;
 
 const CTAButtons = styled.div`
@@ -88,19 +97,18 @@ const BackgroundWrapper = styled.figure`
 `;
 
 const PartnerLogos = styled.ul`
-  display: flex;
-  flex-flow: row nowrap;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 3rem;
+  align-items: center;
   list-style: none;
   margin-top: 4rem;
-  li {
-    margin-right: 2rem;
-  }
   img {
-    height: 2rem;
-    ${media.smallUp`
-      height: 2.5rem;
-    `}
+    max-width: 100%;
   }
+  ${media.xlargeUp`
+    grid-template-columns: repeat(4, 1fr);
+  `}
 `;
 
 function Home () {
@@ -145,8 +153,10 @@ function Home () {
             </CTAButtons>
             <p>Inspired by <a href='https://mapre.lbl.gov/'>MapRE</a></p>
             <PartnerLogos>
-              <li><img src='./assets/graphics/content/logos/logo-esmap--white.png' /></li>
-              <li><img src='./assets/graphics/content/logos/logo-wb--white.png' /></li>
+              <img src='./assets/graphics/content/logos/logo-esmap--white.png' />
+              <img src='./assets/graphics/content/logos/logo-wb--white.png' />
+              <img src='./assets/graphics/content/logos/logo-ucsb--white.png' />
+              <img src='./assets/graphics/content/logos/logo-lbl--white.png' />
             </PartnerLogos>
           </InpageBodyInner>
         </InpageBody>
