@@ -121,7 +121,7 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
 
   const label = visibleRaster[0].title || visibleRaster[0].name;
 
-  const rasterRange = filterRanges.getData()[visibleRaster[0]] ? filterRanges.getData()[visibleRaster[0].id] : visibleRaster[0].range;
+  const rasterRange = filterRanges.getData()[visibleRaster[0].id] || visibleRaster[0].range;
   const rasterFilter = filtersLists.find(
     (l) => l.layer === visibleRaster[0].id
   );
