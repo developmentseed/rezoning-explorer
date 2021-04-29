@@ -67,30 +67,21 @@ jobs:
             - ~/.npm
             - ~/.cache
       - run: yarn cy:test
-  build:
-    <<: *base_def
-    steps:
-      - checkout
-      - restore_cache:
-          <<: *restore_cache_def
-      - run: yarn build
-      - persist_to_workspace:
-          root: ~/repo
-          paths:
-              - dist/*
   deploy-surge-dev:
     <<: *base_def
     steps:
       - checkout
       - restore_cache:
           <<: *restore_cache_def
-      - attach_workspace:
-          at: /workspace
+      - run: yarn install          
+      - run:
+          name: Building staging site
+          command: yarn stage
       - run:
           name: Deploy to surge
           command: |
-            cp /workspace/dist/index.html /workspace/dist/200.html
-            ./node_modules/surge/lib/cli.js --project /workspace/dist --domain https://rezoning-dev.surge.sh
+            cp ./dist/index.html ./dist/200.html
+            ./node_modules/surge/lib/cli.js --project ./dist --domain https://rezoning-dev.surge.sh
 
   deploy-surge:
     <<: *base_def
@@ -98,13 +89,15 @@ jobs:
       - checkout
       - restore_cache:
           <<: *restore_cache_def
-      - attach_workspace:
-          at: /workspace
+      - run: yarn install          
+      - run:
+          name: Building staging site
+          command: yarn build
       - run:
           name: Deploy to surge
           command: |
-            cp /workspace/dist/index.html /workspace/dist/200.html
-            ./node_modules/surge/lib/cli.js --project /workspace/dist --domain https://rezoning.surge.sh
+            cp ./dist/index.html ./dist/200.html
+            ./node_modules/surge/lib/cli.js --project ./dist --domain https://rezoning.surge.sh
 
 workflows:
   version: 2
@@ -117,14 +110,11 @@ workflows:
       - test:
           requires:
             - prepare
-      - build:
-          requires:
-            - prepare
       - deploy-surge-dev:
           requires:
             - lint
             - test
-            - build
+            - prepare
           filters:
             branches:
               only: develop
@@ -132,7 +122,7 @@ workflows:
           requires:
             - lint
             - test
-            - build
+            - prepare
           filters:
             branches:
               only: master
