@@ -70,19 +70,19 @@ async function initStyles () {
 }
 
 function drawHeader (doc, selectedArea) {
-  // Subtitle
-  doc
-    .fillColor(options.baseFontColor)
-    .font(baseFont)
-    .fontSize(6)
-    .text('RENEWABLE ENERGY ZONE ANALYSIS', options.margin, (options.margin / 2) - 4);
-
   // Title
   doc
     .fillColor(options.baseFontColor)
     .font(boldFont)
     .fontSize(20)
-    .text(selectedArea.name, options.margin, (options.margin / 2));
+    .text(selectedArea.name, options.margin, (options.margin / 2) - 6);
+
+  // Subtitle
+  doc
+    .fillColor(options.secondaryFontColor)
+    .font(baseFont)
+    .fontSize(8)
+    .text('RENEWABLE ENERGY ZONE ANALYSIS', options.margin, (options.margin / 2) + 18);
 
   // Logos
   doc.image(
@@ -222,8 +222,6 @@ export default async function exportCountryMap(selectedArea, map, setMap) {
     const legendHeight = (legendCanvas.height / 2) * 0.75;
     let legendWidth = legendCanvas.width === 448 ? 448 : 848;
     legendWidth = (legendWidth / 2) * 0.75;
-    // either 424 or 224 pixels
-    console.log(legendWidth);
     doc.image(legendImage, (doc.page.width - options.margin - legendWidth + 10), (doc.page.height - options.margin - legendHeight + 10), { width: legendWidth - 20 });
 
     // Add Scale
