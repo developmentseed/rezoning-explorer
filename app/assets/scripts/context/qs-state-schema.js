@@ -38,15 +38,15 @@ export const accessResourceDefault = (object, resource, range) => {
     const [min, max] = resource_defaults;
     return (
       {
-        min: min || range[0],
-        max: max || range[1]
+        min: Math.max(min, range[0]),
+        max: Math.min(max || Infinity, range[1])
       });
   } else {
     const [min, max] = resource_defaults[resource] || [];
     return (
       {
-        min: min || range[0],
-        max: max || range[1]
+        min: Math.max(min, range[0]),
+        max: Math.min(max || Infinity, range[1])
       });
   }
 };
