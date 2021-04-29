@@ -1,9 +1,6 @@
 import React, { useContext } from 'react';
 import T from 'prop-types';
 import config from '../../../config';
-import { saveAs } from 'file-saver';
-import dataURItoBlob from '../../../utils/data-uri-to-blob';
-import { format } from 'date-fns';
 import exportPDF from './pdf';
 import { withRouter } from 'react-router';
 
@@ -47,9 +44,6 @@ const ExportWrapper = styled.div`
     width: 100%;
   }
 `;
-
-// Helper function to generate a formatted timestamp
-const timestamp = () => format(Date.now(), 'yyyyMMdd-hhmmss');
 
 // Get lcoe values from search string
 function getLcoeValues(location, selectedResource, lcoeList) {
@@ -112,20 +106,6 @@ function getFilterValues(
     acc[id] = value;
     return acc;
   }, {});
-}
-
-/**
- * Generate map snapshot and download.
- *
- * Reference: https://stackoverflow.com/questions/49807311/how-to-get-usable-canvas-from-mapbox-gl-js
- */
-async function exportMapImage(selectedArea) {
-  const canvas = document.getElementsByClassName('mapboxgl-canvas')[0];
-  const dataURL = canvas.toDataURL('image/png');
-  saveAs(
-    dataURItoBlob(dataURL),
-    `WBG-REZoning-${selectedArea.id}-map-snapshot-${timestamp()}.png`
-  );
 }
 
 /**
@@ -291,6 +271,13 @@ const ExportZonesButton = (props) => {
         <DropMenu role='menu' iconified>
           <DropMenuItem
             data-dropdown='click.close'
+            useIcon='picture'
+            onClick={() => exportCountryMap(selectedArea, map, setMap)}
+          >
+            Map (.pdf)
+          </DropMenuItem>
+          <DropMenuItem
+            data-dropdown='click.close'
             useIcon='link'
             href={ResourceLink}
             target='_blank'
@@ -301,16 +288,9 @@ const ExportZonesButton = (props) => {
           <DropMenuItem
             data-dropdown='click.close'
             useIcon='page-label'
-            onClick={() => exportCountryMap(selectedArea, map, setMap)}
-          >
-            PDF Country Map
-          </DropMenuItem>
-          <DropMenuItem
-            data-dropdown='click.close'
-            useIcon='page-label'
             onClick={onExportPDFClick}
           >
-            PDF Report
+            Report (.pdf)
           </DropMenuItem>
           <DropMenuItem
             data-dropdown='click.close'
@@ -348,13 +328,6 @@ const ExportZonesButton = (props) => {
               </DropMenuItem>
             </>
           )}
-          <DropMenuItem
-            data-dropdown='click.close'
-            useIcon='picture'
-            onClick={() => exportMapImage(selectedArea, map, setMap)}
-          >
-            Map (.png)
-          </DropMenuItem>
         </DropMenu>
       </Dropdown>
     </ExportWrapper>
