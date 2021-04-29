@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import T from 'prop-types';
-import { withRouter } from 'react-router';
 import styled from 'styled-components';
 
 import MetaTags from './meta-tags';
@@ -29,7 +28,7 @@ const PageBody = styled.main`
 `;
 
 class App extends Component {
-  render () {
+  render() {
     const { pageTitle, hideFooter, children } = this.props;
     const title = pageTitle ? `${pageTitle} — ` : '';
 
@@ -42,9 +41,7 @@ class App extends Component {
       >
         <MetaTags title={`${title}${appTitle}`} description={appDescription} />
         <PageHeader />
-        <PageBody role='main'>
-          {children}
-        </PageBody>
+        <PageBody role='main'>{children}</PageBody>
         <PageFooter />
       </SizeAwareElement>
     );
@@ -57,4 +54,8 @@ App.propTypes = {
   children: T.node
 };
 
-export default withRouter(App);
+if (process.env.NODE_ENV === 'development') {
+  App.whyDidYouRender = false;
+}
+
+export default App;

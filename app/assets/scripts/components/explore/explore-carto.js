@@ -5,6 +5,7 @@ import Histogram from '../common/histogram';
 import { themeVal } from '../../styles/utils/general';
 import MbMap from '../common/mb-map/mb-map';
 import { useFocusZone, useHoveredFeature } from '../../context/map-context';
+import { useZones } from '../../context/explore-context';
 
 const ExploreCarto = styled.section`
   position: relative;
@@ -17,7 +18,11 @@ const ExploreCarto = styled.section`
 `;
 
 function Carto(props) {
-  const { triggerResize, zoneData } = props;
+  const { triggerResize } = props;
+  const { currentZones } = useZones();
+
+  const zoneData = currentZones.isReady() ? currentZones.getData() : null;
+
   const { setFocusZone } = useFocusZone();
   const { setHoveredFeature, hoveredFeature } = useHoveredFeature();
 

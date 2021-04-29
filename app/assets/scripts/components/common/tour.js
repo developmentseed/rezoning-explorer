@@ -6,6 +6,7 @@ import Button from '../../styles/button/button';
 import Heading, { Subheading } from '../../styles/type/heading';
 import Prose from '../../styles/type/prose';
 import { themeVal } from '../../styles/utils/general';
+import { useArea, useResource, useTourStep } from '../../context/explore-context';
 
 const steps = [
   {
@@ -132,7 +133,10 @@ TourTooltip.propTypes = {
 };
 
 function Tour (props) {
-  const { tourStep, setTourStep, ready } = props;
+  const { selectedArea } = useArea();
+  const { selectedResource } = useResource();
+  const { tourStep, setTourStep } = useTourStep();
+  const ready = (selectedArea && selectedResource) !== undefined;
   return (
     <>
       <Joyride
