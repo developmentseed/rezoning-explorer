@@ -219,12 +219,6 @@ function ExpMapPrimePanel(props) {
         bodyContent={
           filtersLists && weightsList && lcoeList ? (
             <QueryForm
-              area={selectedArea}
-              resource={selectedResource}
-              filtersLists={filtersLists}
-              filterRanges={filterRanges}
-              weightsList={weightsList}
-              lcoeList={lcoeList}
               gridMode={gridMode}
               setGridMode={setGridMode}
               gridSize={gridSize}

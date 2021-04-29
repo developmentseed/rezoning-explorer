@@ -14,7 +14,11 @@ import Heading, { Subheading } from '../../styles/type/heading';
 
 import GridSetter from './grid-setter';
 
-import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap } from './panel-data';
+import {
+  INPUT_CONSTANTS,
+  checkIncluded,
+  apiResourceNameMap
+} from './panel-data';
 import { HeadOption, HeadOptionHeadline } from '../../styles/form/form';
 import { FiltersForm, WeightsForm, LCOEForm } from './form';
 
@@ -25,7 +29,8 @@ import {
   weightQsSchema,
   lcoeQsSchema
 } from '../../context/qs-state-schema';
-import { useFilteredLayer } from '../../context/explore-context';
+import { useFilteredLayer, useArea, useResource } from '../../context/explore-context';
+import { useFormListsAndRanges } from '../../context/form-context';
 
 const { GRID_OPTIONS } = INPUT_CONSTANTS;
 
@@ -49,30 +54,27 @@ const SubmissionSection = styled(PanelBlockFooter)`
   gap: 0rem 1rem;
 `;
 
-function QueryForm (props) {
+function QueryForm(props) {
   const {
-    area,
-    resource,
-    filtersLists,
-    weightsList,
-    lcoeList,
-    filterRanges,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
     onSelectionChange,
     gridMode,
     setGridMode,
-    gridSize, setGridSize
+    gridSize,
+    setGridSize
   } = props;
 
   const firstLoad = useRef(true);
-
+  const { selectedArea } = useArea();
+  const { selectedResource } = useResource();
+  const { filtersLists, weightsList, lcoeList, filterRanges } = useFormListsAndRanges();
   const { updateFilteredLayer } = useFilteredLayer();
 
   /* Generate weights qs state variables
-  */
-  const weightsInd = weightsList.map(w => {
+   */
+  const weightsInd = weightsList.map((w) => {
     const [weight, setWeight] = useQsState(weightQsSchema(w));
     return [weight, setWeight];
   });
@@ -80,7 +82,7 @@ function QueryForm (props) {
   /* Generate filters qs state variables */
   const filtersInd = filtersLists.map((f) => {
     const [filt, setFilt] = useQsState(
-      filterQsSchema(f, filterRanges.getData(), resource)
+      filterQsSchema(f, filterRanges.getData(), selectedResource)
     );
     return [filt, setFilt];
   });
@@ -95,9 +97,7 @@ function QueryForm (props) {
         const updated = {
           ...object,
           input: {
-            ...initByType(object,
-              apiRange || {},
-              apiResourceNameMap[resource])
+            ...initByType(object, apiRange || {}, apiResourceNameMap[selectedResource])
           }
         };
         setObject(updated);
@@ -108,9 +108,7 @@ function QueryForm (props) {
       setObject({
         ...base,
         input: {
-          ...initByType(base,
-            apiRange || {},
-            apiResourceNameMap[resource])
+          ...initByType(base, apiRange || {}, apiResourceNameMap[selectedResource])
         },
         active: base.active === undefined ? true : base.active
       });
@@ -118,7 +116,7 @@ function QueryForm (props) {
   };
 
   const lcoeInd = lcoeList.map((c) => {
-    const [cost, setCost] = useQsState(lcoeQsSchema(c, resource));
+    const [cost, setCost] = useQsState(lcoeQsSchema(c, selectedResource));
     return [cost, setCost];
   });
 
@@ -132,15 +130,25 @@ function QueryForm (props) {
    * Call function to send values to api
    */
   const applyClick = useCallback(() => {
-    const weightsValues = weightsInd.reduce((accum, [weight, _]) => ({
-      ...accum,
-      [weight.id || weight.name]: castByFilterType(weight.input.type)(weight.input.value)
-    }), {});
+    const weightsValues = weightsInd.reduce(
+      (accum, [weight, _]) => ({
+        ...accum,
+        [weight.id || weight.name]: castByFilterType(weight.input.type)(
+          weight.input.value
+        )
+      }),
+      {}
+    );
 
-    const lcoeValues = lcoeInd.reduce((accum, [cost, _]) => ({
-      ...accum,
-      [cost.id || cost.name]: castByFilterType(cost.input.type)(cost.input.value)
-    }), {});
+    const lcoeValues = lcoeInd.reduce(
+      (accum, [cost, _]) => ({
+        ...accum,
+        [cost.id || cost.name]: castByFilterType(cost.input.type)(
+          cost.input.value
+        )
+      }),
+      {}
+    );
 
     // Get filters and discard setting functions
     const filters = filtersInd.map(([filter, _]) => filter);
@@ -160,19 +168,22 @@ function QueryForm (props) {
     if (firstLoad.current && filterRanges.isReady()) {
       firstLoad.current = false;
     }
-  }, [filterRanges, resource]);
+  }, [filterRanges, selectedResource]);
 
-  useEffect(onInputTouched, [area, resource]);
-  useEffect(onSelectionChange, [area, resource, gridSize]);
+  useEffect(onInputTouched, [selectedArea, selectedResource]);
+  useEffect(onSelectionChange, [selectedArea, selectedResource, gridSize]);
 
   /* Update capacity factor options based on
    * what the current resource is
    */
   useEffect(() => {
-    if (resource) {
+    if (selectedResource) {
       try {
-        const [capacity, setCapacity] = lcoeInd.find(([cost, _]) => cost.id === 'capacity_factor');
-        capacity.input.availableOptions = capacity.input.options[apiResourceNameMap[resource]];
+        const [capacity, setCapacity] = lcoeInd.find(
+          ([cost, _]) => cost.id === 'capacity_factor'
+        );
+        capacity.input.availableOptions =
+          capacity.input.options[apiResourceNameMap[selectedResource]];
         capacity.input.value = capacity.input.availableOptions[0];
         setCapacity(capacity);
       } catch (err) {
@@ -180,7 +191,7 @@ function QueryForm (props) {
         console.error(err);
       }
     }
-  }, [resource]);
+  }, [selectedResource]);
 
   /* Wait until elements have mounted and been parsed to render the query form */
   if (firstLoad.current) {
@@ -193,7 +204,7 @@ function QueryForm (props) {
         <HeadOption>
           <HeadOptionHeadline id='selected-area-prime-panel-heading'>
             <Heading size='large' variation='primary'>
-              {area ? area.name : 'Select Area'}
+              {selectedArea ? selectedArea.name : 'Select Area'}
             </Heading>
             <EditButton
               id='select-area-button'
@@ -210,7 +221,7 @@ function QueryForm (props) {
             <Subheading>Resource: </Subheading>
             <Subheading variation='primary'>
               <Subheadingstrong>
-                {resource || 'Select Resource'}
+                {selectedResource || 'Select Resource'}
               </Subheadingstrong>
             </Subheading>
             <EditButton
@@ -238,7 +249,7 @@ function QueryForm (props) {
               setGridSize={setGridSize}
               gridMode={gridMode}
               setGridMode={setGridMode}
-              disableBoundaries={resource === 'Off-Shore Wind'}
+              disableBoundaries={selectedResource === 'Off-Shore Wind'}
             />
           </HeadOptionHeadline>
         </HeadOption>
@@ -248,29 +259,29 @@ function QueryForm (props) {
         <FiltersForm
           name='Filters'
           icon='filter'
-          disabled={!area || !resource}
+          disabled={!selectedArea || !selectedResource}
           filters={filtersInd}
           checkIncluded={checkIncluded}
-          resource={resource}
+          resource={selectedResource}
         />
         <LCOEForm
           name='Economics'
           icon='disc-dollar'
           lcoe={lcoeInd}
-          disabled={!area || !resource}
+          disabled={!selectedArea || !selectedResource}
         />
         <WeightsForm
           name='weights'
           icon='sliders-horizontal'
           weights={weightsInd}
-          disabled={!area || !resource}
+          disabled={!selectedArea || !selectedResource}
         />
       </TabbedBlockBody>
       <SubmissionSection>
         <Button
           size='small'
           type='reset'
-          disabled={!area || !resource}
+          disabled={!selectedArea || !selectedResource}
           onClick={resetClick}
           variation='primary-raised-light'
           useIcon='arrow-loop'
@@ -280,11 +291,15 @@ function QueryForm (props) {
         <Button
           size='small'
           type='submit'
-          disabled={!area || !resource}
+          disabled={!selectedArea || !selectedResource}
           onClick={applyClick}
           variation='primary-raised-dark'
           useIcon='tick--small'
-          title={!area || !resource ? 'Both area and resource must be set to generate zones' : 'Generate Zones Analysis'}
+          title={
+            !selectedArea || !selectedResource
+              ? 'Both area and resource must be set to generate zones'
+              : 'Generate Zones Analysis'
+          }
         >
           Generate Zones
         </Button>
@@ -294,12 +309,6 @@ function QueryForm (props) {
 }
 
 QueryForm.propTypes = {
-  area: T.object,
-  resource: T.string,
-  filtersLists: T.array,
-  weightsList: T.array,
-  lcoeList: T.array,
-  filterRanges: T.object,
   onResourceEdit: T.func,
   onAreaEdit: T.func,
   onInputTouched: T.func,
@@ -313,4 +322,4 @@ if (process.env.NODE_ENV === 'development') {
   QueryForm.whyDidYouRender = false;
 }
 
-export default React.memo(QueryForm);
+export default QueryForm;
