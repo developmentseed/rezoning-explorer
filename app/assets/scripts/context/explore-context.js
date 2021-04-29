@@ -4,7 +4,8 @@ import React, {
   useState,
   useReducer,
   useMemo,
-  useContext
+  useContext,
+  useCallback
 } from 'react';
 import T from 'prop-types';
 import * as topojson from 'topojson-client';
@@ -256,83 +257,86 @@ export function ExploreProvider(props) {
     );
   };
 
-  const updateFilteredLayer = (filterValues, weights, lcoe) => {
-    // Prepare a query string to the API based from filter values
-    //
-    const filterString = filterValues
-      .map((filter) => {
-        const { id, active, input, isRange } = filter;
+  const updateFilteredLayer = useCallback(
+    (filterValues, weights, lcoe) => {
+      // Prepare a query string to the API based from filter values
+      //
+      const filterString = filterValues
+        .map((filter) => {
+          const { id, active, input, isRange } = filter;
 
-        // Bypass inactive filters
-        if (
-          !maskTypes.includes(input.type) &&
-          (!active || !checkIncluded(filter, selectedResource))
-        ) {
-          // Skip filters that are NOT mask and are inactive
-          return null;
-        } else if (maskTypes.includes(input.type) && active) {
-          // If this is an 'active' mask filter, we don't need to send to the api. Active here means include these areas
-          return null;
-        } else if (isRange) {
+          // Bypass inactive filters
           if (
-            input.value.min === input.range[0] &&
-            input.value.max === input.range[1]
+            !maskTypes.includes(input.type) &&
+            (!active || !checkIncluded(filter, selectedResource))
           ) {
+            // Skip filters that are NOT mask and are inactive
+            return null;
+          } else if (maskTypes.includes(input.type) && active) {
+            // If this is an 'active' mask filter, we don't need to send to the api. Active here means include these areas
+            return null;
+          } else if (isRange) {
+            if (
+              input.value.min === input.range[0] &&
+              input.value.max === input.range[1]
+            ) {
+              return null;
+            }
+          }
+
+          // Add accepted filter types to the query
+          if (input.type === SLIDER) {
+            const {
+              value: { min, max }
+            } = filter.input;
+
+            // App uses km but api expects values in meters
+            const multiplier = getMultiplierByUnit(filter.unit);
+            return `${id}=${min * multiplier},${max * multiplier}`;
+          } else if (input.type === BOOL) {
+            return `${id}=${filter.input.value}`;
+          } else if (input.type === MULTI) {
+            return input.value.length === input.options.length
+              ? null
+              : `${id}=${input.value.join(',')}`;
+          } else if (input.type === DROPDOWN || input.type === MULTI) {
+            return `${id}=${filter.input.value.join(',')}`;
+          } else {
+            // discard non-accepted filter types
+            /* eslint-disable-next-line */
+            console.error(`Filter ${id} type not supported by api, discarding`);
             return null;
           }
-        }
+        })
+        .filter((x) => x)
+        .join('&');
 
-        // Add accepted filter types to the query
-        if (input.type === SLIDER) {
-          const {
-            value: { min, max }
-          } = filter.input;
+      // If area of country type, prepare path string to add to URL
+      const countryPath =
+        selectedArea.type === 'country' ? `${selectedArea.id}` : '';
 
-          // App uses km but api expects values in meters
-          const multiplier = getMultiplierByUnit(filter.unit);
-          return `${id}=${min * multiplier},${max * multiplier}`;
-        } else if (input.type === BOOL) {
-          return `${id}=${filter.input.value}`;
-        } else if (input.type === MULTI) {
-          return input.value.length === input.options.length
-            ? null
-            : `${id}=${input.value.join(',')}`;
-        } else if (input.type === DROPDOWN || input.type === MULTI) {
-          return `${id}=${filter.input.value.join(',')}`;
-        } else {
-          // discard non-accepted filter types
-          /* eslint-disable-next-line */
-          console.error(`Filter ${id} type not supported by api, discarding`);
-          return null;
-        }
-      })
-      .filter((x) => x)
-      .join('&');
+      // Off-shore mask flag
+      const offshoreWindMask =
+        selectedResource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
 
-    // If area of country type, prepare path string to add to URL
-    const countryPath =
-      selectedArea.type === 'country' ? `${selectedArea.id}` : '';
+      // Apply filter querystring to the map
+      setFilteredLayerUrl(
+        `${config.apiEndpoint}/filter/${countryPath}/{z}/{x}/{y}.png?${filterString}${offshoreWindMask}&color=255,0,160,100`
+      );
 
-    // Off-shore mask flag
-    const offshoreWindMask =
-      selectedResource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
+      const lcoeReduction = Object.entries(lcoe).reduce(
+        (accum, [key, value]) => `${accum}&${key}=${value}`,
+        ''
+      );
 
-    // Apply filter querystring to the map
-    setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/${countryPath}/{z}/{x}/{y}.png?${filterString}${offshoreWindMask}&color=255,0,160,100`
-    );
+      setOutputLayerUrl(
+        `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}${offshoreWindMask}&colormap=viridis`
+      );
 
-    const lcoeReduction = Object.entries(lcoe).reduce(
-      (accum, [key, value]) => `${accum}&${key}=${value}`,
-      ''
-    );
-
-    setOutputLayerUrl(
-      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}${offshoreWindMask}&colormap=viridis`
-    );
-
-    generateZones(filterString, weights, lcoe);
-  };
+      generateZones(filterString, weights, lcoe);
+    },
+    [selectedArea]
+  );
 
   useEffect(() => {
     if (currentZones.isReady()) {

@@ -7,8 +7,7 @@ import {
   useArea,
   useGrid,
   useResource,
-  useTourStep,
-  useFilteredLayer
+  useTourStep
 } from '../../context/explore-context';
 import { useMapLayers } from '../../context/map-context';
 import {
@@ -92,8 +91,6 @@ function ExpMapPrimePanel(props) {
 
   const { gridMode, setGridMode, gridSize, setGridSize } = useGrid();
 
-  const { updateFilteredLayer } = useFilteredLayer();
-
   const { map, mapLayers, setMapLayers } = useMapLayers();
 
   const [showRasterPanel, setShowRasterPanel] = useState(false);
@@ -108,8 +105,6 @@ function ExpMapPrimePanel(props) {
   const onSelectionChange = useCallback(() => {
     setZonesGenerated(false);
   }, []);
-
-  const _updateFilteredLayer = useCallback(updateFilteredLayer, []);
 
   return (
     <>
@@ -234,7 +229,6 @@ function ExpMapPrimePanel(props) {
               setGridMode={setGridMode}
               gridSize={gridSize}
               setGridSize={setGridSize}
-              updateFilteredLayer={_updateFilteredLayer}
               onAreaEdit={onAreaEdit}
               onResourceEdit={onResourceEdit}
               onInputTouched={onInputTouched}

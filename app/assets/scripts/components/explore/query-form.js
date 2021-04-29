@@ -25,6 +25,7 @@ import {
   weightQsSchema,
   lcoeQsSchema
 } from '../../context/qs-state-schema';
+import { useFilteredLayer } from '../../context/explore-context';
 
 const { GRID_OPTIONS } = INPUT_CONSTANTS;
 
@@ -55,7 +56,6 @@ function QueryForm (props) {
     filtersLists,
     weightsList,
     lcoeList,
-    updateFilteredLayer,
     filterRanges,
     onAreaEdit,
     onResourceEdit,
@@ -67,6 +67,8 @@ function QueryForm (props) {
   } = props;
 
   const firstLoad = useRef(true);
+
+  const { updateFilteredLayer } = useFilteredLayer();
 
   /* Generate weights qs state variables
   */
@@ -144,7 +146,7 @@ function QueryForm (props) {
     const filters = filtersInd.map(([filter, _]) => filter);
 
     updateFilteredLayer(filters, weightsValues, lcoeValues);
-  }, [weightsInd, lcoeInd, filtersInd]);
+  }, [updateFilteredLayer, weightsInd, lcoeInd, filtersInd]);
 
   useEffect(() => {
     /* When filter ranges update we should reset to match ranges */
@@ -297,7 +299,6 @@ QueryForm.propTypes = {
   filtersLists: T.array,
   weightsList: T.array,
   lcoeList: T.array,
-  updateFilteredLayer: T.func,
   filterRanges: T.object,
   onResourceEdit: T.func,
   onAreaEdit: T.func,
