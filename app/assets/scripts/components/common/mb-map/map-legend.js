@@ -35,7 +35,7 @@ const LegendItemWrapper = styled.div`
   grid-gap: 0.75rem;
   width: 100%;
   ${({ type }) => type === 'linear' && css`
-    &:not(:only-of-type) {
+    &:not(:first-of-type) {
       border-top: 1px solid ${themeVal('color.baseAlphaC')};
       padding-top: ${glsp(0.75)};
     }
