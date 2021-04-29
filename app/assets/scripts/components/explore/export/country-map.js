@@ -70,6 +70,13 @@ async function initStyles () {
 }
 
 function drawHeader (doc, selectedArea) {
+  // Subtitle
+  doc
+    .fillColor(options.baseFontColor)
+    .font(baseFont)
+    .fontSize(6)
+    .text('RENEWABLE ENERGY ZONE ANALYSIS', options.margin, (options.margin / 2) - 4);
+
   // Title
   doc
     .fillColor(options.baseFontColor)
@@ -146,7 +153,7 @@ function drawFooter(doc) {
     .font(baseFont)
     .fontSize(6)
     .text(
-      'This map is publshed by the World Bank Group, funded by ESMAP, and was dynamically genearted from the REZoning application. For more information, please visit https://rezoning.surge.sh',
+      'This map is publshed by the World Bank Group, funded by ESMAP, and was dynamically generated from the REZoning application. For more information, please visit https://rezoning.surge.sh',
       options.margin,
       doc.page.height - (options.margin / 2),
       {
@@ -173,9 +180,9 @@ function drawFooter(doc) {
 
   // Right date
   doc.text(
-    new Date().getFullYear(),
+    `©${new Date().getFullYear()}`,
     doc.page.width - options.colWidthTwoCol - options.margin,
-    doc.page.height - ((options.margin / 2) + 12),
+    doc.page.height - (options.margin / 2 + 8),
     {
       width: options.colWidthTwoCol,
       height: 16,
@@ -227,7 +234,7 @@ export default async function exportCountryMap(selectedArea, map, setMap) {
     return await stream.on('finish', function () {
       saveAs(
         stream.toBlob('application/pdf'),
-        `WBG-REZoning-${selectedArea.id}-summary-${getTimestamp()}.pdf`
+        `WBG-REZoning-${selectedArea.id}-map-${getTimestamp()}.pdf`
       );
     });
   });
