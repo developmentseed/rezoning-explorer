@@ -10,8 +10,7 @@ const {
 
 const GlobalContext = createContext({});
 
-export function GlobalProvider (props) {
-
+export function GlobalProvider(props) {
   // The user is restricted to one one download at a time, Object 'downloadTask'
   // keeps metadata of active download.
   const [download, setDownload] = useState(null);
