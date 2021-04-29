@@ -47,7 +47,7 @@ const HomeInpage = styled(Inpage)`
       max-width: 56rem;
     }
   
-  `};
+  `}
   ${InpageBody} {
     z-index: 1;
   }
