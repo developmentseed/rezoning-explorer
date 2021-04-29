@@ -2,6 +2,8 @@
 
 export default {
   environment: 'production',
+  wdyrLogs: false,
+  reduxeedLogs: false,
   appTitle: 'REZoning Web',
   appDescription:
     'Identify and explore high potential project areas for solar, onshore wind and offshore wind development',

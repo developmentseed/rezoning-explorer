@@ -1,14 +1,14 @@
-import { wrapApiResult } from './reducers/reduxeed';
 import config from '../config';
+import { wrapApiResult } from './reducers/reduxeed';
 
-const { environment } = config;
+const { environment, reduxeedLogs } = config;
 
 export function wrapLogReducer (reducer) {
   /* eslint-disable no-console */
   return (state, action) => {
     const nextState = wrapApiResult(reducer(state, action));
 
-    if (environment !== 'production') {
+    if (environment !== 'production' && reduxeedLogs) {
       console.groupCollapsed(action.type);
       console.log('%c%s', 'color: gray; font-weight: bold', 'prev state ', state);
       console.log('%c%s', 'color: cyan; font-weight: bold', 'action ', action);
