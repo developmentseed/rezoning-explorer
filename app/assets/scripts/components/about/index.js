@@ -12,7 +12,6 @@ import {
 import Prose from '../../styles/type/prose';
 import Dl from '../../styles/type/definition-list';
 import { themeVal } from '../../styles/utils/general';
-import media from '../../styles/utils/media-queries.js';
 import { visuallyHidden } from '../../styles/helpers/index';
 
 const AboutInpage = styled(Inpage)`
@@ -125,7 +124,7 @@ function About () {
                 </a>{' '}
                 and the{' '}
                 <a href='https://www.ucsb.edu/' target='_blank' rel='noreferrer'>
-                  University of California Santa Barbara's (UCSB)
+                  University of California Santa Barbara&apos;s (UCSB)
                 </a>{' '}
                 platform{' '}
                 <a href='https://mapre.lbl.gov/' target='_blank' rel='noreferrer'>
