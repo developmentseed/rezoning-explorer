@@ -170,4 +170,13 @@ export const useFormListsAndRanges = () => {
   );
 };
 
-export default FormContext;
+export const useInputTouched = () => {
+  const { inputTouched } = useFormContext('useInputTouched');
+
+  return useMemo(
+    () => ({
+      inputTouched
+    }),
+    [inputTouched]
+  );
+};

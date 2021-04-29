@@ -475,7 +475,7 @@ export const useZones = () => {
       maxLCOE,
       setMaxLCOE
     }),
-    [currentZones, maxZoneScore, setMaxZoneScore, maxLCOE, setMaxLCOE]
+    [currentZones, maxZoneScore, maxLCOE]
   );
 };
 

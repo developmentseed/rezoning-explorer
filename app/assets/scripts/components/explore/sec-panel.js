@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 
@@ -15,7 +15,7 @@ import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import Prose from '../../styles/type/prose';
 
 import { useZones } from '../../context/explore-context';
-import FormContext from '../../context/form-context';
+import { useInputTouched } from '../../context/form-context';
 
 import ZoneAnalysisPanel from './zone-analysis-panel';
 
@@ -32,10 +32,10 @@ const PreAnalysisMessage = styled(Prose)`
   text-align: center;
 `;
 
-function ExpMapSecPanel (props) {
+function ExpMapSecPanel(props) {
   const { onPanelChange } = props;
   const { currentZones } = useZones();
-  const { inputTouched } = useContext(FormContext);
+  const { inputTouched } = useInputTouched();
 
   return (
     <SecPanel
@@ -47,19 +47,21 @@ function ExpMapSecPanel (props) {
         <>
           <PanelBlock>
             <PanelBlockHeader>
-              <Heading>
-                Zone Analysis
-              </Heading>
+              <Heading>Zone Analysis</Heading>
             </PanelBlockHeader>
             <PanelBlockBody>
-              {currentZones.isReady()
-                ? (
-                  <ZoneAnalysisPanel
-                    currentZones={currentZones.getData()}
-                    inputTouched={inputTouched}
-                  />) : (
-                  <PreAnalysisMessage>{currentZones.fetching ? 'Loading...' : 'Apply parameters (Spatial filters, Weights & LCOE Economic inputs) and click "Generate Zones" to load zone analysis.'}</PreAnalysisMessage>
-                )}
+              {currentZones.isReady() ? (
+                <ZoneAnalysisPanel
+                  currentZones={currentZones.getData()}
+                  inputTouched={inputTouched}
+                />
+              ) : (
+                <PreAnalysisMessage>
+                  {currentZones.fetching
+                    ? 'Loading...'
+                    : 'Apply parameters (Spatial filters, Weights & LCOE Economic inputs) and click "Generate Zones" to load zone analysis.'}
+                </PreAnalysisMessage>
+              )}
             </PanelBlockBody>
           </PanelBlock>
         </>

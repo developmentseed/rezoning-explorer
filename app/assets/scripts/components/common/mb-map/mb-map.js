@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import T from 'prop-types';
 import styled, { withTheme } from 'styled-components';
 import mapboxgl from 'mapbox-gl';
@@ -15,7 +15,7 @@ import {
   useOutputLayer,
   useZones
 } from '../../../context/explore-context';
-import FormContext from '../../../context/form-context';
+import { useFormListsAndRanges } from '../../../context/form-context';
 import {
   useFocusZone,
   useHoveredFeature,
@@ -461,7 +461,7 @@ function MbMap(props) {
 
   const { setFocusZone } = useFocusZone();
 
-  const { filtersLists, filterRanges } = useContext(FormContext);
+  const { filtersLists, filterRanges } = useFormListsAndRanges();
 
   // Initialize map on mount
   useEffect(() => {

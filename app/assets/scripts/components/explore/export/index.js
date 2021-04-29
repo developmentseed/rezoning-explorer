@@ -7,8 +7,6 @@ import { format } from 'date-fns';
 import exportPDF from './pdf';
 import { withRouter } from 'react-router';
 
-import ExploreContext from '../../../context/explore-context';
-import FormContext from '../../../context/form-context';
 import {
   weightQsSchema,
   lcoeQsSchema,
@@ -33,6 +31,12 @@ import GlobalContext from '../../../context/global-context';
 import { toTitleCase } from '../../../utils/format';
 import exportZonesCsv from './csv';
 import exportZonesGeoJSON from './geojson';
+import {
+  useArea,
+  useResource,
+  useZones
+} from '../../../context/explore-context';
+import { useFormListsAndRanges } from '../../../context/form-context';
 
 const { apiEndpoint } = config;
 
@@ -50,7 +54,7 @@ const ExportWrapper = styled.div`
 const timestamp = () => format(Date.now(), 'yyyyMMdd-hhmmss');
 
 // Get lcoe values from search string
-function getLcoeValues (location, selectedResource, lcoeList) {
+function getLcoeValues(location, selectedResource, lcoeList) {
   const lcoeSchema = lcoeList.reduce((acc, l) => {
     acc[l.id] = {
       accessor: l.id,
@@ -67,7 +71,7 @@ function getLcoeValues (location, selectedResource, lcoeList) {
 }
 
 // Get weight values from search string
-function getWeightValues (location, selectedResource, weightsList) {
+function getWeightValues(location, selectedResource, weightsList) {
   const weightsSchema = weightsList.reduce((acc, w) => {
     acc[w.id] = {
       accessor: w.id,
@@ -84,7 +88,7 @@ function getWeightValues (location, selectedResource, weightsList) {
 }
 
 // Get filter values from search string
-function getFilterValues (
+function getFilterValues(
   location,
   selectedResource,
   filtersLists,
@@ -117,29 +121,35 @@ function getFilterValues (
  *
  * Reference: https://stackoverflow.com/questions/49807311/how-to-get-usable-canvas-from-mapbox-gl-js
  */
-async function exportMapImage (selectedArea) {
+async function exportMapImage(selectedArea) {
   const canvas = document.getElementsByClassName('mapboxgl-canvas')[0];
   const dataURL = canvas.toDataURL('image/png');
-  saveAs(dataURItoBlob(dataURL), `WBG-REZoning-${selectedArea.id}-map-snapshot-${timestamp()}.png`);
+  saveAs(
+    dataURItoBlob(dataURL),
+    `WBG-REZoning-${selectedArea.id}-map-snapshot-${timestamp()}.png`
+  );
 }
 
 /**
  * The component
  */
 const ExportZonesButton = (props) => {
-  const { selectedResource, selectedArea, currentZones } = useContext(
-    ExploreContext
-  );
+  const { selectedArea } = useArea();
+  const { selectedResource } = useResource();
+  const { currentZones } = useZones();
 
-  const { filtersLists, weightsList, lcoeList, filterRanges } = useContext(
-    FormContext
-  );
+  const {
+    filtersLists,
+    weightsList,
+    lcoeList,
+    filterRanges
+  } = useFormListsAndRanges();
 
   const { setDownload } = useContext(GlobalContext);
 
   // This will parse current querystring to get values for filters/weights/lcoe
   // an pass to a function to generate the PDF
-  function onExportPDFClick () {
+  function onExportPDFClick() {
     const mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
     const mapDataURL = mapCanvas.toDataURL('image/png');
     const mapAspectRatio = mapCanvas.height / mapCanvas.width;
@@ -197,7 +207,7 @@ const ExportZonesButton = (props) => {
     exportPDF(data);
   }
 
-  async function onRawDataClick (operation) {
+  async function onRawDataClick(operation) {
     if (selectedArea.type !== 'country') {
       toasts.error(
         'Raw data exports are restricted to countries at the moment.'

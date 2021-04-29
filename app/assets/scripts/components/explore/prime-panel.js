@@ -1,17 +1,17 @@
-import React, { useContext, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import Panel from '../common/panel';
 import media, { isLargeViewport } from '../../styles/utils/media-queries';
-import ExploreContext, {
+import {
   useArea,
   useGrid,
   useResource,
   useTourStep,
   useFilteredLayer
 } from '../../context/explore-context';
-import MapContext, { useMapLayers } from '../../context/map-context';
-import FormContext, {
+import { useMapLayers } from '../../context/map-context';
+import {
   useAreaModal,
   useResourceModal,
   useFormListsAndRanges

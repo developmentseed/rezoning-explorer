@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import {
   FormGroupWrapper,
   PanelOption,
@@ -16,22 +16,26 @@ import Heading from '../../styles/type/heading';
 import { makeTitleCase } from '../../styles/utils/general';
 import InfoButton from '../common/info-button';
 
-import ExploreContext from '../../context/explore-context';
+import { useZones } from '../../context/explore-context';
 
-function OutputFilters (props) {
-  const { maxZoneScore, setMaxZoneScore, maxLCOE, setMaxLCOE } = useContext(
-    ExploreContext
-  );
+function OutputFilters(props) {
+  const { maxZoneScore, setMaxZoneScore, maxLCOE, setMaxLCOE } = useZones();
 
   const outputFilters = [
-    [maxZoneScore, setMaxZoneScore, 'A sum of scores for multiple criteria normalized from 0 to 1 and weighted by user-defined weights for each zone. 1 is desired whereas 0 is not. The zone score filter excludes zones with scores below the user-defined threshold.'],
-    [maxLCOE, setMaxLCOE, 'The LCOE score filter excludes zones with LCOE estimates below the user-defined threshold.']
+    [
+      maxZoneScore,
+      setMaxZoneScore,
+      'A sum of scores for multiple criteria normalized from 0 to 1 and weighted by user-defined weights for each zone. 1 is desired whereas 0 is not. The zone score filter excludes zones with scores below the user-defined threshold.'
+    ],
+    [
+      maxLCOE,
+      setMaxLCOE,
+      'The LCOE score filter excludes zones with LCOE estimates below the user-defined threshold.'
+    ]
   ];
 
   return (
-    <Accordion
-      initialState={[true]}
-    >
+    <Accordion initialState={[true]}>
       {({ checkExpanded, setExpanded }) => (
         <AccordionFold
           forwardedAs={FormGroupWrapper}
