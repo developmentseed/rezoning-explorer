@@ -98,7 +98,7 @@ const BackgroundWrapper = styled.figure`
 
 const PartnerLogos = styled.ul`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   grid-gap: 3rem;
   align-items: center;
   list-style: none;
@@ -106,6 +106,9 @@ const PartnerLogos = styled.ul`
   img {
     max-width: 100%;
   }
+  ${media.xlargeUp`
+    grid-template-columns: repeat(4, 1fr);
+  `}
 `;
 
 function Home () {
@@ -116,7 +119,7 @@ function Home () {
           <InpageHeaderInner>
             <InpageHeadline>
               <HomeTitle size='xlarge'>
-                ReZoning
+                REZoning
                 <span>The Renewable Energy Zoning Tool</span>
               </HomeTitle>
             </InpageHeadline>

@@ -35,6 +35,7 @@ const LogoList = styled(Dl)`
   list-style: none;
   padding: 0;
   margin: 0;
+  margin-top: 4rem;
 
   dt {
     grid-column: 1 / span 12;
@@ -46,10 +47,6 @@ const LogoList = styled(Dl)`
 
   dd {
     grid-column: auto / span 6;
-
-    ${media.smallUp`
-      grid-column: auto / span 4;
-    `}
   }
 
   a {
@@ -214,8 +211,6 @@ function About () {
                 selection) for further processing in a different environment.
               </p>
             </Prose>
-          </AboutPageBodyInner>
-          <InpageBodyInner>
             <LogoList>
               <dt>Partners</dt>
               <dd>
@@ -277,8 +272,23 @@ function About () {
                   <span>Lawrence Berkely Lab</span>
                 </a>
               </dd>
+              <dd>
+                <a
+                  href='https://www.developmentseed.org/'
+                  title='Visit Development Seed'
+                  className='logo-ds'
+                  target='_blank'
+                  rel='noreferrer'
+                >
+                  <img
+                    alt='Development Seed Logo'
+                    src='/assets/graphics/content/logos/logo-ds.png'
+                  />
+                  <span>Development Seed</span>
+                </a>
+              </dd>
             </LogoList>
-          </InpageBodyInner>
+          </AboutPageBodyInner>
         </InpageBody>
       </AboutInpage>
     </App>
