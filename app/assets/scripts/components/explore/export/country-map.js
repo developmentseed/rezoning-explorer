@@ -193,7 +193,7 @@ function drawFooter(doc) {
 
 export default async function exportCountryMap(selectedArea, map, setMap) {
   // Zoom to country bounds
-  showGlobalLoadingMessage('Generating PDF Export...');
+  showGlobalLoadingMessage('Generating Map Export...');
   return map.fitBounds(selectedArea.bounds, { padding: 80 }).once('moveend', async () => {
     setMap(map);
 
@@ -219,7 +219,12 @@ export default async function exportCountryMap(selectedArea, map, setMap) {
     legendNode.style.backgroundColor = '#FFFFFF';
     const legendCanvas = await html2canvas(legendNode);
     const legendImage = legendCanvas.toDataURL('image/png');
-    doc.image(legendImage, (doc.page.width - options.margin - 150), (doc.page.height - (options.margin * 3.5)), { width: 140 });
+    const legendHeight = (legendCanvas.height / 2) * 0.75;
+    let legendWidth = legendCanvas.width === 448 ? 448 : 848;
+    legendWidth = (legendWidth / 2) * 0.75;
+    // either 424 or 224 pixels
+    console.log(legendWidth);
+    doc.image(legendImage, (doc.page.width - options.margin - legendWidth + 10), (doc.page.height - options.margin - legendHeight + 10), { width: legendWidth - 20 });
 
     // Add Scale
     const scaleCanvas = await html2canvas(document.querySelector('.mapboxgl-ctrl-scale'));
