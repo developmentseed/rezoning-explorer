@@ -8,7 +8,7 @@ import FocusZone, { formatIndicator } from './focus-zone';
 import Button from '../../styles/button/button';
 import collecticon from '../../styles/collecticons';
 import get from 'lodash.get';
-import  { useFocusZone, useHoveredFeature } from '../../context/map-context';
+import { useFocusZone, useHoveredFeature } from '../../context/map-context';
 
 import { FormCheckable } from '../../styles/form/checkable';
 

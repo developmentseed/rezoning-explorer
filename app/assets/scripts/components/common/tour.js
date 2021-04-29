@@ -6,13 +6,18 @@ import Button from '../../styles/button/button';
 import Heading, { Subheading } from '../../styles/type/heading';
 import Prose from '../../styles/type/prose';
 import { themeVal } from '../../styles/utils/general';
-import { useArea, useResource, useTourStep } from '../../context/explore-context';
+import {
+  useArea,
+  useResource,
+  useTourStep
+} from '../../context/explore-context';
 
 const steps = [
   {
     title: 'Apply Spatial Filters',
     target: '#filters-tab',
-    content: 'First, set filters to exclude undesired areas. Spatial filters allow you to specify lower and upper thresholds for natural, infrastructure, environmental, and cultural areas. Certain areas can be masked out completely by toggling the respective filter switch off. Output LCOE and zone score values can also be filtered to narrow the returned results.',
+    content:
+      'First, set filters to exclude undesired areas. Spatial filters allow you to specify lower and upper thresholds for natural, infrastructure, environmental, and cultural areas. Certain areas can be masked out completely by toggling the respective filter switch off. Output LCOE and zone score values can also be filtered to narrow the returned results.',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
@@ -20,7 +25,8 @@ const steps = [
   {
     title: 'Set Zone Weighting Criteria',
     target: '#weights-tab',
-    content: 'Next, set weights to score zones accordingly. Adjusting the weights of parameters will change the calculated aggregated zone scores.',
+    content:
+      'Next, set weights to score zones accordingly. Adjusting the weights of parameters will change the calculated aggregated zone scores.',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
@@ -28,7 +34,8 @@ const steps = [
   {
     title: 'Adjust Economic Inputs (LCOE)',
     target: '#lcoe-tab',
-    content: 'Adjust LCOE input as needed to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.',
+    content:
+      'Adjust LCOE input as needed to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
@@ -44,7 +51,7 @@ const steps = [
 ];
 
 const Inner = styled.div`
-  background:  ${themeVal('color.baseLight')};
+  background: ${themeVal('color.baseLight')};
   width: 20rem;
   padding: 1rem;
   display: grid;
@@ -66,7 +73,7 @@ const Footer = styled.div`
 
 const Controls = styled.div`
   display: grid;
-  grid-template-columns:repeat(${({ columns }) => columns}, 1fr);
+  grid-template-columns: repeat(${({ columns }) => columns}, 1fr);
   gap: 0.5rem;
 `;
 
@@ -83,11 +90,11 @@ const TourTooltip = ({
     <Inner {...tooltipProps}>
       <Header>
         <Heading>{step.title}</Heading>
-        <Subheading id='tour-progress'>{index + 1} / {size}</Subheading>
+        <Subheading id='tour-progress'>
+          {index + 1} / {size}
+        </Subheading>
       </Header>
-      <Prose>
-        {step.content}
-      </Prose>
+      <Prose>{step.content}</Prose>
       <Footer>
         <Button
           {...closeProps}
@@ -98,15 +105,17 @@ const TourTooltip = ({
           Close
         </Button>
         <Controls columns={index > 0 ? 2 : 1}>
-          {index > 0 &&
+          {index > 0 && (
             <Button
               {...backProps}
               size='small'
               variation='base-plain'
               useIcon={['arrow-left', 'after']}
               id='tour-back-btn'
-            >Back
-            </Button>}
+            >
+              Back
+            </Button>
+          )}
           <Button
             {...primaryProps}
             size='small'
@@ -114,7 +123,7 @@ const TourTooltip = ({
             useIcon={index < size - 1 && ['arrow-right', 'after']}
             id='tour-next-btn'
           >
-            { index === size - 1 ? 'Finish' : 'Next'}
+            {index === size - 1 ? 'Finish' : 'Next'}
           </Button>
         </Controls>
       </Footer>
@@ -132,7 +141,7 @@ TourTooltip.propTypes = {
   tooltipProps: T.object
 };
 
-function Tour (props) {
+function Tour(props) {
   const { selectedArea } = useArea();
   const { selectedResource } = useResource();
   const { tourStep, setTourStep } = useTourStep();
@@ -151,7 +160,10 @@ function Tour (props) {
         callback={(state) => {
           const { action, index, type, status } = state;
           if (tourStep >= 0) {
-            if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
+            if (
+              type === EVENTS.STEP_AFTER ||
+              type === EVENTS.TARGET_NOT_FOUND
+            ) {
               setTourStep(index + (action === ACTIONS.PREV ? -1 : 1));
             } else if (action === ACTIONS.CLOSE || status === STATUS.FINISHED) {
               setTourStep(-1);
@@ -159,15 +171,10 @@ function Tour (props) {
           }
         }}
       />
-
     </>
   );
 }
 
-Tour.propTypes = {
-  tourStep: T.number,
-  setTourStep: T.func,
-  ready: T.bool
-};
+Tour.propTypes = {};
 
 export default Tour;

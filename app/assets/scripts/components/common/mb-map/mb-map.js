@@ -439,6 +439,7 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
   });
 };
 
+/* eslint-disable indent */
 function MbMap(props) {
   const { triggerResize } = props;
   const mapContainer = useRef(null);

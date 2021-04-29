@@ -1,6 +1,6 @@
 import './wdyr';
 import '@babel/polyfill';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { render } from 'react-dom';
 import { Router, Route, Switch } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
@@ -17,7 +17,6 @@ import theme from './styles/theme/theme';
 import Home from './components/home';
 import Explore from './components/explore';
 import About from './components/about';
-import { useState } from 'react';
 
 // Root component.
 function Root() {

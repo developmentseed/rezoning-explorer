@@ -48,8 +48,7 @@ function Carto(props) {
   );
 }
 Carto.propTypes = {
-  triggerResize: T.bool,
-  zoneData: T.array
+  triggerResize: T.bool
 };
 
 export default Carto;

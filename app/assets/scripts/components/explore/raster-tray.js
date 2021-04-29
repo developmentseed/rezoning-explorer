@@ -223,9 +223,9 @@ RasterTray.propTypes = {
   className: T.string,
   resource: T.string
 };
+
 if (process.env.NODE_ENV === 'development') {
   RasterTray.whyDidYouRender = false;
 }
-
 
 export default RasterTray;
