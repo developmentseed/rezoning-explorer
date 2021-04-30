@@ -94,7 +94,7 @@ export const initByType = (obj, ranges, resource) => {
       return {
         ...input,
         // For multi select, select all by default
-        value: input.value || input.resource_defaults || input.options.map((e, i) => i),
+        value: input.value || obj.resource_defaults || input.options.map((e, i) => i),
         unit: null
       };
     case DROPDOWN:
