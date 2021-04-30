@@ -7,6 +7,10 @@ import get from 'lodash.get';
 import groupBy from 'lodash.groupby';
 import { formatThousands, toTitleCase, getTimestamp } from '../../../utils/format';
 import difference from 'lodash.difference';
+import {
+  hideGlobalLoading,
+  showGlobalLoadingMessage
+} from '../../common/global-loading';
 
 /* eslint-disable camelcase */
 
@@ -551,7 +555,7 @@ function drawAnalysisInput (doc, data) {
   doc.text(
     'GLOBAL SOLAR ATLAS: Access to solar resource and photovoltaic power potential around the globe.',
     doc.x,
-    doc.y,
+    doc.y + (options.tables.padding / 2),
     {
       link: 'https://globalsolaratlas.info/map'
     }
@@ -559,7 +563,7 @@ function drawAnalysisInput (doc, data) {
   doc.text(
     'GLOBAL WIND ATLAS: Identify high-wind areas for wind power generation virtually anywhere in the world.',
     doc.x,
-    doc.y,
+    doc.y + (options.tables.padding / 2),
     {
       link: 'https://globalwindatlas.info/'
     }
@@ -567,6 +571,7 @@ function drawAnalysisInput (doc, data) {
 }
 
 export default async function exportPDF (data) {
+  showGlobalLoadingMessage('Generating PDF Report...');
   // Load styles
   await initStyles();
 
@@ -590,6 +595,8 @@ export default async function exportPDF (data) {
 
   // Finalize PDF file
   doc.end();
+
+  hideGlobalLoading();
 
   return await stream.on('finish', function () {
     saveAs(
