@@ -35,7 +35,7 @@ const options = {
 };
 
 // fetch fonts & images on init for use in PDF
-let styles, baseFont, boldFont, Logo, WBGLogo, ESMAPLogo;
+let styles, baseFont, boldFont, Logo, WBGLogo, ESMAPLogo, LBLLogo;
 async function initStyles () {
   await fetch('/assets/fonts/IBM-Plex-Sans-regular.ttf')
     .then((response) => response.arrayBuffer())
@@ -62,6 +62,11 @@ async function initStyles () {
     .then((response) => response.arrayBuffer())
     .then((logo) => {
       ESMAPLogo = logo;
+    });
+  await fetch('/assets/graphics/content/logos/logo-lbl.jpeg')
+    .then((response) => response.arrayBuffer())
+    .then((logo) => {
+      LBLLogo = logo;
     });
 
   styles = {
@@ -231,6 +236,14 @@ function drawFooter (doc, pageNumber) {
   doc.image(
     ESMAPLogo,
     options.margin * 3.25 + 120,
+    doc.page.height - options.margin * 1.25,
+    {
+      height: 18
+    }
+  );
+  doc.image(
+    LBLLogo,
+    options.margin * 3.25 + 210,
     doc.page.height - options.margin * 1.25,
     {
       height: 18
