@@ -25,7 +25,7 @@ const FILTERED_LAYER_SOURCE = 'FILTERED_LAYER_SOURCE';
 const FILTERED_LAYER_ID = 'FILTERED_LAYER_ID';
 
 const LCOE_LAYER_SOURCE_ID = 'LCOE_LAYER_SOURCE_ID';
-const LCOE_LAYER_LAYER_ID = 'LCOE_LAYER_LAYER_ID';
+export const LCOE_LAYER_LAYER_ID = 'LCOE_LAYER_LAYER_ID';
 
 const ZONE_SCORE_SOURCE_ID = 'ZONE_SCORE_SOURCE_ID';
 const ZONE_SCORE_LAYER_ID = 'ZONE_SCORE_LAYER_ID';
@@ -56,26 +56,28 @@ export const outputLayers = [
   },
   {
     id: LCOE_LAYER_LAYER_ID,
-    name: 'LCOE Tiles',
+    name: 'LCOE Value (pixel)',
     type: 'raster',
     category: 'output',
-    info: 'LCOE Tiles',
-    disabled: true
+    info: 'The LCOE value for every 1km pixel in the selected "Suitable Areas." Pixel LCOE values may be higher or lower than the aggregate LCOE value per zone, which averages all pixels in the defined zone area',
+    disabled: true,
+    units: 'USD/MWh'
   },
   {
     id: ZONE_SCORE_LAYER_ID,
-    name: 'Zone Score',
+    name: 'Zone Score (pixel)',
     type: 'raster',
     category: 'output',
-    info: 'Zone Score',
-    disabled: true
+    info: 'The zone score value for every 1km pixel in the selected "Suitable Areas." Pixel zone score values may be higher or lower than the aggregate zone score, which averages all pixels in the defined zone area',
+    disabled: true,
+    range: { min: 0, max: 1 }
   },
   {
     id: ZONES_BOUNDARIES_LAYER_ID,
-    name: 'Zone Boundaries',
+    name: 'Zone Score',
     type: 'vector',
     category: 'output',
-    info: 'Zone Boundaries',
+    info: 'The boundaries for the zones selected in "Zone Size and Type," with the aggregate score associated with each zones.',
     stops: [
       rgba(theme.main.color.base, 0),
       rgba(theme.main.color.base, 1)
