@@ -372,7 +372,8 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
           'source-layer': layer.id,
           layout: {
             visibility: layer.visible ? 'visible' : 'none',
-            'icon-image': symbol
+            'icon-image': symbol,
+            'icon-size': 2
           },
           paint: {
             'icon-color': layer.color
