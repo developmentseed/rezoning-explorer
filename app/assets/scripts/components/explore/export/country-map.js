@@ -216,12 +216,10 @@ export default async function exportCountryMap(selectedArea, map, setMap) {
 
     // Add legend
     const legendNode = document.querySelector('#map-legend');
-    legendNode.style.backgroundColor = '#FFFFFF';
     const legendCanvas = await html2canvas(legendNode);
     const legendImage = legendCanvas.toDataURL('image/png');
-    const legendHeight = (legendCanvas.height / 2) * 0.75;
-    let legendWidth = legendCanvas.width === 448 ? 448 : 848;
-    legendWidth = (legendWidth / 2) * 0.75;
+    const legendHeight = parseInt(legendCanvas.style.height, 10) * 0.75;
+    const legendWidth = parseInt(legendCanvas.style.width, 10) * 0.75;
     doc.image(legendImage, (doc.page.width - options.margin - legendWidth + 10), (doc.page.height - options.margin - legendHeight + 10), { width: legendWidth - 20 });
 
     // Add Scale
