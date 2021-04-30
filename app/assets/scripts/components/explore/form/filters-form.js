@@ -81,7 +81,6 @@ function FiltersForm (props) {
                 }, {})
               ).map(([group, list], idx) => {
                 /* Filters, built as AccordionFolds for each category */
-                idx += 1;
                 return (
                   <AccordionFold
                     key={group}
