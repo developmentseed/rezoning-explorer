@@ -175,7 +175,7 @@ function drawHeader (doc, { selectedArea }) {
     .font(boldFont)
     .fontSize(rightTitleSize)
     .text(
-      config.appTitle,
+      'REZoning - a World Bank Group project',
       doc.page.width - options.colWidthTwoCol - options.margin,
       options.margin,
       {
@@ -208,7 +208,7 @@ function drawHeader (doc, { selectedArea }) {
 /**
  * Draw Footer
  */
-function drawFooter (doc) {
+function drawFooter (doc, pageNumber) {
   doc
     .rect(0, doc.page.height - options.margin * 2, doc.page.width, 1)
     .fillColor('#1F2A50', 0.12)
@@ -284,9 +284,9 @@ function drawFooter (doc) {
       }
     );
 
-  // Right date
+  // Right copyright date + Page Number
   doc.text(
-    new Date().getFullYear(),
+    '©' + new Date().getFullYear() + ' The World Bank Group | Page ' + pageNumber,
     doc.page.width - options.colWidthTwoCol - options.margin,
     doc.page.height - options.margin * 1.25 + 12,
     {
@@ -369,11 +369,17 @@ function drawAnalysisInput (doc, data) {
   doc.addPage();
   // Filters header
   drawSectionHeader(
-    'Filters',
+    'Spatial Filters',
     doc.x,
     doc.y,
     doc,
     options
+  );
+  doc.y += options.tables.padding;
+  addText(
+    doc,
+    'p',
+    'The information layers and the thresholds that were applied for estimating the Technical Potential of the energy resource and for identifying the study areas technically capable of supporting projects.'
   );
 
   const { filtersValues } = data;
@@ -457,7 +463,7 @@ function drawAnalysisInput (doc, data) {
   addText(
     doc,
     'p',
-    'Officia nostrud occaecat ipsum do proident duis. Veniam veniam sint reprehenderit ad sint officia aliquip voluptate enim et enim velit ea. Reprehenderit elit in quis et consequat irure sint laboris nisi cupidatat. Incididunt ea do quis sint qui commodo incididunt cillum ex et reprehenderit aute consequat. Lorem nulla exercitation proident cillum aute nulla. Anim do aute do quis consectetur fugiat minim minim anim anim consectetur nulla non.'
+    'The economic inputs supplied for the calculations of LCOE and economic analysis for each renewable energy technology.'
   );
 
   doc.table({
@@ -481,7 +487,7 @@ function drawAnalysisInput (doc, data) {
   addText(
     doc,
     'p',
-    'Laboris aliqua duis incididunt occaecat elit occaecat sunt deserunt est commodo deserunt tempor anim nostrud. Sit sint mollit incididunt in nisi adipisicing excepteur quis veniam occaecat irure. Quis cupidatat aliqua irure aliqua deserunt minim anim laboris nulla enim proident magna amet.'
+    'The values that were applied for weighting the inputs used to caclulate the zone scores.'
   );
 
   doc.table({
@@ -491,6 +497,60 @@ function drawAnalysisInput (doc, data) {
       return [weight.title, weight.input.value];
     })
   }, { width: options.colWidthThreeCol * 2 });
+
+  /**
+   * About Section
+   */
+  drawSectionHeader(
+    'About the Tool',
+    doc.x,
+    doc.y += (options.margin * 2),
+    doc,
+    options
+  );
+  doc.y += options.tables.padding;
+  doc.text(
+    `The Renewable Energy Zoning (REZoning) tool is an interactive, web-based platform designed to identify, visualize, and rank zones that are most suitable for the development of solar, wind, or offshore wind projects. Custom spatial filters and economic parameters can be applied to meet users needs or to represent a specific country context.
+    
+    Inspired by Berkley’s MapRE and developed by ESMAP the tool bring together complex spatial analysis and economic calculations into an online, user-friendly environment that allows users and decision makers to obtain insights into the technical and economic potential of renewable energy resources for any country. Inspired by and based off Berkely Lab and the University of California Santa Barbaras (UCSB) platform Multi-criteria Analysis for Planning Renewable Energy (MapRE) and developed by ESMAP in partnership with UCSB, the tool brings together spatial analysis and economic calculations into an online, user-friendly environment that allows users and decision makers to obtain insights into the technical and economic potential of renewable energy resources for all countries.
+    
+    The REZoning tool is powered by global geospatial datasets and uses baseline industry assumptions as default values for economic calculations. No input dataset, nor simulation outcome produced by the tool represents the official position of the World Bank Group or UCSB. The boundaries, colors, denominations and other information shown on the outputs do not imply on the part of the World Bank any judgement on the legal status of any territory or endorsement or acceptance of such boundaries.`,
+    options.margin,
+    doc.y
+  );
+
+  drawSectionHeader(
+    'Relevant Tools',
+    doc.x,
+    doc.y += (options.margin * 2),
+    doc,
+    options
+  );
+  doc.y += options.tables.padding;
+  doc.text(
+    'ENERGYDATA.INFO: Open data and analytics for a sustainable energy future.',
+    doc.x,
+    doc.y,
+    {
+      link: 'https://energydata.info/'
+    }
+  );
+  doc.text(
+    'GLOBAL SOLAR ATLAS: Access to solar resource and photovoltaic power potential around the globe.',
+    doc.x,
+    doc.y,
+    {
+      link: 'https://globalsolaratlas.info/map'
+    }
+  );
+  doc.text(
+    'GLOBAL WIND ATLAS: Identify high-wind areas for wind power generation virtually anywhere in the world.',
+    doc.x,
+    doc.y,
+    {
+      link: 'https://globalwindatlas.info/'
+    }
+  );
 }
 
 export default async function exportPDF (data) {
@@ -512,7 +572,7 @@ export default async function exportPDF (data) {
   const pages = doc.bufferedPageRange();
   for (let i = 0; i < pages.count; i++) {
     doc.switchToPage(i);
-    drawFooter(doc);
+    drawFooter(doc, i + 1);
   }
 
   // Finalize PDF file
