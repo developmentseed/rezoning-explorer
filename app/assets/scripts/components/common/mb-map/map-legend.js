@@ -58,7 +58,7 @@ const LegendItemWrapper = styled.div`
   ${({ type }) =>
     type === 'linear' &&
     css`
-      &:not(:only-of-type) {
+      &:not(:first-of-type) {
         border-top: 1px solid ${themeVal('color.baseAlphaC')};
         padding-top: ${glsp(0.75)};
       }
@@ -76,8 +76,6 @@ const LegendItemWrapper = styled.div`
       /* stylelint-disable no-duplicate-selectors */
       ${LegendTitle} {
         ${truncated}
-        text-transform: none;
-        letter-spacing: 0;
         align-self: center;
       }
       /* stylelint-enable no-duplicate-selectors */
@@ -333,7 +331,7 @@ export default function MapLegend({
     mapLayers.filter(({ id, visible }) => id === 'land-cover' && visible)
       .length > 0;
   return (
-    <MapLegendSelf wide={landCoverVisible} isExpanded={showMapLegend}>
+    <MapLegendSelf wide={landCoverVisible} id='map-legend' isExpanded={showMapLegend}>
       <LegendFoldTrigger
         onClick={() => setShowMapLegend(!showMapLegend)}
         isExpanded={showMapLegend}
