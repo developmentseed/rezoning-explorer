@@ -6,7 +6,6 @@ import config from '../../../config';
 import get from 'lodash.get';
 import groupBy from 'lodash.groupby';
 import { formatThousands, toTitleCase, getTimestamp } from '../../../utils/format';
-import { formatIndicator } from '../focus-zone';
 import difference from 'lodash.difference';
 
 /* eslint-disable camelcase */
@@ -380,7 +379,7 @@ function drawAnalysisInput (doc, data) {
   const { filtersValues } = data;
 
   // Add one table per category
-  const filterCategories = groupBy(filtersValues, 'category');
+  const filterCategories = groupBy(filtersValues, 'secondary_category');
   Object.keys(filterCategories).forEach((category, index) => {
     let excludedLandcover;
     const currentY = doc.y;
