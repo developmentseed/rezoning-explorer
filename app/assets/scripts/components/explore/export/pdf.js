@@ -494,61 +494,6 @@ function drawAnalysisInput (doc, data) {
   }, { width: options.colWidthThreeCol * 2 });
 }
 
-/**
- * Add zones list to the document.
- * @param {Object} doc The documento object.
- * @param {Array} zones Array of zones to be included
- */
-function drawZonesList (doc, zones) {
-  doc.addPage();
-
-  // Title
-  drawSectionHeader(
-    'Zones',
-    doc.x,
-    doc.y,
-    doc,
-    options
-  );
-  doc.y += options.tables.padding;
-  // Set style to be used in the table
-  setStyle(doc, 'p');
-
-  // Prepare table data
-  const zonesTable = {
-    header: [
-      'ID',
-      'Score',
-      'LCOE (USD/MWh)',
-      'Output (GWh)',
-      'Output Density (MWh/km²)'
-    ],
-    columnAlignment: ['left', 'right', 'right', 'right', 'right'],
-    cells: zones.map(
-      ({
-        id,
-        properties: {
-          name,
-          summary: { lcoe, zone_score, zone_output, zone_output_density }
-        }
-      }) => {
-        return [
-          name || id,
-          formatIndicator('zone_score', zone_score),
-          formatIndicator('lcoe', lcoe),
-          formatIndicator('zone_output', zone_output),
-          formatIndicator('zone_output_density', zone_output_density)
-        ];
-      }
-    )
-  };
-  if (zones[0].properties.name) {
-    zonesTable.header.shift();
-    zonesTable.header.unshift('Name');
-  }
-  doc.table(zonesTable, { prepareHeader: () => doc.font(boldFont), prepareRow: (row, i) => doc.font(baseFont) });
-}
-
 export default async function exportPDF (data) {
   // Load styles
   await initStyles();
@@ -563,7 +508,6 @@ export default async function exportPDF (data) {
   drawHeader(doc, data);
   drawMapArea(doc, data);
   drawAnalysisInput(doc, data);
-  drawZonesList(doc, data.zones);
 
   // Add footer to each page
   const pages = doc.bufferedPageRange();
