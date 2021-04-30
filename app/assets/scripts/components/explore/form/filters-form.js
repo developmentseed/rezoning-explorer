@@ -40,10 +40,6 @@ function FiltersForm (props) {
     disabled
   } = props;
 
-  console.log(filters.find(([f,_]) => f.id === 'f_land_cover'))
-  console.log(filters.find(([f,_]) => f.id === 'f_slope'))
-
-
   return (
     <>
       {disabled && (
