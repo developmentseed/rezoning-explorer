@@ -39,7 +39,7 @@ const options = {
 };
 
 // fetch fonts & images on init for use in PDF
-let baseFont, boldFont, REZLogo, WBGLogo, ESMAPLogo;
+let baseFont, boldFont, REZLogo, WBGLogo, ESMAPLogo, LBLLogo;
 async function initStyles () {
   await fetch('/assets/fonts/IBM-Plex-Sans-regular.ttf')
     .then((response) => response.arrayBuffer())
@@ -67,6 +67,11 @@ async function initStyles () {
     .then((logo) => {
       ESMAPLogo = logo;
     });
+  await fetch('/assets/graphics/content/logos/logo-lbl.jpeg')
+    .then((response) => response.arrayBuffer())
+    .then((logo) => {
+      LBLLogo = logo;
+    });
 }
 
 function drawHeader (doc, selectedArea) {
@@ -87,7 +92,7 @@ function drawHeader (doc, selectedArea) {
   // Logos
   doc.image(
     REZLogo,
-    (doc.page.width - (options.margin * 8)),
+    (doc.page.width - (options.margin * 9)),
     (options.margin / 2),
     {
       height: 18
@@ -99,13 +104,21 @@ function drawHeader (doc, selectedArea) {
     .fontSize(10)
     .text(
       'REZoning',
-      (doc.page.width - (options.margin * 8)) + 20,
+      (doc.page.width - (options.margin * 9)) + 20,
       (options.margin / 2) + 2,
       {
         align: 'left',
         link: 'https://rezoning.surge.sh'
       }
     );
+  doc.image(
+    LBLLogo,
+    (doc.page.width - (options.margin * 7)) + 5,
+    (options.margin / 2),
+    {
+      height: 18
+    }
+  );
   doc.image(
     WBGLogo,
     (doc.page.width - (options.margin * 6)) + 10,
@@ -116,7 +129,7 @@ function drawHeader (doc, selectedArea) {
   );
   doc.image(
     ESMAPLogo,
-    (doc.page.width - (options.margin * 3)) + 6,
+    (doc.page.width - (options.margin * 3)) + 5,
     (options.margin / 2),
     {
       height: 18
