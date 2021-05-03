@@ -15,7 +15,7 @@ const FormSliderGroup = styled.div`
   display: grid;
   align-items: center;
   grid-gap: 0 1rem;
-  grid-template-columns: ${({ isRange }) => isRange ? '3rem 1fr 4rem' : '1fr 3rem'};
+  grid-template-columns: ${({ isRange }) => isRange ? '4rem 1fr 4rem' : '1fr 3rem'};
   
   label {
     ${visuallyHidden()}
@@ -51,7 +51,7 @@ function SliderGroup (props) {
         id={`slider-input-min-${id}`}
         name={`slider-input-min-${id}}`}
         label='Min value'
-        value={truncateDecimals(value.min)}
+        value={truncateDecimals(value.min === undefined ? value : value.min)}
         disabled={disabled}
         validate={validateLow}
         onChange={fgBottomOnChange}
@@ -73,7 +73,7 @@ function SliderGroup (props) {
         id={`slider-input-max-${id}`}
         name={`slider-input-max-${id}}`}
         label='Max value'
-        value={truncateDecimals(value.max || value)}
+        value={truncateDecimals(value.max === undefined ? value : value.max)}
         disabled={disabled}
         validate={validateTop}
         onChange={fgTopOnChange}

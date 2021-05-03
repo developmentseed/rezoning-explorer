@@ -6,7 +6,11 @@ import {
   INPUT_CONSTANTS
 } from '../../components/explore/panel-data';
 
-const abbreviateUnit = unit => {
+const abbreviateUnit = (unit, id) => {
+  if (id === 'f_srtm90' || id === 'f_gebco') {
+    // Do not convert elevation or bathymetry
+    return 'm';
+  }
   switch (unit) {
     case 'meters':
       // Convert meters to km
@@ -55,7 +59,7 @@ export async function fetchFilters (dispatch) {
           id: filter.id,
           name: filter.title,
           info: filter.description,
-          unit: abbreviateUnit(filter.unit),
+          unit: abbreviateUnit(filter.unit, filter.id),
           category: filter.category,
           // TODO this line is remporary
           active: true,
