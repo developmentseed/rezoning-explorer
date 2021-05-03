@@ -29,6 +29,12 @@ export const apiResourceNameMap = {
   [OFFSHORE]: 'offshore'
 };
 
+export const appToApiResourceNameMap = {
+  wind: WIND,
+  solar: SOLAR,
+  offshore: OFFSHORE
+};
+
 export const checkIncluded = (obj, resource) => {
   return obj.energy_type.includes(apiResourceNameMap[resource]);
 };

@@ -8,7 +8,7 @@ export default {
   appShortTitle: 'REZ',
   mbToken:
     'pk.eyJ1Ijoid2JnLWNkcnAiLCJhIjoiY2l1Z3pxZDVwMDBxcDMzcDJjYmRpYnBicSJ9.hjlLP5TEVhqbTwzhFA1rZw',
-  apiEndpoint: 'https://cb1d9tl7ve.execute-api.us-east-2.amazonaws.com/v1',
+  apiEndpoint: 'https://6lge8ydbtj.execute-api.us-east-2.amazonaws.com/v1',
   rawDataDownloadTimeout: 300000, // 5 min
   rawDataDownloadCheckInterval: 2000, // 2 sec
   indicatorsDecimals: {
