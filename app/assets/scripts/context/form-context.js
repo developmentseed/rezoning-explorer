@@ -55,8 +55,8 @@ export function FormProvider (props) {
   useEffect(() => {
     fetchFilters(dispatchFiltersList);
     fetchWeights(dispatchWeightsList);
-    fetchLcoe(dispatchLcoeList);
-  }, []);
+    fetchLcoe(selectedAreaId, selectedResource, dispatchLcoeList);
+  }, [selectedAreaId, selectedResource]);
 
   useEffect(() => {
     if (currentZones.fetched) {
