@@ -30,7 +30,7 @@ function OutputFilters (props) {
 
   return (
     <Accordion
-      initialState={[true]}
+      initialState={[false]}
     >
       {({ checkExpanded, setExpanded }) => (
         <AccordionFold

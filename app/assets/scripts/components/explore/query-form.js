@@ -171,6 +171,7 @@ function QueryForm (props) {
         const [capacity, setCapacity] = lcoeInd.find(([cost, _]) => cost.id === 'capacity_factor');
         capacity.input.availableOptions = capacity.input.options[apiResourceNameMap[resource]];
         capacity.input.value = capacity.input.availableOptions[0];
+        capacity.name = resource === 'Solar PV' ? 'Solar Unit Type' : 'Turbine Type';
         setCapacity(capacity);
       } catch (err) {
         /* eslint-disable-next-line */
