@@ -83,6 +83,8 @@ function QueryForm (props) {
     return [filt, setFilt];
   });
 
+  console.log(filtersInd)
+
   const initialize = (baseList, destList, options) => {
     const { reset, apiRange } = options || {};
     baseList.forEach((base, ind) => {
@@ -184,6 +186,7 @@ function QueryForm (props) {
   if (firstLoad.current) {
     return null;
   }
+
 
   return (
     <PanelBlock>
