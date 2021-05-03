@@ -44,6 +44,7 @@ export async function fetchLcoe (selectedAreaId, selectedResource, dispatch) {
             // TODO add range if exists
             // range: [cost.gte, cost.lte],
             // Percentage values are served as decimal, rendered as integer 0 - 100
+            range: isPercentage ? [0,100] : null,
             default: isPercentage ? cost.default * 100 : cost.default
           },
           isPercentage
