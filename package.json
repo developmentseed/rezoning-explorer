@@ -18,6 +18,8 @@
   "scripts": {
     "postinstall": "[ -f app/assets/scripts/config/local.js ] || echo \"'use strict';\n\nexport default {\n  environment: 'development'\n};\" > app/assets/scripts/config/local.js",
     "serve": "NODE_ENV=development gulp serve",
+    "serve:staging": "NODE_ENV=staging gulp serve",
+    "serve:production": "NODE_ENV=production gulp serve",
     "build": "NODE_ENV=production gulp",
     "stage": "NODE_ENV=staging gulp",
     "lint": "eslint app/assets/scripts/ --ext .js",
@@ -130,6 +132,7 @@
     "file-saver": "^2.0.5",
     "fs-extra": "^9.0.1",
     "history": "^4.10.0",
+    "html2canvas": "^1.0.0-rc.7",
     "jest-styled-components": "^7.0.2",
     "lodash.debounce": "^4.0.8",
     "lodash.defaultsdeep": "^4.6.1",

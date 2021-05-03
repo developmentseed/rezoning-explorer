@@ -2,7 +2,7 @@ import React from 'react';
 import T from 'prop-types';
 
 export default function MakiIcon({ id }) {
-  return <img src={`/assets/icons/maki/${id}.svg`} />;
+  return <img src={`/assets/graphics/maki/${id}.svg`} />;
 }
 
 MakiIcon.propTypes = {

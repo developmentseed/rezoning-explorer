@@ -12,11 +12,11 @@ export const lcoeReducer = wrapLogReducer(makeAPIReducer('FETCH_LCOE'));
  * Make async request to api for lcoe schema
  * dispatch updates to some context using 'dispatch' function
 */
-export async function fetchLcoe (dispatch) {
+export async function fetchLcoe (selectedAreaId, selectedResource, dispatch) {
   dispatch({ type: 'REQUEST_FETCH_LCOE' });
   try {
     const { body: lcoe } = await fetchJSON(
-      `${apiEndpoint}/lcoe/schema`
+      `${apiEndpoint}/lcoe/${selectedResource}/${selectedAreaId}/schema`
     );
 
     const apiLcoe = Object.keys(lcoe)

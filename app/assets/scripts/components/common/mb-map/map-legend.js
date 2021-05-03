@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import get from 'lodash.get';
 
+import { AccordionFoldTrigger } from '../../../components/accordion';
 import { glsp } from '../../../styles/utils/theme-values';
 import { themeVal } from '../../../styles/utils/general';
 import { truncated } from '../../../styles/helpers/index';
 import { cardSkin } from '../../../styles/skins';
 import { COLOR_SCALE } from '../../../styles/zoneScoreColors';
-import { ZONES_BOUNDARIES_LAYER_ID } from '../mb-map/mb-map';
+import {
+  ZONES_BOUNDARIES_LAYER_ID,
+  LCOE_LAYER_LAYER_ID
+} from '../mb-map/mb-map';
 
 import { LegendLinear, LegendItem } from '@visx/legend';
 import { scaleLinear } from '@visx/scale';
@@ -22,11 +26,31 @@ const MapLegendSelf = styled.div`
   padding: ${glsp()} ${glsp(0.75)};
   margin: ${glsp(0.5)};
   display: grid;
+  grid-template-rows: 1fr;
+  grid-auto-rows: 0;
+  overflow: hidden;
   grid-gap: 0.75rem;
-  width: ${({ wide }) => wide ? '26.5rem' : '14rem'};
+  width: ${({ wide }) => (wide ? '26.5rem' : '14rem')};
   svg {
     display: block;
   }
+  > *:not(:first-child) {
+    display: none;
+  }
+  ${({ isExpanded }) =>
+    isExpanded &&
+    css`
+      grid-auto-rows: max-content;
+      /* stylelint-disable no-duplicate-selectors */
+      > *:not(:first-child) {
+        display: inherit;
+      }
+      /* stylelint-enable no-duplicate-selectors */
+    `}
+`;
+
+const LegendTitle = styled.div`
+  ${null}
 `;
 
 const LegendItemWrapper = styled.div`
@@ -34,35 +58,31 @@ const LegendItemWrapper = styled.div`
   grid-template-columns: 1rem 1fr;
   grid-gap: 0.75rem;
   width: 100%;
-  ${({ type }) => type === 'linear' && css`
-    &:not(:only-of-type) {
-      border-top: 1px solid ${themeVal('color.baseAlphaC')};
-      padding-top: ${glsp(0.75)};
-    }
-    ${LegendTitle} {
-      grid-column: span 2;
-    }
-  `}
-  ${({ type }) => type === 'multiselect' && css`
-    grid-template-columns: 1rem 1fr 1rem 1fr;
-    grid-template-rows: 1.5rem;
-    grid-auto-rows: 1rem;
-    grid-gap: 0.5rem 0.75rem;
-    /* stylelint-disable no-duplicate-selectors */
-    ${LegendTitle} {
-      ${truncated}
-      text-transform: none;
-      letter-spacing: 0;
-      align-self: center;
-    }
-    /* stylelint-enable no-duplicate-selectors */
-  `}
-`;
-
-const LegendTitle = styled.div`
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.5px;
+  ${({ type }) =>
+    type === 'linear' &&
+    css`
+      &:not(:first-of-type) {
+        border-top: 1px solid ${themeVal('color.baseAlphaC')};
+        padding-top: ${glsp(0.75)};
+      }
+      ${LegendTitle} {
+        grid-column: span 2;
+      }
+    `}
+  ${({ type }) =>
+    type === 'multiselect' &&
+    css`
+      grid-template-columns: 1rem 1fr 1rem 1fr;
+      grid-template-rows: 1.5rem;
+      grid-auto-rows: 1rem;
+      grid-gap: 0.5rem 0.75rem;
+      /* stylelint-disable no-duplicate-selectors */
+      ${LegendTitle} {
+        ${truncated}
+        align-self: center;
+      }
+      /* stylelint-enable no-duplicate-selectors */
+    `}
 `;
 
 const LegendLabels = styled.div`
@@ -80,6 +100,15 @@ const InputLabel = styled.span`
   font-size: 0.75rem;
 `;
 
+const LegendFoldTrigger = styled(AccordionFoldTrigger)`
+  text-transform: uppercase;
+  font-weight: ${themeVal('type.heading.weight')};
+  &:after {
+    transform: ${({ isExpanded }) =>
+      isExpanded ? 'rotate(0)' : 'rotate(180deg)'};
+  }
+`;
+
 function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
   const visibleRaster = mapLayers.filter(
     (layer) =>
@@ -93,12 +122,22 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
 
   const label = visibleRaster[0].title || visibleRaster[0].name;
 
-  const rasterRange = filterRanges.getData()[visibleRaster[0].id];
+  const rasterRange =
+    filterRanges.getData()[visibleRaster[0].id] ||
+    (visibleRaster[0].id === LCOE_LAYER_LAYER_ID
+      ? filterRanges.getData()[1].total
+      : visibleRaster[0].range);
+
   const rasterFilter = filtersLists.find(
     (l) => l.layer === visibleRaster[0].id
   );
+
   const unit =
-    rasterFilter && rasterFilter.unit ? ` (${rasterFilter.unit})` : '';
+    rasterFilter && rasterFilter.unit
+      ? ` (${rasterFilter.unit})`
+      : visibleRaster[0].units
+        ? ` (${visibleRaster[0].units})`
+        : '';
 
   // Default legend scale uses colormap with "viridis." Logic allows for custom colormaps passed to legends,
   // and for custom ordinal color scales
@@ -156,12 +195,22 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
   } else if (visibleRaster[0].id === 'land-cover') {
     return (
       <LegendItemWrapper type='multiselect'>
-        <LegendTitle style={{ gridColumn: 'span 4', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Land Cover</LegendTitle>
+        <LegendTitle
+          style={{
+            gridColumn: 'span 4'
+          }}
+        >
+          Land Cover
+        </LegendTitle>
         {rasterFilter.options.map((option, i) => (
           <>
             <LegendItem key={option} title={option}>
               <svg width={16} height={16}>
-                <rect fill={`rgb(${landCoverColor[i]})`} width={16} height={16} />
+                <rect
+                  fill={`rgb(${landCoverColor[i]})`}
+                  width={16}
+                  height={16}
+                />
               </svg>
             </LegendItem>
             <LegendTitle title={option}>{option}</LegendTitle>
@@ -194,13 +243,14 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
             </LegendLabelsStyled>
           )}
         </LegendLinear>
-        {
-          rasterRange &&
+        {rasterRange && (
           <>
             <InputLabel>{rasterRange.min.toFixed(1) || 0}</InputLabel>
-            <InputLabel align='right'>{rasterRange.max.toFixed(1) || 1}</InputLabel>
+            <InputLabel align='right'>
+              {rasterRange.max.toFixed(1) || 1}
+            </InputLabel>
           </>
-        }
+        )}
       </LegendItemWrapper>
     );
   }
@@ -261,11 +311,7 @@ function ZoneScoreLegendItem({ mapLayers, wide }) {
             {labels.map((label, i) => (
               <LegendItem key={`legend-linear-${label.datum}`}>
                 <svg width={wide ? 40 : 20} height={10}>
-                  <rect
-                    fill={label.value}
-                    width={wide ? 40 : 20}
-                    height={10}
-                  />
+                  <rect fill={label.value} width={wide ? 40 : 20} height={10} />
                 </svg>
               </LegendItem>
             ))}
@@ -289,9 +335,18 @@ export default function MapLegend({
   filtersLists,
   filterRanges
 }) {
-  const landCoverVisible = mapLayers.filter(({ id, visible }) => id === 'land-cover' && visible).length > 0;
+  const [showMapLegend, setShowMapLegend] = useState(true);
+  const landCoverVisible =
+    mapLayers.filter(({ id, visible }) => id === 'land-cover' && visible)
+      .length > 0;
   return (
-    <MapLegendSelf wide={landCoverVisible}>
+    <MapLegendSelf wide={landCoverVisible} id='map-legend' isExpanded={showMapLegend}>
+      <LegendFoldTrigger
+        onClick={() => setShowMapLegend(!showMapLegend)}
+        isExpanded={showMapLegend}
+      >
+        Legend
+      </LegendFoldTrigger>
       {mapLayers
         .filter(({ type, visible }) => type === 'symbol' && visible)
         .map(({ id, symbol, name }) => (
@@ -324,18 +379,13 @@ export default function MapLegend({
           <LegendTitle type='boolean'>Exclusive Economic Zone</LegendTitle>
         </LegendItemWrapper>
       )}
-      <FilteredAreaLegendItem
-        mapLayers={mapLayers}
-      />
+      <FilteredAreaLegendItem mapLayers={mapLayers} />
       <RasterLegendItem
         mapLayers={mapLayers}
         filterRanges={filterRanges}
         filtersLists={filtersLists}
       />
-      <ZoneScoreLegendItem
-        mapLayers={mapLayers}
-        wide={landCoverVisible}
-      />
+      <ZoneScoreLegendItem mapLayers={mapLayers} wide={landCoverVisible} />
     </MapLegendSelf>
   );
 }

@@ -1,9 +1,6 @@
 import React, { useContext } from 'react';
 import T from 'prop-types';
 import config from '../../../config';
-import { saveAs } from 'file-saver';
-import dataURItoBlob from '../../../utils/data-uri-to-blob';
-import { format } from 'date-fns';
 import exportPDF from './pdf';
 import { withRouter } from 'react-router';
 
@@ -33,6 +30,8 @@ import GlobalContext from '../../../context/global-context';
 import { toTitleCase } from '../../../utils/format';
 import exportZonesCsv from './csv';
 import exportZonesGeoJSON from './geojson';
+import exportCountryMap from './country-map';
+import MapContext from '../../../context/map-context';
 
 const { apiEndpoint } = config;
 
@@ -46,11 +45,8 @@ const ExportWrapper = styled.div`
   }
 `;
 
-// Helper function to generate a formatted timestamp
-const timestamp = () => format(Date.now(), 'yyyyMMdd-hhmmss');
-
 // Get lcoe values from search string
-function getLcoeValues (location, selectedResource, lcoeList) {
+function getLcoeValues(location, selectedResource, lcoeList) {
   const lcoeSchema = lcoeList.reduce((acc, l) => {
     acc[l.id] = {
       accessor: l.id,
@@ -67,7 +63,7 @@ function getLcoeValues (location, selectedResource, lcoeList) {
 }
 
 // Get weight values from search string
-function getWeightValues (location, selectedResource, weightsList) {
+function getWeightValues(location, selectedResource, weightsList) {
   const weightsSchema = weightsList.reduce((acc, w) => {
     acc[w.id] = {
       accessor: w.id,
@@ -84,7 +80,7 @@ function getWeightValues (location, selectedResource, weightsList) {
 }
 
 // Get filter values from search string
-function getFilterValues (
+function getFilterValues(
   location,
   selectedResource,
   filtersLists,
@@ -113,17 +109,6 @@ function getFilterValues (
 }
 
 /**
- * Generate map snapshot and download.
- *
- * Reference: https://stackoverflow.com/questions/49807311/how-to-get-usable-canvas-from-mapbox-gl-js
- */
-async function exportMapImage (selectedArea) {
-  const canvas = document.getElementsByClassName('mapboxgl-canvas')[0];
-  const dataURL = canvas.toDataURL('image/png');
-  saveAs(dataURItoBlob(dataURL), `WBG-REZoning-${selectedArea.id}-map-snapshot-${timestamp()}.png`);
-}
-
-/**
  * The component
  */
 const ExportZonesButton = (props) => {
@@ -135,11 +120,13 @@ const ExportZonesButton = (props) => {
     FormContext
   );
 
+  const { map, setMap } = useContext(MapContext);
+
   const { setDownload } = useContext(GlobalContext);
 
   // This will parse current querystring to get values for filters/weights/lcoe
   // an pass to a function to generate the PDF
-  function onExportPDFClick () {
+  function onExportPDFClick() {
     const mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
     const mapDataURL = mapCanvas.toDataURL('image/png');
     const mapAspectRatio = mapCanvas.height / mapCanvas.width;
@@ -197,7 +184,7 @@ const ExportZonesButton = (props) => {
     exportPDF(data);
   }
 
-  async function onRawDataClick (operation) {
+  async function onRawDataClick(operation) {
     if (selectedArea.type !== 'country') {
       toasts.error(
         'Raw data exports are restricted to countries at the moment.'
@@ -284,6 +271,13 @@ const ExportZonesButton = (props) => {
         <DropMenu role='menu' iconified>
           <DropMenuItem
             data-dropdown='click.close'
+            useIcon='picture'
+            onClick={() => exportCountryMap(selectedArea, map, setMap)}
+          >
+            Map (.pdf)
+          </DropMenuItem>
+          <DropMenuItem
+            data-dropdown='click.close'
             useIcon='link'
             href={ResourceLink}
             target='_blank'
@@ -296,7 +290,7 @@ const ExportZonesButton = (props) => {
             useIcon='page-label'
             onClick={onExportPDFClick}
           >
-            PDF Report
+            Report (.pdf)
           </DropMenuItem>
           <DropMenuItem
             data-dropdown='click.close'
@@ -334,13 +328,6 @@ const ExportZonesButton = (props) => {
               </DropMenuItem>
             </>
           )}
-          <DropMenuItem
-            data-dropdown='click.close'
-            useIcon='picture'
-            onClick={() => exportMapImage(selectedArea)}
-          >
-            Map (.png)
-          </DropMenuItem>
         </DropMenu>
       </Dropdown>
     </ExportWrapper>
