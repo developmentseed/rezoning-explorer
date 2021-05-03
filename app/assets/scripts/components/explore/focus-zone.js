@@ -81,7 +81,7 @@ export const formatLabel = function (id, titleCased = false) {
 
 export function renderZoneDetailsList (zone, detailsList) {
   const { id, properties } = zone;
-  console.log(zone, detailsList);
+
   let summary = properties.summary;
 
   // Some feature summaries are JSON strings
