@@ -147,10 +147,10 @@ const FormInput = ({ option, onChange }) => {
             }}
             value={option.input.value}
           >
-            {option.input.availableOptions.map((o) => {
+            {option.input.availableOptions.map(({name, id}) => {
               return (
-                <option value={o} key={o}>
-                  {o}
+                <option value={id} key={id}>
+                  {name}
                 </option>
               );
             })}
