@@ -72,6 +72,8 @@ export const formatLabel = function (id, titleCased = false) {
       return `${id.replace(/_/g, ' ')} (GwH)`;
     case 'zone_output_density':
       return `${id.replace(/_/g, ' ')} (MWh/km²)`;
+    case 'cf':
+      return 'Capacity Factor';
     default:
       return titleCased ? toTitleCase(label) : label;
   }
@@ -79,7 +81,7 @@ export const formatLabel = function (id, titleCased = false) {
 
 export function renderZoneDetailsList (zone, detailsList) {
   const { id, properties } = zone;
-
+  console.log(zone, detailsList);
   let summary = properties.summary;
 
   // Some feature summaries are JSON strings
