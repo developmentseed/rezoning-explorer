@@ -544,30 +544,41 @@ function drawAnalysisInput (doc, data) {
     options
   );
   doc.y += options.tables.padding;
-  doc.text(
-    'ENERGYDATA.INFO: Open data and analytics for a sustainable energy future.',
-    doc.x,
-    doc.y,
-    {
-      link: 'https://energydata.info/'
-    }
-  );
-  doc.text(
-    'GLOBAL SOLAR ATLAS: Access to solar resource and photovoltaic power potential around the globe.',
-    doc.x,
-    doc.y + (options.tables.padding / 2),
-    {
-      link: 'https://globalsolaratlas.info/map'
-    }
-  );
-  doc.text(
-    'GLOBAL WIND ATLAS: Identify high-wind areas for wind power generation virtually anywhere in the world.',
-    doc.x,
-    doc.y + (options.tables.padding / 2),
-    {
-      link: 'https://globalwindatlas.info/'
-    }
-  );
+  doc.font(boldFont)
+    .text(
+      'ENERGYDATA.INFO: ',
+      doc.x,
+      doc.y,
+      {
+        link: 'https://energydata.info/',
+        continued: true
+      })
+    .font(baseFont)
+    .text('Open data and analytics for a sustainable energy future.');
+  doc.font(boldFont)
+    .text(
+      'GLOBAL SOLAR ATLAS: ',
+      doc.x,
+      doc.y + (options.tables.padding / 2),
+      {
+        link: 'https://globalsolaratlas.info/map',
+        continued: true
+      }
+    )
+    .font(baseFont)
+    .text('Access to solar resource and photovoltaic power potential around the globe.');
+  doc.font(boldFont)
+    .text(
+      'GLOBAL WIND ATLAS: ',
+      doc.x,
+      doc.y + (options.tables.padding / 2),
+      {
+        link: 'https://globalwindatlas.info/',
+        continued: true
+      }
+    )
+    .font(baseFont)
+    .text('Identify high-wind areas for wind power generation virtually anywhere in the world.');
 }
 
 export default async function exportPDF (data) {
