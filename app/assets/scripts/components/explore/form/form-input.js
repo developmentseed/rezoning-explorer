@@ -147,7 +147,7 @@ const FormInput = ({ option, onChange }) => {
             }}
             value={option.input.value}
           >
-            {option.input.availableOptions.map(({name, id}) => {
+            {option.input.availableOptions.map(({ name, id }) => {
               return (
                 <option value={id} key={id}>
                   {name}
