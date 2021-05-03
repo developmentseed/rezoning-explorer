@@ -9,6 +9,7 @@ import { initialApiRequestState } from './contexeed';
 import {
   hideGlobalLoading
 } from '../components/common/global-loading';
+import { apiResourceNameMap } from '../components/explore/panel-data';
 
 const FormContext = createContext({});
 export function FormProvider (props) {
@@ -58,7 +59,7 @@ export function FormProvider (props) {
   }, []);
 
   useEffect(() => {
-    fetchLcoe(selectedAreaId, selectedResource, dispatchLcoeList);
+    fetchLcoe(selectedAreaId, apiResourceNameMap[selectedResource], dispatchLcoeList);
   }, [selectedAreaId, selectedResource]);
 
   useEffect(() => {
