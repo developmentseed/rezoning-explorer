@@ -59,7 +59,7 @@ export const outputLayers = [
     name: 'LCOE Value (pixel)',
     type: 'raster',
     category: 'output',
-    info: 'The LCOE value for every 1km pixel in the selected "Suitable Areas." Pixel LCOE values may be higher or lower than the aggregate LCOE value per zone, which averages all pixels in the defined zone area',
+    info: 'The LCOE value for every 500m pixel in the selected "Suitable Areas." Pixel LCOE values may be higher or lower than the aggregate LCOE value per zone, which averages all pixels in the defined zone area',
     disabled: true,
     units: 'USD/MWh'
   },
@@ -68,7 +68,7 @@ export const outputLayers = [
     name: 'Zone Score (pixel)',
     type: 'raster',
     category: 'output',
-    info: 'The zone score value for every 1km pixel in the selected "Suitable Areas." Pixel zone score values may be higher or lower than the aggregate zone score, which averages all pixels in the defined zone area',
+    info: 'The zone score value for every 500m pixel in the selected "Suitable Areas." Pixel zone score values may be higher or lower than the aggregate zone score, which averages all pixels in the defined zone area',
     disabled: true,
     range: { min: 0, max: 1 }
   },
