@@ -1,5 +1,6 @@
 import PDFDocument from '../../../utils/pdfkit';
 import blobStream from 'blob-stream';
+import html2canvas from 'html2canvas';
 import { saveAs } from 'file-saver';
 import { zonesSummary } from '../explore-stats';
 import get from 'lodash.get';
@@ -609,9 +610,38 @@ export default async function exportPDF (data, map, setMap) {
     // Create stream
     const stream = doc.pipe(blobStream());
 
-    // Add sections
+    // Add first page sections
     drawHeader(doc, data);
     drawMapArea(doc, data);
+
+    // Add Scale
+    const mapWidth = doc.page.width - options.margin * 2;
+    const mapHeight = (data.map.mapAspectRatio > 1 ? mapWidth : mapWidth * data.map.mapAspectRatio) - options.margin;
+    const scaleCanvas = await html2canvas(document.querySelector('.mapboxgl-ctrl-scale'));
+    const scaleImage = scaleCanvas.toDataURL('image/png');
+    doc.image(
+      scaleImage,
+      options.margin + 10,
+      (options.headerHeight + mapHeight - 20),
+      {
+        width: 100
+      }
+    );
+
+    // Add legend
+    const legendNode = document.querySelector('#map-legend');
+    const legendCanvas = await html2canvas(legendNode);
+    const legendImage = legendCanvas.toDataURL('image/png');
+    doc.image(
+      legendImage,
+      options.margin + 5,
+      (options.headerHeight + mapHeight + 20),
+      {
+        width: 140
+      }
+    );
+
+    // Add analysis
     drawAnalysisInput(doc, data);
 
     // Add footer to each page
