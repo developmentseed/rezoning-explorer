@@ -2,7 +2,6 @@ import PDFDocument from '../../../utils/pdfkit';
 import blobStream from 'blob-stream';
 import { saveAs } from 'file-saver';
 import { zonesSummary } from '../explore-stats';
-import config from '../../../config';
 import get from 'lodash.get';
 import groupBy from 'lodash.groupby';
 import { formatThousands, toTitleCase, getTimestamp } from '../../../utils/format';
@@ -321,19 +320,28 @@ function drawMapArea (
   doc,
   { selectedResource, zones, map: { mapDataURL, mapAspectRatio } }
 ) {
-  // Limit map height to a column width. This results in a square aspect ratio of the map
-  const mapWidth = options.colWidthThreeCol * 2 + options.gutterThreeCol;
-  const mapHeight = mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio;
-  // // MAP AREA
-  // Map area has a three column layout
+  // Create page area for map
+  const overflow = false;
+  const mapWidth = doc.page.width - options.margin * 2;
+  const mapHeight = (mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio) - options.margin;
+  const mapContainer = {
+    cover: [mapWidth, mapHeight],
+    align: 'center',
+    valign: 'center'
+  };
 
   // Background color on the full map area
   doc.rect(0, options.headerHeight, doc.page.width, mapHeight).fill('#f6f7f7');
 
-  // Map (2/3)
-  doc.image(mapDataURL, options.margin, options.headerHeight, {
-    fit: [doc.page.width, mapHeight]
-  });
+  // Map covers container area - first create clipping path, then place image
+  if (!overflow && mapContainer.cover) {
+    doc.save();
+    doc.rect(options.margin, options.headerHeight, mapContainer.cover[0], mapContainer.cover[1]).clip();
+  }
+
+  doc.image(mapDataURL, options.margin, options.headerHeight, mapContainer);
+
+  if (!overflow && mapContainer.cover) doc.restore();
 
   // Map area outline
   doc
@@ -346,14 +354,14 @@ function drawMapArea (
     .fillColor('#192F35', 0.08)
     .fill();
 
-  // Legend (1/3)
-  const legendLeft = doc.page.width - options.margin - options.colWidthThreeCol;
+  // Legend (1/2)
+  const legendRight = doc.page.width - options.margin - options.colWidthTwoCol;
 
   // Area header
   drawSectionHeader(
     'Area Summary',
-    legendLeft,
-    options.headerHeight + 20,
+    legendRight,
+    mapHeight + (options.margin * 3),
     doc,
     options
   );
@@ -374,7 +382,7 @@ function drawMapArea (
     })
   };
   summaryTable.cells.unshift(['Resource', selectedResource]);
-  doc.table(summaryTable, legendLeft, doc.y + 12, { width: (options.colWidthThreeCol) });
+  doc.table(summaryTable, legendRight, doc.y + 12, { width: (options.colWidthTwoCol) });
   doc.y += get(options, 'tables.padding', 0);
 }
 
