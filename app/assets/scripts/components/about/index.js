@@ -25,6 +25,9 @@ const AboutPageBodyInner = styled(InpageBodyInner)`
   p, li {
     margin-bottom: 1rem;
   }
+  h2, h3 {
+    margin-top: 2.5rem;
+  }
 `;
 
 const LogoList = styled(Dl)`
@@ -209,6 +212,16 @@ function About () {
                 .CSV, .SHP (for boundaries selection) or GeoTIFF format (for grid
                 selection) for further processing in a different environment.
               </p>
+              <h3>Additional Tools</h3>
+              <p>Other applications and data sources that are relevant for the energy sector.</p>
+              <Dl horizontal>
+                <dt><strong><a href='https://energydata.info/'>EnergyData.info</a></strong></dt>
+                <dd>Open data and analytics for a sustainable energy future.</dd>
+                <dt><strong><a href='https://globalsolaratlas.info/map'>Global Solar Atlas</a></strong></dt>
+                <dd> Access to solar resource and photovoltaic power potential around the globe.</dd>
+                <dt><strong><a href='https://globalwindatlas.info/'>Global Wind Atlas</a></strong></dt>
+                <dd>Identify high-wind areas for wind power generation virtually anywhere in the world.</dd>
+              </Dl>
             </Prose>
             <LogoList>
               <dt>Partners</dt>
