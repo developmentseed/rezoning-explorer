@@ -135,10 +135,14 @@ function QueryForm (props) {
       [weight.id || weight.name]: castByFilterType(weight.input.type)(weight.input.value)
     }), {});
 
-    const lcoeValues = lcoeInd.reduce((accum, [cost, _]) => ({
-      ...accum,
-      [cost.id || cost.name]: castByFilterType(cost.input.type)(cost.input.value)
-    }), {});
+    const lcoeValues = lcoeInd.reduce((accum, [cost, _]) => {
+      const val = castByFilterType(cost.input.type)(cost.input.value);
+      return ({
+        ...accum,
+        // Percentage values are served as decimal, rendered as integer 0 - 100
+        [cost.id || cost.name]: cost.isPercentage ? val / 100 : val
+      });
+    }, {});
 
     // Get filters and discard setting functions
     const filters = filtersInd.map(([filter, _]) => filter);
