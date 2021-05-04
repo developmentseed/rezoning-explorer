@@ -171,6 +171,7 @@ function FiltersForm (props) {
                                     </FormSwitch>
                                   )}
                                 </OptionHeadline>
+                                {/* {console.log(filter)} */}
                                 <FormInput
                                   option={filter}
                                   onChange={inputOnChange}

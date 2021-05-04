@@ -146,6 +146,7 @@ function QueryForm (props) {
 
     // Get filters and discard setting functions
     const filters = filtersInd.map(([filter, _]) => filter);
+    console.log(filters);
 
     updateFilteredLayer(filters, weightsValues, lcoeValues);
   };

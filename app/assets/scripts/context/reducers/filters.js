@@ -53,6 +53,7 @@ export async function fetchFilters (dispatch) {
           options: filter.options
         } : {};
 
+        const isPercentage = filter.unit === '%';
         return {
           ...filter,
           type: 'filter',
@@ -65,10 +66,11 @@ export async function fetchFilters (dispatch) {
           active: true,
           isRange,
           input: {
-            range: INPUT_CONSTANTS.DEFAULT_RANGE,
+            range: isPercentage ? [0, 100] : INPUT_CONSTANTS.DEFAULT_RANGE,
             type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type),
             ...opts
-          }
+          },
+          isPercentage
         };
       });
     dispatch({ type: 'RECEIVE_FETCH_FILTERS', data: apiFilters });
