@@ -11,42 +11,45 @@ import InfoButton from '../../common/info-button';
 import FormInput from '../form/form-input';
 import { distributedDivision, sumBy } from '../../../utils/math';
 
+function updateWeight(weights, id, value) {
+  const [w, setValue] = weights.find(([w]) => w.id === id);
+  console.log({ w, value });
+  setValue({
+    ...w,
+    input: {
+      ...w.input,
+      value: value > 0 ? value / 100 : 0
+    }
+  });
+}
+
 function WeightsForm(props) {
   const { weights, active } = props;
 
   function onSliderChange(id, sliderVal) {
     console.log(id, sliderVal);
 
-    // Get all current values with changed applied
-    // const updatedValues = weights.reduce((acc, [w]) => {
-    //   acc[w.id] = id === w.id ? sliderVal : w.input.value;
-    //   return acc;
-    // }, {});
     let updatedValuesArray = weights.map(([w]) => {
       return {
         id: w.id,
         locked: false,
-        value: (id === w.id ? sliderVal : w.input.value) * 100
+        value: id === w.id ? sliderVal : w.input.value
       };
     });
     console.log({ updatedValuesArray });
-    // const { values, onChange } = this.props
-    // Update the values so we're working with updated data.
-    // let updatedVals = updateValueProp(values, id, 'value', sliderVal)
-    // const updatedValsArray = objectToArray(updatedVals)
 
-    // // Sliders to update. Everyone except the disabled ones and the current.
+    // Sliders to update. Everyone except the disabled ones and the current.
     const slidersToUpdate = updatedValuesArray.filter(
       (slider) => !slider.locked && slider.id !== id && slider.value > 0
     );
     console.log({ slidersToUpdate });
 
-    // // Get by how much is over 100;
+    // Get by how much is over 100;
     const excess = 100 - sumBy(updatedValuesArray, 'value');
     console.log({ excess });
-    // // By how much we need to update the sliders.
-    // // Since the steps are integers the deltas is an array with the value to
-    // // use to update each of the indexes.
+    // By how much we need to update the sliders.
+    // Since the steps are integers the deltas is an array with the value to
+    // use to update each of the indexes.
     const deltas = distributedDivision(excess, slidersToUpdate.length);
     console.log({ deltas });
 
@@ -64,15 +67,20 @@ function WeightsForm(props) {
     console.log({ updatedValuesArray });
 
     // Total of other sliders.
-    // const otherTotalVal = sumBy(objectToArray(updatedVals), (val) =>
-    //   val.__key === id ? 0 : val.value
-    // );
-    // // Allowed value to ensure that the sum doesn't go over or below 100.
-    // const allowedSliderVal = 100 - otherTotalVal;
-    // updatedVals = updateValueProp(updatedVals, id, 'value', allowedSliderVal);
+    const otherTotalVal = sumBy(updatedValuesArray, (val) =>
+      val.id === id ? 0 : val.value
+    );
+    console.log({ otherTotalVal });
+    // Allowed value to ensure that the sum doesn't go over or below 100.
+    const allowedSliderVal = 100 - otherTotalVal;
 
-    // // Trigger change.
-    // onChange(updatedVals);
+    // Update active slider
+    updateWeight(weights, id, allowedSliderVal);
+
+    // Update other sliders
+    slidersToUpdate.forEach((s, i) => {
+      updateWeight(weights, s.id, s.value + deltas[i]);
+    });
   }
 
   console.log(weights);
@@ -84,19 +92,6 @@ function WeightsForm(props) {
         introText='Set custom zone weighting parameters to change the calculated zone scores.'
       />
       {weights.map(([weight, setWeight], ind) => {
-        const onChange = useCallback(
-          (value) => {
-            setWeight({
-              ...weight,
-              input: {
-                ...weight.input,
-                value
-              }
-            });
-          },
-          [weights]
-        );
-
         return (
           <PanelOption key={weight.name}>
             <OptionHeadline>
@@ -107,7 +102,8 @@ function WeightsForm(props) {
             </OptionHeadline>
             <FormInput
               option={weight}
-              onChange={(value) => onSliderChange(weight.id, value)}
+              onChange={(value) =>
+                onSliderChange(weight.id, Math.round(value * 100))}
             />
           </PanelOption>
         );
