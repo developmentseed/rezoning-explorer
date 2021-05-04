@@ -527,7 +527,7 @@ function drawAnalysisInput (doc, data) {
     columnAlignment: ['left', 'right'],
     cells: Object.keys(data.weightsValues).map((weightId) => {
       const weight = data.weightsValues[weightId];
-      return [weight.title, weight.input.value];
+      return [weight.title, `${weight.input.value * 100}%`];
     })
   }, { width: options.colWidthThreeCol * 2 });
 
