@@ -278,19 +278,19 @@ const ExportZonesButton = (props) => {
           </DropMenuItem>
           <DropMenuItem
             data-dropdown='click.close'
+            useIcon='page-label'
+            onClick={onExportPDFClick}
+          >
+            Report (.pdf)
+          </DropMenuItem>
+          <DropMenuItem
+            data-dropdown='click.close'
             useIcon='link'
             href={ResourceLink}
             target='_blank'
             disabled={selectedArea.type !== 'country'}
           >
             Resource layers (link)
-          </DropMenuItem>
-          <DropMenuItem
-            data-dropdown='click.close'
-            useIcon='page-label'
-            onClick={onExportPDFClick}
-          >
-            Report (.pdf)
           </DropMenuItem>
           <DropMenuItem
             data-dropdown='click.close'
