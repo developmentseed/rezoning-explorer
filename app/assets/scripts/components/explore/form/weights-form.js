@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import T from 'prop-types';
 import {
   FormWrapper,
@@ -26,13 +26,15 @@ function updateWeight(weights, id, value) {
 function WeightsForm(props) {
   const { weights, active } = props;
 
+  const [weightsLocks, setWeightLocks] = useState({});
+
   function onSliderChange(id, sliderVal) {
     console.log(id, sliderVal);
 
     let updatedValuesArray = weights.map(([w]) => {
       return {
         id: w.id,
-        locked: false,
+        locked: typeof weightsLocks[w.id] !== 'undefined' ? weightsLocks[w.id] : false,
         value: id === w.id ? sliderVal : w.input.value
       };
     });
@@ -93,15 +95,22 @@ function WeightsForm(props) {
       />
       {weights.map(([weight]) => {
         return (
-          <PanelOption key={weight.name}>
+          <PanelOption key={weight.id}>
             <OptionHeadline>
               <PanelOptionTitle>{weight.name}</PanelOptionTitle>
-              <InfoButton info={weight.info} id={weight.name}>
+              <InfoButton info={weight.info} id={weight.id}>
                 Info
               </InfoButton>
             </OptionHeadline>
             <FormInput
-              option={weight}
+              isWeight
+              onLockChange={(value) => {
+                setWeightLocks({
+                  ...weightsLocks,
+                  [weight.id]: value
+                });
+              }}
+              option={{ ...weight, active: !weightsLocks[weight.id] }}
               onChange={(value) =>
                 onSliderChange(weight.id, Math.round(value * 100))}
             />

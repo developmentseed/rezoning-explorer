@@ -50,7 +50,7 @@ const MultiWrapper = styled(ShadowScrollbar)`
   }
 `;
 
-const FormInput = ({ option, onChange }) => {
+const FormInput = ({ option, onChange, isWeight, onLockChange }) => {
   const { range, value } = option.input;
   let errorMessage;
   if (range) {
@@ -60,6 +60,23 @@ const FormInput = ({ option, onChange }) => {
         : `Allowed range is ${round(range[0])} - ${round(range[1])}`;
   } else {
     errorMessage = 'Value not accepted';
+  }
+
+  if (isWeight) {
+    return (
+      <SliderGroup
+        unit={option.input.unit || '%'}
+        range={range}
+        id={option.name}
+        value={option.input.value}
+        isRange={option.isRange}
+        disabled={!option.active}
+        onChange={onChange}
+        hasInput={false}
+        hasLock
+        onLockChange={onLockChange}
+      />
+    );
   }
 
   switch (option.input.type) {

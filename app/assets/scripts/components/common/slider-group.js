@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import InputRange from 'react-input-range';
 import styled from 'styled-components';
 import T from 'prop-types';
@@ -6,6 +6,8 @@ import { visuallyHidden } from '../../styles/helpers';
 import { validateRangeNum } from '../../utils/utils';
 import { truncateDecimals } from '../../utils/format';
 import StressedFormGroupInput from './stressed-form-group-input';
+import Button from '../../styles/button/button';
+
 const InputLabel = styled.div`
   text-align: ${({ align }) => align || 'left'};
   grid-column: ${({ gridColumn }) => gridColumn || 'auto'};
@@ -23,7 +25,9 @@ const FormSliderGroup = styled.div`
 `;
 
 function SliderGroup (props) {
-  const { range, id, value, onChange, disabled, isRange } = props;
+  const { range, id, value, onChange, disabled, isRange, hasInput, hasLock, onLockChange } = props;
+
+  const [locked, setLocked] = useState(false);
 
   const validateTop = useCallback(
     validateRangeNum(value.min || range[0], range[1])
@@ -67,6 +71,8 @@ function SliderGroup (props) {
         disabled={disabled}
       />
 
+      {
+        hasInput &&
       <StressedFormGroupInput
         inputType='number'
         inputSize='small'
@@ -79,6 +85,24 @@ function SliderGroup (props) {
         onChange={fgTopOnChange}
         title={disabled ? 'Enable this input to interact' : ''}
       />
+      }
+
+      {
+        hasLock &&
+        <Button
+          id='layer-visibility'
+          variation='base-plain'
+          useIcon={!locked ? 'lock-open' : 'lock'}
+          title={!locked ? 'Lock this slider' : 'Unlock this slided'}
+          hideText
+          onClick={
+            () => {
+              onLockChange(!locked);
+              setLocked(!locked);
+            }
+          }
+        />
+      }
       { isRange &&
     <>
       <InputLabel>From</InputLabel>
@@ -93,7 +117,10 @@ SliderGroup.propTypes = {
   onChange: T.func,
   value: T.oneOfType([T.string, T.number, T.object]),
   disabled: T.bool,
-  isRange: T.bool
+  isRange: T.bool,
+  hasInput: T.bool,
+  hasLock: T.bool,
+  onLockChange: T.func
 };
 
 export default SliderGroup;
