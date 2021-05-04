@@ -90,6 +90,7 @@ const FormInput = ({ option, onChange, isWeight, onLockChange }) => {
           isRange={option.isRange}
           disabled={!option.active}
           onChange={onChange}
+          hasInput
         />
       );
     case TEXT:
