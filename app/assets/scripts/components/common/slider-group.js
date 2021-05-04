@@ -17,11 +17,17 @@ const FormSliderGroup = styled.div`
   display: grid;
   align-items: center;
   grid-gap: 0 1rem;
-  grid-template-columns: ${({ isRange }) => isRange ? '4rem 1fr 4rem' : '1fr 3rem'};
+  grid-template-columns: ${({ isRange, hasLock }) => isRange ? '4rem 1fr 4rem' : hasLock ? '1fr 3rem 2rem' : '1fr 3rem'};
   
   label {
     ${visuallyHidden()}
   }
+`;
+
+const LockButton = styled(Button)`
+  justify-self: center;
+  align-self: center;
+  grid-column: 3;
 `;
 
 function SliderGroup (props) {
@@ -47,7 +53,7 @@ function SliderGroup (props) {
   }, [value.max, value.min]);
 
   return (
-    <FormSliderGroup isRange={isRange}>
+    <FormSliderGroup isRange={isRange} hasLock={hasLock}>
       { isRange &&
       <StressedFormGroupInput
         inputType='number'
@@ -89,9 +95,10 @@ function SliderGroup (props) {
 
       {
         hasLock &&
-        <Button
+        <LockButton
           id='layer-visibility'
-          variation='base-plain'
+          size='small'
+          variation={!locked ? 'base-plain' : 'primary-plain'}
           useIcon={!locked ? 'lock-open' : 'lock'}
           title={!locked ? 'Lock this slider' : 'Unlock this slided'}
           hideText

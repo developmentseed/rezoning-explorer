@@ -72,7 +72,7 @@ const FormInput = ({ option, onChange, isWeight, onLockChange }) => {
         isRange={option.isRange}
         disabled={!option.active}
         onChange={onChange}
-        hasInput={false}
+        hasInput
         hasLock
         onLockChange={onLockChange}
       />
@@ -182,7 +182,9 @@ const FormInput = ({ option, onChange, isWeight, onLockChange }) => {
 
 FormInput.propTypes = {
   option: T.object,
-  onChange: T.func
+  onChange: T.func,
+  isWeight: T.bool,
+  onLockChange: T.func
 };
 
 export default FormInput;

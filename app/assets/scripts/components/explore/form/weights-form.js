@@ -98,9 +98,6 @@ function WeightsForm(props) {
           <PanelOption key={weight.id}>
             <OptionHeadline>
               <PanelOptionTitle>{weight.name}</PanelOptionTitle>
-              <InfoButton info={weight.info} id={weight.id}>
-                Info
-              </InfoButton>
             </OptionHeadline>
             <FormInput
               isWeight
