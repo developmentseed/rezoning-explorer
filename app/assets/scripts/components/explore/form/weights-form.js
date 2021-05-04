@@ -18,7 +18,7 @@ function updateWeight(weights, id, value) {
     ...w,
     input: {
       ...w.input,
-      value: value > 0 ? value / 100 : 0
+      value: value > 100 ? 1 : value > 0 ? Math.round(value) / 100 : 0
     }
   });
 }
@@ -91,7 +91,7 @@ function WeightsForm(props) {
         formTitle='Zone weights'
         introText='Set custom zone weighting parameters to change the calculated zone scores.'
       />
-      {weights.map(([weight, setWeight], ind) => {
+      {weights.map(([weight]) => {
         return (
           <PanelOption key={weight.name}>
             <OptionHeadline>
