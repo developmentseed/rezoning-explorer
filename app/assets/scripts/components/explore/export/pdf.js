@@ -411,7 +411,7 @@ function drawAnalysisInput (doc, data) {
     'The information layers and the thresholds that were applied for estimating the Technical Potential of the energy resource and for identifying the study areas technically capable of supporting projects.'
   );
 
-  const { filtersValues } = data;
+  const { filtersValues, selectedResource } = data;
 
   // Add one table per category
   const filterCategories = groupBy(filtersValues, 'secondary_category');
@@ -503,6 +503,9 @@ function drawAnalysisInput (doc, data) {
     columnAlignment: ['left', 'right'],
     cells: Object.keys(data.lcoeValues).map((lcoeId) => {
       const lcoe = data.lcoeValues[lcoeId];
+      if (lcoe.id === 'capacity_factor') {
+        return [selectedResource === 'Solar PV' ? 'Solar Unit Type' : 'Turbine Type', lcoe.input.value.name];
+      }
       return [lcoe.title, lcoe.input.value];
     })
   }, { width: options.colWidthThreeCol * 2 });
