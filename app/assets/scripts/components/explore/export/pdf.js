@@ -602,7 +602,7 @@ function drawAnalysisInput (doc, data) {
 
 export default async function exportPDF (data, map, setMap) {
   showGlobalLoadingMessage('Generating PDF Report...');
-  return map.fitBounds(data.selectedArea.bounds, { padding: 100 }).once('moveend', async () => {
+  return map.fitBounds(data.selectedArea.bounds, { padding: 100 }).once('zoomend', async () => {
     setMap(map);
 
     // Give unloaded layers time to load

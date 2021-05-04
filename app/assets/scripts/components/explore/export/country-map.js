@@ -207,7 +207,7 @@ function drawFooter(doc) {
 export default async function exportCountryMap(selectedArea, map, setMap) {
   // Zoom to country bounds
   showGlobalLoadingMessage('Generating Map Export...');
-  return map.fitBounds(selectedArea.bounds, { padding: 80 }).once('moveend', async () => {
+  return map.fitBounds(selectedArea.bounds, { padding: 80 }).once('zoomend', async () => {
     setMap(map);
 
     // Give unloaded layers time to load
