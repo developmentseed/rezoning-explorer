@@ -440,6 +440,8 @@ function drawAnalysisInput (doc, data) {
           const availableLandcoverIndexes = filter.options.map((name, i) => i);
           const excludedLandcoverIndexes = difference(availableLandcoverIndexes, value);
           excludedLandcover = excludedLandcoverIndexes.map((i) => filter.options[i]);
+          // OPTION FOR DISPLAYING EXCLUDED LC INDICES
+          // excludedLandcover = excludedLandcoverIndexes.map((i) => filter.options.indexOf(filter.options[i]));
           return;
         } else if (filter.options) {
           // Discard other categorical filters as they are not supported now
@@ -457,13 +459,15 @@ function drawAnalysisInput (doc, data) {
           'Excluded land cover types',
           excludedLandcover.join(', ')
         ]);
+        // OPTION FOR DISPLAYING EXCLUDED LC TEXT
+        // doc.text('Excluded land cover types: ' + excludedLandcover.join(', '), doc.x, doc.page.height - options.margin * 3.5);
       } else {
         filterTable.cells.push(['All land cover types are included', '-']);
       }
     }
 
     const tableX = (options.margin + ((index % 2) * options.colWidthTwoCol) + ((index % 2) * options.gutterTwoCol));
-    const tableY = doc.y + ((index & 2) * 80);
+    const tableY = doc.y + 80;
 
     doc.table(
       filterTable,
