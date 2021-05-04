@@ -13,6 +13,9 @@ import {
 
 /* eslint-disable camelcase */
 
+// Timeout for map to load
+const MIN_TIMEOUT = 5000;
+
 // Base PDF options
 const pdfDocumentOptions = {
   size: 'A4',
@@ -589,38 +592,45 @@ function drawAnalysisInput (doc, data) {
     .text('Identify high-wind areas for wind power generation virtually anywhere in the world.');
 }
 
-export default async function exportPDF (data) {
+export default async function exportPDF (data, map, setMap) {
   showGlobalLoadingMessage('Generating PDF Report...');
-  // Load styles
-  await initStyles();
+  return map.fitBounds(data.selectedArea.bounds, { padding: 100 }).once('moveend', async () => {
+    setMap(map);
 
-  // Create a document
-  const doc = new PDFDocument(pdfDocumentOptions);
+    // Give unloaded layers time to load
+    await new Promise(resolve => setTimeout(resolve, MIN_TIMEOUT));
 
-  // Create stream
-  const stream = doc.pipe(blobStream());
+    // Load styles
+    await initStyles();
 
-  // Add sections
-  drawHeader(doc, data);
-  drawMapArea(doc, data);
-  drawAnalysisInput(doc, data);
+    // Create a document
+    const doc = new PDFDocument(pdfDocumentOptions);
 
-  // Add footer to each page
-  const pages = doc.bufferedPageRange();
-  for (let i = 0; i < pages.count; i++) {
-    doc.switchToPage(i);
-    drawFooter(doc, i + 1);
-  }
+    // Create stream
+    const stream = doc.pipe(blobStream());
 
-  // Finalize PDF file
-  doc.end();
+    // Add sections
+    drawHeader(doc, data);
+    drawMapArea(doc, data);
+    drawAnalysisInput(doc, data);
 
-  hideGlobalLoading();
+    // Add footer to each page
+    const pages = doc.bufferedPageRange();
+    for (let i = 0; i < pages.count; i++) {
+      doc.switchToPage(i);
+      drawFooter(doc, i + 1);
+    }
 
-  return await stream.on('finish', function () {
-    saveAs(
-      stream.toBlob('application/pdf'),
-      `WBG-REZoning-${data.selectedArea.id}-summary-${getTimestamp()}.pdf`
-    );
+    // Finalize PDF file
+    doc.end();
+
+    hideGlobalLoading();
+
+    return await stream.on('finish', function () {
+      saveAs(
+        stream.toBlob('application/pdf'),
+        `WBG-REZoning-${data.selectedArea.id}-summary-${getTimestamp()}.pdf`
+      );
+    });
   });
 }

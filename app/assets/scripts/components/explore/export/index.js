@@ -181,7 +181,7 @@ const ExportZonesButton = (props) => {
       weightsValues,
       lcoeValues
     };
-    exportPDF(data);
+    exportPDF(data, map, setMap);
   }
 
   async function onRawDataClick(operation) {
