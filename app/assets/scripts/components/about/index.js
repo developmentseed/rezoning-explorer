@@ -212,7 +212,7 @@ function About () {
                 .CSV, .SHP (for boundaries selection) or GeoTIFF format (for grid
                 selection) for further processing in a different environment.
               </p>
-              <h3>Additional Tools</h3>
+              <h3>Relevant Tools</h3>
               <p>Other applications and data sources that are relevant for the energy sector.</p>
               <Dl horizontal>
                 <dt><strong><a href='https://energydata.info/'>EnergyData.info</a></strong></dt>
