@@ -31,7 +31,7 @@ const LockButton = styled(Button)`
 `;
 
 function SliderGroup (props) {
-  const { range, id, value, onChange, disabled, isRange, hasInput, hasLock, onLockChange } = props;
+  const { range, id, value, onChange, disabled, isRange, isWeight, hasInput, hasLock, onLockChange } = props;
 
   const [locked, setLocked] = useState(false);
 
@@ -85,14 +85,13 @@ function SliderGroup (props) {
         id={`slider-input-max-${id}`}
         name={`slider-input-max-${id}}`}
         label='Max value'
-        value={truncateDecimals(value.max === undefined ? value : value.max)}
+        value={isWeight ? value * 100 : truncateDecimals(value.max === undefined ? value : value.max)}
         disabled={disabled}
         validate={validateTop}
         onChange={fgTopOnChange}
         title={disabled ? 'Enable this input to interact' : ''}
       />
       }
-
       {
         hasLock &&
         <LockButton
@@ -125,6 +124,7 @@ SliderGroup.propTypes = {
   value: T.oneOfType([T.string, T.number, T.object]),
   disabled: T.bool,
   isRange: T.bool,
+  isWeight: T.bool,
   hasInput: T.bool,
   hasLock: T.bool,
   onLockChange: T.func

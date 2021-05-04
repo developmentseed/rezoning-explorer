@@ -97,7 +97,7 @@ function WeightsForm(props) {
         return (
           <PanelOption key={weight.id}>
             <OptionHeadline>
-              <PanelOptionTitle>{weight.name}</PanelOptionTitle>
+              <PanelOptionTitle>{weight.name} - %</PanelOptionTitle>
             </OptionHeadline>
             <FormInput
               isWeight
