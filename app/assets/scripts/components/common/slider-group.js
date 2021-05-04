@@ -78,7 +78,7 @@ function SliderGroup (props) {
       />
 
       {
-        hasInput &&
+        hasInput && !disabled &&
       <StressedFormGroupInput
         inputType='number'
         inputSize='small'

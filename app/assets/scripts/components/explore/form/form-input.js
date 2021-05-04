@@ -67,7 +67,7 @@ const FormInput = ({ option, onChange, isWeight, onLockChange }) => {
       <SliderGroup
         unit={option.input.unit || '%'}
         range={range}
-        id={option.name}
+        id={option.id}
         value={option.input.value}
         isRange={option.isRange}
         disabled={!option.active}
