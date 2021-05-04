@@ -537,6 +537,9 @@ function drawAnalysisInput (doc, data) {
   /**
    * About Section
    */
+
+  // Background color on about section
+  doc.rect(0, doc.page.height / 3, doc.page.width, doc.page.height / 2 + options.margin).fill('#f6f7f7');
   drawSectionHeader(
     'About the Tool',
     doc.x,
