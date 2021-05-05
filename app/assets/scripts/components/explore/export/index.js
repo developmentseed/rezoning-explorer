@@ -58,6 +58,10 @@ function getLcoeValues(location, selectedResource, lcoeList) {
   const formValues = lcoeQsState.getState(location.search.substr(1));
   return Object.keys(formValues).reduce((acc, id) => {
     acc[id] = formValues[id].input.value;
+    // Capacity factor should be an object here, but we need just the id prop
+    if (id === 'capacity_factor') {
+      acc[id] = acc[id].id;
+    }
     return acc;
   }, {});
 }
@@ -127,10 +131,6 @@ const ExportZonesButton = (props) => {
   // This will parse current querystring to get values for filters/weights/lcoe
   // an pass to a function to generate the PDF
   function onExportPDFClick() {
-    const mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
-    const mapDataURL = mapCanvas.toDataURL('image/png');
-    const mapAspectRatio = mapCanvas.height / mapCanvas.width;
-
     // Get filters values
     const filtersSchema = filtersLists.reduce((acc, w) => {
       acc[w.id] = {
@@ -171,17 +171,13 @@ const ExportZonesButton = (props) => {
     const data = {
       selectedResource,
       selectedArea,
-      map: {
-        mapDataURL,
-        mapAspectRatio
-      },
       zones: currentZones.getData(),
       filtersValues,
       filterRanges: filterRanges.getData(),
       weightsValues,
       lcoeValues
     };
-    exportPDF(data);
+    exportPDF(data, map, setMap);
   }
 
   async function onRawDataClick(operation) {
@@ -278,19 +274,19 @@ const ExportZonesButton = (props) => {
           </DropMenuItem>
           <DropMenuItem
             data-dropdown='click.close'
+            useIcon='page-label'
+            onClick={onExportPDFClick}
+          >
+            Report (.pdf)
+          </DropMenuItem>
+          <DropMenuItem
+            data-dropdown='click.close'
             useIcon='link'
             href={ResourceLink}
             target='_blank'
             disabled={selectedArea.type !== 'country'}
           >
             Resource layers (link)
-          </DropMenuItem>
-          <DropMenuItem
-            data-dropdown='click.close'
-            useIcon='page-label'
-            onClick={onExportPDFClick}
-          >
-            Report (.pdf)
           </DropMenuItem>
           <DropMenuItem
             data-dropdown='click.close'

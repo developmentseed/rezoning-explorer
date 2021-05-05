@@ -132,13 +132,19 @@ function QueryForm (props) {
   const applyClick = () => {
     const weightsValues = weightsInd.reduce((accum, [weight, _]) => ({
       ...accum,
-      [weight.id || weight.name]: castByFilterType(weight.input.type)(weight.input.value)
+      // The frontend deals with weights as 0 - 100
+      // Convert to 0 - 1 decimal value before sending to backend
+      [weight.id || weight.name]: castByFilterType(weight.input.type)(weight.input.value) / 100
     }), {});
 
-    const lcoeValues = lcoeInd.reduce((accum, [cost, _]) => ({
-      ...accum,
-      [cost.id || cost.name]: castByFilterType(cost.input.type)(cost.input.value)
-    }), {});
+    const lcoeValues = lcoeInd.reduce((accum, [cost, _]) => {
+      const val = castByFilterType(cost.input.type)(cost.input.value);
+      return ({
+        ...accum,
+        // Percentage values are served as decimal, rendered as integer 0 - 100
+        [cost.id || cost.name]: cost.isPercentage ? val / 100 : val
+      });
+    }, {});
 
     // Get filters and discard setting functions
     const filters = filtersInd.map(([filter, _]) => filter);

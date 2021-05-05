@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { divide } from '../utils/math';
 import { themeVal } from '../utils/general';
@@ -15,6 +15,11 @@ const Dl = styled.dl`
   dd {
     margin: 0 0 ${themeVal('layout.space')} 0;
   }
+  ${({ horizontal }) => horizontal && css`
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-gap: ${themeVal('layout.space')};
+  `}
 `;
 
 export default Dl;

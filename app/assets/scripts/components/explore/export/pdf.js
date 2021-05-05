@@ -1,15 +1,21 @@
 import PDFDocument from '../../../utils/pdfkit';
 import blobStream from 'blob-stream';
+import html2canvas from 'html2canvas';
 import { saveAs } from 'file-saver';
 import { zonesSummary } from '../explore-stats';
-import config from '../../../config';
 import get from 'lodash.get';
 import groupBy from 'lodash.groupby';
 import { formatThousands, toTitleCase, getTimestamp } from '../../../utils/format';
-import { formatIndicator } from '../focus-zone';
 import difference from 'lodash.difference';
+import {
+  hideGlobalLoading,
+  showGlobalLoadingMessage
+} from '../../common/global-loading';
 
 /* eslint-disable camelcase */
+
+// Timeout for map to load
+const MIN_TIMEOUT = 5000;
 
 // Base PDF options
 const pdfDocumentOptions = {
@@ -36,7 +42,7 @@ const options = {
 };
 
 // fetch fonts & images on init for use in PDF
-let styles, baseFont, boldFont, Logo, WBGLogo, ESMAPLogo;
+let styles, baseFont, boldFont, Logo, WBGLogo, ESMAPLogo, LBLLogo;
 async function initStyles () {
   await fetch('/assets/fonts/IBM-Plex-Sans-regular.ttf')
     .then((response) => response.arrayBuffer())
@@ -63,6 +69,11 @@ async function initStyles () {
     .then((response) => response.arrayBuffer())
     .then((logo) => {
       ESMAPLogo = logo;
+    });
+  await fetch('/assets/graphics/content/logos/logo-lbl.jpeg')
+    .then((response) => response.arrayBuffer())
+    .then((logo) => {
+      LBLLogo = logo;
     });
 
   styles = {
@@ -176,7 +187,7 @@ function drawHeader (doc, { selectedArea }) {
     .font(boldFont)
     .fontSize(rightTitleSize)
     .text(
-      config.appTitle,
+      'REZoning - a World Bank Group project',
       doc.page.width - options.colWidthTwoCol - options.margin,
       options.margin,
       {
@@ -209,7 +220,7 @@ function drawHeader (doc, { selectedArea }) {
 /**
  * Draw Footer
  */
-function drawFooter (doc) {
+function drawFooter (doc, pageNumber) {
   doc
     .rect(0, doc.page.height - options.margin * 2, doc.page.width, 1)
     .fillColor('#1F2A50', 0.12)
@@ -232,6 +243,14 @@ function drawFooter (doc) {
   doc.image(
     ESMAPLogo,
     options.margin * 3.25 + 120,
+    doc.page.height - options.margin * 1.25,
+    {
+      height: 18
+    }
+  );
+  doc.image(
+    LBLLogo,
+    options.margin * 3.25 + 210,
     doc.page.height - options.margin * 1.25,
     {
       height: 18
@@ -285,9 +304,9 @@ function drawFooter (doc) {
       }
     );
 
-  // Right date
+  // Right copyright date + Page Number
   doc.text(
-    new Date().getFullYear(),
+    '©' + new Date().getFullYear() + ' The World Bank Group | Page ' + pageNumber,
     doc.page.width - options.colWidthTwoCol - options.margin,
     doc.page.height - options.margin * 1.25 + 12,
     {
@@ -303,21 +322,31 @@ function drawFooter (doc) {
  */
 function drawMapArea (
   doc,
-  { selectedResource, zones, map: { mapDataURL, mapAspectRatio } }
+  { selectedResource, zones },
+  mapDataURL, mapAspectRatio
 ) {
-  // Limit map height to a column width. This results in a square aspect ratio of the map
-  const mapWidth = options.colWidthThreeCol * 2 + options.gutterThreeCol;
-  const mapHeight = mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio;
-  // // MAP AREA
-  // Map area has a three column layout
+  // Create page area for map
+  const overflow = false;
+  const mapWidth = doc.page.width - options.margin * 2;
+  const mapHeight = (mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio) - options.margin;
+  const mapContainer = {
+    cover: [mapWidth, mapHeight],
+    align: 'center',
+    valign: 'center'
+  };
 
   // Background color on the full map area
   doc.rect(0, options.headerHeight, doc.page.width, mapHeight).fill('#f6f7f7');
 
-  // Map (2/3)
-  doc.image(mapDataURL, options.margin, options.headerHeight, {
-    fit: [doc.page.width, mapHeight]
-  });
+  // Map covers container area - first create clipping path, then place image
+  if (!overflow && mapContainer.cover) {
+    doc.save();
+    doc.rect(options.margin, options.headerHeight, mapContainer.cover[0], mapContainer.cover[1]).clip();
+  }
+
+  doc.image(mapDataURL, options.margin, options.headerHeight, mapContainer);
+
+  if (!overflow && mapContainer.cover) doc.restore();
 
   // Map area outline
   doc
@@ -330,14 +359,14 @@ function drawMapArea (
     .fillColor('#192F35', 0.08)
     .fill();
 
-  // Legend (1/3)
-  const legendLeft = doc.page.width - options.margin - options.colWidthThreeCol;
+  // Legend (1/2)
+  const legendRight = doc.page.width - options.margin - options.colWidthTwoCol;
 
   // Area header
   drawSectionHeader(
     'Area Summary',
-    legendLeft,
-    options.headerHeight + 20,
+    legendRight,
+    mapHeight + (options.margin * 3),
     doc,
     options
   );
@@ -358,7 +387,7 @@ function drawMapArea (
     })
   };
   summaryTable.cells.unshift(['Resource', selectedResource]);
-  doc.table(summaryTable, legendLeft, doc.y + 12, { width: (options.colWidthThreeCol) });
+  doc.table(summaryTable, legendRight, doc.y + 12, { width: (options.colWidthTwoCol) });
   doc.y += get(options, 'tables.padding', 0);
 }
 
@@ -370,17 +399,23 @@ function drawAnalysisInput (doc, data) {
   doc.addPage();
   // Filters header
   drawSectionHeader(
-    'Filters',
+    'Spatial Filters',
     doc.x,
     doc.y,
     doc,
     options
   );
+  doc.y += options.tables.padding;
+  addText(
+    doc,
+    'p',
+    'The information layers and the thresholds that were applied for estimating the Technical Potential of the energy resource and for identifying the study areas technically capable of supporting projects.'
+  );
 
-  const { filtersValues } = data;
+  const { filtersValues, selectedResource } = data;
 
   // Add one table per category
-  const filterCategories = groupBy(filtersValues, 'category');
+  const filterCategories = groupBy(filtersValues, 'secondary_category');
   Object.keys(filterCategories).forEach((category, index) => {
     let excludedLandcover;
     const currentY = doc.y;
@@ -415,21 +450,25 @@ function drawAnalysisInput (doc, data) {
       }).filter((x) => x) // discard null values from categorical filters
     };
 
-    // When 'f_land_cover' is part of category, include land cover types at the
-    // end of the table
+    // When 'f_land_cover' is part of category, include excluded land cover types at the
+    // end of the page
     if (excludedLandcover) {
       if (excludedLandcover.length > 0) {
         filterTable.cells.push([
           'Excluded land cover types',
-          excludedLandcover.join(', ')
+          '* See below'
         ]);
+        // OPTION FOR DISPLAYING EXCLUDED LC TEXT
+        doc.text('*Excluded land cover types: ' + excludedLandcover.join(', '), doc.x, doc.page.height - options.margin * 3.5);
+        doc.y = currentY;
+        doc.y += get(options, 'tables.padding', 0);
       } else {
         filterTable.cells.push(['All land cover types are included', '-']);
       }
     }
 
     const tableX = (options.margin + ((index % 2) * options.colWidthTwoCol) + ((index % 2) * options.gutterTwoCol));
-    const tableY = doc.y + ((index & 2) * 80);
+    const tableY = doc.y + 80;
 
     doc.table(
       filterTable,
@@ -458,13 +497,16 @@ function drawAnalysisInput (doc, data) {
   addText(
     doc,
     'p',
-    'Officia nostrud occaecat ipsum do proident duis. Veniam veniam sint reprehenderit ad sint officia aliquip voluptate enim et enim velit ea. Reprehenderit elit in quis et consequat irure sint laboris nisi cupidatat. Incididunt ea do quis sint qui commodo incididunt cillum ex et reprehenderit aute consequat. Lorem nulla exercitation proident cillum aute nulla. Anim do aute do quis consectetur fugiat minim minim anim anim consectetur nulla non.'
+    'The economic inputs supplied for the calculations of LCOE and economic analysis for each renewable energy technology.'
   );
 
   doc.table({
     columnAlignment: ['left', 'right'],
     cells: Object.keys(data.lcoeValues).map((lcoeId) => {
       const lcoe = data.lcoeValues[lcoeId];
+      if (lcoe.id === 'capacity_factor') {
+        return [selectedResource === 'Solar PV' ? 'Solar Unit Type' : 'Turbine Type', lcoe.input.value.name];
+      }
       return [lcoe.title, lcoe.input.value];
     })
   }, { width: options.colWidthThreeCol * 2 });
@@ -482,103 +524,157 @@ function drawAnalysisInput (doc, data) {
   addText(
     doc,
     'p',
-    'Laboris aliqua duis incididunt occaecat elit occaecat sunt deserunt est commodo deserunt tempor anim nostrud. Sit sint mollit incididunt in nisi adipisicing excepteur quis veniam occaecat irure. Quis cupidatat aliqua irure aliqua deserunt minim anim laboris nulla enim proident magna amet.'
+    'The values that were applied for weighting the inputs used to caclulate the zone scores.'
   );
 
   doc.table({
     columnAlignment: ['left', 'right'],
     cells: Object.keys(data.weightsValues).map((weightId) => {
       const weight = data.weightsValues[weightId];
-      return [weight.title, weight.input.value];
+      return [weight.title, `${weight.input.value}%`];
     })
   }, { width: options.colWidthThreeCol * 2 });
-}
 
-/**
- * Add zones list to the document.
- * @param {Object} doc The documento object.
- * @param {Array} zones Array of zones to be included
- */
-function drawZonesList (doc, zones) {
-  doc.addPage();
+  /**
+   * About Section
+   */
 
-  // Title
+  // Background color on about section
+  doc.rect(0, doc.page.height / 3, doc.page.width, doc.page.height / 2 + options.margin).fill('#f6f7f7');
   drawSectionHeader(
-    'Zones',
+    'About the Tool',
     doc.x,
-    doc.y,
+    doc.y += (options.margin * 2),
     doc,
     options
   );
   doc.y += options.tables.padding;
-  // Set style to be used in the table
-  setStyle(doc, 'p');
+  doc.text(
+    `The Renewable Energy Zoning (REZoning) tool is an interactive, web-based platform designed to identify, visualize, and rank zones that are most suitable for the development of solar, wind, or offshore wind projects. Custom spatial filters and economic parameters can be applied to meet users needs or to represent a specific country context.
+    
+    Inspired by Berkley’s MapRE and developed by ESMAP the tool bring together complex spatial analysis and economic calculations into an online, user-friendly environment that allows users and decision makers to obtain insights into the technical and economic potential of renewable energy resources for any country. Inspired by and based off Berkely Lab and the University of California Santa Barbaras (UCSB) platform Multi-criteria Analysis for Planning Renewable Energy (MapRE) and developed by ESMAP in partnership with UCSB, the tool brings together spatial analysis and economic calculations into an online, user-friendly environment that allows users and decision makers to obtain insights into the technical and economic potential of renewable energy resources for all countries.
+    
+    The REZoning tool is powered by global geospatial datasets and uses baseline industry assumptions as default values for economic calculations. No input dataset, nor simulation outcome produced by the tool represents the official position of the World Bank Group or UCSB. The boundaries, colors, denominations and other information shown on the outputs do not imply on the part of the World Bank any judgement on the legal status of any territory or endorsement or acceptance of such boundaries.`,
+    options.margin,
+    doc.y
+  );
 
-  // Prepare table data
-  const zonesTable = {
-    header: [
-      'ID',
-      'Score',
-      'LCOE (USD/MWh)',
-      'Output (GWh)',
-      'Output Density (MWh/km²)'
-    ],
-    columnAlignment: ['left', 'right', 'right', 'right', 'right'],
-    cells: zones.map(
-      ({
-        id,
-        properties: {
-          name,
-          summary: { lcoe, zone_score, zone_output, zone_output_density }
-        }
-      }) => {
-        return [
-          name || id,
-          formatIndicator('zone_score', zone_score),
-          formatIndicator('lcoe', lcoe),
-          formatIndicator('zone_output', zone_output),
-          formatIndicator('zone_output_density', zone_output_density)
-        ];
+  drawSectionHeader(
+    'Relevant Tools',
+    doc.x,
+    doc.y += (options.margin * 2),
+    doc,
+    options
+  );
+  doc.y += options.tables.padding;
+  doc.font(boldFont)
+    .text(
+      'ENERGYDATA.INFO: ',
+      doc.x,
+      doc.y,
+      {
+        link: 'https://energydata.info/',
+        continued: true
+      })
+    .font(baseFont)
+    .text('Open data and analytics for a sustainable energy future.');
+  doc.font(boldFont)
+    .text(
+      'GLOBAL SOLAR ATLAS: ',
+      doc.x,
+      doc.y + (options.tables.padding / 2),
+      {
+        link: 'https://globalsolaratlas.info/map',
+        continued: true
       }
     )
-  };
-  if (zones[0].properties.name) {
-    zonesTable.header.shift();
-    zonesTable.header.unshift('Name');
-  }
-  doc.table(zonesTable, { prepareHeader: () => doc.font(boldFont), prepareRow: (row, i) => doc.font(baseFont) });
+    .font(baseFont)
+    .text('Access to solar resource and photovoltaic power potential around the globe.');
+  doc.font(boldFont)
+    .text(
+      'GLOBAL WIND ATLAS: ',
+      doc.x,
+      doc.y + (options.tables.padding / 2),
+      {
+        link: 'https://globalwindatlas.info/',
+        continued: true
+      }
+    )
+    .font(baseFont)
+    .text('Identify high-wind areas for wind power generation virtually anywhere in the world.');
 }
 
-export default async function exportPDF (data) {
-  // Load styles
-  await initStyles();
+export default async function exportPDF (data, map, setMap) {
+  showGlobalLoadingMessage('Generating PDF Report...');
+  return map.fitBounds(data.selectedArea.bounds, { padding: 100 }).once('zoomend', async () => {
+    setMap(map);
 
-  // Create a document
-  const doc = new PDFDocument(pdfDocumentOptions);
+    // Give unloaded layers time to load
+    await new Promise(resolve => setTimeout(resolve, MIN_TIMEOUT));
+    const mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
+    const mapDataURL = mapCanvas.toDataURL('image/png');
+    const mapAspectRatio = mapCanvas.height / mapCanvas.width;
 
-  // Create stream
-  const stream = doc.pipe(blobStream());
+    // Load styles
+    await initStyles();
 
-  // Add sections
-  drawHeader(doc, data);
-  drawMapArea(doc, data);
-  drawAnalysisInput(doc, data);
-  drawZonesList(doc, data.zones);
+    // Create a document
+    const doc = new PDFDocument(pdfDocumentOptions);
 
-  // Add footer to each page
-  const pages = doc.bufferedPageRange();
-  for (let i = 0; i < pages.count; i++) {
-    doc.switchToPage(i);
-    drawFooter(doc);
-  }
+    // Create stream
+    const stream = doc.pipe(blobStream());
 
-  // Finalize PDF file
-  doc.end();
+    // Add first page sections
+    drawHeader(doc, data);
+    drawMapArea(doc, data, mapDataURL, mapAspectRatio);
 
-  return await stream.on('finish', function () {
-    saveAs(
-      stream.toBlob('application/pdf'),
-      `WBG-REZoning-${data.selectedArea.id}-summary-${getTimestamp()}.pdf`
+    // Add Scale
+    const mapWidth = doc.page.width - options.margin * 2;
+    const mapHeight = (mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio) - options.margin;
+    const scaleCanvas = await html2canvas(document.querySelector('.mapboxgl-ctrl-scale'));
+    const scaleImage = scaleCanvas.toDataURL('image/png');
+    doc.image(
+      scaleImage,
+      options.margin + 10,
+      (options.headerHeight + mapHeight - 20),
+      {
+        width: 100
+      }
     );
+
+    // Add legend
+    const legendNode = document.querySelector('#map-legend');
+    const legendCanvas = await html2canvas(legendNode);
+    const legendImage = legendCanvas.toDataURL('image/png');
+    doc.image(
+      legendImage,
+      options.margin + 5,
+      (options.headerHeight + mapHeight + 20),
+      {
+        width: 140
+      }
+    );
+
+    // Add analysis
+    drawAnalysisInput(doc, data);
+
+    // Add footer to each page
+    const pages = doc.bufferedPageRange();
+    for (let i = 0; i < pages.count; i++) {
+      doc.switchToPage(i);
+      drawFooter(doc, i + 1);
+    }
+
+    // Finalize PDF file
+    doc.end();
+
+    hideGlobalLoading();
+
+    return await stream.on('finish', function () {
+      saveAs(
+        stream.toBlob('application/pdf'),
+        `WBG-REZoning-${data.selectedArea.id}-summary-${getTimestamp()}.pdf`
+      );
+    });
   });
 }

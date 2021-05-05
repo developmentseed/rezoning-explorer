@@ -28,6 +28,9 @@ export async function fetchLcoe (selectedAreaId, selectedResource, dispatch) {
         const opts = cost.options ? {
           options: cost.options
         } : {};
+
+        const isPercentage = cost.title.includes('%');
+
         return ({
           ...cost,
           id,
@@ -40,10 +43,11 @@ export async function fetchLcoe (selectedAreaId, selectedResource, dispatch) {
             ...opts,
             // TODO add range if exists
             // range: [cost.gte, cost.lte],
-            default: cost.default
-
-          }
-
+            // Percentage values are served as decimal, rendered as integer 0 - 100
+            range: isPercentage ? [0, 100] : null,
+            default: isPercentage ? cost.default * 100 : cost.default
+          },
+          isPercentage
         });
       }
       );

@@ -29,8 +29,8 @@ export async function fetchWeights (dispatch) {
           info: weight.description,
           input: {
             type: INPUT_CONSTANTS.SLIDER,
-            range: [weight.gte, weight.lte],
-            default: weight.default
+            range: [weight.gte, weight.lte * 100],
+            default: weight.default * 100
           }
         });
       }
