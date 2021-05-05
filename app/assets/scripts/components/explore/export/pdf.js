@@ -322,7 +322,8 @@ function drawFooter (doc, pageNumber) {
  */
 function drawMapArea (
   doc,
-  { selectedResource, zones, map: { mapDataURL, mapAspectRatio } }
+  { selectedResource, zones },
+  mapDataURL, mapAspectRatio
 ) {
   // Create page area for map
   const overflow = false;
@@ -610,6 +611,9 @@ export default async function exportPDF (data, map, setMap) {
 
     // Give unloaded layers time to load
     await new Promise(resolve => setTimeout(resolve, MIN_TIMEOUT));
+    const mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
+    const mapDataURL = mapCanvas.toDataURL('image/png');
+    const mapAspectRatio = mapCanvas.height / mapCanvas.width;
 
     // Load styles
     await initStyles();
@@ -622,11 +626,11 @@ export default async function exportPDF (data, map, setMap) {
 
     // Add first page sections
     drawHeader(doc, data);
-    drawMapArea(doc, data);
+    drawMapArea(doc, data, mapDataURL, mapAspectRatio);
 
     // Add Scale
     const mapWidth = doc.page.width - options.margin * 2;
-    const mapHeight = (data.map.mapAspectRatio > 1 ? mapWidth : mapWidth * data.map.mapAspectRatio) - options.margin;
+    const mapHeight = (mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio) - options.margin;
     const scaleCanvas = await html2canvas(document.querySelector('.mapboxgl-ctrl-scale'));
     const scaleImage = scaleCanvas.toDataURL('image/png');
     doc.image(

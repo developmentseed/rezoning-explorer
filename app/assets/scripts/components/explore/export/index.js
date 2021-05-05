@@ -127,10 +127,6 @@ const ExportZonesButton = (props) => {
   // This will parse current querystring to get values for filters/weights/lcoe
   // an pass to a function to generate the PDF
   function onExportPDFClick() {
-    const mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
-    const mapDataURL = mapCanvas.toDataURL('image/png');
-    const mapAspectRatio = mapCanvas.height / mapCanvas.width;
-
     // Get filters values
     const filtersSchema = filtersLists.reduce((acc, w) => {
       acc[w.id] = {
@@ -171,10 +167,6 @@ const ExportZonesButton = (props) => {
     const data = {
       selectedResource,
       selectedArea,
-      map: {
-        mapDataURL,
-        mapAspectRatio
-      },
       zones: currentZones.getData(),
       filtersValues,
       filterRanges: filterRanges.getData(),
