@@ -94,6 +94,24 @@ function SliderGroup (props) {
       }
 
       {
+      // Force render of disabled input field for locked inputs
+      // FIXME: Remove, and fix disabled in line 89 above
+        hasLock && disabled &&
+      <StressedFormGroupInput
+        inputType='number'
+        inputSize='small'
+        id={`slider-input-max-${id}`}
+        name={`slider-input-max-${id}}`}
+        label='Max value'
+        value={truncateDecimals(value.max === undefined ? value : value.max)}
+        disabled={true}
+        validate={validateTop}
+        onChange={fgTopOnChange}
+        title={disabled ? 'Enable this input to interact' : ''}
+      />
+      }
+
+      {
         hasLock &&
         <LockButton
           id='layer-visibility'
