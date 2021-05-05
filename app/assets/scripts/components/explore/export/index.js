@@ -58,6 +58,10 @@ function getLcoeValues(location, selectedResource, lcoeList) {
   const formValues = lcoeQsState.getState(location.search.substr(1));
   return Object.keys(formValues).reduce((acc, id) => {
     acc[id] = formValues[id].input.value;
+    // Capacity factor should be an object here, but we need just the id prop
+    if (id === 'capacity_factor') {
+      acc[id] = acc[id].id;
+    }
     return acc;
   }, {});
 }
