@@ -272,11 +272,20 @@ export const lcoeQsSchema = (c, resource) => {
         const parsedValue = castByFilterType(base.input.type)(qsvalue);
 
         // Validate supported LCOE types: options, integer, number
-        if (
-          base.input.options &&
-          get(base, `input.options.${resourceApiId}`, []).includes(parsedValue)
-        ) {
-          value = parsedValue;
+        if (base.input.options) {
+          // Get options from schema
+          const options = get(base, `input.options.${resourceApiId}`, []);
+
+          // If options are objects, check if option has `id` equal to value (like capacity_factor)
+          // or do simple comparison
+          const optionValue = options.find((o) =>
+            typeof o === 'object' ? o.id === v : o === v
+          );
+
+          // Apply if found
+          if (optionValue) {
+            value = optionValue;
+          }
         } else if (base.input.range) {
           value = Number(parsedValue);
           value = inRange(value, min, max) ? value : defaultValue;
@@ -297,10 +306,13 @@ export const lcoeQsSchema = (c, resource) => {
         }
       };
     },
-    dehydrator: (c) => {
-      const { value } = c.input;
+    dehydrator: (v) => {
+      // Use id if value is type of object
+      const value = typeof v.input.value === 'object' ? v.input.value.id : v.input.value;
+
+      // Build shard
       let shard = `${value}`;
-      shard = c.active ? shard : `${shard},${false}`;
+      shard = v.active ? shard : `${shard},${false}`;
       return shard;
     }
   };
