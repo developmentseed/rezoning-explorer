@@ -193,7 +193,7 @@ function drawFooter(doc) {
 
   // Right date
   doc.text(
-    `©${new Date().getFullYear()}`,
+    '©' + new Date().getFullYear() + ' The World Bank Group',
     doc.page.width - options.colWidthTwoCol - options.margin,
     doc.page.height - (options.margin / 2 + 8),
     {
