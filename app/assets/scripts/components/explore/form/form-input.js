@@ -70,6 +70,7 @@ const FormInput = ({ option, onChange, isWeight, onLockChange }) => {
         id={option.id}
         value={option.input.value}
         isRange={option.isRange}
+        isWeight={isWeight}
         disabled={!option.active}
         onChange={onChange}
         hasInput

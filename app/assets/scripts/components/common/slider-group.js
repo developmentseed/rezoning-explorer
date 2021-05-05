@@ -17,21 +17,31 @@ const FormSliderGroup = styled.div`
   display: grid;
   align-items: center;
   grid-gap: 0 1rem;
-  grid-template-columns: ${({ isRange, hasLock }) => isRange ? '4rem 1fr 4rem' : hasLock ? '1fr 3rem 2rem' : '1fr 3rem'};
+  grid-template-columns: ${({ isRange, hasLock }) =>
+    isRange
+      ? '4rem 1fr 4rem'
+      : hasLock
+        ? '1fr 2.5rem 0.5rem 1rem'
+        : '1fr 3rem'
+  };
   
   label {
     ${visuallyHidden()}
+  }
+
+  > p {
+    align-self: flex-end;
+    margin-left: -0.75rem;
   }
 `;
 
 const LockButton = styled(Button)`
   justify-self: center;
-  align-self: center;
-  grid-column: 3;
+  align-self: flex-end;
 `;
 
 function SliderGroup (props) {
-  const { range, id, value, onChange, disabled, isRange, hasInput, hasLock, onLockChange } = props;
+  const { range, id, value, onChange, disabled, isRange, isWeight, hasInput, hasLock, onLockChange } = props;
 
   const [locked, setLocked] = useState(false);
 
@@ -110,6 +120,7 @@ function SliderGroup (props) {
         title={disabled ? 'Enable this input to interact' : ''}
       />
       }
+      {isWeight && <p>%</p>}
 
       {
         hasLock &&
@@ -143,6 +154,7 @@ SliderGroup.propTypes = {
   value: T.oneOfType([T.string, T.number, T.object]),
   disabled: T.bool,
   isRange: T.bool,
+  isWeight: T.bool,
   hasInput: T.bool,
   hasLock: T.bool,
   onLockChange: T.func
