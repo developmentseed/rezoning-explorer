@@ -25,7 +25,8 @@ export default async function exportZonesCsv (selectedArea, zones) {
       'Zone Output Density (MWh/km²)': round(
         summary.zone_output_density,
         indicatorsDecimals.zone_output_density
-      )
+      ),
+      'Capacity Factor': (summary.cf, indicatorsDecimals.zone_score)
     };
 
     // Add name if available
