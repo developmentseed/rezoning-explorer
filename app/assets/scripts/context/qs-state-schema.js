@@ -39,7 +39,7 @@ export const accessResourceDefault = (object, resource, range) => {
     const [min, max] = setRangeByUnit(resource_defaults, object.unit);
     return (
       {
-        min: Math.max(min, range[0]),
+        min: Math.max(min || -Infinity, range[0]),
         max: Math.min(max || Infinity, range[1])
       });
   } else {
