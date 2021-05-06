@@ -22,7 +22,8 @@ export default async function exportZonesGeoJSON (selectedArea, zones) {
           zone_output_density_mwh_km2: round(
             summary.zone_output_density,
             indicatorsDecimals.zone_output_density
-          )
+          ),
+          cf: round(summary.cf, indicatorsDecimals.cf)
         }
       };
     })
