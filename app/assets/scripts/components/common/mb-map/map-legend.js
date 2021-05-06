@@ -109,7 +109,7 @@ const LegendFoldTrigger = styled(AccordionFoldTrigger)`
   }
 `;
 
-function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
+function RasterLegendItem({ mapLayers, filterRanges, filtersLists, currentZones }) {
   const visibleRaster = mapLayers.filter(
     (layer) =>
       layer.type === 'raster' &&
@@ -125,7 +125,7 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
   const rasterRange =
     filterRanges.getData()[visibleRaster[0].id] ||
     (visibleRaster[0].id === LCOE_LAYER_LAYER_ID
-      ? filterRanges.getData()[1].total
+      ? filterRanges.getData().lcoe[currentZones.getData().lcoe.capacity_factor].total
       : visibleRaster[0].range);
 
   const rasterFilter = filtersLists.find(
@@ -333,7 +333,9 @@ export default function MapLegend({
   selectedResource,
   mapLayers,
   filtersLists,
-  filterRanges
+  filterRanges,
+  currentZones
+
 }) {
   const [showMapLegend, setShowMapLegend] = useState(true);
   const landCoverVisible =
@@ -384,6 +386,7 @@ export default function MapLegend({
         mapLayers={mapLayers}
         filterRanges={filterRanges}
         filtersLists={filtersLists}
+        currentZones={currentZones}
       />
       <ZoneScoreLegendItem mapLayers={mapLayers} wide={landCoverVisible} />
     </MapLegendSelf>
