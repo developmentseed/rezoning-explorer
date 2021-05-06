@@ -14,6 +14,7 @@ export default {
   indicatorsDecimals: {
     zone_score: 3,
     lcoe: 2,
-    zone_output_density: 5
+    zone_output_density: 5,
+    cf: 3
   }
 };

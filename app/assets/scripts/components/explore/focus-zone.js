@@ -64,7 +64,6 @@ export const formatIndicator = function (id, value) {
 
 export const formatLabel = function (id, titleCased = false) {
   const label = id.replace(/_/g, ' '); // replace spaces;
-
   switch (id) {
     case 'lcoe':
       return `${id.replace(/_/g, ' ')} (USD/MWh)`;
@@ -72,6 +71,10 @@ export const formatLabel = function (id, titleCased = false) {
       return `${id.replace(/_/g, ' ')} (GwH)`;
     case 'zone_output_density':
       return `${id.replace(/_/g, ' ')} (MWh/km²)`;
+    case 'icp':
+      return `${id.replace(/_/g, ' ')} (MW)`;
+    case 'cf':
+      return 'Capacity Factor';
     default:
       return titleCased ? toTitleCase(label) : label;
   }
