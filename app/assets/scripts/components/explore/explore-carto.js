@@ -39,7 +39,7 @@ function Carto (props) {
       { zoneData && (
         <Histogram
           yProp='lcoe'
-          xProp={['zone_output', 'lcoe']}
+          xProp={['generation_potential', 'lcoe']}
           data={
             zoneData
               /* Disable histogram filtering temporarily

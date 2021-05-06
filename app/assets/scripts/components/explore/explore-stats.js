@@ -37,7 +37,7 @@ export const zonesSummary = (zones) => {
       if (!summary || !summary.zone_score) return stats;
       return {
         zonesCount: stats.zonesCount + 1,
-        zonesOutput: stats.zonesOutput + summary.zone_output,
+        zonesOutput: stats.zonesOutput + summary.generation_potential,
         zonesArea:
           stats.zonesArea + area(zone) / 1000000
       };
