@@ -2,5 +2,5 @@
 
 export default {
   environment: 'staging',
-  apiEndpoint: 'https://6lge8ydbtj.execute-api.us-east-2.amazonaws.com/v1'
+  apiEndpoint: 'https://1g8q88b79b.execute-api.us-east-2.amazonaws.com/v1'
 };
