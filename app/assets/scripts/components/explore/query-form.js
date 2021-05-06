@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
@@ -63,10 +63,10 @@ function QueryForm (props) {
     onSelectionChange,
     gridMode,
     setGridMode,
-    gridSize, setGridSize
-  } = props;
+    gridSize, setGridSize,
 
-  const firstLoad = useRef(true);
+    firstLoad
+  } = props;
 
   /* Generate weights qs state variables
   */
@@ -312,7 +312,8 @@ QueryForm.propTypes = {
   gridMode: T.bool,
   setGridMode: T.func,
   gridSize: T.number,
-  setGridSize: T.func
+  setGridSize: T.func,
+  firstLoad: T.object
 };
 
 export default QueryForm;

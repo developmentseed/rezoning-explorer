@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useRef } from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import Panel from '../common/panel';
@@ -52,6 +52,8 @@ const RasterTrayWrapper = styled.div`
 `;
 function ExpMapPrimePanel (props) {
   const { onPanelChange } = props;
+
+  const firstLoad = useRef(true);
 
   /**
    * Get Explore context values
@@ -209,6 +211,7 @@ function ExpMapPrimePanel (props) {
             lcoeList
           ) ? (
               <QueryForm
+                firstLoad={firstLoad}
                 area={selectedArea}
                 resource={selectedResource}
                 filtersLists={filtersLists}
