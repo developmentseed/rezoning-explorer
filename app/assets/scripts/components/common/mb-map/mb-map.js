@@ -630,7 +630,7 @@ function MbMap (props) {
             filtersLists={filtersLists}
             mapLayers={mapLayers}
             filterRanges={filterRanges}
-            currentZones = {currentZones}
+            currentZones={currentZones}
           />
         )
       }

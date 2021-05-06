@@ -30,9 +30,9 @@ export async function fetchFilterRanges (selectedAreaId, dispatch) {
           ...Object.entries(layers.lcoe)
             .reduce((lcoe, [comp, obj]) => ({ ...lcoe, [comp]: obj.total }))
         };
-      } else {*/
-        acc[layerId] = layers[layerId];
-      //}
+      } else { */
+      acc[layerId] = layers[layerId];
+      // }
       return acc;
     }, {});
 

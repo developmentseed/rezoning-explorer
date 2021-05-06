@@ -148,8 +148,8 @@ export async function fetchZones (
       };
     });
 
-    data.lcoe = lcoe
-    data.weights = weights
+    data.lcoe = lcoe;
+    data.weights = weights;
     dispatch({ type: 'RECEIVE_FETCH_ZONES', data: data });
   } catch (err) {
     dispatch({ type: 'ERROR', error: err });

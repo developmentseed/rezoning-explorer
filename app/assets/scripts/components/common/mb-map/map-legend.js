@@ -122,11 +122,19 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists, currentZones 
 
   const label = visibleRaster[0].title || visibleRaster[0].name;
 
-  const rasterRange =
-    filterRanges.getData()[visibleRaster[0].id] ||
-    (visibleRaster[0].id === LCOE_LAYER_LAYER_ID
-      ? filterRanges.getData().lcoe[currentZones.getData().lcoe.capacity_factor].total
-      : visibleRaster[0].range);
+  let rasterRange;
+
+  if (filterRanges.getData()[visibleRaster[0].id]) {
+    rasterRange = filterRanges.getData()[visibleRaster[0].id];
+  } else if (visibleRaster[0].id === LCOE_LAYER_LAYER_ID) {
+    // CurrentZones will be defined at this point
+    // LCOE layer can only be made visible after zones are generated
+    /* eslint-disable-next-line */
+    const { capacity_factor } = currentZones.getData().lcoe;
+    rasterRange = filterRanges.getData().lcoe[capacity_factor].total;
+  } else {
+    rasterRange = visibleRaster[0].range;
+  }
 
   const rasterFilter = filtersLists.find(
     (l) => l.layer === visibleRaster[0].id
@@ -397,5 +405,6 @@ MapLegend.propTypes = {
   selectedResource: T.string.isRequired,
   mapLayers: T.array.isRequired,
   filtersLists: T.array.isRequired,
-  filterRanges: T.object.isRequired
+  filterRanges: T.object.isRequired,
+  currentZones: T.object
 };
