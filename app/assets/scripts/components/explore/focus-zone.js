@@ -67,7 +67,7 @@ export const formatLabel = function (id, titleCased = false) {
   switch (id) {
     case 'lcoe':
       return `${id.replace(/_/g, ' ')} (USD/MWh)`;
-    case 'zone_output':
+    case 'generation_potential':
       return `${id.replace(/_/g, ' ')} (GwH)`;
     case 'zone_output_density':
       return `${id.replace(/_/g, ' ')} (MWh/km²)`;
