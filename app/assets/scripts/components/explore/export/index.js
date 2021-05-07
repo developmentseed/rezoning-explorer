@@ -99,6 +99,7 @@ function getFilterValues(
   }, {});
   const filtersQsState = new QsState(filtersSchema);
   const formValues = filtersQsState.getState(location.search.substr(1));
+  console.log(formValues)
   return Object.keys(formValues).reduce((acc, id) => {
     const filter = formValues[id];
     let value = filter.input.value;
@@ -106,6 +107,9 @@ function getFilterValues(
       value = `${value.min},${value.max}`;
     } else if (Array.isArray(value)) {
       value = value.join(',');
+    } else if (filter.input.type === 'boolean' && value === true) {
+      // skip true booleans
+      return acc
     }
     acc[id] = value;
     return acc;
@@ -142,7 +146,7 @@ const ExportZonesButton = (props) => {
     const filtersQsState = new QsState(filtersSchema);
     const filtersValues = filtersQsState.getState(
       props.location.search.substr(1)
-    );
+    )
 
     // Get weights values
     const weightsSchema = weightsList.reduce((acc, w) => {
