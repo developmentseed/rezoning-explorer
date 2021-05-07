@@ -106,15 +106,14 @@ function getFilterValues(
     const filter = formValues[id];
     let value = filter.input.value;
     if (!checkIncluded(filter, selectedResource)) {
-      return acc
-    }
-    else if (filter.isRange) {
+      return acc;
+    } else if (filter.isRange) {
       value = `${value.min},${value.max}`;
     } else if (Array.isArray(value)) {
       value = value.join(',');
     } else if (filter.input.type === 'boolean' && value === true) {
       // skip true booleans
-      return acc
+      return acc;
     }
     acc[id] = value;
     return acc;
@@ -151,7 +150,7 @@ const ExportZonesButton = (props) => {
     const filtersQsState = new QsState(filtersSchema);
     const filtersValues = filtersQsState.getState(
       props.location.search.substr(1)
-    )
+    );
 
     // Get weights values
     const weightsSchema = weightsList.reduce((acc, w) => {
