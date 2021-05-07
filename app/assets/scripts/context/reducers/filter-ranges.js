@@ -20,17 +20,7 @@ export async function fetchFilterRanges (selectedAreaId, dispatch) {
 
     // Filters have "f_" prefix, apply
     const filterRanges = Object.keys(layers).reduce((acc, layerId) => {
-      // LCOE layer object contains components
-      // Flatten them to the top level
-      if (layerId === 'lcoe') {
-        acc = {
-          ...acc,
-          ...Object.entries(layers.lcoe)
-            .reduce((lcoe, [comp, obj]) => ({ ...lcoe, [comp]: obj.total }))
-        };
-      } else {
-        acc[layerId] = layers[layerId];
-      }
+      acc[layerId] = layers[layerId];
       return acc;
     }, {});
 

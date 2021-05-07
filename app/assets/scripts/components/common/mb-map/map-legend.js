@@ -109,7 +109,7 @@ const LegendFoldTrigger = styled(AccordionFoldTrigger)`
   }
 `;
 
-function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
+function RasterLegendItem({ mapLayers, filterRanges, filtersLists, currentZones }) {
   const visibleRaster = mapLayers.filter(
     (layer) =>
       layer.type === 'raster' &&
@@ -122,11 +122,19 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
 
   const label = visibleRaster[0].title || visibleRaster[0].name;
 
-  const rasterRange =
-    filterRanges.getData()[visibleRaster[0].id] ||
-    (visibleRaster[0].id === LCOE_LAYER_LAYER_ID
-      ? filterRanges.getData()[1].total
-      : visibleRaster[0].range);
+  let rasterRange;
+
+  if (filterRanges.getData()[visibleRaster[0].id]) {
+    rasterRange = filterRanges.getData()[visibleRaster[0].id];
+  } else if (visibleRaster[0].id === LCOE_LAYER_LAYER_ID) {
+    // CurrentZones will be defined at this point
+    // LCOE layer can only be made visible after zones are generated
+    /* eslint-disable-next-line */
+    const { capacity_factor } = currentZones.getData().lcoe;
+    rasterRange = filterRanges.getData().lcoe[capacity_factor].total;
+  } else {
+    rasterRange = visibleRaster[0].range;
+  }
 
   const rasterFilter = filtersLists.find(
     (l) => l.layer === visibleRaster[0].id
@@ -333,7 +341,9 @@ export default function MapLegend({
   selectedResource,
   mapLayers,
   filtersLists,
-  filterRanges
+  filterRanges,
+  currentZones
+
 }) {
   const [showMapLegend, setShowMapLegend] = useState(true);
   const landCoverVisible =
@@ -384,6 +394,7 @@ export default function MapLegend({
         mapLayers={mapLayers}
         filterRanges={filterRanges}
         filtersLists={filtersLists}
+        currentZones={currentZones}
       />
       <ZoneScoreLegendItem mapLayers={mapLayers} wide={landCoverVisible} />
     </MapLegendSelf>
@@ -394,5 +405,6 @@ MapLegend.propTypes = {
   selectedResource: T.string.isRequired,
   mapLayers: T.array.isRequired,
   filtersLists: T.array.isRequired,
-  filterRanges: T.object.isRequired
+  filterRanges: T.object.isRequired,
+  currentZones: T.object
 };
