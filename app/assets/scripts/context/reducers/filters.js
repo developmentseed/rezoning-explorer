@@ -65,7 +65,7 @@ export async function fetchFilters (dispatch) {
           active: true,
           isRange,
           input: {
-            range: INPUT_CONSTANTS.DEFAULT_RANGE,
+            range: filter.id === 'f_gebco' ? [-1000, 0] : INPUT_CONSTANTS.DEFAULT_RANGE,
             type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type),
             ...opts
           }

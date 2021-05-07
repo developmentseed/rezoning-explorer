@@ -33,6 +33,8 @@ import exportZonesGeoJSON from './geojson';
 import exportCountryMap from './country-map';
 import MapContext from '../../../context/map-context';
 
+import { checkIncluded } from '../panel-data';
+
 const { apiEndpoint } = config;
 
 const ExportWrapper = styled.div`
@@ -99,11 +101,14 @@ function getFilterValues(
   }, {});
   const filtersQsState = new QsState(filtersSchema);
   const formValues = filtersQsState.getState(location.search.substr(1));
-  console.log(formValues)
+
   return Object.keys(formValues).reduce((acc, id) => {
     const filter = formValues[id];
     let value = filter.input.value;
-    if (filter.isRange) {
+    if (!checkIncluded(filter, selectedResource)) {
+      return acc
+    }
+    else if (filter.isRange) {
       value = `${value.min},${value.max}`;
     } else if (Array.isArray(value)) {
       value = value.join(',');
