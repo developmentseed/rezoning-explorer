@@ -129,7 +129,7 @@ function SliderGroup (props) {
           size='small'
           variation={!locked ? 'base-plain' : 'primary-plain'}
           useIcon={!locked ? 'lock-open' : 'lock'}
-          title={!locked ? 'Lock this slider' : 'Unlock this slided'}
+          title={!locked ? 'Lock this slider' : 'Unlock this slider'}
           hideText
           onClick={
             () => {
