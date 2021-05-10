@@ -13,7 +13,7 @@ const { apiEndpoint } = config;
 
 async function getZoneSummary (feature, filterString, weights, lcoe, countryPath) {
   let summary = {
-    lcoe: 0, zone_score: 0, generation_potential: 0, zone_output_density: 0, cf: 0
+    lcoe: Infinity, zone_score: 0, generation_potential: 0, zone_output_density: 0, cf: 0
   };
 
   try {
