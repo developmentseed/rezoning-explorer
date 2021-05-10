@@ -121,7 +121,11 @@ function QueryForm (props) {
   });
 
   const resetClick = () => {
-    initialize(filtersLists, filtersInd, { reset: true });
+    if (filterRanges.isReady()) {
+      initialize(filtersLists, filtersInd, { reset: true, apiRange: filterRanges.getData() });
+    } else {
+      initialize(filtersLists, filtersInd, { reset: true });
+    }
     initialize(weightsList, weightsInd, { reset: true });
     initialize(lcoeList, lcoeInd, { reset: true });
   };
