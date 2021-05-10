@@ -219,10 +219,22 @@ function ExploreZones (props) {
           <CardList
             numColumns={1}
             data={
-              currentZones.sort((a, b) =>
-                sortAsc
+              currentZones.sort((a, b) => {
+                // Zones with no suitable areas have LCOE equal to 0, when they
+                // should have Infinity. To avoid breaking other components by changing the default 
+                // value, this quick fix will treat zeroes as Infinity when ordering.
+                if (sortId === 'lcoe') {
+                  if (b.properties.summary[sortId] === 0) {
+                    return sortAsc ? 1 : -1;
+                  } else if (a.properties.summary[sortId] === 0) {
+                    return sortAsc ? -1 : 1;
+                  }
+                }
+
+                return sortAsc
                   ? parseFloat(b.properties.summary[sortId]) - parseFloat(a.properties.summary[sortId])
-                  : parseFloat(a.properties.summary[sortId]) - parseFloat(b.properties.summary[sortId])
+                  : parseFloat(a.properties.summary[sortId]) - parseFloat(b.properties.summary[sortId]);
+              }
               )
             }
             renderCard={(data) => {
