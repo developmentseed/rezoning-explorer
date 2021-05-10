@@ -33,7 +33,7 @@ import exportZonesGeoJSON from './geojson';
 import exportCountryMap from './country-map';
 import MapContext from '../../../context/map-context';
 
-import { checkIncluded } from '../panel-data';
+import { checkIncluded, getMultiplierByUnit } from '../panel-data';
 
 const { apiEndpoint } = config;
 
@@ -104,11 +104,12 @@ function getFilterValues(
 
   return Object.keys(formValues).reduce((acc, id) => {
     const filter = formValues[id];
+    const multiplier = getMultiplierByUnit(filter.unit);
     let value = filter.input.value;
     if (!checkIncluded(filter, selectedResource)) {
       return acc;
     } else if (filter.isRange) {
-      value = `${value.min},${value.max}`;
+      value = `${value.min * multiplier},${value.max * multiplier}`;
     } else if (Array.isArray(value)) {
       value = value.join(',');
     } else if (filter.input.type === 'boolean' && value === true) {
