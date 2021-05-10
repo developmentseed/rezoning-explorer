@@ -33,7 +33,7 @@ import exportZonesGeoJSON from './geojson';
 import exportCountryMap from './country-map';
 import MapContext from '../../../context/map-context';
 
-import { checkIncluded, getMultiplierByUnit } from '../panel-data';
+import { checkIncluded, getMultiplierByUnit, apiResourceNameMap } from '../panel-data';
 
 const { apiEndpoint } = config;
 
@@ -201,7 +201,7 @@ const ExportZonesButton = (props) => {
       showGlobalLoadingMessage('Requesting raw data export...');
 
       const res = await fetch(
-        `${apiEndpoint}/export/${operation}/${selectedArea.id}`,
+        `${apiEndpoint}/export/${operation}/${selectedArea.id}/${apiResourceNameMap[selectedResource]}`,
         {
           method: 'POST',
           body: JSON.stringify({
