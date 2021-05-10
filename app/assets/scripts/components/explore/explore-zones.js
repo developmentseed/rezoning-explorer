@@ -238,7 +238,7 @@ function ExploreZones (props) {
               )
             }
             renderCard={(data) => {
-              const hasZoneScore = get(data, 'properties.summary.zone_score');
+              const hasZoneScore = get(data, 'properties.summary.zone_score', 0) > 0;
               return (
                 <Card
                   size='large'
