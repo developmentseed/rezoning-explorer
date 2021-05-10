@@ -40,16 +40,17 @@ export const accessResourceDefault = (object, resource, range) => {
     return (
       {
         min: Math.max(min || -Infinity, range[0]),
-        max: Math.min(max || Infinity, range[1])
+        max: Math.min(max > range[0] ? max : Infinity, range[1])
       });
   } else {
     // const [min, max] = setRangeByUnit(resource_defaults[resource] || range, object.unit);
 
     const [min, max] = resource_defaults[resource] ? setRangeByUnit(resource_defaults[resource], object.unit) : [];
+
     return (
       {
         min: Math.max(min || -Infinity, range[0]),
-        max: Math.min(max || Infinity, range[1])
+        max: Math.min(max > range[0] ? max : Infinity, range[1])
       });
   }
 };
@@ -65,7 +66,7 @@ export const initByType = (obj, ranges, resource) => {
       obj.input.range ||
       DEFAULT_RANGE,
     obj.unit
-  ).map(round);
+  ).map((v) => round(v));
 
   switch (input.type) {
     case SLIDER:
