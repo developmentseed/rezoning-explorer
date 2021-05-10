@@ -50,7 +50,7 @@ const MultiWrapper = styled(ShadowScrollbar)`
   }
 `;
 
-const FormInput = ({ option, onChange, isWeight, onLockChange }) => {
+const FormInput = ({ option, onChange, isWeight, isLocked, onLockChange }) => {
   const { range, value } = option.input;
   let errorMessage;
   if (range) {
@@ -71,6 +71,7 @@ const FormInput = ({ option, onChange, isWeight, onLockChange }) => {
         value={option.input.value}
         isRange={option.isRange}
         isWeight={isWeight}
+        isLocked={isLocked}
         disabled={!option.active}
         onChange={onChange}
         hasInput
@@ -185,6 +186,7 @@ FormInput.propTypes = {
   option: T.object,
   onChange: T.func,
   isWeight: T.bool,
+  isLocked: T.bool,
   onLockChange: T.func
 };
 
