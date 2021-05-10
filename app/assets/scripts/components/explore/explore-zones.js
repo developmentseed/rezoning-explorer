@@ -94,8 +94,10 @@ const CardIcon = styled.div`
 const CardDetails = styled.ul`
   grid-column: span 2;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: ${({ hasZoneScore }) => hasZoneScore ? '1fr 1fr' : '1fr'};
   font-size: 0.875rem;
+  text-align: center;
+  text-transform: uppercase;
 `;
 const Detail = styled.dl`
   dt,
@@ -223,34 +225,37 @@ function ExploreZones (props) {
                   : parseFloat(a.properties.summary[sortId]) - parseFloat(b.properties.summary[sortId])
               )
             }
-            renderCard={(data) => (
-              <Card
-                size='large'
-                key={data.id}
-                isHovered={hoveredFeature === data.id}
-                onMouseEnter={onRowHoverEvent.bind(null, 'enter', data.id)}
-                onMouseLeave={onRowHoverEvent.bind(null, 'leave', data.id)}
-                onClick={() => setFocusZone(data)}
-              >
+            renderCard={(data) => {
+              const hasZoneScore = get(data, 'properties.summary.zone_score');
+              return (
+                <Card
+                  size='large'
+                  key={data.id}
+                  isHovered={hoveredFeature === data.id}
+                  onMouseEnter={onRowHoverEvent.bind(null, 'enter', data.id)}
+                  onMouseLeave={onRowHoverEvent.bind(null, 'leave', data.id)}
+                  onClick={() => setFocusZone(data)}
+                >
 
-                <CardIcon color={get(data, 'properties.color')}>
-                  <div>{data.id}</div>
-                </CardIcon>
-                <CardDetails>
-                  {get(data, 'properties.summary.zone_score')
-                    ? Object.entries(data.properties.summary)
-                      .filter(([label, value]) => FILTERED_PROPERTIES[label])
-                      .map(([label, value]) => (
-                        <Detail key={`${data.id}-${label}`}>
-                          <dd>{formatIndicator(label, value)}</dd>
-                        </Detail>
-                      )
-                      )
-                    : 'NO SUITABLE AREA'}
-                </CardDetails>
+                  <CardIcon color={get(data, 'properties.color')}>
+                    <div>{data.id}</div>
+                  </CardIcon>
+                  <CardDetails columns={hasZoneScore}>
+                    {hasZoneScore
+                      ? Object.entries(data.properties.summary)
+                        .filter(([label, value]) => FILTERED_PROPERTIES[label])
+                        .map(([label, value]) => (
+                          <Detail key={`${data.id}-${label}`}>
+                            <dd>{formatIndicator(label, value)}</dd>
+                          </Detail>
+                        )
+                        )
+                      : 'Zone unavailable'}
+                  </CardDetails>
 
-              </Card>
-            )}
+                </Card>
+              );
+            }}
           />
         </>
       )}
