@@ -98,7 +98,7 @@ const BackgroundWrapper = styled.figure`
 
 const PartnerLogos = styled.ul`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   grid-gap: 3rem;
   align-items: center;
   list-style: none;
@@ -106,9 +106,6 @@ const PartnerLogos = styled.ul`
   img {
     max-width: 100%;
   }
-  ${media.xlargeUp`
-    grid-template-columns: repeat(4, 1fr);
-  `}
 `;
 
 function Home () {
@@ -156,7 +153,6 @@ function Home () {
               <img src='./assets/graphics/content/logos/logo-esmap--white.png' />
               <img src='./assets/graphics/content/logos/logo-wb--white.png' />
               <img src='./assets/graphics/content/logos/logo-ucsb--white.png' />
-              <img src='./assets/graphics/content/logos/logo-lbl--white.png' />
             </PartnerLogos>
           </InpageBodyInner>
         </InpageBody>
