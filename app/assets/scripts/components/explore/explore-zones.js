@@ -246,7 +246,7 @@ function ExploreZones (props) {
                         </Detail>
                       )
                       )
-                    : 'UNAVAILABLE'}
+                    : 'NO SUITABLE AREA'}
                 </CardDetails>
 
               </Card>
