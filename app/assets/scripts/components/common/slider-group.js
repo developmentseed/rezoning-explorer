@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import InputRange from 'react-input-range';
 import styled from 'styled-components';
 import T from 'prop-types';
@@ -41,9 +41,7 @@ const LockButton = styled(Button)`
 `;
 
 function SliderGroup (props) {
-  const { range, id, value, onChange, disabled, isRange, isWeight, hasInput, hasLock, onLockChange } = props;
-
-  const [locked, setLocked] = useState(false);
+  const { range, id, value, onChange, disabled, isRange, isWeight, isLocked, hasInput, hasLock, onLockChange } = props;
 
   const validateTop = useCallback(
     validateRangeNum(value.min || range[0], range[1])
@@ -52,7 +50,7 @@ function SliderGroup (props) {
   const fgTopOnChange = useCallback((val) => {
     const update = isRange ? { ...value, max: Number(val) } : Number(val);
     onChange(update);
-  }, [value.min, value.max]);
+  }, [onChange, value.min, value.max]);
 
   const validateLow = useCallback(
     validateRangeNum(range[0], value.max)
@@ -60,7 +58,7 @@ function SliderGroup (props) {
 
   const fgBottomOnChange = useCallback((val) => {
     onChange({ ...value, min: Number(val) });
-  }, [value.max, value.min]);
+  }, [onChange, value.max, value.min]);
 
   return (
     <FormSliderGroup isRange={isRange} hasLock={hasLock}>
@@ -127,14 +125,13 @@ function SliderGroup (props) {
         <LockButton
           id='layer-visibility'
           size='small'
-          variation={!locked ? 'base-plain' : 'primary-plain'}
-          useIcon={!locked ? 'lock-open' : 'lock'}
-          title={!locked ? 'Lock this slider' : 'Unlock this slider'}
+          variation={!isLocked ? 'base-plain' : 'primary-plain'}
+          useIcon={!isLocked ? 'lock-open' : 'lock'}
+          title={!isLocked ? 'Lock this slider' : 'Unlock this slider'}
           hideText
           onClick={
             () => {
-              onLockChange(!locked);
-              setLocked(!locked);
+              onLockChange(!isLocked);
             }
           }
         />
@@ -155,6 +152,7 @@ SliderGroup.propTypes = {
   disabled: T.bool,
   isRange: T.bool,
   isWeight: T.bool,
+  isLocked: T.bool,
   hasInput: T.bool,
   hasLock: T.bool,
   onLockChange: T.func

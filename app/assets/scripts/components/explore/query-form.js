@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
@@ -74,6 +74,7 @@ function QueryForm (props) {
     const [weight, setWeight] = useQsState(weightQsSchema(w));
     return [weight, setWeight];
   });
+  const [weightsLocks, setWeightLocks] = useState({});
 
   /* Generate filters qs state variables */
   const filtersInd = filtersLists.map((f) => {
@@ -126,8 +127,21 @@ function QueryForm (props) {
     } else {
       initialize(filtersLists, filtersInd, { reset: true });
     }
-    initialize(weightsList, weightsInd, { reset: true });
     initialize(lcoeList, lcoeInd, { reset: true });
+
+    // Apply defaults to weights
+    weightsInd.forEach(([w, setW]) => {
+      setW({
+        ...w,
+        input: {
+          ...w.input,
+          value: w.input.default
+        }
+      });
+    });
+
+    // Clear weight locks
+    setWeightLocks({});
   };
 
   /* Reduce filters, weights, and lcoe
@@ -272,6 +286,8 @@ function QueryForm (props) {
           icon='sliders-horizontal'
           weights={weightsInd}
           disabled={!area || !resource}
+          weightsLocks={weightsLocks}
+          setWeightLocks={setWeightLocks}
         />
       </TabbedBlockBody>
       <SubmissionSection>

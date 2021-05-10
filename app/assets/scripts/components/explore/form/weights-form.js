@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import T from 'prop-types';
 import {
   FormWrapper,
@@ -12,7 +12,6 @@ import { distributedDivision, sumBy } from '../../../utils/math';
 
 function updateWeight(weights, id, value) {
   const [w, setValue] = weights.find(([w]) => w.id === id);
-  // console.log({ w, value });
   setValue({
     ...w,
     input: {
@@ -23,13 +22,9 @@ function updateWeight(weights, id, value) {
 }
 
 function WeightsForm(props) {
-  const { weights, active } = props;
-
-  const [weightsLocks, setWeightLocks] = useState({});
+  const { weights, active, weightsLocks, setWeightLocks } = props;
 
   function onSliderChange(id, sliderVal) {
-    // console.log(id, sliderVal);
-
     let updatedValuesArray = weights.map(([w]) => {
       return {
         id: w.id,
@@ -37,13 +32,11 @@ function WeightsForm(props) {
         value: id === w.id ? sliderVal : w.input.value
       };
     });
-    // console.log({ updatedValuesArray });
 
     // Sliders to update. Everyone except the disabled ones and the current.
     const slidersToUpdate = updatedValuesArray.filter(
       (slider) => !slider.locked && slider.id !== id && slider.value > 0
     );
-    // console.log({ slidersToUpdate });
 
     // Get by how much is over 100;
     const excess = 100 - sumBy(updatedValuesArray, 'value');
@@ -51,7 +44,6 @@ function WeightsForm(props) {
     // Since the steps are integers the deltas is an array with the value to
     // use to update each of the indexes.
     const deltas = distributedDivision(excess, slidersToUpdate.length);
-    // console.log({ deltas });
 
     // Update the values of the other sliders.
     updatedValuesArray = updatedValuesArray.map((slider, i) => {
@@ -89,8 +81,6 @@ function WeightsForm(props) {
     });
   }
 
-  // console.log(weights);
-
   return (
     <FormWrapper active={active}>
       <FormIntro
@@ -105,6 +95,7 @@ function WeightsForm(props) {
             </OptionHeadline>
             <FormInput
               isWeight
+              isLocked={weightsLocks[weight.id]}
               onLockChange={(value) => {
                 setWeightLocks({
                   ...weightsLocks,
@@ -131,7 +122,9 @@ WeightsForm.propTypes = {
   weights: T.array,
   setWeights: T.func,
   active: T.bool,
-  disabled: T.bool
+  disabled: T.bool,
+  weightsLocks: T.object,
+  setWeightLocks: T.func
 };
 
 export default WeightsForm;
