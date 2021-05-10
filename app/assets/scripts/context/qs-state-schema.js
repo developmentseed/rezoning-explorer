@@ -65,7 +65,7 @@ export const initByType = (obj, ranges, resource) => {
       obj.input.range ||
       DEFAULT_RANGE,
     obj.unit
-  ).map(round);
+  ).map((v) => round(v));
 
   switch (input.type) {
     case SLIDER:
