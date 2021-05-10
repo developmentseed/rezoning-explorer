@@ -252,7 +252,7 @@ function ExploreZones (props) {
                   <CardIcon color={get(data, 'properties.color')}>
                     <div>{data.id}</div>
                   </CardIcon>
-                  <CardDetails columns={hasZoneScore}>
+                  <CardDetails hasZoneScore={hasZoneScore}>
                     {hasZoneScore
                       ? Object.entries(data.properties.summary)
                         .filter(([label, value]) => FILTERED_PROPERTIES[label])
