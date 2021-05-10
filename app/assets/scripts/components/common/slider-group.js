@@ -52,7 +52,7 @@ function SliderGroup (props) {
   const fgTopOnChange = useCallback((val) => {
     const update = isRange ? { ...value, max: Number(val) } : Number(val);
     onChange(update);
-  }, [value.min, value.max]);
+  }, [onChange, value.min, value.max]);
 
   const validateLow = useCallback(
     validateRangeNum(range[0], value.max)
@@ -60,7 +60,7 @@ function SliderGroup (props) {
 
   const fgBottomOnChange = useCallback((val) => {
     onChange({ ...value, min: Number(val) });
-  }, [value.max, value.min]);
+  }, [onChange, value.max, value.min]);
 
   return (
     <FormSliderGroup isRange={isRange} hasLock={hasLock}>
