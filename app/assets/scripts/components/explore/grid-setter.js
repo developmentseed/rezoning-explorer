@@ -23,12 +23,12 @@ const GridSetButton = styled(Button)`
   position: relative;
   transition: color .16s ease-in-out 0s;
   padding: 0.75rem 0;
-  color: ${themeVal('color.baseAlphaD')};
+  color: ${themeVal('color.base')};
   font-weight: ${themeVal('type.heading.weight')};
   &,
   &:visited {
     background-color: transparent;
-    color: ${themeVal('color.baseAlphaD')};
+    color: ${themeVal('color.base')};
   }
 
   &:hover {
