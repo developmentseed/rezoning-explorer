@@ -322,7 +322,7 @@ function drawFooter (doc, pageNumber) {
  */
 function drawMapArea (
   doc,
-  { selectedResource, zones },
+  { selectedResource, zones, gridMode, gridSize },
   mapDataURL, mapAspectRatio
 ) {
   // Create page area for map
@@ -387,6 +387,7 @@ function drawMapArea (
     })
   };
   summaryTable.cells.unshift(['Resource', selectedResource]);
+  summaryTable.cells.unshift(['Zone Type and Size', gridMode ? gridSize + 'km²' : 'Boundaries']);
   doc.table(summaryTable, legendRight, doc.y + 12, { width: (options.colWidthTwoCol) });
   doc.y += get(options, 'tables.padding', 0);
 }

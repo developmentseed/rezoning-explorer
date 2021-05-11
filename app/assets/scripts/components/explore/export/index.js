@@ -125,7 +125,7 @@ function getFilterValues(
  * The component
  */
 const ExportZonesButton = (props) => {
-  const { selectedResource, selectedArea, currentZones } = useContext(
+  const { selectedResource, selectedArea, currentZones, gridMode, gridSize } = useContext(
     ExploreContext
   );
 
@@ -180,6 +180,8 @@ const ExportZonesButton = (props) => {
     const data = {
       selectedResource,
       selectedArea,
+      gridMode,
+      gridSize,
       zones: currentZones.getData(),
       filtersValues,
       filterRanges: filterRanges.getData(),
@@ -277,7 +279,7 @@ const ExportZonesButton = (props) => {
           <DropMenuItem
             data-dropdown='click.close'
             useIcon='picture'
-            onClick={() => exportCountryMap(selectedArea, map, setMap)}
+            onClick={() => exportCountryMap(selectedArea, selectedResource, gridMode, gridSize, map, setMap)}
           >
             Map (.pdf)
           </DropMenuItem>

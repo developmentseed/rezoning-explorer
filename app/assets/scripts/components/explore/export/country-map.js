@@ -74,7 +74,7 @@ async function initStyles () {
     });
 }
 
-function drawHeader (doc, selectedArea) {
+function drawHeader (doc, selectedArea, selectedResource, gridMode, gridSize) {
   // Title
   doc
     .fillColor(options.baseFontColor)
@@ -85,9 +85,15 @@ function drawHeader (doc, selectedArea) {
   // Subtitle
   doc
     .fillColor(options.secondaryFontColor)
-    .font(baseFont)
+    .font(boldFont)
     .fontSize(8)
-    .text('RENEWABLE ENERGY ZONE ANALYSIS', options.margin, (options.margin / 2) + 18);
+    .text('RESOURCE:  ', options.margin, (options.margin / 2) + 18, { continued: true })
+    .font(baseFont)
+    .text(selectedResource, { continued: true })
+    .font(boldFont)
+    .text('ZONE TYPE AND SIZE:  ', options.margin * 1.5, (options.margin / 2) + 18, { continued: true })
+    .font(baseFont)
+    .text(gridMode ? gridSize + 'km²' : 'Boundaries');
 
   // Logos
   doc.image(
@@ -166,7 +172,7 @@ function drawFooter(doc) {
     .font(baseFont)
     .fontSize(6)
     .text(
-      'This map is publshed by the World Bank Group, funded by ESMAP, and was dynamically generated from the REZoning application. For more information, please visit https://rezoning.surge.sh',
+      'This map is generated dynamically from the REZoning application. For more information, please visit https://rezoning.surge.sh',
       options.margin,
       doc.page.height - (options.margin / 2),
       {
@@ -204,7 +210,7 @@ function drawFooter(doc) {
   );
 }
 
-export default async function exportCountryMap(selectedArea, map, setMap) {
+export default async function exportCountryMap(selectedArea, selectedResource, gridMode, gridSize, map, setMap) {
   // Zoom to country bounds
   showGlobalLoadingMessage('Generating Map Export...');
   return map.fitBounds(selectedArea.bounds, { padding: 80 }).once('zoomend', async () => {
@@ -223,7 +229,7 @@ export default async function exportCountryMap(selectedArea, map, setMap) {
     const stream = doc.pipe(blobStream());
 
     // Add Sections
-    drawHeader(doc, selectedArea);
+    drawHeader(doc, selectedArea, selectedResource, gridMode, gridSize);
     drawMap(doc);
     drawFooter(doc);
 
