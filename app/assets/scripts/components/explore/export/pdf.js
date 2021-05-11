@@ -179,7 +179,7 @@ function drawHeader (doc, { selectedArea }) {
     .fillColor(options.secondaryFontColor)
     .font(baseFont)
     .fontSize(subTitleSize)
-    .text(toTitleCase(selectedArea.type), options.margin, options.margin + 24);
+    .text('Analysis of suitable zones for solar, onshore wind and offshore wind development', options.margin, options.margin + 24);
 
   // Right Title
   doc
@@ -387,7 +387,7 @@ function drawMapArea (
     })
   };
   summaryTable.cells.unshift(['Resource', selectedResource]);
-  summaryTable.cells.unshift(['Zone Type and Size', gridMode ? gridSize + 'km²' : 'Boundaries']);
+  summaryTable.cells.unshift(['Zone Type and Size', gridMode ? gridSize + 'km² grid' : 'Boundaries']);
   doc.table(summaryTable, legendRight, doc.y + 12, { width: (options.colWidthTwoCol) });
   doc.y += get(options, 'tables.padding', 0);
 }
@@ -561,7 +561,7 @@ function drawAnalysisInput (doc, data) {
   );
 
   drawSectionHeader(
-    'Relevant Tools',
+    'Additional Relevant Tools',
     doc.x,
     doc.y += (options.margin * 2),
     doc,

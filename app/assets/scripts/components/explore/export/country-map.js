@@ -93,7 +93,7 @@ function drawHeader (doc, selectedArea, selectedResource, gridMode, gridSize) {
     .font(boldFont)
     .text('ZONE TYPE AND SIZE:  ', options.margin * 1.5, (options.margin / 2) + 18, { continued: true })
     .font(baseFont)
-    .text(gridMode ? gridSize + 'km²' : 'Boundaries');
+    .text(gridMode ? gridSize + 'km² grid' : 'Boundaries');
 
   // Logos
   doc.image(
