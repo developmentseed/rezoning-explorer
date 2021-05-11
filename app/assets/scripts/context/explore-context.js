@@ -127,17 +127,25 @@ export function ExploreProvider (props) {
   // Instead of using "selectedArea" from state, the area must be passed as a param
   // to avoid life cycle errors.
   function updateAvailableResources (area) {
+    const updatedList = resourceList.filter((r) => {
+      // If no area is selected, return all resources
+      if (!area) return true;
+
+      // If resource is not offshore, include it
+      if (r.name !== RESOURCES.OFFSHORE) return true;
+
+      // Include offshore if area has EEZ defined
+      return typeof area.eez !== 'undefined';
+    });
+
+    if (!updatedList.find(r => r.name === selectedResource)) {
+      // This means offshore was selcted from previous area
+      // But is not available for this country
+      // default to wind
+      setSelectedResource(RESOURCES.WIND);
+    }
     setAvailableResources(
-      resourceList.filter((r) => {
-        // If no area is selected, return all resources
-        if (!area) return true;
-
-        // If resource is not offshore, include it
-        if (r.name !== RESOURCES.OFFSHORE) return true;
-
-        // Include offshore if area as EEZ defined
-        return typeof area.eez !== 'undefined';
-      })
+      updatedList
     );
   }
 
