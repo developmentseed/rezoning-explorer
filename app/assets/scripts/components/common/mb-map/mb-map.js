@@ -339,10 +339,7 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
   layers.forEach((layer) => {
     const { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
     const source = map.getSource(`${layerId}_source`);
-    // console.log(layerTiles)
 
-    /* some layers have existing tiles */
-    // const tiles = layerTiles || `${config.apiEndpoint}/layers${countryPath}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
     let tiles;
     if (layerTiles && !layerTiles.includes('/layers/')) {
       tiles = layerTiles;
