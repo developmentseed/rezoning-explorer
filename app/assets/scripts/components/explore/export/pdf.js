@@ -513,7 +513,7 @@ function drawAnalysisInput (doc, data) {
   }, { width: options.colWidthThreeCol * 2 });
 
   // Add weights section
-  doc.addPage();
+  doc.y += options.tables.padding;
   drawSectionHeader(
     'Weights',
     doc.x,
@@ -539,9 +539,9 @@ function drawAnalysisInput (doc, data) {
   /**
    * About Section
    */
-
+  doc.addPage();
   // Background color on about section
-  doc.rect(0, doc.page.height / 3, doc.page.width, doc.page.height / 2 + options.margin).fill('#f6f7f7');
+  doc.rect(0, options.headerHeight, doc.page.width, doc.page.height / 2 + options.margin).fill('#f6f7f7');
   drawSectionHeader(
     'About the Tool',
     doc.x,
