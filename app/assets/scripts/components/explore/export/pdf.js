@@ -426,7 +426,7 @@ function drawAnalysisInput (doc, data) {
 
     const filterTable = {
       columnAlignment: ['left', 'right'],
-      header: [toTitleCase(category), ''],
+      header: [toTitleCase(category), 'Thresholds'],
       cells: filterCategories[category].map((filter) => {
         let title = filter.title;
         if (filter.unit) {
@@ -446,8 +446,10 @@ function drawAnalysisInput (doc, data) {
         } else if (filter.options) {
           // Discard other categorical filters as they are not supported now
           return [title, 'Unavailable'];
-        }
-        return [title, value];
+        } else if (typeof value === 'boolean') {
+          value = filter.active;
+          return [title, value === true ? 'Included' : 'Excluded'];
+        } return [title, value];
       }).filter((x) => x) // discard null values from categorical filters
     };
 
@@ -460,7 +462,7 @@ function drawAnalysisInput (doc, data) {
           '* See below'
         ]);
         // OPTION FOR DISPLAYING EXCLUDED LC TEXT
-        doc.text('*Excluded land cover types: ' + excludedLandcover.join(', '), doc.x, doc.page.height - options.margin * 3.5);
+        doc.text('*Excluded land cover types: ' + excludedLandcover.join('  •  '), doc.x, doc.page.height - options.margin * 3.5);
         doc.y = currentY;
         doc.y += get(options, 'tables.padding', 0);
       } else {
@@ -553,7 +555,7 @@ function drawAnalysisInput (doc, data) {
   doc.text(
     `The Renewable Energy Zoning (REZoning) tool is an interactive, web-based platform designed to identify, visualize, and rank zones that are most suitable for the development of solar, wind, or offshore wind projects. Custom spatial filters and economic parameters can be applied to meet users needs or to represent a specific country context.
     
-    Inspired by Berkley’s MapRE and developed by ESMAP the tool bring together complex spatial analysis and economic calculations into an online, user-friendly environment that allows users and decision makers to obtain insights into the technical and economic potential of renewable energy resources for any country. Inspired by and based off Berkely Lab and the University of California Santa Barbaras (UCSB) platform Multi-criteria Analysis for Planning Renewable Energy (MapRE) and developed by ESMAP in partnership with UCSB, the tool brings together spatial analysis and economic calculations into an online, user-friendly environment that allows users and decision makers to obtain insights into the technical and economic potential of renewable energy resources for all countries.
+    Inspired by and based off Berkely Lab and the University of California Santa Barbara's (UCSB) platform Multi-criteria Analysis for Planning Renewable Energy (MapRE) and developed by ESMAP in partnership with UCSB, the tool brings together spatial analysis and economic calculations into an online, user-friendly environment that allows users and decision makers to obtain insights into the technical and economic potential of renewable energy resources for all countries.
     
     The REZoning tool is powered by global geospatial datasets and uses baseline industry assumptions as default values for economic calculations. No input dataset, nor simulation outcome produced by the tool represents the official position of the World Bank Group or UCSB. The boundaries, colors, denominations and other information shown on the outputs do not imply on the part of the World Bank any judgement on the legal status of any territory or endorsement or acceptance of such boundaries.`,
     options.margin,
