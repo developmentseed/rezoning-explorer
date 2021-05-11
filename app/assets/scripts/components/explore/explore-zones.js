@@ -220,20 +220,25 @@ function ExploreZones (props) {
             numColumns={1}
             data={
               currentZones.sort((a, b) => {
+                const aValue = a.properties.summary[sortId];
+                const bValue = b.properties.summary[sortId];
                 // Zones with no suitable areas have LCOE equal to 0, when they
                 // should have Infinity. To avoid breaking other components by changing the default
                 // value, this quick fix will treat zeroes as Infinity when ordering.
                 if (sortId === 'lcoe') {
-                  if (b.properties.summary[sortId] === 0) {
+                  if (aValue === 0 && bValue === 0) {
+                    // if both are zero, order by id
+                    return ('' + a.properties.id).localeCompare(b.properties.id);
+                  } else if (bValue === 0) {
                     return sortAsc ? 1 : -1;
-                  } else if (a.properties.summary[sortId] === 0) {
+                  } else if (aValue === 0) {
                     return sortAsc ? -1 : 1;
                   }
                 }
 
                 return sortAsc
-                  ? parseFloat(b.properties.summary[sortId]) - parseFloat(a.properties.summary[sortId])
-                  : parseFloat(a.properties.summary[sortId]) - parseFloat(b.properties.summary[sortId]);
+                  ? parseFloat(bValue) - parseFloat(aValue)
+                  : parseFloat(aValue) - parseFloat(bValue);
               }
               )
             }
