@@ -268,6 +268,7 @@ function QueryForm (props) {
 
       <TabbedBlockBody>
         <FiltersForm
+          id='filters-tab'
           name='Filters'
           icon='filter'
           disabled={!area || !resource}
@@ -276,12 +277,14 @@ function QueryForm (props) {
           resource={resource}
         />
         <LCOEForm
+          id='lcoe-tab'
           name='Economics'
           icon='disc-dollar'
           lcoe={lcoeInd}
           disabled={!area || !resource}
         />
         <WeightsForm
+          id='weights-tab'
           name='weights'
           icon='sliders-horizontal'
           weights={weightsInd}

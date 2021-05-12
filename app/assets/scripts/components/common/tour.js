@@ -11,15 +11,7 @@ const steps = [
   {
     title: 'Apply Spatial Filters',
     target: '#filters-tab',
-    content: 'First, set filters to exclude undesired areas. Spatial filters allow you to specify lower and upper thresholds for natural, infrastructure, environmental, and cultural areas. Certain areas can be masked out completely by toggling the respective filter switch off. Output LCOE and zone score values can also be filtered to narrow the returned results.',
-    disableBeacon: true,
-    placement: 'right',
-    spotlightClicks: true
-  },
-  {
-    title: 'Set Zone Weighting Criteria',
-    target: '#weights-tab',
-    content: 'Next, set weights to score zones accordingly. Adjusting the weights of parameters will change the calculated aggregated zone scores.',
+    content: 'First, set filters to exclude undesired areas. Spatial filters allow you to specify lower and upper thresholds for natural, infrastructure, environmental, and cultural areas. Certain areas can be masked out completely by toggling the respective filter switch off.',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
@@ -27,7 +19,15 @@ const steps = [
   {
     title: 'Adjust Economic Inputs (LCOE)',
     target: '#lcoe-tab',
-    content: 'Adjust LCOE input as needed to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.',
+    content: 'Next, adjust LCOE input as needed to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.',
+    disableBeacon: true,
+    placement: 'right',
+    spotlightClicks: true
+  },
+  {
+    title: 'Set Zone Weighting Criteria',
+    target: '#weights-tab',
+    content: 'Finally, set weights to score zones accordingly. Adjusting the weights of parameters will change the calculated aggregated zone scores.',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
