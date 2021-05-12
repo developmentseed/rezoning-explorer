@@ -125,7 +125,7 @@ function getFilterValues(
  * The component
  */
 const ExportZonesButton = (props) => {
-  const { selectedResource, selectedArea, currentZones } = useContext(
+  const { selectedResource, selectedArea, currentZones, gridMode, gridSize, maxZoneScore, maxLCOE } = useContext(
     ExploreContext
   );
 
@@ -180,11 +180,22 @@ const ExportZonesButton = (props) => {
     const data = {
       selectedResource,
       selectedArea,
-      zones: currentZones.getData(),
+      gridMode,
+      gridSize,
+      zones: currentZones.getData().filter(z => {
+        // Filter by zone min/max lcoe/score
+        /* eslint-disable camelcase */
+        const { zone_score, lcoe } = z.properties.summary;
+        const zs = zone_score >= maxZoneScore.input.value.min && zone_score <= maxZoneScore.input.value.max;
+        const zl = maxLCOE ? (lcoe >= maxLCOE.input.value.min && lcoe <= maxLCOE.input.value.max) : true;
+        return zs && zl;
+      }),
       filtersValues,
       filterRanges: filterRanges.getData(),
       weightsValues,
-      lcoeValues
+      lcoeValues,
+      maxZoneScore,
+      maxLCOE
     };
     exportPDF(data, map, setMap);
   }
@@ -277,7 +288,7 @@ const ExportZonesButton = (props) => {
           <DropMenuItem
             data-dropdown='click.close'
             useIcon='picture'
-            onClick={() => exportCountryMap(selectedArea, map, setMap)}
+            onClick={() => exportCountryMap(selectedArea, selectedResource, gridMode, gridSize, map, setMap)}
           >
             Map (.pdf)
           </DropMenuItem>

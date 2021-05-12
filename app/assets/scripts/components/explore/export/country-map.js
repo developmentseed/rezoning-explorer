@@ -11,7 +11,7 @@ import html2canvas from 'html2canvas';
 /* eslint-disable camelcase */
 
 // Timeout for map to load
-const MIN_TIMEOUT = 5000;
+const MIN_TIMEOUT = 3000;
 
 // Base PDF options
 const pdfDocumentOptions = {
@@ -39,7 +39,7 @@ const options = {
 };
 
 // fetch fonts & images on init for use in PDF
-let baseFont, boldFont, REZLogo, WBGLogo, ESMAPLogo, LBLLogo;
+let baseFont, boldFont, REZLogo, WBGLogo, ESMAPLogo, UCSBLogo;
 async function initStyles () {
   await fetch('/assets/fonts/IBM-Plex-Sans-regular.ttf')
     .then((response) => response.arrayBuffer())
@@ -67,14 +67,14 @@ async function initStyles () {
     .then((logo) => {
       ESMAPLogo = logo;
     });
-  await fetch('/assets/graphics/content/logos/logo-lbl.jpeg')
+  await fetch('/assets/graphics/content/logos/logo-ucsb.png')
     .then((response) => response.arrayBuffer())
     .then((logo) => {
-      LBLLogo = logo;
+      UCSBLogo = logo;
     });
 }
 
-function drawHeader (doc, selectedArea) {
+function drawHeader (doc, selectedArea, selectedResource, gridMode, gridSize) {
   // Title
   doc
     .fillColor(options.baseFontColor)
@@ -85,54 +85,39 @@ function drawHeader (doc, selectedArea) {
   // Subtitle
   doc
     .fillColor(options.secondaryFontColor)
-    .font(baseFont)
+    .font(boldFont)
     .fontSize(8)
-    .text('RENEWABLE ENERGY ZONE ANALYSIS', options.margin, (options.margin / 2) + 18);
+    .text('RESOURCE:  ', options.margin, (options.margin / 2) + 18, { continued: true })
+    .font(baseFont)
+    .text(selectedResource, { continued: true })
+    .font(boldFont)
+    .text('ZONE TYPE AND SIZE:  ', options.margin * 1.5, (options.margin / 2) + 18, { continued: true })
+    .font(baseFont)
+    .text(gridMode ? `Grid: ${gridSize}km²` : 'Administrative Boundaries');
 
   // Logos
   doc.image(
-    REZLogo,
-    (doc.page.width - (options.margin * 9)),
-    (options.margin / 2),
-    {
-      height: 18
-    }
-  );
-  doc
-    .fillColor(options.primaryColor)
-    .font(boldFont)
-    .fontSize(10)
-    .text(
-      'REZoning',
-      (doc.page.width - (options.margin * 9)) + 20,
-      (options.margin / 2) + 2,
-      {
-        align: 'left',
-        link: 'https://rezoning.surge.sh'
-      }
-    );
-  doc.image(
-    LBLLogo,
-    (doc.page.width - (options.margin * 7)) + 5,
-    (options.margin / 2),
-    {
-      height: 18
-    }
-  );
-  doc.image(
     WBGLogo,
-    (doc.page.width - (options.margin * 6)) + 10,
-    (options.margin / 2),
+    (doc.page.width - (options.margin * 4.5)),
+    (options.margin / 2) - 8,
     {
-      height: 18
+      height: 16.5
     }
   );
   doc.image(
     ESMAPLogo,
-    (doc.page.width - (options.margin * 3)) + 5,
-    (options.margin / 2),
+    (doc.page.width - (options.margin * 2.5) + 14),
+    (options.margin / 2) - 5,
     {
-      height: 18
+      height: 11
+    }
+  );
+  doc.image(
+    UCSBLogo,
+    (doc.page.width - (options.margin * 4.5) + 2),
+    (options.margin / 2) + 18,
+    {
+      height: 10
     }
   );
 }
@@ -161,13 +146,35 @@ async function drawMap(doc) {
 
 function drawFooter(doc) {
   // Left attribution
+  doc.image(
+    REZLogo,
+    options.margin,
+    doc.page.height - (options.margin / 1.625),
+    {
+      height: 12,
+      continued: true
+    }
+  );
+  doc
+    .fillColor(options.primaryColor)
+    .font(boldFont)
+    .fontSize(10)
+    .text(
+      'REZoning',
+      options.margin + 20,
+      doc.page.height - (options.margin / 1.625),
+      {
+        continued: true,
+        lineBreak: false
+      }
+    );
   doc
     .fillColor(options.baseFontColor)
     .font(baseFont)
     .fontSize(6)
     .text(
-      'This map is publshed by the World Bank Group, funded by ESMAP, and was dynamically generated from the REZoning application. For more information, please visit https://rezoning.surge.sh',
-      options.margin,
+      'This map is generated dynamically from the REZoning application. For more information, please visit https://rezoning.surge.sh',
+      options.margin * 3,
       doc.page.height - (options.margin / 2),
       {
         height: 16,
@@ -204,52 +211,53 @@ function drawFooter(doc) {
   );
 }
 
-export default async function exportCountryMap(selectedArea, map, setMap) {
+export default async function exportCountryMap(selectedArea, selectedResource, gridMode, gridSize, map, setMap) {
   // Zoom to country bounds
   showGlobalLoadingMessage('Generating Map Export...');
-  return map.fitBounds(selectedArea.bounds, { padding: 80 }).once('zoomend', async () => {
-    setMap(map);
 
-    // Give unloaded layers time to load
-    await new Promise(resolve => setTimeout(resolve, MIN_TIMEOUT));
+  map.fitBounds(selectedArea.bounds, { padding: 100, animation: false, duration: 0 });
 
-    // Load styles
-    await initStyles();
+  setMap(map);
 
-    // Create a document
-    const doc = new PDFDocument(pdfDocumentOptions);
+  // Give unloaded layers time to load
+  await new Promise(resolve => setTimeout(resolve, MIN_TIMEOUT));
 
-    // Create stream
-    const stream = doc.pipe(blobStream());
+  // Load styles
+  await initStyles();
 
-    // Add Sections
-    drawHeader(doc, selectedArea);
-    drawMap(doc);
-    drawFooter(doc);
+  // Create a document
+  const doc = new PDFDocument(pdfDocumentOptions);
 
-    // Add legend
-    const legendNode = document.querySelector('#map-legend');
-    const legendCanvas = await html2canvas(legendNode);
-    const legendImage = legendCanvas.toDataURL('image/png');
-    const legendHeight = parseInt(legendCanvas.style.height, 10) * 0.75;
-    const legendWidth = parseInt(legendCanvas.style.width, 10) * 0.75;
-    doc.image(legendImage, (doc.page.width - options.margin - legendWidth + 10), (doc.page.height - options.margin - legendHeight + 10), { width: legendWidth - 20 });
+  // Create stream
+  const stream = doc.pipe(blobStream());
 
-    // Add Scale
-    const scaleCanvas = await html2canvas(document.querySelector('.mapboxgl-ctrl-scale'));
-    const scaleImage = scaleCanvas.toDataURL('image/png');
-    doc.image(scaleImage, options.margin + 10, (doc.page.height - options.margin - 20), { width: 100 });
+  // Add Sections
+  drawHeader(doc, selectedArea, selectedResource, gridMode, gridSize);
+  drawMap(doc);
+  drawFooter(doc);
 
-    // Finalize PDF file
-    doc.end();
+  // Add legend
+  const legendNode = document.querySelector('#map-legend');
+  const legendCanvas = await html2canvas(legendNode);
+  const legendImage = legendCanvas.toDataURL('image/png');
+  const legendHeight = parseInt(legendCanvas.style.height, 10) * 0.75;
+  const legendWidth = parseInt(legendCanvas.style.width, 10) * 0.75;
+  doc.image(legendImage, (doc.page.width - options.margin - legendWidth + 10), (doc.page.height - options.margin - legendHeight + 10), { width: legendWidth - 20 });
 
-    hideGlobalLoading();
+  // Add Scale
+  const scaleCanvas = await html2canvas(document.querySelector('.mapboxgl-ctrl-scale'));
+  const scaleImage = scaleCanvas.toDataURL('image/png');
+  doc.image(scaleImage, options.margin + 10, (doc.page.height - options.margin - 20), { width: 100 });
 
-    return await stream.on('finish', function () {
-      saveAs(
-        stream.toBlob('application/pdf'),
-        `WBG-REZoning-${selectedArea.id}-map-${getTimestamp()}.pdf`
-      );
-    });
+  // Finalize PDF file
+  doc.end();
+
+  hideGlobalLoading();
+
+  return await stream.on('finish', function () {
+    saveAs(
+      stream.toBlob('application/pdf'),
+      `WBG-REZoning-${selectedArea.id}-map-${getTimestamp()}.pdf`
+    );
   });
 }

@@ -271,21 +271,6 @@ function About () {
               </dd>
               <dd>
                 <a
-                  href='https://www.lbl.gov/'
-                  title='Visit Lawrence Berkely National Laboratory'
-                  className='logo-lbl'
-                  target='_blank'
-                  rel='noreferrer'
-                >
-                  <img
-                    alt='Lawrence Berkley Lab Logo'
-                    src='/assets/graphics/content/logos/logo-lbl.jpeg'
-                  />
-                  <span>Lawrence Berkely Lab</span>
-                </a>
-              </dd>
-              <dd>
-                <a
                   href='https://www.developmentseed.org/'
                   title='Visit Development Seed'
                   className='logo-ds'
