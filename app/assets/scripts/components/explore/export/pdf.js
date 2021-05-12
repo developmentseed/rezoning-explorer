@@ -416,6 +416,9 @@ function drawAnalysisInput (doc, data) {
     let excludedLandcover;
     const currentY = doc.y;
     doc.y += get(options, 'tables.padding', 0);
+    if (index > 1) { // For two by two table layout, push tables in second row further down the page
+      doc.y += (get(options, 'tables.padding', 0) * 4);
+    }
 
     setStyle(doc, 'p');
 
