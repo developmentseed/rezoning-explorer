@@ -147,7 +147,7 @@ export function ExploreProvider (props) {
       // This means offshore was selcted from previous area
       // But is not available for this country
       // default to wind
-      setSelectedResource(RESOURCES.WIND);
+      setSelectedResource(undefined);
     }
     setAvailableResources(
       updatedList
