@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState, useReducer } from 'react';
+import React, { createContext, useEffect, useState, useReducer, useRef } from 'react';
 import T from 'prop-types';
 import * as topojson from 'topojson-client';
 import bbox from '@turf/bbox';
@@ -61,6 +61,7 @@ const maskTypes = [BOOL];
 const ExploreContext = createContext({});
 
 export function ExploreProvider (props) {
+  const areasInitialized = useRef(false);
   const [maxZoneScore, setMaxZoneScore] = useQsState({
     key: 'maxZoneScore',
     default: undefined,
@@ -127,6 +128,10 @@ export function ExploreProvider (props) {
   // Instead of using "selectedArea" from state, the area must be passed as a param
   // to avoid life cycle errors.
   function updateAvailableResources (area) {
+    if (!areasInitialized.current) {
+      // Wait for eez to be loaded before checking to see that selected resource is acceptable for this country
+      return;
+    }
     const updatedList = resourceList.filter((r) => {
       // If no area is selected, return all resources
       if (!area) return true;
@@ -198,6 +203,8 @@ export function ExploreProvider (props) {
     });
     setAreas(areasWithEez);
     const currentArea = areasWithEez.find((a) => a.id === selectedAreaId);
+
+    areasInitialized.current = true;
     updateAvailableResources(currentArea);
 
     hideGlobalLoading();
