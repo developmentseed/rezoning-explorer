@@ -476,8 +476,23 @@ function MbMap (props) {
           visible: l.id === getResourceLayerName(selectedResource)
         }))
       ];
+
       addInputLayersToMap(map, initializedLayers, selectedArea, selectedResource);
-      setMapLayers([...outputLayers, ...initializedLayers]);
+
+      const _output = outputLayers.map(l => {
+        return ({
+          ...l,
+          disabled: l.category === 'output',
+          visible: false
+        });
+      });
+
+      const mLayers = [
+        ..._output,
+        ...initializedLayers
+      ];
+
+      setMapLayers(mLayers);
     }
   }, [map, selectedArea, /* selectedResource, */ inputLayers]);
 
@@ -513,10 +528,19 @@ function MbMap (props) {
         mapLayers.map(l => {
           if (l.id === rLayerName) {
             map.setLayoutProperty(l.id, 'visibility', 'visible');
-            return { ...l, visible: true };
+            return {
+              ...l,
+              visible: true,
+              disabled: l.category === 'output'
+            };
           } else {
             map.setLayoutProperty(l.id, 'visibility', 'none');
-            return { ...l, visible: false };
+            return {
+              ...l,
+              visible: false,
+              disabled: l.category === 'output'
+
+            };
           }
         })
       );
