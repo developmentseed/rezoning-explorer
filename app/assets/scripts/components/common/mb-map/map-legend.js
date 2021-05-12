@@ -129,9 +129,15 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists, currentZones 
   } else if (visibleRaster[0].id === LCOE_LAYER_LAYER_ID) {
     // CurrentZones will be defined at this point
     // LCOE layer can only be made visible after zones are generated
-    /* eslint-disable-next-line */
-    const { capacity_factor } = currentZones.getData().lcoe;
-    rasterRange = filterRanges.getData().lcoe[capacity_factor].total;
+    try {
+      /* eslint-disable-next-line */
+      const { capacity_factor } = currentZones.getData().lcoe;
+      rasterRange = filterRanges.getData().lcoe[capacity_factor].total;
+    } catch {
+      // Current zones has been invalidated
+      // Visibility of lcoe layer not updated in this render cycle
+      return null;
+    }
   } else {
     rasterRange = visibleRaster[0].range;
   }
