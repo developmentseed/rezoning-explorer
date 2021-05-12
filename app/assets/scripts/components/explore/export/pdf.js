@@ -396,6 +396,7 @@ function drawAnalysisInput (doc, data) {
   filterCategories['Output Filters'] = outputFilters;
 
   // Add one table per category
+  let oddColumnBottom;
   Object.keys(filterCategories).forEach((category, index) => {
     let excludedLandcover;
     const currentY = doc.y;
@@ -467,8 +468,17 @@ function drawAnalysisInput (doc, data) {
         prepareRow: () => doc.fontSize(8).font(baseFont),
         width: options.colWidthTwoCol - (options.gutterTwoCol / 2)
       });
+
+    // On odd columns
     if (index % 2 === 0) {
+      // Record this table bottom
+      oddColumnBottom = doc.y;
+
+      // Move y pointer to up as next column will be on the right
       doc.y = currentY;
+    } else if (doc.y < oddColumnBottom) {
+      // If right column is shorter than the left, set y accordingly
+      doc.y = oddColumnBottom;
     }
   });
 
