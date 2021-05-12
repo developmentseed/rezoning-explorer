@@ -214,49 +214,50 @@ function drawFooter(doc) {
 export default async function exportCountryMap(selectedArea, selectedResource, gridMode, gridSize, map, setMap) {
   // Zoom to country bounds
   showGlobalLoadingMessage('Generating Map Export...');
-  return map.fitBounds(selectedArea.bounds, { padding: 100 }).once('zoomend', async () => {
-    setMap(map);
 
-    // Give unloaded layers time to load
-    await new Promise(resolve => setTimeout(resolve, MIN_TIMEOUT));
+  map.fitBounds(selectedArea.bounds, { padding: 100, animation: false, duration: 0 });
 
-    // Load styles
-    await initStyles();
+  setMap(map);
 
-    // Create a document
-    const doc = new PDFDocument(pdfDocumentOptions);
+  // Give unloaded layers time to load
+  await new Promise(resolve => setTimeout(resolve, MIN_TIMEOUT));
 
-    // Create stream
-    const stream = doc.pipe(blobStream());
+  // Load styles
+  await initStyles();
 
-    // Add Sections
-    drawHeader(doc, selectedArea, selectedResource, gridMode, gridSize);
-    drawMap(doc);
-    drawFooter(doc);
+  // Create a document
+  const doc = new PDFDocument(pdfDocumentOptions);
 
-    // Add legend
-    const legendNode = document.querySelector('#map-legend');
-    const legendCanvas = await html2canvas(legendNode);
-    const legendImage = legendCanvas.toDataURL('image/png');
-    const legendHeight = parseInt(legendCanvas.style.height, 10) * 0.75;
-    const legendWidth = parseInt(legendCanvas.style.width, 10) * 0.75;
-    doc.image(legendImage, (doc.page.width - options.margin - legendWidth + 10), (doc.page.height - options.margin - legendHeight + 10), { width: legendWidth - 20 });
+  // Create stream
+  const stream = doc.pipe(blobStream());
 
-    // Add Scale
-    const scaleCanvas = await html2canvas(document.querySelector('.mapboxgl-ctrl-scale'));
-    const scaleImage = scaleCanvas.toDataURL('image/png');
-    doc.image(scaleImage, options.margin + 10, (doc.page.height - options.margin - 20), { width: 100 });
+  // Add Sections
+  drawHeader(doc, selectedArea, selectedResource, gridMode, gridSize);
+  drawMap(doc);
+  drawFooter(doc);
 
-    // Finalize PDF file
-    doc.end();
+  // Add legend
+  const legendNode = document.querySelector('#map-legend');
+  const legendCanvas = await html2canvas(legendNode);
+  const legendImage = legendCanvas.toDataURL('image/png');
+  const legendHeight = parseInt(legendCanvas.style.height, 10) * 0.75;
+  const legendWidth = parseInt(legendCanvas.style.width, 10) * 0.75;
+  doc.image(legendImage, (doc.page.width - options.margin - legendWidth + 10), (doc.page.height - options.margin - legendHeight + 10), { width: legendWidth - 20 });
 
-    hideGlobalLoading();
+  // Add Scale
+  const scaleCanvas = await html2canvas(document.querySelector('.mapboxgl-ctrl-scale'));
+  const scaleImage = scaleCanvas.toDataURL('image/png');
+  doc.image(scaleImage, options.margin + 10, (doc.page.height - options.margin - 20), { width: 100 });
 
-    return await stream.on('finish', function () {
-      saveAs(
-        stream.toBlob('application/pdf'),
-        `WBG-REZoning-${selectedArea.id}-map-${getTimestamp()}.pdf`
-      );
-    });
+  // Finalize PDF file
+  doc.end();
+
+  hideGlobalLoading();
+
+  return await stream.on('finish', function () {
+    saveAs(
+      stream.toBlob('application/pdf'),
+      `WBG-REZoning-${selectedArea.id}-map-${getTimestamp()}.pdf`
+    );
   });
 }
