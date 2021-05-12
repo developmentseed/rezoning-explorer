@@ -424,6 +424,7 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
         maxzoom: 22
       }, ZONES_BOUNDARIES_LAYER_ID);
     }
+    map.moveLayer(FILTERED_LAYER_ID);
   });
 };
 
