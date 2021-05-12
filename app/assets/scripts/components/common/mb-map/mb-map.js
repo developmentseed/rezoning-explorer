@@ -27,9 +27,6 @@ const FILTERED_LAYER_ID = 'FILTERED_LAYER_ID';
 const LCOE_LAYER_SOURCE_ID = 'LCOE_LAYER_SOURCE_ID';
 export const LCOE_LAYER_LAYER_ID = 'LCOE_LAYER_LAYER_ID';
 
-const ZONE_SCORE_SOURCE_ID = 'ZONE_SCORE_SOURCE_ID';
-const ZONE_SCORE_LAYER_ID = 'ZONE_SCORE_LAYER_ID';
-
 const ZONES_BOUNDARIES_SOURCE_ID = 'ZONES_BOUNDARIES_SOURCE_ID';
 export const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
 const EEZ_BOUNDARIES_SOURCE_ID = 'EEZ_BOUNDARIES_SOURCE_ID';
@@ -62,15 +59,6 @@ export const outputLayers = [
     info: 'The LCOE value for every 500m pixel in the selected "Suitable Areas." Pixel LCOE values may be higher or lower than the aggregate LCOE value per zone, which averages all pixels in the defined zone area',
     disabled: true,
     units: 'USD/MWh'
-  },
-  {
-    id: ZONE_SCORE_LAYER_ID,
-    name: 'Zone Score (pixel)',
-    type: 'raster',
-    category: 'output',
-    info: 'The zone score value for every 500m pixel in the selected "Suitable Areas." Pixel zone score values may be higher or lower than the aggregate zone score, which averages all pixels in the defined zone area',
-    disabled: true,
-    range: { min: 0, max: 1 }
   },
   {
     id: ZONES_BOUNDARIES_LAYER_ID,
@@ -218,25 +206,6 @@ const initializeMap = ({
       id: LCOE_LAYER_LAYER_ID,
       type: 'raster',
       source: LCOE_LAYER_SOURCE_ID,
-      layout: {
-        visibility: 'none'
-      },
-      paint: {
-        'raster-opacity': 0.75
-      },
-      minzoom: 0,
-      maxzoom: 22
-    });
-    //
-    map.addSource(ZONE_SCORE_SOURCE_ID, {
-      type: 'raster',
-      tiles: ['https://placeholder.url/{z}/{x}/{y}.png'],
-      tileSize: 256
-    });
-    map.addLayer({
-      id: ZONE_SCORE_LAYER_ID,
-      type: 'raster',
-      source: ZONE_SCORE_SOURCE_ID,
       layout: {
         visibility: 'none'
       },
@@ -619,10 +588,6 @@ function MbMap (props) {
         [LCOE_LAYER_SOURCE_ID]: {
           ...style.sources[LCOE_LAYER_SOURCE_ID],
           tiles: [`${config.apiEndpoint}/lcoe/${outputLayerUrl}`]
-        },
-        [ZONE_SCORE_SOURCE_ID]: {
-          ...style.sources[ZONE_SCORE_SOURCE_ID],
-          tiles: [`${config.apiEndpoint}/score/${outputLayerUrl}`]
         }
 
       }
