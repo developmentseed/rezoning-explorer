@@ -11,7 +11,7 @@ import html2canvas from 'html2canvas';
 /* eslint-disable camelcase */
 
 // Timeout for map to load
-const MIN_TIMEOUT = 5000;
+const MIN_TIMEOUT = 3000;
 
 // Base PDF options
 const pdfDocumentOptions = {

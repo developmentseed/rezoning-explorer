@@ -11,11 +11,12 @@ import {
   hideGlobalLoading,
   showGlobalLoadingMessage
 } from '../../common/global-loading';
+import { checkIncluded } from '../panel-data';
 
 /* eslint-disable camelcase */
 
 // Timeout for map to load
-const MIN_TIMEOUT = 5000;
+const MIN_TIMEOUT = 3000;
 
 // Base PDF options
 const pdfDocumentOptions = {
@@ -401,6 +402,10 @@ function drawAnalysisInput (doc, data) {
       columnAlignment: ['left', 'right'],
       header: [toTitleCase(category), 'Thresholds'],
       cells: filterCategories[category].map((filter) => {
+        // Don't print the filter in a cell if its not included for the selected resource
+        if (!checkIncluded(filter, selectedResource)) {
+          return;
+        }
         let title = filter.title;
         if (filter.unit) {
           title = `${title} (${filter.unit})`;
