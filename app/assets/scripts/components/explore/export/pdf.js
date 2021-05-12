@@ -384,10 +384,18 @@ function drawAnalysisInput (doc, data) {
     'The information layers and the thresholds that were applied for estimating the Technical Potential of the energy resource and for identifying the study areas technically capable of supporting projects.'
   );
 
-  const { filtersValues, selectedResource } = data;
+  const { filtersValues, selectedResource, maxZoneScore, maxLCOE } = data;
+
+  // Create output filters category
+  const outputFilters = [maxZoneScore, maxLCOE];
+
+  // Separate categories
+  const filterCategories = groupBy(filtersValues, 'secondary_category');
+
+  // Add output filters to categories
+  filterCategories['Output Filters'] = outputFilters;
 
   // Add one table per category
-  const filterCategories = groupBy(filtersValues, 'secondary_category');
   Object.keys(filterCategories).forEach((category, index) => {
     let excludedLandcover;
     const currentY = doc.y;
@@ -403,10 +411,10 @@ function drawAnalysisInput (doc, data) {
       header: [toTitleCase(category), 'Thresholds'],
       cells: filterCategories[category].map((filter) => {
         // Don't print the filter in a cell if its not included for the selected resource
-        if (!checkIncluded(filter, selectedResource)) {
+        if (filter.energy_type && !checkIncluded(filter, selectedResource)) {
           return;
         }
-        let title = filter.title;
+        let title = filter.title || filter.name;
         if (filter.unit) {
           title = `${title} (${filter.unit})`;
         }

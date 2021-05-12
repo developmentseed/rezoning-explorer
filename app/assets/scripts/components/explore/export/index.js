@@ -125,7 +125,7 @@ function getFilterValues(
  * The component
  */
 const ExportZonesButton = (props) => {
-  const { selectedResource, selectedArea, currentZones, gridMode, gridSize } = useContext(
+  const { selectedResource, selectedArea, currentZones, gridMode, gridSize, maxZoneScore, maxLCOE } = useContext(
     ExploreContext
   );
 
@@ -186,7 +186,9 @@ const ExportZonesButton = (props) => {
       filtersValues,
       filterRanges: filterRanges.getData(),
       weightsValues,
-      lcoeValues
+      lcoeValues,
+      maxZoneScore,
+      maxLCOE
     };
     exportPDF(data, map, setMap);
   }
