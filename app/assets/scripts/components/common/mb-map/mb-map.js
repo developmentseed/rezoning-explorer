@@ -587,7 +587,7 @@ function MbMap (props) {
         [LCOE_LAYER_SOURCE_ID]: {
           ...style.sources[LCOE_LAYER_SOURCE_ID],
           tiles: [`${config.apiEndpoint}/lcoe/${outputLayerUrl}`]
-        },
+        }
 
       }
     });
