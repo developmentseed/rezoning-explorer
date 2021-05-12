@@ -93,7 +93,7 @@ function drawHeader (doc, selectedArea, selectedResource, gridMode, gridSize) {
     .font(boldFont)
     .text('ZONE TYPE AND SIZE:  ', options.margin * 1.5, (options.margin / 2) + 18, { continued: true })
     .font(baseFont)
-    .text(gridMode ? gridSize + 'km² grid' : 'Administrative Boundaries');
+    .text(gridMode ? `Grid: ${gridSize}km²` : 'Administrative Boundaries');
 
   // Logos
   doc.image(
@@ -214,7 +214,7 @@ function drawFooter(doc) {
 export default async function exportCountryMap(selectedArea, selectedResource, gridMode, gridSize, map, setMap) {
   // Zoom to country bounds
   showGlobalLoadingMessage('Generating Map Export...');
-  return map.fitBounds(selectedArea.bounds, { padding: 80 }).once('zoomend', async () => {
+  return map.fitBounds(selectedArea.bounds, { padding: 100 }).once('zoomend', async () => {
     setMap(map);
 
     // Give unloaded layers time to load

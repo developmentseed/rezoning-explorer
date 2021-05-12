@@ -185,7 +185,7 @@ function drawHeader (doc, { selectedArea }) {
   doc.image(
     WBGLogo,
     (doc.page.width - (options.margin * 4.5)),
-    options.margin - 8,
+    options.margin - 2,
     {
       height: 16.5
     }
@@ -193,7 +193,7 @@ function drawHeader (doc, { selectedArea }) {
   doc.image(
     ESMAPLogo,
     (doc.page.width - (options.margin * 2.5) + 14),
-    options.margin - 5,
+    options.margin,
     {
       height: 11
     }
@@ -201,7 +201,7 @@ function drawHeader (doc, { selectedArea }) {
   doc.image(
     UCSBLogo,
     (doc.page.width - (options.margin * 4.5) + 2),
-    options.margin + 18,
+    options.margin + 22,
     {
       height: 10
     }
@@ -358,7 +358,7 @@ function drawMapArea (
     })
   };
   summaryTable.cells.unshift(['Resource', selectedResource]);
-  summaryTable.cells.unshift(['Zone Type and Size', gridMode ? gridSize + 'km² grid' : 'Administrative Boundaries']);
+  summaryTable.cells.unshift(['Zone Type and Size', gridMode ? `Grid: ${gridSize}km²` : 'Administrative Boundaries']);
   doc.table(summaryTable, legendRight, doc.y + 12, { width: (options.colWidthTwoCol) });
   doc.y += get(options, 'tables.padding', 0);
 }
@@ -402,7 +402,7 @@ function drawAnalysisInput (doc, data) {
     const currentY = doc.y;
     doc.y += get(options, 'tables.padding', 0);
     if (index > 1) { // For two by two table layout, push tables in second row further down the page
-      doc.y += (get(options, 'tables.padding', 0) * 4);
+      doc.y += (get(options, 'tables.padding', 0) * 2);
     }
 
     setStyle(doc, 'p');
