@@ -163,7 +163,6 @@ function drawSectionHeader (label, left, top, doc, options) {
  */
 function drawHeader (doc, { selectedArea }) {
   const leftTitleSize = 20;
-  const rightTitleSize = 12;
   const subTitleSize = 8;
   const padding = 15;
 
@@ -227,30 +226,6 @@ function drawFooter (doc, pageNumber) {
   doc.image(Logo, options.margin, doc.page.height - options.margin * 1.25, {
     height: 18
   });
-  doc.image(
-    WBGLogo,
-    options.margin * 3.25 + 12,
-    doc.page.height - options.margin * 1.25,
-    {
-      height: 18
-    }
-  );
-  doc.image(
-    ESMAPLogo,
-    options.margin * 3.25 + 120,
-    doc.page.height - options.margin * 1.25,
-    {
-      height: 18
-    }
-  );
-  doc.image(
-    LBLLogo,
-    options.margin * 3.25 + 210,
-    doc.page.height - options.margin * 1.25,
-    {
-      height: 18
-    }
-  );
 
   // Left Title
   doc
@@ -288,7 +263,7 @@ function drawFooter (doc, pageNumber) {
   doc
     .fillColor(options.baseFontColor)
     .text(
-      'Creative Commons BY 4.0',
+      'Creative Commons BY 4.0 | Page ' + pageNumber,
       doc.page.width - options.colWidthTwoCol - options.margin,
       doc.page.height - options.margin * 1.25,
       {
@@ -301,7 +276,7 @@ function drawFooter (doc, pageNumber) {
 
   // Right copyright date + Page Number
   doc.text(
-    '©' + new Date().getFullYear() + ' The World Bank Group | Page ' + pageNumber,
+    '©' + new Date().getFullYear() + ' The World Bank Group',
     doc.page.width - options.colWidthTwoCol - options.margin,
     doc.page.height - options.margin * 1.25 + 12,
     {
@@ -382,7 +357,7 @@ function drawMapArea (
     })
   };
   summaryTable.cells.unshift(['Resource', selectedResource]);
-  summaryTable.cells.unshift(['Zone Type and Size', gridMode ? gridSize + 'km² grid' : 'Boundaries']);
+  summaryTable.cells.unshift(['Zone Type and Size', gridMode ? gridSize + 'km² grid' : 'Administrative Boundaries']);
   doc.table(summaryTable, legendRight, doc.y + 12, { width: (options.colWidthTwoCol) });
   doc.y += get(options, 'tables.padding', 0);
 }
@@ -459,7 +434,6 @@ function drawAnalysisInput (doc, data) {
           'Excluded land cover types',
           '* See below'
         ]);
-        // OPTION FOR DISPLAYING EXCLUDED LC TEXT
         doc.text('*Excluded land cover types: ' + excludedLandcover.join('  •  '), doc.x, doc.page.height - options.margin * 3.5);
         doc.y = currentY;
         doc.y += get(options, 'tables.padding', 0);
@@ -469,7 +443,7 @@ function drawAnalysisInput (doc, data) {
     }
 
     const tableX = (options.margin + ((index % 2) * options.colWidthTwoCol) + ((index % 2) * options.gutterTwoCol));
-    const tableY = doc.y + 80;
+    const tableY = doc.y;
 
     doc.table(
       filterTable,
@@ -541,7 +515,7 @@ function drawAnalysisInput (doc, data) {
    */
   doc.addPage();
   // Background color on about section
-  doc.rect(0, options.headerHeight, doc.page.width, doc.page.height / 2 + options.margin).fill('#f6f7f7');
+  doc.rect(0, options.headerHeight - 20, doc.page.width, doc.page.height / 2 + options.margin).fill('#f6f7f7');
   drawSectionHeader(
     'About the Tool',
     doc.x,
