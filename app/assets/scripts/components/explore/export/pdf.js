@@ -604,75 +604,95 @@ function drawAnalysisInput (doc, data) {
 
 export default async function exportPDF (data, map, setMap) {
   showGlobalLoadingMessage('Generating PDF Report...');
-  return map.fitBounds(data.selectedArea.bounds, { padding: 100 }).once('zoomend', async () => {
-    setMap(map);
 
-    // Give unloaded layers time to load
-    await new Promise(resolve => setTimeout(resolve, MIN_TIMEOUT));
-    const mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
-    const mapDataURL = mapCanvas.toDataURL('image/png');
-    const mapAspectRatio = mapCanvas.height / mapCanvas.width;
+  // The map needs to be zoomed into the area before PDF generation.
+  // Because of pixel padding applied to the map, we can't compare area bounds to map bounds.
+  // With the following we force the map to zoom out a bit before zooming in, in case the map is already fitted
+  // to area. This is necessary because map.fitBounds() doesn't have a callback, we have to listen
+  // to 'zoomend', which only happens if map changes.
+  map
+    .fitBounds(data.selectedArea.bounds, { padding: 200, animation: false })
+    .once('zoomend', () => {
+      map
+        .fitBounds(data.selectedArea.bounds, { padding: 100, animation: false })
+        .once('zoomend', async () => {
+          setMap(map);
 
-    // Load styles
-    await initStyles();
+          // Give unloaded layers time to load
+          await new Promise((resolve) => setTimeout(resolve, MIN_TIMEOUT));
+          const mapCanvas = document.getElementsByClassName(
+            'mapboxgl-canvas'
+          )[0];
+          const mapDataURL = mapCanvas.toDataURL('image/png');
+          const mapAspectRatio = mapCanvas.height / mapCanvas.width;
 
-    // Create a document
-    const doc = new PDFDocument(pdfDocumentOptions);
+          // Load styles
+          await initStyles();
 
-    // Create stream
-    const stream = doc.pipe(blobStream());
+          // Create a document
+          const doc = new PDFDocument(pdfDocumentOptions);
 
-    // Add first page sections
-    drawHeader(doc, data);
-    drawMapArea(doc, data, mapDataURL, mapAspectRatio);
+          // Create stream
+          const stream = doc.pipe(blobStream());
 
-    // Add Scale
-    const mapWidth = doc.page.width - options.margin * 2;
-    const mapHeight = (mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio) - options.margin;
-    const scaleCanvas = await html2canvas(document.querySelector('.mapboxgl-ctrl-scale'));
-    const scaleImage = scaleCanvas.toDataURL('image/png');
-    doc.image(
-      scaleImage,
-      options.margin + 10,
-      (options.headerHeight + mapHeight - 20),
-      {
-        width: 100
-      }
-    );
+          // Add first page sections
+          drawHeader(doc, data);
+          drawMapArea(doc, data, mapDataURL, mapAspectRatio);
 
-    // Add legend
-    const legendNode = document.querySelector('#map-legend');
-    const legendCanvas = await html2canvas(legendNode);
-    const legendImage = legendCanvas.toDataURL('image/png');
-    doc.image(
-      legendImage,
-      options.margin + 5,
-      (options.headerHeight + mapHeight + 20),
-      {
-        width: 140
-      }
-    );
+          // Add Scale
+          const mapWidth = doc.page.width - options.margin * 2;
+          const mapHeight =
+            (mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio) -
+            options.margin;
+          const scaleCanvas = await html2canvas(
+            document.querySelector('.mapboxgl-ctrl-scale')
+          );
+          const scaleImage = scaleCanvas.toDataURL('image/png');
+          doc.image(
+            scaleImage,
+            options.margin + 10,
+            options.headerHeight + mapHeight - 20,
+            {
+              width: 100
+            }
+          );
 
-    // Add analysis
-    drawAnalysisInput(doc, data);
+          // Add legend
+          const legendNode = document.querySelector('#map-legend');
+          const legendCanvas = await html2canvas(legendNode);
+          const legendImage = legendCanvas.toDataURL('image/png');
+          doc.image(
+            legendImage,
+            options.margin + 5,
+            options.headerHeight + mapHeight + 20,
+            {
+              width: 140
+            }
+          );
 
-    // Add footer to each page
-    const pages = doc.bufferedPageRange();
-    for (let i = 0; i < pages.count; i++) {
-      doc.switchToPage(i);
-      drawFooter(doc, i + 1);
-    }
+          // Add analysis
+          drawAnalysisInput(doc, data);
 
-    // Finalize PDF file
-    doc.end();
+          // Add footer to each page
+          const pages = doc.bufferedPageRange();
+          for (let i = 0; i < pages.count; i++) {
+            doc.switchToPage(i);
+            drawFooter(doc, i + 1);
+          }
 
-    hideGlobalLoading();
+          // Finalize PDF file
+          doc.end();
 
-    return await stream.on('finish', function () {
-      saveAs(
-        stream.toBlob('application/pdf'),
-        `WBG-REZoning-${data.selectedArea.id}-summary-${getTimestamp()}.pdf`
-      );
+          hideGlobalLoading();
+
+          return await stream.on('finish', function () {
+            saveAs(
+              stream.toBlob('application/pdf'),
+              `WBG-REZoning-${
+                data.selectedArea.id
+              }-summary-${getTimestamp()}.pdf`
+            );
+          });
+        });
     });
-  });
 }
