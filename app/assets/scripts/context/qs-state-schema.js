@@ -39,17 +39,15 @@ export const accessResourceDefault = (object, resource, range) => {
     const [min, max] = setRangeByUnit(resource_defaults, object.unit);
     return (
       {
-        min: Math.max(min || -Infinity, range[0]),
+        min: Math.max(min < range[1] ? min : -Infinity, range[0]),
         max: Math.min(max > range[0] ? max : Infinity, range[1])
       });
   } else {
-    // const [min, max] = setRangeByUnit(resource_defaults[resource] || range, object.unit);
-
     const [min, max] = resource_defaults[resource] ? setRangeByUnit(resource_defaults[resource], object.unit) : [];
 
     return (
       {
-        min: Math.max(min || -Infinity, range[0]),
+        min: Math.max(min < range[1] ? min : -Infinity, range[0]),
         max: Math.min(max > range[0] ? max : Infinity, range[1])
       });
   }
