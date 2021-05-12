@@ -200,7 +200,7 @@ function drawHeader (doc, { selectedArea }) {
   );
   doc.image(
     UCSBLogo,
-    (doc.page.width - (options.margin * 4.5)),
+    (doc.page.width - (options.margin * 4.5) + 2),
     options.margin + 18,
     {
       height: 10
@@ -520,7 +520,7 @@ function drawAnalysisInput (doc, data) {
    */
   doc.addPage();
   // Background color on about section
-  doc.rect(0, options.headerHeight - 20, doc.page.width, doc.page.height / 2 + options.margin).fill('#f6f7f7');
+  doc.rect(0, options.headerHeight - 30, doc.page.width, doc.page.height / 2 + options.margin).fill('#f6f7f7');
   drawSectionHeader(
     'About the Tool',
     doc.x,
