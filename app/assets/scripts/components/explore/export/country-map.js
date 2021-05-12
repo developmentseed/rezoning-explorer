@@ -39,7 +39,7 @@ const options = {
 };
 
 // fetch fonts & images on init for use in PDF
-let baseFont, boldFont, REZLogo, WBGLogo, ESMAPLogo, LBLLogo;
+let baseFont, boldFont, REZLogo, WBGLogo, ESMAPLogo, UCSBLogo;
 async function initStyles () {
   await fetch('/assets/fonts/IBM-Plex-Sans-regular.ttf')
     .then((response) => response.arrayBuffer())
@@ -67,10 +67,10 @@ async function initStyles () {
     .then((logo) => {
       ESMAPLogo = logo;
     });
-  await fetch('/assets/graphics/content/logos/logo-lbl.jpeg')
+  await fetch('/assets/graphics/content/logos/logo-ucsb.png')
     .then((response) => response.arrayBuffer())
     .then((logo) => {
-      LBLLogo = logo;
+      UCSBLogo = logo;
     });
 }
 
@@ -97,48 +97,27 @@ function drawHeader (doc, selectedArea, selectedResource, gridMode, gridSize) {
 
   // Logos
   doc.image(
-    REZLogo,
-    (doc.page.width - (options.margin * 9)),
-    (options.margin / 2),
-    {
-      height: 18
-    }
-  );
-  doc
-    .fillColor(options.primaryColor)
-    .font(boldFont)
-    .fontSize(10)
-    .text(
-      'REZoning',
-      (doc.page.width - (options.margin * 9)) + 20,
-      (options.margin / 2) + 2,
-      {
-        align: 'left',
-        link: 'https://rezoning.surge.sh'
-      }
-    );
-  doc.image(
-    LBLLogo,
-    (doc.page.width - (options.margin * 7)) + 5,
-    (options.margin / 2),
-    {
-      height: 18
-    }
-  );
-  doc.image(
     WBGLogo,
-    (doc.page.width - (options.margin * 6)) + 10,
-    (options.margin / 2),
+    (doc.page.width - (options.margin * 4.5)),
+    (options.margin / 2) - 8,
     {
-      height: 18
+      height: 16.5
     }
   );
   doc.image(
     ESMAPLogo,
-    (doc.page.width - (options.margin * 3)) + 5,
-    (options.margin / 2),
+    (doc.page.width - (options.margin * 2.5) + 14),
+    (options.margin / 2) - 5,
     {
-      height: 18
+      height: 11
+    }
+  );
+  doc.image(
+    UCSBLogo,
+    (doc.page.width - (options.margin * 4.5)),
+    (options.margin / 2) + 18,
+    {
+      height: 10
     }
   );
 }
@@ -167,13 +146,35 @@ async function drawMap(doc) {
 
 function drawFooter(doc) {
   // Left attribution
+  doc.image(
+    REZLogo,
+    options.margin,
+    doc.page.height - (options.margin / 1.625),
+    {
+      height: 12,
+      continued: true
+    }
+  );
+  doc
+    .fillColor(options.primaryColor)
+    .font(boldFont)
+    .fontSize(10)
+    .text(
+      'REZoning',
+      options.margin + 20,
+      doc.page.height - (options.margin / 1.625),
+      {
+        continued: true,
+        lineBreak: false
+      }
+    );
   doc
     .fillColor(options.baseFontColor)
     .font(baseFont)
     .fontSize(6)
     .text(
       'This map is generated dynamically from the REZoning application. For more information, please visit https://rezoning.surge.sh',
-      options.margin,
+      options.margin * 3,
       doc.page.height - (options.margin / 2),
       {
         height: 16,

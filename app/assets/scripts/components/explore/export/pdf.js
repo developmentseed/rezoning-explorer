@@ -42,7 +42,7 @@ const options = {
 };
 
 // fetch fonts & images on init for use in PDF
-let styles, baseFont, boldFont, Logo, WBGLogo, ESMAPLogo, LBLLogo;
+let styles, baseFont, boldFont, Logo, WBGLogo, ESMAPLogo, UCSBLogo;
 async function initStyles () {
   await fetch('/assets/fonts/IBM-Plex-Sans-regular.ttf')
     .then((response) => response.arrayBuffer())
@@ -70,10 +70,10 @@ async function initStyles () {
     .then((logo) => {
       ESMAPLogo = logo;
     });
-  await fetch('/assets/graphics/content/logos/logo-lbl.jpeg')
+  await fetch('/assets/graphics/content/logos/logo-ucsb.png')
     .then((response) => response.arrayBuffer())
     .then((logo) => {
-      LBLLogo = logo;
+      UCSBLogo = logo;
     });
 
   styles = {
@@ -181,36 +181,31 @@ function drawHeader (doc, { selectedArea }) {
     .fontSize(subTitleSize)
     .text('Analysis of suitable zones for solar, onshore wind and offshore wind development', options.margin, options.margin + 24);
 
-  // Right Title
-  doc
-    .fillColor(options.baseFontColor)
-    .font(boldFont)
-    .fontSize(rightTitleSize)
-    .text(
-      'REZoning - a World Bank Group project',
-      doc.page.width - options.colWidthTwoCol - options.margin,
-      options.margin,
-      {
-        width: options.colWidthTwoCol,
-        align: 'right'
-      }
-    );
-
-  // Right Subtitle
-  doc
-    .fillColor(options.secondaryFontColor)
-    .font(baseFont)
-    .fontSize(subTitleSize)
-    .text(
-      'Identify project areas for solar, onshore wind and offshore wind development',
-      doc.page.width - options.colWidthTwoCol - options.margin,
-      options.margin + 16,
-      {
-        width: options.colWidthTwoCol,
-        height: 16,
-        align: 'right'
-      }
-    );
+  // Right Logos
+  doc.image(
+    WBGLogo,
+    (doc.page.width - (options.margin * 4.5)),
+    options.margin - 8,
+    {
+      height: 16.5
+    }
+  );
+  doc.image(
+    ESMAPLogo,
+    (doc.page.width - (options.margin * 2.5) + 14),
+    options.margin - 5,
+    {
+      height: 11
+    }
+  );
+  doc.image(
+    UCSBLogo,
+    (doc.page.width - (options.margin * 4.5)),
+    options.margin + 18,
+    {
+      height: 10
+    }
+  );
 
   // Move cursor down
   doc.y = options.margin + leftTitleSize + subTitleSize + padding;
