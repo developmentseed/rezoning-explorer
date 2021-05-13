@@ -13,7 +13,7 @@ import FormContext from '../../../context/form-context';
 import MapContext from '../../../context/map-context';
 import theme from '../../../styles/theme/theme';
 import { rgba } from 'polished';
-import { RESOURCES } from '../../explore/panel-data';
+import { RESOURCES, apiResourceNameMap } from '../../explore/panel-data';
 import MapLegend from './map-legend';
 import { renderZoneDetailsList } from './../../explore/focus-zone';
 
@@ -303,11 +303,12 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
   const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
 
   // If area of country type, prepare path string to add to URL
-  const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
+  const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}/${apiResourceNameMap[resource]}` : '';
 
   layers.forEach((layer) => {
     const { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
-    const source = map.getSource(`${layerId}_source`);
+    const sourceId = `${layerId}_source`;
+    const source = map.getSource(sourceId);
 
     let tiles;
     if (layerTiles && !layerTiles.includes('/layers/')) {
@@ -319,6 +320,11 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
     /* If source exists, replace the tiles and return */
     if (source) {
       source.tiles = [tiles];
+      source.tiles = [tiles];
+      map.style.sourceCaches[sourceId].clearTiles();
+      map.style.sourceCaches[sourceId].update(map.transform);
+      map.triggerRepaint();
+
       if (layer.visible) {
         map.setLayoutProperty(layerId, 'visibility', 'visible');
       } else {
@@ -450,6 +456,7 @@ function MbMap (props) {
       addInputLayersToMap(map, initializedLayers, selectedArea, selectedResource);
 
       const _output = outputLayers.map(l => {
+        map.setLayoutProperty(l.id, 'visibility', 'none');
         return ({
           ...l,
           disabled: l.category === 'output',
@@ -464,58 +471,7 @@ function MbMap (props) {
 
       setMapLayers(mLayers);
     }
-  }, [map, selectedArea, /* selectedResource, */ inputLayers]);
-
-  /*
-   * This function updates the visible resource layer when
-  */
-  useEffect(() => {
-    if (map && inputLayers.isReady() && mapLayers.length) {
-      const rLayerName = getResourceLayerName(selectedResource);
-
-      /* If resouce is wind, we may need to update the
-       * tiles url because
-       * wind and offshore wind use the same layer,
-       * but with a mask param for offshore
-       */
-      const offshoreWindMask = selectedResource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
-
-      const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
-
-      const tiles = `${config.apiEndpoint}/layers${countryPath}/${rLayerName}/{z}/{x}/{y}.png?colormap=inferno${offshoreWindMask}`;
-
-      const sourceId = `${rLayerName}_source`;
-      const source = map.getSource(sourceId);
-      if (!source) {
-        return;
-      }
-      source.tiles = [tiles];
-      map.style.sourceCaches[sourceId].clearTiles();
-      map.style.sourceCaches[sourceId].update(map.transform);
-      map.triggerRepaint();
-
-      setMapLayers(
-        mapLayers.map(l => {
-          if (l.id === rLayerName) {
-            map.setLayoutProperty(l.id, 'visibility', 'visible');
-            return {
-              ...l,
-              visible: true,
-              disabled: l.category === 'output'
-            };
-          } else {
-            map.setLayoutProperty(l.id, 'visibility', 'none');
-            return {
-              ...l,
-              visible: false,
-              disabled: l.category === 'output'
-
-            };
-          }
-        })
-      );
-    }
-  }, [map, selectedResource, selectedArea, mapLayers.length]);
+  }, [map, selectedArea, selectedResource, inputLayers]);
 
   // Watch window size changes
 
@@ -602,6 +558,7 @@ function MbMap (props) {
   useEffect(() => {
     if (!map || !currentZones.isReady()) return;
     // Update GeoJSON source, applying hover effect if any
+
     map.getSource(ZONES_BOUNDARIES_SOURCE_ID).setData({
       type: 'FeatureCollection',
       features: currentZones.getData().map(z => ({
@@ -640,6 +597,7 @@ function MbMap (props) {
     // Update filter expression for boundaries layer
     map.setFilter(ZONES_BOUNDARIES_LAYER_ID, [
       'all',
+      ['>', ['get', 'zone_score'], 0], // always ignore 0 zones
       ['>=', ['get', 'zone_score'], maxZoneScore.input.value.min],
       ['<=', ['get', 'zone_score'], maxZoneScore.input.value.max],
       ...(maxLCOE.active ? [

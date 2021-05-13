@@ -1,6 +1,7 @@
 import { fetchJSON, makeAPIReducer } from './reduxeed';
 import config from '../../config';
 import { wrapLogReducer } from './../contexeed';
+import { apiResourceNameMap } from '../../components/explore/panel-data';
 
 const { apiEndpoint } = config;
 
@@ -11,11 +12,11 @@ export const filterRangesReducer = wrapLogReducer(
 /*
  * Fetch filter ranges for the selected area from API
  */
-export async function fetchFilterRanges (selectedAreaId, dispatch) {
+export async function fetchFilterRanges (selectedAreaId, selectedResouce, dispatch) {
   dispatch({ type: 'REQUEST_FILTER_RANGES' });
   try {
     const layers = (
-      await fetchJSON(`${apiEndpoint}/filter/${selectedAreaId}/layers`)
+      await fetchJSON(`${apiEndpoint}/filter/${selectedAreaId}/${apiResourceNameMap[selectedResouce]}/layers`)
     ).body;
 
     // Filters have "f_" prefix, apply

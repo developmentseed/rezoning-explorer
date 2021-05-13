@@ -47,11 +47,11 @@ export function FormProvider (props) {
   useEffect(() => {
     setShowSelectAreaModal(!selectedAreaId);
     setShowSelectResourceModal(!selectedResource);
-  }, [selectedAreaId, selectedResource]);
 
-  useEffect(() => {
-    fetchFilterRanges(selectedAreaId, dispatchFilterRanges);
-  }, [selectedAreaId]);
+    if (selectedResource) {
+      fetchFilterRanges(selectedAreaId, selectedResource, dispatchFilterRanges);
+    }
+  }, [selectedAreaId, selectedResource]);
 
   useEffect(() => {
     fetchFilters(dispatchFiltersList);
