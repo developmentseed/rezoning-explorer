@@ -21,7 +21,8 @@ import {
   RESOURCES,
   checkIncluded,
   getMultiplierByUnit,
-  resourceList
+  resourceList,
+  apiResourceNameMap
 } from '../components/explore/panel-data';
 
 // Prepare area dataset
@@ -320,7 +321,7 @@ export function ExploreProvider (props) {
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
 
     setOutputLayerUrl(
-      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}${offshoreWindMask}&colormap=viridis`
+      `${countryPath}/${apiResourceNameMap[selectedResource]}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}${offshoreWindMask}&colormap=viridis`
     );
 
     generateZones(filterString, weights, lcoe);
