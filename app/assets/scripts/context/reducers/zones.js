@@ -7,18 +7,19 @@ import theme from '../../styles/theme/theme';
 import squareGrid from '@turf/square-grid';
 import pLimit from 'p-limit';
 import { wrapLogReducer } from './../contexeed';
+import { apiResourceNameMap } from '../../components/explore/panel-data';
 
 const limit = pLimit(50);
 const { apiEndpoint } = config;
 
-async function getZoneSummary (feature, filterString, weights, lcoe, countryPath) {
+async function getZoneSummary (feature, filterString, weights, lcoe, countryPath, resource) {
   let summary = {
     lcoe: 0, zone_score: 0, generation_potential: 0, zone_output_density: 0, cf: 0
   };
 
   try {
     summary = (
-      await fetchJSON(`${apiEndpoint}/zone${countryPath}?${filterString}`, {
+      await fetchJSON(`${apiEndpoint}/zone${countryPath}/${apiResourceNameMap[resource]}?${filterString}`, {
         method: 'POST',
         body: JSON.stringify({
           aoi: feature.geometry,
@@ -121,7 +122,7 @@ export async function fetchZones (
     // Fetch Lcoe for each sub-area
     const zones = await Promise.all(
       features.map((z) =>
-        limit(() => getZoneSummary(z, filterString, weights, lcoe, countryPath))
+        limit(() => getZoneSummary(z, filterString, weights, lcoe, countryPath, selectedResource))
       )
     );
 

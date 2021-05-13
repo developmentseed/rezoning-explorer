@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState, useReducer, useRef } from 'react';
+import React, { createContext, useEffect, useState, useReducer, useRef, useMemo, useContext } from 'react';
 import T from 'prop-types';
 import * as topojson from 'topojson-client';
 import bbox from '@turf/bbox';
@@ -21,7 +21,8 @@ import {
   RESOURCES,
   checkIncluded,
   getMultiplierByUnit,
-  resourceList
+  resourceList,
+  apiResourceNameMap
 } from '../components/explore/panel-data';
 
 // Prepare area dataset
@@ -320,7 +321,7 @@ export function ExploreProvider (props) {
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
 
     setOutputLayerUrl(
-      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}${offshoreWindMask}&colormap=viridis`
+      `${countryPath}/${apiResourceNameMap[selectedResource]}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}${offshoreWindMask}&colormap=viridis`
     );
 
     generateZones(filterString, weights, lcoe);
@@ -392,6 +393,27 @@ export function ExploreProvider (props) {
     </>
   );
 }
+// Check if consumer function is used properly
+export const useExploreContext = (fnName) => {
+  const context = useContext(ExploreContext);
+
+  if (!context) {
+    throw new Error(
+      `The \`${fnName}\` hook must be used inside the <ExploreContext> component's context.`
+    );
+  }
+
+  return context;
+};
+export const useResource = () => {
+  const { selectedResource } = useExploreContext('useResource');
+
+  return useMemo(
+    () => ({
+      selectedResource
+    }), [selectedResource]
+  );
+};
 
 ExploreProvider.propTypes = {
   children: T.node

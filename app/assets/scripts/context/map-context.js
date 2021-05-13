@@ -1,13 +1,14 @@
 import React, { createContext, useState, useReducer, useEffect } from 'react';
 import T from 'prop-types';
 import { fetchInputLayers, inputLayersReducer } from './reducers/layers';
+
+import { useResource } from './explore-context';
 import { initialApiRequestState } from './contexeed';
 
 const MapContext = createContext({});
 export function MapProvider (props) {
   const [hoveredFeature, setHoveredFeature] = useState(null);
 
-  //
   // Init map state
   const [map, setMap] = useState(null);
   const [mapLayers, setMapLayers] = useState([]);
@@ -18,7 +19,7 @@ export function MapProvider (props) {
     initialApiRequestState
   );
   useEffect(() => {
-    fetchInputLayers(dispatchInputLayers);
+    fetchInputLayers(dispatchInputLayers)
   }, []);
 
   return (
