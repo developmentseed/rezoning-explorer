@@ -163,7 +163,7 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists, currentZones 
       .fill(0)
       .map((a, i) => i / domain),
     range: colormap({
-      colormap: 'viridis',
+      colormap: 'inferno',
       nshades: domain
     })
   });

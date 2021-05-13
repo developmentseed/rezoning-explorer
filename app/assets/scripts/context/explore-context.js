@@ -320,7 +320,7 @@ export function ExploreProvider (props) {
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
 
     setOutputLayerUrl(
-      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}${offshoreWindMask}&colormap=viridis`
+      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}${offshoreWindMask}&colormap=inferno`
     );
 
     generateZones(filterString, weights, lcoe);

@@ -313,7 +313,7 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
     if (layerTiles && !layerTiles.includes('/layers/')) {
       tiles = layerTiles;
     } else {
-      tiles = `${config.apiEndpoint}/layers${countryPath}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
+      tiles = `${config.apiEndpoint}/layers${countryPath}/${layerId}/{z}/{x}/{y}.png?colormap=inferno${offshoreWindMask}`;
     }
 
     /* If source exists, replace the tiles and return */
@@ -482,7 +482,7 @@ function MbMap (props) {
 
       const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
 
-      const tiles = `${config.apiEndpoint}/layers${countryPath}/${rLayerName}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
+      const tiles = `${config.apiEndpoint}/layers${countryPath}/${rLayerName}/{z}/{x}/{y}.png?colormap=inferno${offshoreWindMask}`;
 
       const sourceId = `${rLayerName}_source`;
       const source = map.getSource(sourceId);
