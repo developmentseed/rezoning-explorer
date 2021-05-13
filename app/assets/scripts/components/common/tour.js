@@ -33,6 +33,22 @@ const steps = [
     spotlightClicks: true
   },
   {
+    title: 'Generate Zones',
+    target: '#generate-zones',
+    content: 'Click the "Generate Zones" button to submit all spatial filters, economic and weight inputs and see all resulting zone scores and economic values.',
+    disableBeacon: true,
+    placement: 'top',
+    spotlightClicks: true
+  },
+  {
+    title: 'Contextual Layers',
+    target: '#toggle-raster-tray',
+    content: 'Activate contextual layers to visualize relevant spatial data and resulting output on the map. Additional contextual layers, such as roads, grid, location of airports, etc. can be activate in order to create a meaningful visual output.',
+    disableBeacon: true,
+    placement: 'right',
+    spotlightClicks: true
+  },
+  {
     title: 'Guided Tour',
     target: '#open-tour-trigger',
     content: 'Click here to reopen this guided tour at any time.',

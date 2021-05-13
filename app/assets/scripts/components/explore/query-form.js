@@ -305,6 +305,7 @@ function QueryForm (props) {
           Reset
         </Button>
         <Button
+          id='generate-zones'
           size='small'
           type='submit'
           disabled={!area || !resource}
