@@ -2,7 +2,6 @@ import React, { createContext, useState, useReducer, useEffect } from 'react';
 import T from 'prop-types';
 import { fetchInputLayers, inputLayersReducer } from './reducers/layers';
 
-import { useResource } from './explore-context';
 import { initialApiRequestState } from './contexeed';
 
 const MapContext = createContext({});
@@ -19,7 +18,7 @@ export function MapProvider (props) {
     initialApiRequestState
   );
   useEffect(() => {
-    fetchInputLayers(dispatchInputLayers)
+    fetchInputLayers(dispatchInputLayers);
   }, []);
 
   return (

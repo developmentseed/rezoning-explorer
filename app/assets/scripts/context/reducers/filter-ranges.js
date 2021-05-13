@@ -12,7 +12,7 @@ export const filterRangesReducer = wrapLogReducer(
 /*
  * Fetch filter ranges for the selected area from API
  */
-export async function fetchFilterRanges (selectedAreaId, selectedResouce,  dispatch) {
+export async function fetchFilterRanges (selectedAreaId, selectedResouce, dispatch) {
   dispatch({ type: 'REQUEST_FILTER_RANGES' });
   try {
     const layers = (
