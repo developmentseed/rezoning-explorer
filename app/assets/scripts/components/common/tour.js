@@ -18,7 +18,7 @@ const steps = [
   },
   {
     title: 'Adjust Economic Inputs (LCOE)',
-    target: '#lcoe-tab',
+    target: '#economics-tab',
     content: 'Next, adjust LCOE input as needed to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.',
     disableBeacon: true,
     placement: 'right',

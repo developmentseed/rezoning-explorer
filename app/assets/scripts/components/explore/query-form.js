@@ -277,7 +277,7 @@ function QueryForm (props) {
           resource={resource}
         />
         <LCOEForm
-          id='lcoe-tab'
+          id='economics-tab'
           name='Economics'
           icon='disc-dollar'
           lcoe={lcoeInd}
