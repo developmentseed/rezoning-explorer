@@ -11,7 +11,15 @@ const steps = [
   {
     title: 'Apply Spatial Filters',
     target: '#filters-tab',
-    content: 'First, set filters to exclude undesired areas. Spatial filters allow you to specify lower and upper thresholds for natural, infrastructure, environmental, and cultural areas. Certain areas can be masked out completely by toggling the respective filter switch off. Output LCOE and zone score values can also be filtered to narrow the returned results.',
+    content: 'First, set filters to exclude undesired areas. Spatial filters allow you to specify lower and upper thresholds for natural, infrastructure, environmental, and cultural areas. Certain areas can be masked out completely by toggling the respective filter switch off.',
+    disableBeacon: true,
+    placement: 'right',
+    spotlightClicks: true
+  },
+  {
+    title: 'Adjust Economic Inputs (LCOE)',
+    target: '#economics-tab',
+    content: 'Next, adjust LCOE input as needed to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
@@ -19,15 +27,23 @@ const steps = [
   {
     title: 'Set Zone Weighting Criteria',
     target: '#weights-tab',
-    content: 'Next, set weights to score zones accordingly. Adjusting the weights of parameters will change the calculated aggregated zone scores.',
+    content: 'Finally, set weights to score zones accordingly. Adjusting the weights of parameters will change the calculated aggregated zone scores.',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
   },
   {
-    title: 'Adjust Economic Inputs (LCOE)',
-    target: '#lcoe-tab',
-    content: 'Adjust LCOE input as needed to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.',
+    title: 'Generate Zones',
+    target: '#generate-zones',
+    content: 'Click the "Generate Zones" button to submit all spatial filters, economic and weight inputs and see all resulting zone scores and economic values.',
+    disableBeacon: true,
+    placement: 'top',
+    spotlightClicks: true
+  },
+  {
+    title: 'Contextual Layers',
+    target: '#toggle-raster-tray',
+    content: 'Activate contextual layers to visualize relevant spatial data and resulting output on the map. Additional contextual layers, such as roads, grid, location of airports, etc. can be activate in order to create a meaningful visual output.',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
