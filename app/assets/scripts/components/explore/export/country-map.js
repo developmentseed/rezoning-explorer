@@ -114,10 +114,10 @@ function drawHeader (doc, selectedArea, selectedResource, gridMode, gridSize) {
   );
   doc.image(
     UCSBLogo,
-    (doc.page.width - (options.margin * 4.5) + 2),
-    (options.margin / 2) + 18,
+    (doc.page.width - (options.margin * 3.75)),
+    (options.margin / 2) + 20,
     {
-      height: 10
+      height: 6
     }
   );
 }
