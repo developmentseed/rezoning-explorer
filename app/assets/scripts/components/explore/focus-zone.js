@@ -58,7 +58,7 @@ export const formatIndicator = function (id, value) {
         decimals: indicatorsDecimals.zone_output_density
       });
     case 'suitable_area':
-      return formatThousands(value / 1000000)
+      return formatThousands(value / 1000000);
     default:
       return formatThousands(value);
   }
