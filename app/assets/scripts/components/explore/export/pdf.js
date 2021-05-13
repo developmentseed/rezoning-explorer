@@ -179,7 +179,7 @@ function drawHeader (doc, { selectedArea }) {
     .fillColor(options.secondaryFontColor)
     .font(baseFont)
     .fontSize(subTitleSize)
-    .text('Analysis of suitable zones for solar, onshore wind and offshore wind development', options.margin, options.margin + 24);
+    .text('Analysis of suitable zones for solar, onshore wind and offshore wind development', options.margin, options.margin + 28);
 
   // Right Logos
   doc.image(
@@ -200,10 +200,10 @@ function drawHeader (doc, { selectedArea }) {
   );
   doc.image(
     UCSBLogo,
-    (doc.page.width - (options.margin * 4.5) + 2),
-    options.margin + 22,
+    (doc.page.width - (options.margin * 3.75)),
+    options.margin + 24,
     {
-      height: 10
+      height: 6
     }
   );
 
