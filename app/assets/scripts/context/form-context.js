@@ -47,7 +47,10 @@ export function FormProvider (props) {
   useEffect(() => {
     setShowSelectAreaModal(!selectedAreaId);
     setShowSelectResourceModal(!selectedResource);
-    fetchFilterRanges(selectedAreaId, selectedResource, dispatchFilterRanges);
+
+    if (selectedResource) {
+      fetchFilterRanges(selectedAreaId, selectedResource, dispatchFilterRanges);
+    }
   }, [selectedAreaId, selectedResource]);
 
   useEffect(() => {
