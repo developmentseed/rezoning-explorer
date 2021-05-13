@@ -50,7 +50,7 @@ export const zonesSummary = (zones) => {
   );
 
   return [
-    { label: 'Matching Zones', data: stats.zonesCount },
+    { label: 'Zones', data: stats.zonesCount },
     {
       label: 'Total Area',
       unit: 'km²',
