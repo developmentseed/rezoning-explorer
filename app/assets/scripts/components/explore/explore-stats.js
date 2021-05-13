@@ -60,7 +60,7 @@ export const zonesSummary = (zones) => {
           : '--'
     },
     {
-      label: 'Output by Year',
+      label: 'Annual Energy Output Potential',
       unit: 'GWh',
       data:
         stats.zonesOutput > 0
@@ -68,7 +68,7 @@ export const zonesSummary = (zones) => {
           : '--'
     },
     {
-      label: 'Output Density',
+      label: 'Annual Energy Output Density',
       unit: 'MWh/km²',
       data:
         stats.zonesOutput > 0
