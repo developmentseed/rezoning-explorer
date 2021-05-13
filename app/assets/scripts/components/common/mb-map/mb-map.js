@@ -307,7 +307,7 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
 
   layers.forEach((layer) => {
     const { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
-    const sourceId = `${layerId}_source`
+    const sourceId = `${layerId}_source`;
     const source = map.getSource(sourceId);
 
     let tiles;
@@ -471,58 +471,6 @@ function MbMap (props) {
       setMapLayers(mLayers);
     }
   }, [map, selectedArea, selectedResource, inputLayers]);
-
-  /*
-   * This function updates the visible resource layer when
-  */
-  useEffect(() => {
-    return
-    if (map && inputLayers.isReady() && mapLayers.length) {
-      const rLayerName = getResourceLayerName(selectedResource);
-
-      /* If resouce is wind, we may need to update the
-       * tiles url because
-       * wind and offshore wind use the same layer,
-       * but with a mask param for offshore
-       */
-      const offshoreWindMask = selectedResource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
-
-      const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}/${apiResourceNameMap[selectedResource]}` : '';
-
-      const tiles = `${config.apiEndpoint}/layers${countryPath}/${rLayerName}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
-
-      const sourceId = `${rLayerName}_source`;
-      const source = map.getSource(sourceId);
-      if (!source) {
-        return;
-      }
-      source.tiles = [tiles];
-      map.style.sourceCaches[sourceId].clearTiles();
-      map.style.sourceCaches[sourceId].update(map.transform);
-      map.triggerRepaint();
-
-      setMapLayers(
-        mapLayers.map(l => {
-          if (l.id === rLayerName) {
-            map.setLayoutProperty(l.id, 'visibility', 'visible');
-            return {
-              ...l,
-              visible: true,
-              disabled: l.category === 'output'
-            };
-          } else {
-            map.setLayoutProperty(l.id, 'visibility', 'none');
-            return {
-              ...l,
-              visible: false,
-              disabled: l.category === 'output'
-
-            };
-          }
-        })
-      );
-    }
-  }, [map, selectedResource, selectedArea, mapLayers.length]);
 
   // Watch window size changes
 
