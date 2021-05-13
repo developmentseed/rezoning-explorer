@@ -329,6 +329,7 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
         map.setLayoutProperty(layerId, 'visibility', 'visible');
       } else {
         map.setLayoutProperty(layerId, 'visibility', 'none');
+        console.log('set not visible', layerId, layer.name)
       }
       return;
     }
@@ -456,6 +457,7 @@ function MbMap (props) {
       addInputLayersToMap(map, initializedLayers, selectedArea, selectedResource);
 
       const _output = outputLayers.map(l => {
+        map.setLayoutProperty(l.id, 'visibility', 'none')
         return ({
           ...l,
           disabled: l.category === 'output',
