@@ -357,8 +357,8 @@ function drawMapArea (
       return [label, value];
     })
   };
-  summaryTable.cells.unshift(['Resource', selectedResource]);
   summaryTable.cells.unshift(['Zone Type and Size', gridMode ? `Grid: ${gridSize}km²` : 'Administrative Boundaries']);
+  summaryTable.cells.unshift(['Resource', selectedResource]);
   doc.table(summaryTable, legendRight, doc.y + 12, { width: (options.colWidthTwoCol) });
   doc.y += get(options, 'tables.padding', 0);
 }
