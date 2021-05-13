@@ -303,7 +303,7 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
   const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
 
   // If area of country type, prepare path string to add to URL
-  const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
+  const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}/${apiResourceNameMap[resource]}` : '';
 
   layers.forEach((layer) => {
     const { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
@@ -313,7 +313,7 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
     if (layerTiles && !layerTiles.includes('/layers/')) {
       tiles = layerTiles;
     } else {
-      tiles = `${config.apiEndpoint}/layers${countryPath}/${apiResourceNameMap[resource]}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
+      tiles = `${config.apiEndpoint}/layers${countryPath}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
     }
 
     /* If source exists, replace the tiles and return */
@@ -480,9 +480,9 @@ function MbMap (props) {
        */
       const offshoreWindMask = selectedResource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
 
-      const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
+      const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}/${apiResourceNameMap[selectedResource]}` : '';
 
-      const tiles = `${config.apiEndpoint}/layers${countryPath}/${apiResourceNameMap[selectedResource]}/${rLayerName}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
+      const tiles = `${config.apiEndpoint}/layers${countryPath}/${rLayerName}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
 
       const sourceId = `${rLayerName}_source`;
       const source = map.getSource(sourceId);
