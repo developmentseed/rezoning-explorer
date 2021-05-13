@@ -299,7 +299,7 @@ function drawMapArea (
   // Create page area for map
   const overflow = false;
   const mapWidth = doc.page.width - options.margin * 2;
-  const mapHeight = (mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio) - options.margin;
+  const mapHeight = (mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio) - options.margin * 2;
   const mapContainer = {
     cover: [mapWidth, mapHeight],
     align: 'center',
@@ -634,7 +634,7 @@ export default async function exportPDF (data, map, setMap) {
   const mapWidth = doc.page.width - options.margin * 2;
   const mapHeight =
     (mapAspectRatio > 1 ? mapWidth : mapWidth * mapAspectRatio) -
-    options.margin;
+    options.margin * 2;
   const scaleCanvas = await html2canvas(
     document.querySelector('.mapboxgl-ctrl-scale')
   );
