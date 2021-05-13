@@ -307,7 +307,8 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
 
   layers.forEach((layer) => {
     const { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
-    const source = map.getSource(`${layerId}_source`);
+    const sourceId = `${layerId}_source`
+    const source = map.getSource(sourceId);
 
     let tiles;
     if (layerTiles && !layerTiles.includes('/layers/')) {
@@ -319,6 +320,11 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
     /* If source exists, replace the tiles and return */
     if (source) {
       source.tiles = [tiles];
+      source.tiles = [tiles];
+      map.style.sourceCaches[sourceId].clearTiles();
+      map.style.sourceCaches[sourceId].update(map.transform);
+      map.triggerRepaint();
+
       if (layer.visible) {
         map.setLayoutProperty(layerId, 'visibility', 'visible');
       } else {
@@ -464,12 +470,13 @@ function MbMap (props) {
 
       setMapLayers(mLayers);
     }
-  }, [map, selectedArea, /* selectedResource, */ inputLayers]);
+  }, [map, selectedArea, selectedResource, inputLayers]);
 
   /*
    * This function updates the visible resource layer when
   */
   useEffect(() => {
+    return
     if (map && inputLayers.isReady() && mapLayers.length) {
       const rLayerName = getResourceLayerName(selectedResource);
 
