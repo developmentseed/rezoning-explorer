@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components';
 import StatSummary from '../common/table';
 import { themeVal } from '../../styles/utils/general';
 import { formatThousands } from '../../utils/format';
-import area from '@turf/area';
 
 const StatsWrapper = styled.section`
   display: grid;
@@ -38,8 +37,7 @@ export const zonesSummary = (zones) => {
       return {
         zonesCount: stats.zonesCount + 1,
         zonesOutput: stats.zonesOutput + summary.generation_potential,
-        zonesArea:
-          stats.zonesArea + area(zone) / 1000000
+        zonesArea: stats.zonesArea + summary.suitable_area / 1000000
       };
     },
     {
@@ -52,7 +50,7 @@ export const zonesSummary = (zones) => {
   return [
     { label: 'Matching Zones', data: stats.zonesCount },
     {
-      label: 'Total Area',
+      label: 'Suitable Area',
       unit: 'km²',
       data:
         stats.zonesArea > 0
