@@ -602,6 +602,7 @@ function MbMap (props) {
   useEffect(() => {
     if (!map || !currentZones.isReady()) return;
     // Update GeoJSON source, applying hover effect if any
+
     map.getSource(ZONES_BOUNDARIES_SOURCE_ID).setData({
       type: 'FeatureCollection',
       features: currentZones.getData().map(z => ({
@@ -640,6 +641,7 @@ function MbMap (props) {
     // Update filter expression for boundaries layer
     map.setFilter(ZONES_BOUNDARIES_LAYER_ID, [
       'all',
+      ['>', ['get', 'zone_score'], 0], // always ignore 0 zones
       ['>=', ['get', 'zone_score'], maxZoneScore.input.value.min],
       ['<=', ['get', 'zone_score'], maxZoneScore.input.value.max],
       ...(maxLCOE.active ? [

@@ -26,7 +26,7 @@ function ZoneAnalysisPanel (props) {
 
     const zs = zone_score >= maxZoneScore.min && zone_score <= maxZoneScore.max;
     const zl = maxLCOE ? (lcoe >= maxLCOE.min && lcoe <= maxLCOE.max) : true;
-    return zs && zl;
+    return zs && zl && zone_score > 0;
   });
 
   return (
