@@ -6,6 +6,7 @@ import useQsState from '../../utils/qs-state-hook';
 import {
   PanelBlock,
   PanelBlockHeader,
+  PanelBlockBody,
   PanelBlockFooter
 } from '../common/panel-block';
 import TabbedBlockBody from '../common/tabbed-block-body';
@@ -17,6 +18,7 @@ import GridSetter from './grid-setter';
 import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap } from './panel-data';
 import { HeadOption, HeadOptionHeadline } from '../../styles/form/form';
 import { FiltersForm, WeightsForm, LCOEForm } from './form';
+import Prose from '../../styles/type/prose';
 
 import {
   initByType,
@@ -48,7 +50,12 @@ const SubmissionSection = styled(PanelBlockFooter)`
   gap: 0rem 1rem;
 `;
 
-function QueryForm (props) {
+const PreAnalysisMessage = styled(Prose)`
+  padding: 1rem 1.5rem;
+  text-align: center;
+`;
+
+function QueryForm(props) {
   const {
     area,
     resource,
@@ -206,7 +213,97 @@ function QueryForm (props) {
 
   /* Wait until elements have mounted and been parsed to render the query form */
   if (firstLoad.current) {
-    return null;
+    return (
+      <PanelBlock>
+        <PanelBlockHeader>
+          <HeadOption>
+            <HeadOptionHeadline id='selected-area-prime-panel-heading'>
+              <Heading size='large' variation='primary'>
+                {area ? area.name : 'Select Area'}
+              </Heading>
+              <EditButton
+                id='select-area-button'
+                onClick={onAreaEdit}
+                title='Edit Area'
+              >
+                Edit Area Selection
+              </EditButton>
+            </HeadOptionHeadline>
+          </HeadOption>
+
+          <HeadOption>
+            <HeadOptionHeadline id='selected-resource-prime-panel-heading'>
+              <Subheading>Resource: </Subheading>
+              <Subheading variation='primary'>
+                <Subheadingstrong>
+                  {resource || 'Select Resource'}
+                </Subheadingstrong>
+              </Subheading>
+              <EditButton
+                id='select-resource-button'
+                onClick={onResourceEdit}
+                title='Edit Resource'
+              >
+                Edit Resource Selection
+              </EditButton>
+            </HeadOptionHeadline>
+          </HeadOption>
+
+          <HeadOption>
+            <HeadOptionHeadline>
+              <Subheading>Zone Type and Size: </Subheading>
+              <Subheading variation='primary'>
+                <Subheadingstrong>
+                  {gridMode ? `${gridSize} km²` : 'Boundaries'}
+                </Subheadingstrong>
+              </Subheading>
+
+              <GridSetter
+                gridOptions={GRID_OPTIONS}
+                gridSize={gridSize}
+                setGridSize={setGridSize}
+                gridMode={gridMode}
+                setGridMode={setGridMode}
+                disableBoundaries={resource === 'Off-Shore Wind'}
+              />
+            </HeadOptionHeadline>
+          </HeadOption>
+        </PanelBlockHeader>
+        <PanelBlockBody>
+          <PreAnalysisMessage>
+            Select Area and Resource to view and interact with input parameters.
+          </PreAnalysisMessage>
+        </PanelBlockBody>
+        <SubmissionSection>
+          <Button
+            size='small'
+            type='reset'
+            disabled={!area || !resource}
+            onClick={resetClick}
+            variation='primary-raised-light'
+            useIcon='arrow-loop'
+          >
+            Reset
+          </Button>
+          <Button
+            id='generate-zones'
+            size='small'
+            type='submit'
+            disabled={!area || !resource}
+            onClick={applyClick}
+            variation='primary-raised-dark'
+            useIcon='tick--small'
+            title={
+              !area || !resource
+                ? 'Both area and resource must be set to generate zones'
+                : 'Generate Zones Analysis'
+            }
+          >
+            Generate Zones
+          </Button>
+        </SubmissionSection>
+      </PanelBlock>
+    );
   }
 
   return (
@@ -312,7 +409,11 @@ function QueryForm (props) {
           onClick={applyClick}
           variation='primary-raised-dark'
           useIcon='tick--small'
-          title={!area || !resource ? 'Both area and resource must be set to generate zones' : 'Generate Zones Analysis'}
+          title={
+            !area || !resource
+              ? 'Both area and resource must be set to generate zones'
+              : 'Generate Zones Analysis'
+          }
         >
           Generate Zones
         </Button>
