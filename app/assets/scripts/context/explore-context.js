@@ -308,7 +308,7 @@ export function ExploreProvider (props) {
       .join('&');
 
     // If area of country type, prepare path string to add to URL
-    const countryPath = selectedArea.type === 'country' ? `${selectedArea.id}` : '';
+    const countryPath = selectedArea.type === 'country' ? `${selectedArea.id}/${apiResourceNameMap[selectedResource]}` : '';
 
     // Off-shore mask flag
     const offshoreWindMask = selectedResource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
@@ -321,7 +321,7 @@ export function ExploreProvider (props) {
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
 
     setOutputLayerUrl(
-      `${countryPath}/${apiResourceNameMap[selectedResource]}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}${offshoreWindMask}&colormap=viridis`
+      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}${offshoreWindMask}&colormap=viridis`
     );
 
     generateZones(filterString, weights, lcoe);
