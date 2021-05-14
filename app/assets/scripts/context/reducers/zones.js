@@ -12,14 +12,14 @@ import { apiResourceNameMap } from '../../components/explore/panel-data';
 const limit = pLimit(50);
 const { apiEndpoint } = config;
 
-async function getZoneSummary (feature, filterString, weights, lcoe, countryPath, resource) {
+async function getZoneSummary (feature, filterString, weights, lcoe, countryResourcePath) {
   let summary = {
     lcoe: 0, zone_score: 0, generation_potential: 0, zone_output_density: 0, cf: 0
   };
 
   try {
     summary = (
-      await fetchJSON(`${apiEndpoint}/zone${countryPath}?${filterString}`, {
+      await fetchJSON(`${apiEndpoint}/zone${countryResourcePath}?${filterString}`, {
         method: 'POST',
         body: JSON.stringify({
           aoi: feature.geometry,
@@ -116,13 +116,13 @@ export async function fetchZones (
       }
     }
 
-    // If area of country type, prepare path string to add to URL
-    const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}/${apiResourceNameMap[selectedResource]}` : '';
+    // If area of country type, prepare country & resource path string to add to URL
+    const countryResourcePath = selectedArea.type === 'country' ? `/${selectedArea.id}/${apiResourceNameMap[selectedResource]}` : '';
 
     // Fetch Lcoe for each sub-area
     const zones = await Promise.all(
       features.map((z) =>
-        limit(() => getZoneSummary(z, filterString, weights, lcoe, countryPath, selectedResource))
+        limit(() => getZoneSummary(z, filterString, weights, lcoe, countryResourcePath))
       )
     );
 

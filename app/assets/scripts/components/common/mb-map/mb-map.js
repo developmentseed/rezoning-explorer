@@ -302,8 +302,8 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
   // Off-shore mask flag
   const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
 
-  // If area of country type, prepare path string to add to URL
-  const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}/${apiResourceNameMap[resource]}` : '';
+  // If area of country type, prepare country & resource path string to add to URL
+  const countryResourcePath = selectedArea.type === 'country' ? `/${selectedArea.id}/${apiResourceNameMap[resource]}` : '';
 
   layers.forEach((layer) => {
     const { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
@@ -314,7 +314,7 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
     if (layerTiles && !layerTiles.includes('/layers/')) {
       tiles = layerTiles;
     } else {
-      tiles = `${config.apiEndpoint}/layers${countryPath}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
+      tiles = `${config.apiEndpoint}/layers${countryResourcePath}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
     }
 
     /* If source exists, replace the tiles and return */
