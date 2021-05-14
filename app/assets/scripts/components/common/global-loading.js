@@ -6,6 +6,7 @@ import styled, { keyframes } from 'styled-components';
 
 import { themeVal } from '../../styles/utils/general';
 import collecticon from '../../styles/collecticons';
+import { formatThousands } from '../../utils/format';
 
 // Minimum time the loading is visible.
 const MIN_TIME = 512;
@@ -93,7 +94,9 @@ export class GlobalLoading extends React.Component {
     this.state = {
       showTimestamp: 0, // eslint-disable-line
       message: '', // eslint-disable-line
-      revealed: false
+      revealed: false,
+      totalZones: 0,
+      completeZones: 0
     };
 
     if (theGlobalLoading !== null) {
@@ -134,7 +137,11 @@ export class GlobalLoading extends React.Component {
   }
 
   render () {
-    const { revealed, message } = this.state;
+    let { revealed, message, totalZones, completeZones } = this.state;
+
+    if (message && totalZones > 0 && completeZones > 0) {
+      message = `${message} (${formatThousands(completeZones)} / ${formatThousands(totalZones)})`;
+    }
 
     return createPortal(
       <CSSTransition
@@ -266,5 +273,20 @@ export function hideGlobalLoading (count = 1, force = false) {
         if (theGlobalLoadingCount === 0) return hide();
       }, MIN_TIME - diff);
     }
+  });
+}
+
+export function updateLoadingProgress (completeZones, totalZones) {
+  return new Promise(resolve => {
+    if (theGlobalLoading === null) {
+      throw new Error('<GlobalLoading /> component not mounted');
+    }
+
+    theGlobalLoading.setState({
+      completeZones,
+      totalZones
+    });
+
+    resolve();
   });
 }
