@@ -130,9 +130,7 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists, currentZones 
     // CurrentZones will be defined at this point
     // LCOE layer can only be made visible after zones are generated
     try {
-      /* eslint-disable-next-line */
-      const { capacity_factor } = currentZones.getData().lcoe;
-      rasterRange = filterRanges.getData().lcoe[capacity_factor].total;
+      rasterRange = filterRanges.getData().lcoe;
     } catch {
       // Current zones has been invalidated
       // Visibility of lcoe layer not updated in this render cycle
