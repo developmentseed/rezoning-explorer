@@ -17,6 +17,7 @@ export const castByFilterType = (type) => {
     case BOOL:
       return Boolean;
     case DROPDOWN:
+      return ({ name, id }) => id;
     case MULTI:
     case TEXT:
       return String;
@@ -24,6 +25,31 @@ export const castByFilterType = (type) => {
       return Number;
     default:
       return String;
+  }
+};
+
+/* eslint-disable camelcase */
+export const accessResourceDefault = (object, resource, range) => {
+  const { resource_defaults } = object;
+
+  if (!resource_defaults) {
+    return null;
+  }
+  if (Array.isArray(resource_defaults)) {
+    const [min, max] = setRangeByUnit(resource_defaults, object.unit);
+    return (
+      {
+        min: Math.max(min < range[1] ? min : -Infinity, range[0]),
+        max: Math.min(max > range[0] ? max : Infinity, range[1])
+      });
+  } else {
+    const [min, max] = resource_defaults[resource] ? setRangeByUnit(resource_defaults[resource], object.unit) : [];
+
+    return (
+      {
+        min: Math.max(min < range[1] ? min : -Infinity, range[0]),
+        max: Math.min(max > range[0] ? max : Infinity, range[1])
+      });
   }
 };
 
@@ -38,7 +64,7 @@ export const initByType = (obj, ranges, resource) => {
       obj.input.range ||
       DEFAULT_RANGE,
     obj.unit
-  ).map(round);
+  ).map((v) => round(v));
 
   switch (input.type) {
     case SLIDER:
@@ -48,7 +74,7 @@ export const initByType = (obj, ranges, resource) => {
         unit: input.unit,
         value:
           input.value ||
-          input.default ||
+          accessResourceDefault(obj, resource, range) ||
           (obj.isRange ? { min: range[0], max: range[1] } : range[0])
       };
     case TEXT:
@@ -68,7 +94,7 @@ export const initByType = (obj, ranges, resource) => {
       return {
         ...input,
         // For multi select, select all by default
-        value: input.value || input.options.map((e, i) => i),
+        value: input.value || obj.resource_defaults || input.options.map((e, i) => i),
         unit: null
       };
     case DROPDOWN:
@@ -245,11 +271,20 @@ export const lcoeQsSchema = (c, resource) => {
         const parsedValue = castByFilterType(base.input.type)(qsvalue);
 
         // Validate supported LCOE types: options, integer, number
-        if (
-          base.input.options &&
-          get(base, `input.options.${resourceApiId}`, []).includes(parsedValue)
-        ) {
-          value = parsedValue;
+        if (base.input.options) {
+          // Get options from schema
+          const options = get(base, `input.options.${resourceApiId}`, []);
+
+          // If options are objects, check if option has `id` equal to value (like capacity_factor)
+          // or do simple comparison
+          const optionValue = options.find((o) =>
+            typeof o === 'object' ? o.id === v : o === v
+          );
+
+          // Apply if found
+          if (optionValue) {
+            value = optionValue;
+          }
         } else if (base.input.range) {
           value = Number(parsedValue);
           value = inRange(value, min, max) ? value : defaultValue;
@@ -270,10 +305,13 @@ export const lcoeQsSchema = (c, resource) => {
         }
       };
     },
-    dehydrator: (c) => {
-      const { value } = c.input;
+    dehydrator: (v) => {
+      // Use id if value is type of object
+      const value = typeof v.input.value === 'object' ? v.input.value.id : v.input.value;
+
+      // Build shard
       let shard = `${value}`;
-      shard = c.active ? shard : `${shard},${false}`;
+      shard = v.active ? shard : `${shard},${false}`;
       return shard;
     }
   };

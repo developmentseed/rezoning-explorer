@@ -13,7 +13,7 @@ import FormContext from '../../../context/form-context';
 import MapContext from '../../../context/map-context';
 import theme from '../../../styles/theme/theme';
 import { rgba } from 'polished';
-import { RESOURCES } from '../../explore/panel-data';
+import { RESOURCES, apiResourceNameMap } from '../../explore/panel-data';
 import MapLegend from './map-legend';
 import { renderZoneDetailsList } from './../../explore/focus-zone';
 
@@ -25,10 +25,7 @@ const FILTERED_LAYER_SOURCE = 'FILTERED_LAYER_SOURCE';
 const FILTERED_LAYER_ID = 'FILTERED_LAYER_ID';
 
 const LCOE_LAYER_SOURCE_ID = 'LCOE_LAYER_SOURCE_ID';
-const LCOE_LAYER_LAYER_ID = 'LCOE_LAYER_LAYER_ID';
-
-const ZONE_SCORE_SOURCE_ID = 'ZONE_SCORE_SOURCE_ID';
-const ZONE_SCORE_LAYER_ID = 'ZONE_SCORE_LAYER_ID';
+export const LCOE_LAYER_LAYER_ID = 'LCOE_LAYER_LAYER_ID';
 
 const ZONES_BOUNDARIES_SOURCE_ID = 'ZONES_BOUNDARIES_SOURCE_ID';
 export const ZONES_BOUNDARIES_LAYER_ID = 'ZONES_BOUNDARIES_LAYER_ID';
@@ -43,40 +40,32 @@ export const outputLayers = [
     type: 'raster',
     nonexclusive: true,
     visible: false,
-    category: 'output',
     info: 'Satellite layer'
   },
   {
     id: FILTERED_LAYER_ID,
-    name: 'Selected Area',
+    name: 'Suitable Areas',
     type: 'raster',
     visible: true,
     category: 'output',
-    info: 'Filtered selected area',
+    info: 'Filtered suitable area',
     disabled: true
   },
   {
     id: LCOE_LAYER_LAYER_ID,
-    name: 'LCOE Tiles',
+    name: 'LCOE Value (pixel)',
     type: 'raster',
     category: 'output',
-    info: 'LCOE Tiles',
-    disabled: true
-  },
-  {
-    id: ZONE_SCORE_LAYER_ID,
-    name: 'Zone Score',
-    type: 'raster',
-    category: 'output',
-    info: 'Zone Score',
-    disabled: true
+    info: 'The LCOE value for every 500m pixel in the selected "Suitable Areas." Pixel LCOE values may be higher or lower than the aggregate LCOE value per zone, which averages all pixels in the defined zone area',
+    disabled: true,
+    units: 'USD/MWh'
   },
   {
     id: ZONES_BOUNDARIES_LAYER_ID,
-    name: 'Zone Boundaries',
+    name: 'Zone Score',
     type: 'vector',
     category: 'output',
-    info: 'Zone Boundaries',
+    info: 'The boundaries for the zones selected in "Zone Size and Type," with the aggregate score associated with each zones.',
     stops: [
       rgba(theme.main.color.base, 0),
       rgba(theme.main.color.base, 1)
@@ -95,10 +84,19 @@ const getResourceLayerName = resource => {
   }
 };
 
+const layerDefaultVisibility = id => {
+  return id === ZONES_BOUNDARIES_LAYER_ID || id === FILTERED_LAYER_ID;
+};
+
 const MapsContainer = styled.div`
   position: relative;
   overflow: hidden;
   height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  flex-flow: column;
+  align-items: flex-end;
+  padding-bottom: 2.125rem;
   /* Styles to accommodate the partner logos */
   .mapboxgl-ctrl-bottom-left {
     display: flex;
@@ -108,6 +106,17 @@ const MapsContainer = styled.div`
     > .mapboxgl-ctrl {
       margin-bottom: ${glsp(0.5)};
     }
+    /* > .mapboxgl-ctrl-scale:first-child {
+      margin-bottom: -2px;
+      border-top: none;
+    }
+    > .mapboxgl-ctrl-scale:nth-of-type(2) {
+      border-bottom: none;
+      border-top: 2px solid #333;
+    } */
+  }
+  .mapboxgl-ctrl-top-right {
+    margin-top: 2.625rem;
   }
 `;
 
@@ -143,8 +152,11 @@ const initializeMap = ({
   // Disable map rotation using touch rotation gesture.
   map.touchZoomRotate.disableRotation();
 
-  // Add zoom controls.
-  map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
+  // Add zoom controls
+  map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+  // Add scale
+  map.addControl(new mapboxgl.ScaleControl({ maxWidth: 224, unit: 'metric' }), 'bottom-left');
 
   map.on('load', () => {
     // This map style has a 'background' layer underneath the satellite layer
@@ -194,25 +206,6 @@ const initializeMap = ({
       id: LCOE_LAYER_LAYER_ID,
       type: 'raster',
       source: LCOE_LAYER_SOURCE_ID,
-      layout: {
-        visibility: 'none'
-      },
-      paint: {
-        'raster-opacity': 0.75
-      },
-      minzoom: 0,
-      maxzoom: 22
-    });
-    //
-    map.addSource(ZONE_SCORE_SOURCE_ID, {
-      type: 'raster',
-      tiles: ['https://placeholder.url/{z}/{x}/{y}.png'],
-      tileSize: 256
-    });
-    map.addLayer({
-      id: ZONE_SCORE_LAYER_ID,
-      type: 'raster',
-      source: ZONE_SCORE_SOURCE_ID,
       layout: {
         visibility: 'none'
       },
@@ -309,19 +302,29 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
   // Off-shore mask flag
   const offshoreWindMask = resource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
 
-  // If area of country type, prepare path string to add to URL
-  const countryPath = selectedArea.type === 'country' ? `/${selectedArea.id}` : '';
+  // If area of country type, prepare country & resource path string to add to URL
+  const countryResourcePath = selectedArea.type === 'country' ? `/${selectedArea.id}/${apiResourceNameMap[resource]}` : '';
 
   layers.forEach((layer) => {
     const { id: layerId, tiles: layerTiles, symbol, type: layerType } = layer;
-    const source = map.getSource(`${layerId}_source`);
+    const sourceId = `${layerId}_source`;
+    const source = map.getSource(sourceId);
 
-    /* some layers have existing tiles */
-    const tiles = layerTiles || `${config.apiEndpoint}/layers${countryPath}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
+    let tiles;
+    if (layerTiles && !layerTiles.includes('/layers/')) {
+      tiles = layerTiles;
+    } else {
+      tiles = `${config.apiEndpoint}/layers${countryResourcePath}/${layerId}/{z}/{x}/{y}.png?colormap=viridis${offshoreWindMask}`;
+    }
 
     /* If source exists, replace the tiles and return */
     if (source) {
       source.tiles = [tiles];
+      source.tiles = [tiles];
+      map.style.sourceCaches[sourceId].clearTiles();
+      map.style.sourceCaches[sourceId].update(map.transform);
+      map.triggerRepaint();
+
       if (layer.visible) {
         map.setLayoutProperty(layerId, 'visibility', 'visible');
       } else {
@@ -348,7 +351,8 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
           'source-layer': layer.id,
           layout: {
             visibility: layer.visible ? 'visible' : 'none',
-            'icon-image': symbol
+            'icon-image': symbol,
+            'icon-size': 2
           },
           paint: {
             'icon-color': layer.color
@@ -395,6 +399,7 @@ const addInputLayersToMap = (map, layers, selectedArea, resource) => {
         maxzoom: 22
       }, ZONES_BOUNDARIES_LAYER_ID);
     }
+    map.moveLayer(FILTERED_LAYER_ID);
   });
 };
 
@@ -422,15 +427,7 @@ function MbMap (props) {
     setFocusZone
   } = useContext(MapContext);
 
-  const {
-    filterRanges
-  } = useContext(FormContext);
-
-  const visibleRaster = mapLayers.filter(layer => layer.type === 'raster' && layer.visible && layer.id !== 'FILTERED_LAYER_ID');
-  let rasterRange = null;
-  if (visibleRaster.length > 0) {
-    rasterRange = filterRanges.getData()[visibleRaster[0].id];
-  }
+  const { filtersLists, filterRanges } = useContext(FormContext);
 
   // Initialize map on mount
   useEffect(() => {
@@ -439,6 +436,9 @@ function MbMap (props) {
     }
   }, [map]);
 
+  /*
+   * Initialize map layers on receipt of input layers
+  */
   useEffect(() => {
     if (map && inputLayers.isReady() && selectedArea) {
       const layers = inputLayers.getData();
@@ -452,8 +452,24 @@ function MbMap (props) {
           visible: l.id === getResourceLayerName(selectedResource)
         }))
       ];
+
       addInputLayersToMap(map, initializedLayers, selectedArea, selectedResource);
-      setMapLayers([...outputLayers, ...initializedLayers]);
+
+      const _output = outputLayers.map(l => {
+        map.setLayoutProperty(l.id, 'visibility', 'none');
+        return ({
+          ...l,
+          disabled: l.category === 'output',
+          visible: false
+        });
+      });
+
+      const mLayers = [
+        ..._output,
+        ...initializedLayers
+      ];
+
+      setMapLayers(mLayers);
     }
   }, [map, selectedArea, selectedResource, inputLayers]);
 
@@ -528,10 +544,6 @@ function MbMap (props) {
         [LCOE_LAYER_SOURCE_ID]: {
           ...style.sources[LCOE_LAYER_SOURCE_ID],
           tiles: [`${config.apiEndpoint}/lcoe/${outputLayerUrl}`]
-        },
-        [ZONE_SCORE_SOURCE_ID]: {
-          ...style.sources[ZONE_SCORE_SOURCE_ID],
-          tiles: [`${config.apiEndpoint}/score/${outputLayerUrl}`]
         }
 
       }
@@ -540,9 +552,13 @@ function MbMap (props) {
 
   // Update zone boundaries on change
 
+  /*
+   * Update visibility of layers on new zones
+  */
   useEffect(() => {
     if (!map || !currentZones.isReady()) return;
     // Update GeoJSON source, applying hover effect if any
+
     map.getSource(ZONES_BOUNDARIES_SOURCE_ID).setData({
       type: 'FeatureCollection',
       features: currentZones.getData().map(z => ({
@@ -556,7 +572,7 @@ function MbMap (props) {
 
     // Disable all layers besides zones boundaries
     setMapLayers(mapLayers.map(layer => {
-      const visible = layer.id === ZONES_BOUNDARIES_LAYER_ID;
+      const visible = layerDefaultVisibility(layer.id);
       map.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none');
       return {
         ...layer,
@@ -581,6 +597,7 @@ function MbMap (props) {
     // Update filter expression for boundaries layer
     map.setFilter(ZONES_BOUNDARIES_LAYER_ID, [
       'all',
+      ['>', ['get', 'zone_score'], 0], // always ignore 0 zones
       ['>=', ['get', 'zone_score'], maxZoneScore.input.value.min],
       ['<=', ['get', 'zone_score'], maxZoneScore.input.value.max],
       ...(maxLCOE.active ? [
@@ -590,10 +607,27 @@ function MbMap (props) {
     ]
     );
   }, [maxZoneScore, maxLCOE, currentZones]);
-
   return (
     <MapsContainer>
-      {visibleRaster.length ? <MapLegend min={rasterRange && rasterRange.min} max={rasterRange && rasterRange.max} description={visibleRaster[0].title} /> : ''}
+      {
+        selectedResource &&
+        mapLayers &&
+        filtersLists &&
+        filterRanges &&
+        mapLayers.some(({ visible, disabled, id }) =>
+          (visible === true) &&
+          (!disabled) &&
+          (id !== 'satellite')
+        ) && (
+          <MapLegend
+            selectedResource={selectedResource}
+            filtersLists={filtersLists}
+            mapLayers={mapLayers}
+            filterRanges={filterRanges}
+            currentZones={currentZones}
+          />
+        )
+      }
       <SingleMapContainer ref={mapContainer} />
       {map && popoverCoods && (
         <MapPopover
@@ -601,11 +635,16 @@ function MbMap (props) {
           lngLat={popoverCoods.coords}
           closeButton={false}
           offset={[15, 15]}
-          content={<>{renderZoneDetailsList(popoverCoods.zoneFeature, ['lcoe', 'zone_score'])}</>}
+          content={
+            <>
+              {renderZoneDetailsList(popoverCoods.zoneFeature, [
+                'lcoe',
+                'zone_score'
+              ])}
+            </>
+          }
           footerContent={
-            <a>
-              Click zone to view more details in the right panel.
-            </a>
+            <a>Click zone to view more details in the right panel.</a>
           }
         />
       )}

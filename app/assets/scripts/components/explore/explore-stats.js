@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components';
 import StatSummary from '../common/table';
 import { themeVal } from '../../styles/utils/general';
 import { formatThousands } from '../../utils/format';
-import area from '@turf/area';
 
 const StatsWrapper = styled.section`
   display: grid;
@@ -37,9 +36,8 @@ export const zonesSummary = (zones) => {
       if (!summary || !summary.zone_score) return stats;
       return {
         zonesCount: stats.zonesCount + 1,
-        zonesOutput: stats.zonesOutput + summary.zone_output,
-        zonesArea:
-          stats.zonesArea + area(zone) / 1000000
+        zonesOutput: stats.zonesOutput + summary.generation_potential,
+        zonesArea: stats.zonesArea + summary.suitable_area / 1000000
       };
     },
     {
@@ -50,9 +48,9 @@ export const zonesSummary = (zones) => {
   );
 
   return [
-    { label: 'Matching Zones', data: stats.zonesCount },
+    { label: 'Zones', data: stats.zonesCount },
     {
-      label: 'Total Area',
+      label: 'Suitable Area',
       unit: 'km²',
       data:
         stats.zonesArea > 0
@@ -60,7 +58,7 @@ export const zonesSummary = (zones) => {
           : '--'
     },
     {
-      label: 'Output by Year',
+      label: 'Annual Energy Output Potential',
       unit: 'GWh',
       data:
         stats.zonesOutput > 0
@@ -68,7 +66,7 @@ export const zonesSummary = (zones) => {
           : '--'
     },
     {
-      label: 'Output Density',
+      label: 'Annual Energy Output Density',
       unit: 'MWh/km²',
       data:
         stats.zonesOutput > 0

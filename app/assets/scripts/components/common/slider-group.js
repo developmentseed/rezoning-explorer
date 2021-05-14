@@ -6,6 +6,8 @@ import { visuallyHidden } from '../../styles/helpers';
 import { validateRangeNum } from '../../utils/utils';
 import { truncateDecimals } from '../../utils/format';
 import StressedFormGroupInput from './stressed-form-group-input';
+import Button from '../../styles/button/button';
+
 const InputLabel = styled.div`
   text-align: ${({ align }) => align || 'left'};
   grid-column: ${({ gridColumn }) => gridColumn || 'auto'};
@@ -15,15 +17,31 @@ const FormSliderGroup = styled.div`
   display: grid;
   align-items: center;
   grid-gap: 0 1rem;
-  grid-template-columns: ${({ isRange }) => isRange ? '3rem 1fr 4rem' : '1fr 3rem'};
+  grid-template-columns: ${({ isRange, hasLock }) =>
+    isRange
+      ? '4rem 1fr 4rem'
+      : hasLock
+        ? '1fr 2.5rem 0.5rem 1rem'
+        : '1fr 3rem'
+  };
   
   label {
     ${visuallyHidden()}
   }
+
+  > p {
+    align-self: flex-end;
+    margin-left: -0.75rem;
+  }
+`;
+
+const LockButton = styled(Button)`
+  justify-self: center;
+  align-self: flex-end;
 `;
 
 function SliderGroup (props) {
-  const { range, id, value, onChange, disabled, isRange } = props;
+  const { range, id, value, onChange, disabled, isRange, isWeight, isLocked, hasInput, hasLock, onLockChange } = props;
 
   const validateTop = useCallback(
     validateRangeNum(value.min || range[0], range[1])
@@ -32,7 +50,7 @@ function SliderGroup (props) {
   const fgTopOnChange = useCallback((val) => {
     const update = isRange ? { ...value, max: Number(val) } : Number(val);
     onChange(update);
-  }, [value.min, value.max]);
+  }, [onChange, value.min, value.max]);
 
   const validateLow = useCallback(
     validateRangeNum(range[0], value.max)
@@ -40,10 +58,10 @@ function SliderGroup (props) {
 
   const fgBottomOnChange = useCallback((val) => {
     onChange({ ...value, min: Number(val) });
-  }, [value.max, value.min]);
+  }, [onChange, value.max, value.min]);
 
   return (
-    <FormSliderGroup isRange={isRange}>
+    <FormSliderGroup isRange={isRange} hasLock={hasLock}>
       { isRange &&
       <StressedFormGroupInput
         inputType='number'
@@ -51,7 +69,7 @@ function SliderGroup (props) {
         id={`slider-input-min-${id}`}
         name={`slider-input-min-${id}}`}
         label='Min value'
-        value={truncateDecimals(value.min)}
+        value={truncateDecimals(value.min === undefined ? value : value.min)}
         disabled={disabled}
         validate={validateLow}
         onChange={fgBottomOnChange}
@@ -67,18 +85,57 @@ function SliderGroup (props) {
         disabled={disabled}
       />
 
+      {
+        hasInput && !disabled &&
       <StressedFormGroupInput
         inputType='number'
         inputSize='small'
         id={`slider-input-max-${id}`}
         name={`slider-input-max-${id}}`}
         label='Max value'
-        value={truncateDecimals(value.max || value)}
+        value={truncateDecimals(value.max === undefined ? value : value.max)}
         disabled={disabled}
         validate={validateTop}
         onChange={fgTopOnChange}
         title={disabled ? 'Enable this input to interact' : ''}
       />
+      }
+
+      {
+      // Force render of disabled input field for locked inputs
+      // FIXME: Remove, and fix disabled in line 89 above
+        hasLock && disabled &&
+      <StressedFormGroupInput
+        inputType='number'
+        inputSize='small'
+        id={`slider-input-max-${id}`}
+        name={`slider-input-max-${id}}`}
+        label='Max value'
+        value={truncateDecimals(value.max === undefined ? value : value.max)}
+        disabled={true}
+        validate={validateTop}
+        onChange={fgTopOnChange}
+        title={disabled ? 'Enable this input to interact' : ''}
+      />
+      }
+      {isWeight && <p>%</p>}
+
+      {
+        hasLock &&
+        <LockButton
+          id='layer-visibility'
+          size='small'
+          variation={!isLocked ? 'base-plain' : 'primary-plain'}
+          useIcon={!isLocked ? 'lock-open' : 'lock'}
+          title={!isLocked ? 'Lock this slider' : 'Unlock this slider'}
+          hideText
+          onClick={
+            () => {
+              onLockChange(!isLocked);
+            }
+          }
+        />
+      }
       { isRange &&
     <>
       <InputLabel>From</InputLabel>
@@ -93,7 +150,12 @@ SliderGroup.propTypes = {
   onChange: T.func,
   value: T.oneOfType([T.string, T.number, T.object]),
   disabled: T.bool,
-  isRange: T.bool
+  isRange: T.bool,
+  isWeight: T.bool,
+  isLocked: T.bool,
+  hasInput: T.bool,
+  hasLock: T.bool,
+  onLockChange: T.func
 };
 
 export default SliderGroup;

@@ -9,6 +9,7 @@ import SliderGroup from '../common/slider-group';
 import { Accordion, AccordionFold, AccordionFoldTrigger } from '../../components/accordion';
 import Heading from '../../styles/type/heading';
 import { makeTitleCase } from '../../styles/utils/general';
+import { apiResourceNameMap } from '../../components/explore/panel-data';
 
 const TrayWrapper = styled(ShadowScrollbar)`
   padding: 0.25rem;
@@ -59,9 +60,12 @@ const LayersWrapper = styled.div`
   transition: opacity .16s ease 0s;
   padding: 0.5rem;
   overflow-x: hidden;
-
   ${AccordionFold} {
     padding-bottom: 1rem;
+
+    &:first-of-type {
+      padding-top: 2rem;
+    }
   }
 `;
 
@@ -127,15 +131,24 @@ LayerControl.propTypes = {
 };
 
 function RasterTray (props) {
-  const { show, layers, onLayerKnobChange, onVisibilityToggle, className } = props;
+  const { show, layers, onLayerKnobChange, onVisibilityToggle, className, resource } = props;
 
+  /*
+   * Reduce layers into categories.
+   * Layers with out a category will be stored under `undefined`
+   * These layers are displayed outside of the accordion
+  */
   const categorizedLayers = layers.reduce((cats, layer) => {
-    if (!cats[layer.category]) {
-      cats[layer.category] = [];
+    if (!resource || !layer.energy_type ||
+    layer.energy_type.includes(apiResourceNameMap[resource])) {
+      if (!cats[layer.category]) {
+        cats[layer.category] = [];
+      }
+      cats[layer.category].push(layer);
     }
-    cats[layer.category].push(layer);
     return cats;
   }, {});
+
   return (
     <TrayWrapper
       className={className}
@@ -143,60 +156,59 @@ function RasterTray (props) {
       <LayersWrapper
         show={show}
       >
+        {
+          // Non categorized layers
+          categorizedLayers[undefined] && categorizedLayers[undefined].map(l => (
+            <LayerControl
+              key={l.name}
+              {...l}
+              onLayerKnobChange={onLayerKnobChange}
+              onVisibilityToggle={onVisibilityToggle}
+            />
+
+          ))
+        }
 
         <Accordion
-          initialState={[
-            false,
-            true,
-            ...Object.keys(categorizedLayers).slice(2).map(_ => false)
-          ]}
           allowMultiple
         >
           {({ checkExpanded, setExpanded }) => {
             return (
-              Object.entries(categorizedLayers).map(([category, layers], idx) => {
-                return (
-                  <AccordionFold
-                    key={category}
-                    isFoldExpanded={checkExpanded(idx)}
-                    setFoldExpanded={v => setExpanded(idx, v)}
-                    renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
-                      <AccordionFoldTrigger
-                        isExpanded={isFoldExpanded}
-                        onClick={() => setFoldExpanded(!isFoldExpanded)}
-                      >
-                        <Heading size='small' variation='primary'>
-                          {makeTitleCase(category.replace(/_/g, ' '))}
-                        </Heading>
-                      </AccordionFoldTrigger>
-                    )}
-                    renderBody={({ isFoldExpanded }) => (
-                      layers.map(l => (
-                        <LayerControl
-                          key={l.name}
-                          {...l}
-                          onLayerKnobChange={onLayerKnobChange}
-                          onVisibilityToggle={onVisibilityToggle}
-                        />
-                      )
-                      )
-                    )}
-                  />
-                );
-              }));
+              Object.entries(categorizedLayers)
+                .filter(cat => cat !== 'undefined')
+                .map(([category, layers], idx) => {
+                  return (category !== 'undefined' &&
+                 <AccordionFold
+                   key={category}
+                   isFoldExpanded={checkExpanded(idx)}
+                   setFoldExpanded={v => setExpanded(idx, v)}
+                   renderHeader={({ isFoldExpanded, setFoldExpanded }) => (
+                     <AccordionFoldTrigger
+                       isExpanded={isFoldExpanded}
+                       onClick={() => setFoldExpanded(!isFoldExpanded)}
+                     >
+                       <Heading size='small' variation='primary'>
+                         {makeTitleCase(category.replace(/_/g, ' '))}
+                       </Heading>
+                     </AccordionFoldTrigger>
+                   )}
+                   renderBody={({ isFoldExpanded }) => (
+                     layers.map(l => (
+                       <LayerControl
+                         key={l.id}
+                         {...l}
+                         onLayerKnobChange={onLayerKnobChange}
+                         onVisibilityToggle={onVisibilityToggle}
+                       />
+                     )
+                     )
+                   )}
+                 />
+                  );
+                }));
           }}
 
         </Accordion>
-
-        {/* layers.map(l => (
-          <LayerControl
-            key={l.name}
-            {...l}
-            onLayerKnobChange={onLayerKnobChange}
-            onVisibilityToggle={onVisibilityToggle}
-          />
-        )
-        ) */}
       </LayersWrapper>
     </TrayWrapper>
   );
@@ -208,7 +220,8 @@ RasterTray.propTypes = {
   layers: T.array,
   onLayerKnobChange: T.func,
   onVisibilityToggle: T.func,
-  className: T.string
+  className: T.string,
+  resource: T.string
 };
 
 export default RasterTray;

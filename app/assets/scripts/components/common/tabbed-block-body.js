@@ -109,6 +109,10 @@ const PresetMenu = styled(DropMenu)`
 
 const ContentInner = styled.div`
   padding: 1.5rem;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  flex: 1;
 `;
 
 function TabbedBlock (props) {
@@ -128,16 +132,17 @@ function TabbedBlock (props) {
         <ul>
           {
             Children.map(children, (child, ind) => {
-              const { name, icon } = child.props;
+              const { name, icon, disabled } = child.props;
               return (
                 <li key={name}>
                   <Tab
                     as='a'
-                    id={`${name}-tab`}
+                    id={`${name.toLowerCase()}-tab`}
                     active={ind === activeTab}
                     useIcon={icon}
                     title='Show menu'
                     size='small'
+                    disabled={disabled}
                     onClick={(e) => {
                       e.preventDefault();
                       setActiveTab(ind);

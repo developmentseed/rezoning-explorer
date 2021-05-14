@@ -12,11 +12,11 @@ export const lcoeReducer = wrapLogReducer(makeAPIReducer('FETCH_LCOE'));
  * Make async request to api for lcoe schema
  * dispatch updates to some context using 'dispatch' function
 */
-export async function fetchLcoe (dispatch) {
+export async function fetchLcoe (selectedAreaId, selectedResource, dispatch) {
   dispatch({ type: 'REQUEST_FETCH_LCOE' });
   try {
     const { body: lcoe } = await fetchJSON(
-      `${apiEndpoint}/lcoe/schema`
+      `${apiEndpoint}/lcoe/${selectedResource}/${selectedAreaId}/schema`
     );
 
     const apiLcoe = Object.keys(lcoe)
@@ -28,19 +28,26 @@ export async function fetchLcoe (dispatch) {
         const opts = cost.options ? {
           options: cost.options
         } : {};
+
+        const isPercentage = cost.title.includes('%');
+
         return ({
           ...cost,
           id,
           name: cost.title,
           info: cost.description,
+          category: cost.category,
+          priority: cost.priority || 1,
           input: {
             type,
             ...opts,
             // TODO add range if exists
             // range: [cost.gte, cost.lte],
-            default: cost.default
-
-          }
+            // Percentage values are served as decimal, rendered as integer 0 - 100
+            range: isPercentage ? [0, 100] : null,
+            default: isPercentage ? cost.default * 100 : cost.default
+          },
+          isPercentage
         });
       }
       );

@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState, useReducer } from 'react';
+import React, { createContext, useEffect, useState, useReducer, useRef } from 'react';
 import T from 'prop-types';
 import * as topojson from 'topojson-client';
 import bbox from '@turf/bbox';
@@ -21,7 +21,8 @@ import {
   RESOURCES,
   checkIncluded,
   getMultiplierByUnit,
-  resourceList
+  resourceList,
+  apiResourceNameMap
 } from '../components/explore/panel-data';
 
 // Prepare area dataset
@@ -61,6 +62,7 @@ const maskTypes = [BOOL];
 const ExploreContext = createContext({});
 
 export function ExploreProvider (props) {
+  const areasInitialized = useRef(false);
   const [maxZoneScore, setMaxZoneScore] = useQsState({
     key: 'maxZoneScore',
     default: undefined,
@@ -72,7 +74,7 @@ export function ExploreProvider (props) {
         id: 'zone-score-range',
         active: true,
         isRange: true,
-        info: 'Filter zones by calculated zone score',
+        info: 'A sum of scores for multiple criteria normalized from 0 to 1 and weighted by user-defined weights for each zone. 1 is desired whereas 0 is not. The zone score filter excludes zones with scores below the user-defined threshold.',
         input: {
           value: range ? { min: range[0], max: range[1] } : { min: 0, max: 1 },
           type: SLIDER,
@@ -95,7 +97,7 @@ export function ExploreProvider (props) {
         active: range && true,
         isRange: true,
         unit: 'USD/MWh',
-        info: 'Filter zones by calculated LCOE',
+        info: 'The LCOE filter excludes zones with LCOE estimates below the user-defined threshold.',
         input: {
           value: range ? { min: range[0], max: range[1] } : null,
           type: SLIDER,
@@ -127,17 +129,29 @@ export function ExploreProvider (props) {
   // Instead of using "selectedArea" from state, the area must be passed as a param
   // to avoid life cycle errors.
   function updateAvailableResources (area) {
+    if (!areasInitialized.current) {
+      // Wait for eez to be loaded before checking to see that selected resource is acceptable for this country
+      return;
+    }
+    const updatedList = resourceList.filter((r) => {
+      // If no area is selected, return all resources
+      if (!area) return true;
+
+      // If resource is not offshore, include it
+      if (r.name !== RESOURCES.OFFSHORE) return true;
+
+      // Include offshore if area has EEZ defined
+      return typeof area.eez !== 'undefined';
+    });
+
+    if (!updatedList.find(r => r.name === selectedResource)) {
+      // This means offshore was selcted from previous area
+      // But is not available for this country
+      // default to wind
+      setSelectedResource(undefined);
+    }
     setAvailableResources(
-      resourceList.filter((r) => {
-        // If no area is selected, return all resources
-        if (!area) return true;
-
-        // If resource is not offshore, include it
-        if (r.name !== RESOURCES.OFFSHORE) return true;
-
-        // Include offshore if area as EEZ defined
-        return typeof area.eez !== 'undefined';
-      })
+      updatedList
     );
   }
 
@@ -190,6 +204,8 @@ export function ExploreProvider (props) {
     });
     setAreas(areasWithEez);
     const currentArea = areasWithEez.find((a) => a.id === selectedAreaId);
+
+    areasInitialized.current = true;
     updateAvailableResources(currentArea);
 
     hideGlobalLoading();
@@ -291,21 +307,24 @@ export function ExploreProvider (props) {
       .filter((x) => x)
       .join('&');
 
-    // If area of country type, prepare path string to add to URL
-    const countryPath = selectedArea.type === 'country' ? `${selectedArea.id}` : '';
+    // If area of country type, prepare country path string to add to URL
+    const countryPath = selectedArea.type === 'country' ? `${selectedArea.id}/` : '';
+
+    // if area of country type, prepare resource path string to add to URL
+    const resourcePath = selectedArea.type === 'country' ? `${apiResourceNameMap[selectedResource]}/` : '';
 
     // Off-shore mask flag
     const offshoreWindMask = selectedResource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
 
     // Apply filter querystring to the map
     setFilteredLayerUrl(
-      `${config.apiEndpoint}/filter/${countryPath}/{z}/{x}/{y}.png?${filterString}${offshoreWindMask}&color=54,166,244,80`
+      `${config.apiEndpoint}/filter/${countryPath}{z}/{x}/{y}.png?${filterString}${offshoreWindMask}&color=255,0,160,100`
     );
 
     const lcoeReduction = Object.entries(lcoe).reduce((accum, [key, value]) => `${accum}&${key}=${value}`, '');
 
     setOutputLayerUrl(
-      `${countryPath}/{z}/{x}/{y}.png?${filterString}&${lcoeReduction}${offshoreWindMask}&colormap=viridis`
+      `${countryPath}${resourcePath}{z}/{x}/{y}.png?${filterString}&${lcoeReduction}${offshoreWindMask}&colormap=viridis`
     );
 
     generateZones(filterString, weights, lcoe);

@@ -18,14 +18,15 @@ export default async function exportZonesCsv (selectedArea, zones) {
       id,
       'Zone Score': round(summary.zone_score, indicatorsDecimals.zone_score),
       'LCOE (USD/MWh)': round(summary.lcoe, indicatorsDecimals.lcoe),
-      'Zone Output (GWh)': round(
-        summary.zone_output,
-        indicatorsDecimals.zone_output
+      'Generation Potential (GWh)': round(
+        summary.generation_potential,
+        indicatorsDecimals.generation_potential
       ),
       'Zone Output Density (MWh/km²)': round(
         summary.zone_output_density,
         indicatorsDecimals.zone_output_density
-      )
+      ),
+      'Capacity Factor': (summary.cf, indicatorsDecimals.cf)
     };
 
     // Add name if available

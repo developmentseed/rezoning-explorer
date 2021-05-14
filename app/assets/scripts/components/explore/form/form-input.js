@@ -50,7 +50,7 @@ const MultiWrapper = styled(ShadowScrollbar)`
   }
 `;
 
-const FormInput = ({ option, onChange }) => {
+const FormInput = ({ option, onChange, isWeight, isLocked, onLockChange }) => {
   const { range, value } = option.input;
   let errorMessage;
   if (range) {
@@ -60,6 +60,25 @@ const FormInput = ({ option, onChange }) => {
         : `Allowed range is ${round(range[0])} - ${round(range[1])}`;
   } else {
     errorMessage = 'Value not accepted';
+  }
+
+  if (isWeight) {
+    return (
+      <SliderGroup
+        unit={option.input.unit || '%'}
+        range={range}
+        id={option.id}
+        value={option.input.value}
+        isRange={option.isRange}
+        isWeight={isWeight}
+        isLocked={isLocked}
+        disabled={!option.active}
+        onChange={onChange}
+        hasInput
+        hasLock
+        onLockChange={onLockChange}
+      />
+    );
   }
 
   switch (option.input.type) {
@@ -73,6 +92,7 @@ const FormInput = ({ option, onChange }) => {
           isRange={option.isRange}
           disabled={!option.active}
           onChange={onChange}
+          hasInput
         />
       );
     case TEXT:
@@ -147,10 +167,10 @@ const FormInput = ({ option, onChange }) => {
             }}
             value={option.input.value}
           >
-            {option.input.availableOptions.map((o) => {
+            {option.input.availableOptions.map(({ name, id }) => {
               return (
-                <option value={o} key={o}>
-                  {o}
+                <option value={id} key={id}>
+                  {name}
                 </option>
               );
             })}
@@ -164,7 +184,10 @@ const FormInput = ({ option, onChange }) => {
 
 FormInput.propTypes = {
   option: T.object,
-  onChange: T.func
+  onChange: T.func,
+  isWeight: T.bool,
+  isLocked: T.bool,
+  onLockChange: T.func
 };
 
 export default FormInput;

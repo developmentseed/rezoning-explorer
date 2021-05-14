@@ -4,14 +4,12 @@ import { fetchFilterRanges, filterRangesReducer } from './reducers/filter-ranges
 import { fetchFilters, filtersReducer } from './reducers/filters';
 import { fetchWeights, weightsReducer } from './reducers/weights';
 import { fetchLcoe, lcoeReducer } from './reducers/lcoe';
-import {
-  presets
-} from '../components/explore/panel-data';
 import ExploreContext from './explore-context';
 import { initialApiRequestState } from './contexeed';
 import {
   hideGlobalLoading
 } from '../components/common/global-loading';
+import { apiResourceNameMap } from '../components/explore/panel-data';
 
 const FormContext = createContext({});
 export function FormProvider (props) {
@@ -49,34 +47,20 @@ export function FormProvider (props) {
   useEffect(() => {
     setShowSelectAreaModal(!selectedAreaId);
     setShowSelectResourceModal(!selectedResource);
-  }, [selectedAreaId, selectedResource]);
 
-  useEffect(() => {
-    if (!lcoeList.isReady()) {
-      return;
+    if (selectedResource) {
+      fetchFilterRanges(selectedAreaId, selectedResource, dispatchFilterRanges);
     }
-
-    presets.lcoe = {
-      Default: lcoeList.getData()
-        .map(cost => ({
-          ...cost,
-          input: {
-            ...cost.input,
-            value: cost.default || 1
-          }
-        }))
-    };
-  }, [lcoeList]);
-
-  useEffect(() => {
-    fetchFilterRanges(selectedAreaId, dispatchFilterRanges);
-  }, [selectedAreaId]);
+  }, [selectedAreaId, selectedResource]);
 
   useEffect(() => {
     fetchFilters(dispatchFiltersList);
     fetchWeights(dispatchWeightsList);
-    fetchLcoe(dispatchLcoeList);
   }, []);
+
+  useEffect(() => {
+    fetchLcoe(selectedAreaId, apiResourceNameMap[selectedResource], dispatchLcoeList);
+  }, [selectedAreaId, selectedResource]);
 
   useEffect(() => {
     if (currentZones.fetched) {
@@ -93,9 +77,8 @@ export function FormProvider (props) {
           {
             filtersLists: filtersList.isReady() ? filtersList.getData() : null,
             weightsList: weightsList.isReady() ? weightsList.getData() : null,
-            lcoeList: (lcoeList.isReady() && presets.lcoe) ? lcoeList.getData() : null,
+            lcoeList: lcoeList.isReady() ? lcoeList.getData() : null,
             filterRanges,
-            presets,
             inputTouched,
             setInputTouched,
             zonesGenerated,

@@ -94,8 +94,10 @@ const CardIcon = styled.div`
 const CardDetails = styled.ul`
   grid-column: span 2;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: ${({ hasZoneScore }) => hasZoneScore ? '1fr 1fr' : '1fr'};
   font-size: 0.875rem;
+  text-align: center;
+  text-transform: uppercase;
 `;
 const Detail = styled.dl`
   dt,
@@ -217,40 +219,60 @@ function ExploreZones (props) {
           <CardList
             numColumns={1}
             data={
-              currentZones.sort((a, b) =>
-                sortAsc
-                  ? parseFloat(b.properties.summary[sortId]) - parseFloat(a.properties.summary[sortId])
-                  : parseFloat(a.properties.summary[sortId]) - parseFloat(b.properties.summary[sortId])
+              currentZones.sort((a, b) => {
+                const aValue = a.properties.summary[sortId];
+                const bValue = b.properties.summary[sortId];
+                // Zones with no suitable areas have LCOE equal to 0, when they
+                // should have Infinity. To avoid breaking other components by changing the default
+                // value, this quick fix will treat zeroes as Infinity when ordering.
+                if (sortId === 'lcoe') {
+                  if (aValue === 0 && bValue === 0) {
+                    // if both are zero, order by id
+                    return ('' + a.properties.id).localeCompare(b.properties.id);
+                  } else if (bValue === 0) {
+                    return sortAsc ? 1 : -1;
+                  } else if (aValue === 0) {
+                    return sortAsc ? -1 : 1;
+                  }
+                }
+
+                return sortAsc
+                  ? parseFloat(bValue) - parseFloat(aValue)
+                  : parseFloat(aValue) - parseFloat(bValue);
+              }
               )
             }
-            renderCard={(data) => (
-              <Card
-                size='large'
-                key={data.id}
-                isHovered={hoveredFeature === data.id}
-                onMouseEnter={onRowHoverEvent.bind(null, 'enter', data.id)}
-                onMouseLeave={onRowHoverEvent.bind(null, 'leave', data.id)}
-                onClick={() => setFocusZone(data)}
-              >
+            renderCard={(data) => {
+              const hasZoneScore = get(data, 'properties.summary.zone_score', 0) > 0;
+              return (
+                <Card
+                  size='large'
+                  key={data.id}
+                  isHovered={hoveredFeature === data.id}
+                  onMouseEnter={onRowHoverEvent.bind(null, 'enter', data.id)}
+                  onMouseLeave={onRowHoverEvent.bind(null, 'leave', data.id)}
+                  onClick={() => setFocusZone(data)}
+                >
 
-                <CardIcon color={get(data, 'properties.color')}>
-                  <div>{data.id}</div>
-                </CardIcon>
-                <CardDetails>
-                  {get(data, 'properties.summary.zone_score')
-                    ? Object.entries(data.properties.summary)
-                      .filter(([label, value]) => FILTERED_PROPERTIES[label])
-                      .map(([label, value]) => (
-                        <Detail key={`${data.id}-${label}`}>
-                          <dd>{formatIndicator(label, value)}</dd>
-                        </Detail>
-                      )
-                      )
-                    : 'UNAVAILABLE'}
-                </CardDetails>
+                  <CardIcon color={get(data, 'properties.color')}>
+                    <div>{data.id}</div>
+                  </CardIcon>
+                  <CardDetails hasZoneScore={hasZoneScore}>
+                    {hasZoneScore
+                      ? Object.entries(data.properties.summary)
+                        .filter(([label, value]) => FILTERED_PROPERTIES[label])
+                        .map(([label, value]) => (
+                          <Detail key={`${data.id}-${label}`}>
+                            <dd>{formatIndicator(label, value)}</dd>
+                          </Detail>
+                        )
+                        )
+                      : 'Zone unavailable'}
+                  </CardDetails>
 
-              </Card>
-            )}
+                </Card>
+              );
+            }}
           />
         </>
       )}

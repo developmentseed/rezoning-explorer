@@ -57,6 +57,8 @@ export const formatIndicator = function (id, value) {
         forceDecimals: true,
         decimals: indicatorsDecimals.zone_output_density
       });
+    case 'suitable_area':
+      return formatThousands(value / 1000000);
     default:
       return formatThousands(value);
   }
@@ -64,14 +66,19 @@ export const formatIndicator = function (id, value) {
 
 export const formatLabel = function (id, titleCased = false) {
   const label = id.replace(/_/g, ' '); // replace spaces;
-
   switch (id) {
     case 'lcoe':
       return `${id.replace(/_/g, ' ')} (USD/MWh)`;
-    case 'zone_output':
+    case 'generation_potential':
       return `${id.replace(/_/g, ' ')} (GwH)`;
     case 'zone_output_density':
       return `${id.replace(/_/g, ' ')} (MWh/km²)`;
+    case 'icp':
+      return `${id.replace(/_/g, ' ')} (MW)`;
+    case 'suitable_area':
+      return `${id.replace(/_/g, ' ')} (km²)`;
+    case 'cf':
+      return 'Capacity Factor';
     default:
       return titleCased ? toTitleCase(label) : label;
   }

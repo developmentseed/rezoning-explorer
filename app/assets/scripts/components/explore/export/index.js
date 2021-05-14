@@ -1,9 +1,6 @@
 import React, { useContext } from 'react';
 import T from 'prop-types';
 import config from '../../../config';
-import { saveAs } from 'file-saver';
-import dataURItoBlob from '../../../utils/data-uri-to-blob';
-import { format } from 'date-fns';
 import exportPDF from './pdf';
 import { withRouter } from 'react-router';
 
@@ -33,6 +30,10 @@ import GlobalContext from '../../../context/global-context';
 import { toTitleCase } from '../../../utils/format';
 import exportZonesCsv from './csv';
 import exportZonesGeoJSON from './geojson';
+import exportCountryMap from './country-map';
+import MapContext from '../../../context/map-context';
+
+import { checkIncluded, getMultiplierByUnit, apiResourceNameMap } from '../panel-data';
 
 const { apiEndpoint } = config;
 
@@ -46,11 +47,8 @@ const ExportWrapper = styled.div`
   }
 `;
 
-// Helper function to generate a formatted timestamp
-const timestamp = () => format(Date.now(), 'yyyyMMdd-hhmmss');
-
 // Get lcoe values from search string
-function getLcoeValues (location, selectedResource, lcoeList) {
+function getLcoeValues(location, selectedResource, lcoeList) {
   const lcoeSchema = lcoeList.reduce((acc, l) => {
     acc[l.id] = {
       accessor: l.id,
@@ -62,12 +60,16 @@ function getLcoeValues (location, selectedResource, lcoeList) {
   const formValues = lcoeQsState.getState(location.search.substr(1));
   return Object.keys(formValues).reduce((acc, id) => {
     acc[id] = formValues[id].input.value;
+    // Capacity factor should be an object here, but we need just the id prop
+    if (id === 'capacity_factor') {
+      acc[id] = acc[id].id;
+    }
     return acc;
   }, {});
 }
 
 // Get weight values from search string
-function getWeightValues (location, selectedResource, weightsList) {
+function getWeightValues(location, selectedResource, weightsList) {
   const weightsSchema = weightsList.reduce((acc, w) => {
     acc[w.id] = {
       accessor: w.id,
@@ -84,7 +86,7 @@ function getWeightValues (location, selectedResource, weightsList) {
 }
 
 // Get filter values from search string
-function getFilterValues (
+function getFilterValues(
   location,
   selectedResource,
   filtersLists,
@@ -99,13 +101,20 @@ function getFilterValues (
   }, {});
   const filtersQsState = new QsState(filtersSchema);
   const formValues = filtersQsState.getState(location.search.substr(1));
+
   return Object.keys(formValues).reduce((acc, id) => {
     const filter = formValues[id];
+    const multiplier = getMultiplierByUnit(filter.unit);
     let value = filter.input.value;
-    if (filter.isRange) {
-      value = `${value.min},${value.max}`;
+    if (!checkIncluded(filter, selectedResource)) {
+      return acc;
+    } else if (filter.isRange) {
+      value = `${value.min * multiplier},${value.max * multiplier}`;
     } else if (Array.isArray(value)) {
       value = value.join(',');
+    } else if (filter.input.type === 'boolean' && value === true) {
+      // skip true booleans
+      return acc;
     }
     acc[id] = value;
     return acc;
@@ -113,21 +122,10 @@ function getFilterValues (
 }
 
 /**
- * Generate map snapshot and download.
- *
- * Reference: https://stackoverflow.com/questions/49807311/how-to-get-usable-canvas-from-mapbox-gl-js
- */
-async function exportMapImage (selectedArea) {
-  const canvas = document.getElementsByClassName('mapboxgl-canvas')[0];
-  const dataURL = canvas.toDataURL('image/png');
-  saveAs(dataURItoBlob(dataURL), `WBG-REZoning-${selectedArea.id}-map-snapshot-${timestamp()}.png`);
-}
-
-/**
  * The component
  */
 const ExportZonesButton = (props) => {
-  const { selectedResource, selectedArea, currentZones } = useContext(
+  const { selectedResource, selectedArea, currentZones, gridMode, gridSize, maxZoneScore, maxLCOE } = useContext(
     ExploreContext
   );
 
@@ -135,15 +133,13 @@ const ExportZonesButton = (props) => {
     FormContext
   );
 
+  const { map, setMap } = useContext(MapContext);
+
   const { setDownload } = useContext(GlobalContext);
 
   // This will parse current querystring to get values for filters/weights/lcoe
   // an pass to a function to generate the PDF
-  function onExportPDFClick () {
-    const mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0];
-    const mapDataURL = mapCanvas.toDataURL('image/png');
-    const mapAspectRatio = mapCanvas.height / mapCanvas.width;
-
+  function onExportPDFClick() {
     // Get filters values
     const filtersSchema = filtersLists.reduce((acc, w) => {
       acc[w.id] = {
@@ -184,20 +180,27 @@ const ExportZonesButton = (props) => {
     const data = {
       selectedResource,
       selectedArea,
-      map: {
-        mapDataURL,
-        mapAspectRatio
-      },
-      zones: currentZones.getData(),
+      gridMode,
+      gridSize,
+      zones: currentZones.getData().filter(z => {
+        // Filter by zone min/max lcoe/score
+        /* eslint-disable camelcase */
+        const { zone_score, lcoe } = z.properties.summary;
+        const zs = zone_score >= maxZoneScore.input.value.min && zone_score <= maxZoneScore.input.value.max;
+        const zl = maxLCOE ? (lcoe >= maxLCOE.input.value.min && lcoe <= maxLCOE.input.value.max) : true;
+        return zs && zl;
+      }),
       filtersValues,
       filterRanges: filterRanges.getData(),
       weightsValues,
-      lcoeValues
+      lcoeValues,
+      maxZoneScore,
+      maxLCOE
     };
-    exportPDF(data);
+    exportPDF(data, map, setMap);
   }
 
-  async function onRawDataClick (operation) {
+  async function onRawDataClick(operation) {
     if (selectedArea.type !== 'country') {
       toasts.error(
         'Raw data exports are restricted to countries at the moment.'
@@ -209,7 +212,7 @@ const ExportZonesButton = (props) => {
       showGlobalLoadingMessage('Requesting raw data export...');
 
       const res = await fetch(
-        `${apiEndpoint}/export/${operation}/${selectedArea.id}`,
+        `${apiEndpoint}/export/${operation}/${selectedArea.id}/${apiResourceNameMap[selectedResource]}`,
         {
           method: 'POST',
           body: JSON.stringify({
@@ -284,19 +287,26 @@ const ExportZonesButton = (props) => {
         <DropMenu role='menu' iconified>
           <DropMenuItem
             data-dropdown='click.close'
-            useIcon='link'
-            href={ResourceLink}
-            target='_blank'
-            disabled={selectedArea.type !== 'country'}
+            useIcon='picture'
+            onClick={() => exportCountryMap(selectedArea, selectedResource, gridMode, gridSize, map, setMap)}
           >
-            Resource layers (link)
+            Map (.pdf)
           </DropMenuItem>
           <DropMenuItem
             data-dropdown='click.close'
             useIcon='page-label'
             onClick={onExportPDFClick}
           >
-            PDF Report
+            Report (.pdf)
+          </DropMenuItem>
+          <DropMenuItem
+            data-dropdown='click.close'
+            useIcon='link'
+            href={ResourceLink}
+            target='_blank'
+            disabled={selectedArea.type !== 'country'}
+          >
+            Resource layers (link)
           </DropMenuItem>
           <DropMenuItem
             data-dropdown='click.close'
@@ -334,13 +344,6 @@ const ExportZonesButton = (props) => {
               </DropMenuItem>
             </>
           )}
-          <DropMenuItem
-            data-dropdown='click.close'
-            useIcon='picture'
-            onClick={() => exportMapImage(selectedArea)}
-          >
-            Map (.png)
-          </DropMenuItem>
         </DropMenu>
       </Dropdown>
     </ExportWrapper>

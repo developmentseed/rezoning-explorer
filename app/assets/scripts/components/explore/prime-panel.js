@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useRef } from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import Panel from '../common/panel';
@@ -8,7 +8,7 @@ import MapContext from '../../context/map-context';
 import FormContext from '../../context/form-context';
 
 import ModalSelect from './modal-select';
-import { ModalHeader } from '../common/modal';
+import { ModalHeadline } from '@devseed-ui/modal';
 import ModalSelectArea from './modal-select-area';
 
 import Button from '../../styles/button/button';
@@ -53,6 +53,8 @@ const RasterTrayWrapper = styled.div`
 function ExpMapPrimePanel (props) {
   const { onPanelChange } = props;
 
+  const firstLoad = useRef(true);
+
   /**
    * Get Explore context values
    */
@@ -68,9 +70,7 @@ function ExpMapPrimePanel (props) {
     gridMode,
     setGridMode,
     gridSize, setGridSize,
-    maxZoneScore, setMaxZoneScore,
-    updateFilteredLayer,
-    maxLCOE, setMaxLCOE
+    updateFilteredLayer
   } = useContext(ExploreContext);
   const {
     showSelectAreaModal,
@@ -82,8 +82,7 @@ function ExpMapPrimePanel (props) {
     filtersLists,
     weightsList,
     lcoeList,
-    filterRanges,
-    presets
+    filterRanges
   } = useContext(FormContext);
 
   const {
@@ -136,6 +135,7 @@ function ExpMapPrimePanel (props) {
                 show={showRasterPanel}
                 className='raster-tray'
                 layers={mapLayers}
+                resource={selectedResource}
                 onLayerKnobChange={(layer, knob) => {
                   // Check if changes are applied to zones layer, which
                   // have conditional paint properties due to filters
@@ -211,11 +211,11 @@ function ExpMapPrimePanel (props) {
             lcoeList
           ) ? (
               <QueryForm
+                firstLoad={firstLoad}
                 area={selectedArea}
                 resource={selectedResource}
                 filtersLists={filtersLists}
                 filterRanges={filterRanges}
-                presets={presets}
                 updateFilteredLayer={updateFilteredLayer}
                 weightsList={weightsList}
                 lcoeList={lcoeList}
@@ -223,10 +223,6 @@ function ExpMapPrimePanel (props) {
                 setGridMode={setGridMode}
                 gridSize={gridSize}
                 setGridSize={setGridSize}
-                maxZoneScore={maxZoneScore}
-                setMaxZoneScore={setMaxZoneScore}
-                maxLCOE={maxLCOE}
-                setMaxLCOE={setMaxLCOE}
                 onAreaEdit={() => setShowSelectAreaModal(true)}
                 onResourceEdit={() => setShowSelectResourceModal(true)}
                 onInputTouched={(status) => {
@@ -244,16 +240,20 @@ function ExpMapPrimePanel (props) {
       <ModalSelect
         revealed={showSelectResourceModal && !showSelectAreaModal}
         onOverlayClick={() => {
-          if (selectedResource) {
-            setShowSelectResourceModal(false);
-          }
+          setShowSelectResourceModal(false);
+        }}
+        onCloseClick={() => {
+          setShowSelectResourceModal(false);
         }}
         data={availableResources}
-        renderHeader={() => (
-          <ModalHeader
+        renderHeadline={() => (
+          <ModalHeadline
             id='select-resource-modal-header'
             title='Select Resource'
-          />
+            style={{ flex: 1, textAlign: 'center' }}
+          >
+            <h1>Select Resource</h1>
+          </ModalHeadline>
         )}
         renderCard={(resource) => (
           <Card

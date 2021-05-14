@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import T from 'prop-types';
 import { themeVal } from '../../styles/utils/general';
@@ -6,6 +6,7 @@ import useQsState from '../../utils/qs-state-hook';
 import {
   PanelBlock,
   PanelBlockHeader,
+  PanelBlockBody,
   PanelBlockFooter
 } from '../common/panel-block';
 import TabbedBlockBody from '../common/tabbed-block-body';
@@ -17,6 +18,7 @@ import GridSetter from './grid-setter';
 import { INPUT_CONSTANTS, checkIncluded, apiResourceNameMap } from './panel-data';
 import { HeadOption, HeadOptionHeadline } from '../../styles/form/form';
 import { FiltersForm, WeightsForm, LCOEForm } from './form';
+import Prose from '../../styles/type/prose';
 
 import {
   initByType,
@@ -48,7 +50,12 @@ const SubmissionSection = styled(PanelBlockFooter)`
   gap: 0rem 1rem;
 `;
 
-function QueryForm (props) {
+const PreAnalysisMessage = styled(Prose)`
+  padding: 1rem 1.5rem;
+  text-align: center;
+`;
+
+function QueryForm(props) {
   const {
     area,
     resource,
@@ -57,7 +64,6 @@ function QueryForm (props) {
     lcoeList,
     updateFilteredLayer,
     filterRanges,
-    presets,
     onAreaEdit,
     onResourceEdit,
     onInputTouched,
@@ -65,11 +71,9 @@ function QueryForm (props) {
     gridMode,
     setGridMode,
     gridSize, setGridSize,
-    maxZoneScore, setMaxZoneScore,
-    maxLCOE, setMaxLCOE
-  } = props;
 
-  const firstLoad = useRef(true);
+    firstLoad
+  } = props;
 
   /* Generate weights qs state variables
   */
@@ -77,6 +81,7 @@ function QueryForm (props) {
     const [weight, setWeight] = useQsState(weightQsSchema(w));
     return [weight, setWeight];
   });
+  const [weightsLocks, setWeightLocks] = useState({});
 
   /* Generate filters qs state variables */
   const filtersInd = filtersLists.map((f) => {
@@ -124,9 +129,26 @@ function QueryForm (props) {
   });
 
   const resetClick = () => {
-    initialize(filtersLists, filtersInd, { reset: true });
-    initialize(weightsList, weightsInd, { reset: true });
+    if (filterRanges.isReady()) {
+      initialize(filtersLists, filtersInd, { reset: true, apiRange: filterRanges.getData() });
+    } else {
+      initialize(filtersLists, filtersInd, { reset: true });
+    }
     initialize(lcoeList, lcoeInd, { reset: true });
+
+    // Apply defaults to weights
+    weightsInd.forEach(([w, setW]) => {
+      setW({
+        ...w,
+        input: {
+          ...w.input,
+          value: w.input.default
+        }
+      });
+    });
+
+    // Clear weight locks
+    setWeightLocks({});
   };
 
   /* Reduce filters, weights, and lcoe
@@ -135,13 +157,19 @@ function QueryForm (props) {
   const applyClick = () => {
     const weightsValues = weightsInd.reduce((accum, [weight, _]) => ({
       ...accum,
-      [weight.id || weight.name]: castByFilterType(weight.input.type)(weight.input.value)
+      // The frontend deals with weights as 0 - 100
+      // Convert to 0 - 1 decimal value before sending to backend
+      [weight.id || weight.name]: castByFilterType(weight.input.type)(weight.input.value) / 100
     }), {});
 
-    const lcoeValues = lcoeInd.reduce((accum, [cost, _]) => ({
-      ...accum,
-      [cost.id || cost.name]: castByFilterType(cost.input.type)(cost.input.value)
-    }), {});
+    const lcoeValues = lcoeInd.reduce((accum, [cost, _]) => {
+      const val = castByFilterType(cost.input.type)(cost.input.value);
+      return ({
+        ...accum,
+        // Percentage values are served as decimal, rendered as integer 0 - 100
+        [cost.id || cost.name]: cost.isPercentage ? val / 100 : val
+      });
+    }, {});
 
     // Get filters and discard setting functions
     const filters = filtersInd.map(([filter, _]) => filter);
@@ -174,6 +202,7 @@ function QueryForm (props) {
         const [capacity, setCapacity] = lcoeInd.find(([cost, _]) => cost.id === 'capacity_factor');
         capacity.input.availableOptions = capacity.input.options[apiResourceNameMap[resource]];
         capacity.input.value = capacity.input.availableOptions[0];
+        capacity.name = resource === 'Solar PV' ? 'Solar Unit Type' : 'Turbine Type';
         setCapacity(capacity);
       } catch (err) {
         /* eslint-disable-next-line */
@@ -184,7 +213,97 @@ function QueryForm (props) {
 
   /* Wait until elements have mounted and been parsed to render the query form */
   if (firstLoad.current) {
-    return null;
+    return (
+      <PanelBlock>
+        <PanelBlockHeader>
+          <HeadOption>
+            <HeadOptionHeadline id='selected-area-prime-panel-heading'>
+              <Heading size='large' variation='primary'>
+                {area ? area.name : 'Select Area'}
+              </Heading>
+              <EditButton
+                id='select-area-button'
+                onClick={onAreaEdit}
+                title='Edit Area'
+              >
+                Edit Area Selection
+              </EditButton>
+            </HeadOptionHeadline>
+          </HeadOption>
+
+          <HeadOption>
+            <HeadOptionHeadline id='selected-resource-prime-panel-heading'>
+              <Subheading>Resource: </Subheading>
+              <Subheading variation='primary'>
+                <Subheadingstrong>
+                  {resource || 'Select Resource'}
+                </Subheadingstrong>
+              </Subheading>
+              <EditButton
+                id='select-resource-button'
+                onClick={onResourceEdit}
+                title='Edit Resource'
+              >
+                Edit Resource Selection
+              </EditButton>
+            </HeadOptionHeadline>
+          </HeadOption>
+
+          <HeadOption>
+            <HeadOptionHeadline>
+              <Subheading>Zone Type and Size: </Subheading>
+              <Subheading variation='primary'>
+                <Subheadingstrong>
+                  {gridMode ? `${gridSize} km²` : 'Boundaries'}
+                </Subheadingstrong>
+              </Subheading>
+
+              <GridSetter
+                gridOptions={GRID_OPTIONS}
+                gridSize={gridSize}
+                setGridSize={setGridSize}
+                gridMode={gridMode}
+                setGridMode={setGridMode}
+                disableBoundaries={resource === 'Off-Shore Wind'}
+              />
+            </HeadOptionHeadline>
+          </HeadOption>
+        </PanelBlockHeader>
+        <PanelBlockBody>
+          <PreAnalysisMessage>
+            Select Area and Resource to view and interact with input parameters.
+          </PreAnalysisMessage>
+        </PanelBlockBody>
+        <SubmissionSection>
+          <Button
+            size='small'
+            type='reset'
+            disabled={!area || !resource}
+            onClick={resetClick}
+            variation='primary-raised-light'
+            useIcon='arrow-loop'
+          >
+            Reset
+          </Button>
+          <Button
+            id='generate-zones'
+            size='small'
+            type='submit'
+            disabled={!area || !resource}
+            onClick={applyClick}
+            variation='primary-raised-dark'
+            useIcon='tick--small'
+            title={
+              !area || !resource
+                ? 'Both area and resource must be set to generate zones'
+                : 'Generate Zones Analysis'
+            }
+          >
+            Generate Zones
+          </Button>
+        </SubmissionSection>
+      </PanelBlock>
+    );
   }
 
   return (
@@ -246,75 +365,36 @@ function QueryForm (props) {
 
       <TabbedBlockBody>
         <FiltersForm
+          id='filters-tab'
           name='Filters'
           icon='filter'
-          setPreset={(preset) => {
-            if (preset === 'reset') {
-              initialize(filtersLists, filtersInd, {
-                reset: true,
-                apiRange: filterRanges.getData()
-              });
-            } else {
-              initialize(presets.filters[preset], filtersInd, {
-                reset: true,
-                apiRange: filterRanges.getData()
-              });
-            }
-          }}
+          disabled={!area || !resource}
           filters={filtersInd}
           checkIncluded={checkIncluded}
           resource={resource}
-          outputFilters={
-            [
-              [maxZoneScore, setMaxZoneScore, 'Run analysis to filter on zone score'],
-              [maxLCOE, setMaxLCOE, 'Run analysis to filter on LCOE']
-            ]
-          }
         />
         <LCOEForm
+          id='economics-tab'
           name='Economics'
           icon='disc-dollar'
           lcoe={lcoeInd}
-          // setLcoe={setLcoe}
-          presets={presets.lcoe}
-          setPreset={(preset) => {
-            if (preset === 'reset') {
-              initialize(lcoeList, lcoeInd, {
-                reset: true
-              });
-            } else {
-              initialize(presets.lcoe[preset], lcoeInd, {
-                reset: true
-              });
-            }
-          }}
-
+          disabled={!area || !resource}
         />
         <WeightsForm
+          id='weights-tab'
           name='weights'
           icon='sliders-horizontal'
           weights={weightsInd}
-          presets={presets.weights}
-          setPreset={(preset) => {
-            if (preset === 'reset') {
-              initialize(weightsList, weightsInd, {
-                reset: true
-              });
-            } else {
-              initialize(presets.weights[preset], weightsInd, {
-                reset: true
-              });
-            }
-          }}
-
+          disabled={!area || !resource}
+          weightsLocks={weightsLocks}
+          setWeightLocks={setWeightLocks}
         />
-
       </TabbedBlockBody>
-
       <SubmissionSection>
         <Button
           size='small'
           type='reset'
+          disabled={!area || !resource}
           onClick={resetClick}
           variation='primary-raised-light'
           useIcon='arrow-loop'
@@ -322,11 +402,18 @@ function QueryForm (props) {
           Reset
         </Button>
         <Button
+          id='generate-zones'
           size='small'
           type='submit'
+          disabled={!area || !resource}
           onClick={applyClick}
           variation='primary-raised-dark'
           useIcon='tick--small'
+          title={
+            !area || !resource
+              ? 'Both area and resource must be set to generate zones'
+              : 'Generate Zones Analysis'
+          }
         >
           Generate Zones
         </Button>
@@ -343,11 +430,6 @@ QueryForm.propTypes = {
   lcoeList: T.array,
   updateFilteredLayer: T.func,
   filterRanges: T.object,
-  presets: T.shape({
-    weights: T.object,
-    lcoe: T.object,
-    filters: T.object
-  }),
   onResourceEdit: T.func,
   onAreaEdit: T.func,
   onInputTouched: T.func,
@@ -356,10 +438,7 @@ QueryForm.propTypes = {
   setGridMode: T.func,
   gridSize: T.number,
   setGridSize: T.func,
-  maxZoneScore: T.object,
-  setMaxZoneScore: T.func,
-  maxLCOE: T.object,
-  setMaxLCOE: T.func
+  firstLoad: T.object
 };
 
 export default QueryForm;

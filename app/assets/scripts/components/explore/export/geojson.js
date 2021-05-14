@@ -15,14 +15,15 @@ export default async function exportZonesGeoJSON (selectedArea, zones) {
           id: z.id,
           zone_score: round(summary.zone_score, indicatorsDecimals.zone_score),
           lcoe_usd_mwh: round(summary.lcoe, indicatorsDecimals.lcoe),
-          zone_output_gwh: round(
-            summary.zone_output,
-            indicatorsDecimals.zone_output
+          generation_potential_gwh: round(
+            summary.generation_potential,
+            indicatorsDecimals.generation_potential
           ),
           zone_output_density_mwh_km2: round(
             summary.zone_output_density,
             indicatorsDecimals.zone_output_density
-          )
+          ),
+          cf: round(summary.cf, indicatorsDecimals.cf)
         }
       };
     })
