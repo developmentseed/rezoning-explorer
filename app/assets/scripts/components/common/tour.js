@@ -43,7 +43,7 @@ const steps = [
   {
     title: 'Contextual Layers',
     target: '#toggle-raster-tray',
-    content: 'Activate contextual layers to visualize relevant spatial data and resulting output on the map. Additional contextual layers, such as roads, grid, location of airports, etc. can be activate in order to create a meaningful visual output.',
+    content: 'Toggle contextual layers to visualize relevant spatial data and resulting output on the map. Additional contextual layers, such as roads, grid, location of airports, etc. can be activated in order to create a meaningful visual output.',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
