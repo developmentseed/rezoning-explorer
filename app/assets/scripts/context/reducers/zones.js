@@ -8,8 +8,9 @@ import squareGrid from '@turf/square-grid';
 import pLimit from 'p-limit';
 import { wrapLogReducer } from './../contexeed';
 import { apiResourceNameMap } from '../../components/explore/panel-data';
+import { updateLoadingProgress } from '../../components/common/global-loading';
 
-const limit = pLimit(50);
+const limit = pLimit(20);
 const { apiEndpoint } = config;
 
 async function getZoneSummary (feature, filterString, weights, lcoe, countryResourcePath) {
@@ -120,11 +121,19 @@ export async function fetchZones (
     const countryResourcePath = selectedArea.type === 'country' ? `/${selectedArea.id}/${apiResourceNameMap[selectedResource]}` : '';
 
     // Fetch Lcoe for each sub-area
+    const zoneUpdateInterval = setInterval(() => {
+      const totalZones = features.length;
+      const completeZones = features.length - limit.pendingCount - limit.activeCount;
+      updateLoadingProgress(completeZones, totalZones);
+    }, 5);
+
     const zones = await Promise.all(
       features.map((z) =>
         limit(() => getZoneSummary(z, filterString, weights, lcoe, countryResourcePath))
       )
     );
+    updateLoadingProgress(0, 0);
+    clearInterval(zoneUpdateInterval);
 
     const maxScore = Math.max(
       ...zones.map((z) => get(z, 'properties.summary.zone_score', 0))
