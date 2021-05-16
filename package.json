@@ -165,6 +165,7 @@
     "redux": "^4.0.5",
     "styled-components": "5.0.0",
     "stylelint-processor-styled-components": "^1.10.0",
-    "topojson-client": "^3.1.0"
+    "topojson-client": "^3.1.0",
+    "utf8": "^3.0.0"
   }
 }

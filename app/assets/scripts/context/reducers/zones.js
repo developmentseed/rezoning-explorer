@@ -2,6 +2,7 @@ import * as topojson from 'topojson-client';
 import { fetchJSON, makeAPIReducer } from './reduxeed';
 import config from '../../config';
 import get from 'lodash.get';
+import utf8 from 'utf8';
 import zoneScoreColor from '../../styles/zoneScoreColors';
 import theme from '../../styles/theme/theme';
 import squareGrid from '@turf/square-grid';
@@ -112,6 +113,8 @@ export async function fetchZones (
           if (typeof f.properties.id === 'undefined') {
             f.properties.id = f.properties.GID_0;
           }
+          // fix data utf8 encoding
+          f.properties.name = utf8.decode(f.properties.name);
           return f;
         });
       }
@@ -144,7 +147,6 @@ export async function fetchZones (
 
       const zoneScore = z.properties.summary.zone_score / maxScore;
       const color = zoneScoreColor(zoneScore);
-
       return {
         ...z,
         properties: {
