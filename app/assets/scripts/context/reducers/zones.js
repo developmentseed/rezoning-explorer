@@ -113,6 +113,9 @@ export async function fetchZones (
           if (typeof f.properties.id === 'undefined') {
             f.properties.id = f.properties.GID_0;
           }
+          if (typeof f.properties.name === 'undefined') {
+            f.properties.name = f.properties.NAME_0;
+          }
           // fix data utf8 encoding
           f.properties.name = utf8.decode(f.properties.name);
           return f;
