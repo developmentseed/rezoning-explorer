@@ -43,18 +43,26 @@ export function FormProvider (props) {
     initialApiRequestState
   );
 
+  // this is lazy programming for fire off the filters fetch once
+  let ff = false;
+
   // Show modals based on selection
   useEffect(() => {
     setShowSelectAreaModal(!selectedAreaId);
     setShowSelectResourceModal(!selectedResource);
 
     if (selectedResource) {
+      // only fetch filters once, after we have resources
+      if (!ff) {
+        fetchFilters(dispatchFiltersList);
+        ff = true;
+      }
+
       fetchFilterRanges(selectedAreaId, selectedResource, dispatchFilterRanges);
     }
   }, [selectedAreaId, selectedResource]);
 
   useEffect(() => {
-    fetchFilters(dispatchFiltersList);
     fetchWeights(dispatchWeightsList);
   }, []);
 
