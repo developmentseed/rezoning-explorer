@@ -81,7 +81,7 @@ function SliderGroup (props) {
         maxValue={range[1]}
         step={(range[1] % 1 !== 0 || range[1] <= 1) ? 0.01 : 1}
         value={value}
-        formatLabel={value => Number(value) ? truncateDecimals(value) : value}
+        formatLabel={value => typeof value === 'number' ? truncateDecimals(value) : value}
         onChange={onChange}
         disabled={disabled}
       />
