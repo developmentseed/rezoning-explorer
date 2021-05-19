@@ -26,7 +26,7 @@ const heightMatrix = {
 };
 
 const paddingMatrix = {
-  small: '0.125rem 0.5rem',
+  small: '0.125rem 0.25rem',
   medium: '0.25rem 0.5rem',
   large: '0.5rem 0.75rem'
 };
