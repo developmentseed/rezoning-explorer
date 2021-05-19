@@ -26,7 +26,7 @@ export default async function exportZonesCsv (selectedArea, zones) {
         summary.zone_output_density,
         indicatorsDecimals.zone_output_density
       ),
-      'Capacity Factor': (summary.cf, indicatorsDecimals.cf)
+      'Capacity Factor': round(summary.cf, indicatorsDecimals.cf)
     };
 
     // Add name if available
