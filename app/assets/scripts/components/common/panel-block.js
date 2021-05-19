@@ -46,5 +46,5 @@ export const PanelBlockBody = styled.div`
 
 export const PanelBlockScroll = styled(ShadowScrollbar)`
   flex: 1;
-  z-index: 1;
+  z-index: 12;
 `;
