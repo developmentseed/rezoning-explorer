@@ -53,18 +53,7 @@ function FiltersForm (props) {
           introText='This step identifies areas suitable for solar PV (or wind or offshore wind) development by applying spatial filters. Suitable areas will then be used to generate solar energy zones, which can be scored with user-provided weights and economic assumptions.'
         />
         <Accordion
-          initialState={[
-            true,
-            ...filters
-              .reduce((seen, [filt, setFilt]) => {
-                if (!seen.includes(filt.category)) {
-                  seen.push(filt);
-                }
-                return seen;
-              }, [])
-              .slice(1)
-              .map((_) => false)
-          ]}
+          initialState={[true, true]}
           // foldCount={Object.keys(filters).length + 1}
           allowMultiple
         >

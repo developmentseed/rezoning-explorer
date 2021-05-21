@@ -34,7 +34,8 @@ function LCOEForm (props) {
         introText='Adjust economic parameters to change economic calculations. Set custom LCOE inputs to affect the economic analysis for each renewable energy technology.'
       />
       <Accordion
-        initialState={[true, ...categorizedCosts.slice(1).map(c => false)]}
+        initialState={[true, true]}
+        allowMultiple
       >
         {({ checkExpanded, setExpanded }) => {
           return (
