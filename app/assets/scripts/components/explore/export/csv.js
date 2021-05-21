@@ -14,9 +14,10 @@ export default async function exportZonesCsv (selectedArea, zones) {
   const rows = zones.map(({ properties }) => {
     const { name, id, summary } = properties;
 
-    const zone = {
+    let zone = {
       id,
       'Zone Score': round(summary.zone_score, indicatorsDecimals.zone_score),
+      'Suitable Area (km²)': round(summary.suitable_area / 1000000, 0),
       'LCOE (USD/MWh)': round(summary.lcoe, indicatorsDecimals.lcoe),
       'Generation Potential (GWh)': round(
         summary.generation_potential,
@@ -26,11 +27,12 @@ export default async function exportZonesCsv (selectedArea, zones) {
         summary.zone_output_density,
         indicatorsDecimals.zone_output_density
       ),
+      'Installed Capacity Potential (MW)': summary.icp,
       'Capacity Factor': round(summary.cf, indicatorsDecimals.cf)
     };
 
     // Add name if available
-    if (name) zone.Name = name;
+    if (name) zone = { Name: name, ...zone };
 
     return zone;
   });
