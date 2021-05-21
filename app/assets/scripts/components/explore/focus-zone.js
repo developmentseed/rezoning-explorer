@@ -74,7 +74,7 @@ export const formatLabel = function (id, titleCased = false) {
     case 'zone_output_density':
       return `${id.replace(/_/g, ' ')} (MWh/km²)`;
     case 'icp':
-      return `${id.replace(/_/g, ' ')} (MW)`;
+      return 'Installed Capacity Potential (MW)';
     case 'suitable_area':
       return `${id.replace(/_/g, ' ')} (km²)`;
     case 'cf':
