@@ -32,7 +32,7 @@ export default async function exportZonesCsv(selectedArea, zones) {
           summary.generation_potential,
           indicatorsDecimals.generation_potential
         ),
-        'Zone Output Density (MWh/km²)': round(
+        'Zone Output Density (GWh/km²)': round(
           summary.zone_output_density,
           indicatorsDecimals.zone_output_density
         ),

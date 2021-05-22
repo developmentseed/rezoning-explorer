@@ -14,16 +14,18 @@ export default async function exportZonesGeoJSON (selectedArea, zones) {
           name: z.properties.name,
           id: z.id,
           zone_score: round(summary.zone_score, indicatorsDecimals.zone_score),
+          suitable_area: round(summary.suitable_area, 0),
           lcoe_usd_mwh: round(summary.lcoe, indicatorsDecimals.lcoe),
           generation_potential_gwh: round(
             summary.generation_potential,
             indicatorsDecimals.generation_potential
           ),
-          zone_output_density_mwh_km2: round(
+          zone_output_density_gwh_km2: round(
             summary.zone_output_density,
             indicatorsDecimals.zone_output_density
           ),
-          cf: round(summary.cf, indicatorsDecimals.cf)
+          installed_capacity_potential_mw: summary.icp,
+          capacity_factor: round(summary.cf, indicatorsDecimals.cf)
         }
       };
     })

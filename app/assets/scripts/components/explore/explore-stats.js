@@ -67,7 +67,7 @@ export const zonesSummary = (zones) => {
     },
     {
       label: 'Annual Energy Output Density',
-      unit: 'MWh/km²',
+      unit: 'GWh/km²',
       data:
         stats.zonesOutput > 0
           ? formatThousands(stats.zonesOutput / stats.zonesArea, {
