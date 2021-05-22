@@ -109,21 +109,9 @@ function About () {
                 specific country context.
               </p>
               <p>
-                Inspired by{' '}
-                <a rel='noreferrer' target='_blank' href='https://mapre.lbl.gov/'>
-                  Berkley’s MapRE
-                </a>{' '}
-                and developed by{' '}
-                <a rel='noreferrer' target='_blank' href='https://esmap.org/'>
-                  ESMAP
-                </a>{' '}
-                the tool bring together complex spatial analysis and economic
-                calculations into an online, user-friendly environment that allows
-                users and decision makers to obtain insights into the technical
-                and economic potential of renewable energy resources for any
-                country. Inspired by and based off{' '}
+                Inspired by and based off{' '}
                 <a href='https://www.lbl.gov/' target='_blank' rel='noreferrer'>
-                  Berkely Lab
+                  Lawrence Berkeley National Laboratory&apos;s
                 </a>{' '}
                 and the{' '}
                 <a href='https://www.ucsb.edu/' target='_blank' rel='noreferrer'>
@@ -212,7 +200,7 @@ function About () {
                 .CSV, .SHP (for boundaries selection) or GeoTIFF format (for grid
                 selection) for further processing in a different environment.
               </p>
-              <h3>Relevant Tools</h3>
+              <h3>Additional Relevant Tools</h3>
               <p>Other applications and data sources that are relevant for the energy sector.</p>
               <Dl horizontal>
                 <dt><strong><a href='https://energydata.info/'>EnergyData.info</a></strong></dt>
