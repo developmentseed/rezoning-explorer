@@ -15,6 +15,8 @@ import Button from '../../styles/button/button';
 import InfoButton from '../common/info-button';
 
 import { Card } from '../common/card-list';
+import { PanelBlock, PanelBlockBody } from '../common/panel-block';
+import Prose from '../../styles/type/prose';
 
 import QueryForm from './query-form';
 import RasterTray from './raster-tray';
@@ -50,6 +52,12 @@ const RasterTrayWrapper = styled.div`
 
   }
 `;
+
+const PreAnalysisMessage = styled(Prose)`
+  padding: 1rem 1.5rem;
+  text-align: center;
+`;
+
 function ExpMapPrimePanel (props) {
   const { onPanelChange } = props;
 
@@ -233,7 +241,18 @@ function ExpMapPrimePanel (props) {
                 }}
               />
             ) : (
-              <></>
+              <PanelBlock>
+                <PanelBlockBody>
+                  {filterRanges && selectedArea && selectedResource ? (
+                    <PreAnalysisMessage> Loading... </PreAnalysisMessage>
+                  ) : (
+                    <PreAnalysisMessage>
+                      Select Area and Resource to view and interact with input
+                      parameters.
+                    </PreAnalysisMessage>
+                  )}
+                </PanelBlockBody>
+              </PanelBlock>
             )
         }
       />
