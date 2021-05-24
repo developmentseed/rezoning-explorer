@@ -250,7 +250,7 @@ function ExpMapPrimePanel (props) {
                 <HeadOption>
                   <HeadOptionHeadline id='selected-area-prime-panel-heading'>
                     <Heading size='large' variation='primary'>
-                      {selectedArea ? selectedArea.name : 'Select Area'}
+                      {filterRanges && selectedArea ? selectedArea.name : 'Select Area'}
                     </Heading>
                     <EditButton
                       id='select-area-button'
@@ -302,7 +302,7 @@ function ExpMapPrimePanel (props) {
               </PanelBlockHeader>
               <PanelBlockBody>
                 {selectedArea && selectedResource ? (
-                  <PreAnalysisMessage> Loading... </PreAnalysisMessage>
+                  <PreAnalysisMessage> Loading parameters... </PreAnalysisMessage>
                 ) : (
                   <PreAnalysisMessage>
                     Select Area and Resource to view and interact with input
@@ -323,6 +323,7 @@ function ExpMapPrimePanel (props) {
           setShowSelectResourceModal(false);
         }}
         data={availableResources}
+        closeButton={typeof selectedResource !== 'undefined'}
         renderHeadline={() => (
           <ModalHeadline
             id='select-resource-modal-header'
@@ -351,6 +352,7 @@ function ExpMapPrimePanel (props) {
 
       <ModalSelectArea
         areas={areas}
+        closeButton={typeof selectedArea !== 'undefined'}
         selectedResource={selectedResource}
         showSelectAreaModal={showSelectAreaModal}
         setShowSelectAreaModal={setShowSelectAreaModal}

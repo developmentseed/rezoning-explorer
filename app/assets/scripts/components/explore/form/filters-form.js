@@ -54,7 +54,6 @@ function FiltersForm (props) {
         />
         <Accordion
           initialState={[
-            true,
             ...filters
               .reduce((seen, [filt, setFilt]) => {
                 if (!seen.includes(filt.category)) {
@@ -62,8 +61,7 @@ function FiltersForm (props) {
                 }
                 return seen;
               }, [])
-              .slice(1)
-              .map((_) => false)
+              .map((_) => true)
           ]}
           // foldCount={Object.keys(filters).length + 1}
           allowMultiple

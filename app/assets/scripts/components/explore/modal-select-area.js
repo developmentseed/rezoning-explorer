@@ -37,7 +37,8 @@ function ModalSelectArea (props) {
     areas,
     showSelectAreaModal,
     setShowSelectAreaModal,
-    setSelectedAreaId
+    setSelectedAreaId,
+    closeButton
   } = props;
 
   const [areaType, setAreaType] = useState('country');
@@ -50,6 +51,7 @@ function ModalSelectArea (props) {
         setShowSelectAreaModal(false);
       }}
       onCloseClick={() => setShowSelectAreaModal(false)}
+      closeButton={closeButton}
       data={areas.filter((a) => a.type === areaType)}
       renderHeadline={() => (
         <HeadlineWrapper id='select-area-modal-header'>
@@ -99,7 +101,8 @@ ModalSelectArea.propTypes = {
   areas: T.array,
   showSelectAreaModal: T.bool,
   setShowSelectAreaModal: T.func,
-  setSelectedAreaId: T.func
+  setSelectedAreaId: T.func,
+  closeButton: T.bool
 };
 
 export default ModalSelectArea;
