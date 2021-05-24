@@ -11,7 +11,7 @@ const BodyOuter = styled.div`
 function ModalSelect (props) {
   const {
     revealed, onOverlayClick, onCloseClick, data,
-    renderHeadline, renderCard, filterCard,
+    renderHeadline, renderCard, filterCard, closeButton,
     nonScrolling
   } = props;
 
@@ -21,6 +21,7 @@ function ModalSelect (props) {
       className='select'
       size='xlarge'
       revealed={revealed}
+      closeButton={closeButton}
       onOverlayClick={onOverlayClick}
       onCloseClick={onCloseClick}
       renderHeadline={renderHeadline}
@@ -41,6 +42,7 @@ function ModalSelect (props) {
 
 ModalSelect.propTypes = {
   revealed: T.bool,
+  closeButton: T.bool,
   onOverlayClick: T.func,
   onCloseClick: T.func,
   data: T.array,

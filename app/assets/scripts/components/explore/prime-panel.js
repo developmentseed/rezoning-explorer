@@ -246,6 +246,7 @@ function ExpMapPrimePanel (props) {
           setShowSelectResourceModal(false);
         }}
         data={availableResources}
+        closeButton={typeof selectedResource !== 'undefined'}
         renderHeadline={() => (
           <ModalHeadline
             id='select-resource-modal-header'
@@ -274,6 +275,7 @@ function ExpMapPrimePanel (props) {
 
       <ModalSelectArea
         areas={areas}
+        closeButton={typeof selectedArea !== 'undefined'}
         selectedResource={selectedResource}
         showSelectAreaModal={showSelectAreaModal}
         setShowSelectAreaModal={setShowSelectAreaModal}
