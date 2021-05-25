@@ -14,8 +14,8 @@
   {
     "id": "caspian-sea",
     "name": "Caspian Sea",
-    "type": "region",
-    "bounds": "43.8,25.05,89.1,60"
+    "type": "region",    
+    "bounds": "46.679,36.579, 54.760,47.114"
   },
   {
     "id": "east-and-southern-africa",
