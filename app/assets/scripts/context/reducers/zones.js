@@ -117,7 +117,12 @@ export async function fetchZones (
             f.properties.name = f.properties.NAME_0;
           }
           // fix data utf8 encoding
-          f.properties.name = utf8.decode(f.properties.name);
+          try {
+            f.properties.name = utf8.decode(f.properties.name);
+          } catch (error) {
+            // eslint-disable-next-line
+            console.log('Failed to decode ', f.properties);
+          }
           return f;
         });
       }
