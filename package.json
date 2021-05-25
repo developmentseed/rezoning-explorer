@@ -1,6 +1,6 @@
 {
   "name": "rezoning-web",
-  "version": "0.2.4",
+  "version": "1.0.3",
   "description": "Frontend application for the REZoning project",
   "repository": {
     "type": "git",
@@ -59,6 +59,7 @@
     "@babel/plugin-transform-spread": "^7.0.0",
     "@babel/preset-env": "^7.10.4",
     "@babel/preset-react": "^7.10.4",
+    "@turf/simplify": "^6.3.0",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^26.1.0",
     "babelify": "^10.0.0",

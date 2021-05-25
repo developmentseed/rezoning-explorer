@@ -70,11 +70,11 @@ export const formatLabel = function (id, titleCased = false) {
     case 'lcoe':
       return `${id.replace(/_/g, ' ')} (USD/MWh)`;
     case 'generation_potential':
-      return `${id.replace(/_/g, ' ')} (GwH)`;
+      return `${id.replace(/_/g, ' ')} (GWH)`;
     case 'zone_output_density':
-      return `${id.replace(/_/g, ' ')} (MWh/km²)`;
+      return `${id.replace(/_/g, ' ')} (GWh/km²)`;
     case 'icp':
-      return `${id.replace(/_/g, ' ')} (MW)`;
+      return 'Installed Capacity Potential (MW)';
     case 'suitable_area':
       return `${id.replace(/_/g, ' ')} (km²)`;
     case 'cf':

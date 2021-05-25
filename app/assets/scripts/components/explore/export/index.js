@@ -265,7 +265,7 @@ const ExportZonesButton = (props) => {
     const countryName = selectedArea.name;
     selectedResource === 'Solar PV'
       ? (ResourceLink = `https://globalsolaratlas.info/download/${countryName}`)
-      : (ResourceLink = `https://globalwindatlas.info/en/area/${countryName}?print=true`);
+      : (ResourceLink = `https://globalwindatlas.info/area/${countryName}?download=print`);
   }
 
   return (

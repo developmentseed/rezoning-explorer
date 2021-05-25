@@ -271,7 +271,7 @@ function QueryForm(props) {
         </PanelBlockHeader>
         <PanelBlockBody>
           <PreAnalysisMessage>
-            Select Area and Resource to view and interact with input parameters.
+            Loading...
           </PreAnalysisMessage>
         </PanelBlockBody>
         <SubmissionSection>

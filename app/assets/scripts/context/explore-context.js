@@ -195,13 +195,30 @@ export function ExploreProvider (props) {
       return accum;
     }, new Map());
 
+    const regions = areas.filter(a => a.type === 'region');
+
+    const regionEezRequests = regions.map(async (r) => {
+      const regionEez = await fetch(`public/eez-regions/${r.id}.geojson`)
+        .then(e => e.json());
+
+      return {
+        ...r,
+        eez: regionEez.features
+      };
+    });
+
+    const regionsWithEez = await Promise.all(regionEezRequests);
+
     // Apply EEZs to areas list
     const areasWithEez = areas.map((a) => {
       if (a.type === 'country') {
         a.eez = eezCountries.get(a.id);
+      } else if (a.type === 'region') {
+        return regionsWithEez.find(r => r.id === a.id);
       }
       return a;
     });
+
     setAreas(areasWithEez);
     const currentArea = areasWithEez.find((a) => a.id === selectedAreaId);
 
