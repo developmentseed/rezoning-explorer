@@ -225,7 +225,7 @@ function drawFooter (doc, pageNumber) {
 
   // // Footer
   doc.image(Logo, options.margin, doc.page.height - options.margin * 1.25, {
-    height: 18
+    height: 30
   });
 
   // Left Title
@@ -234,7 +234,7 @@ function drawFooter (doc, pageNumber) {
     .font(boldFont)
     .text(
       'REZoning',
-      options.margin * 1.5 + 4,
+      options.margin * 1.5 + 16,
       doc.page.height - options.margin * 1.25,
       {
         width: options.colWidthTwoCol,
