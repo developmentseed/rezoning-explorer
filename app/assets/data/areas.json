@@ -3,7 +3,7 @@
     "id": "black-sea",
     "name": "Black Sea",
     "type": "region",
-    "bounds": "20.2,35.81,180,81.85"
+    "bounds": "27.443,40.908,42.354,47.310"    
   },
   {
     "id": "caribbean",
@@ -14,8 +14,8 @@
   {
     "id": "caspian-sea",
     "name": "Caspian Sea",
-    "type": "region",
-    "bounds": "43.8,25.05,89.1,60"
+    "type": "region",    
+    "bounds": "46.679,36.579, 54.760,47.114"
   },
   {
     "id": "east-and-southern-africa",
