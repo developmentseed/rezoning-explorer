@@ -131,8 +131,7 @@
     },
     {
       "id": "caspian-sea",
-      "name": "Caspian Sea",
-      "territories": ["AZE", "IRN", "KAZ", "RUS", "TKM"]
+      "name": "Caspian Sea"
     }
   ]
 }
