@@ -126,8 +126,7 @@
     },
     {
       "id": "black-sea",
-      "name": "Black Sea",
-      "territories": ["BGR", "GEO", "ROU", "RUS", "TUR", "UKR"]
+      "name": "Black Sea"
     },
     {
       "id": "caspian-sea",
