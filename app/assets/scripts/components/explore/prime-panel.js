@@ -301,7 +301,7 @@ function ExpMapPrimePanel (props) {
                 </HeadOption>
               </PanelBlockHeader>
               <PanelBlockBody>
-                {selectedArea && selectedResource ? (
+                {filterRanges && selectedArea && selectedResource ? (
                   <PreAnalysisMessage> Loading parameters... </PreAnalysisMessage>
                 ) : (
                   <PreAnalysisMessage>
