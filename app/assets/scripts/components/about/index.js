@@ -138,7 +138,8 @@ function About () {
                 endorsement or acceptance of such boundaries. A list of the input
                 datasets can be found here (link to ED.info datasets) and the
                 methodology is described here (link to github). See the
-                {' '}<a href='https://gre-website-public.s3.us-east-2.amazonaws.com/rezoning_user_guide.pdf'>
+                {' '}
+                <a href='https://gre-website-public.s3.us-east-2.amazonaws.com/rezoning_user_guide.pdf'>
                        Rezoning User Guide
                 </a>{' '}
                 for a detailed description of the tool and
@@ -209,20 +210,20 @@ function About () {
               <ul>
                 <li>
                   <strong>Offshore Wind:</strong>
-                  <video controls width="100%">
-                    <source src="https://gre-website-public.s3.us-east-2.amazonaws.com/offshore.mkv" type="video/mp4" />
+                  <video controls width='100%'>
+                    <source src='https://gre-website-public.s3.us-east-2.amazonaws.com/offshore.mkv' type='video/mp4' />
                   </video>
                 </li>
                 <li>
                   <strong>Onshore Wind:</strong>
-                  <video controls width="100%">
-                    <source src="https://gre-website-public.s3.us-east-2.amazonaws.com/onshore.mkv" type="video/mp4" />
+                  <video controls width='100%'>
+                    <source src='https://gre-website-public.s3.us-east-2.amazonaws.com/onshore.mkv' type='video/mp4' />
                   </video>
                 </li>
                 <li>
                   <strong>Solar PV:</strong>
-                  <video controls width="100%">
-                    <source src="https://gre-website-public.s3.us-east-2.amazonaws.com/solarpv_v2.mkv" type="video/mp4" />
+                  <video controls width='100%'>
+                    <source src='https://gre-website-public.s3.us-east-2.amazonaws.com/solarpv_v2.mkv' type='video/mp4' />
                   </video>
                 </li>
               </ul>
