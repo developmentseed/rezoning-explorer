@@ -335,14 +335,7 @@
     "name": "Republic of Congo",
     "type": "country",
     "bounds": "11.201,-5.031,18.65,3.703"
-  },
-  {
-    "gid": "COK",
-    "alpha2": "CK",
-    "name": "Cook Islands",
-    "type": "country",
-    "bounds": "-165.879,-21.959,-157.321,-8.915"
-  },
+  },  
   {
     "gid": "COL",
     "alpha2": "CO",
@@ -510,13 +503,6 @@
     "name": "Finland",
     "type": "country",
     "bounds": "20.551,59.721,31.583,70.091"
-  },
-  {
-    "gid": "FJI",
-    "alpha2": "FJ",
-    "name": "Fiji",
-    "type": "country",
-    "bounds": "-183.09555054,-21.03111076,-178.2333374,-12.46233463"
   },
   {
     "gid": "FLK",
@@ -841,13 +827,6 @@
     "bounds": "102.336,9.914,107.63,14.688"
   },
   {
-    "gid": "KIR",
-    "alpha2": "KI",
-    "name": "Kiribati",
-    "type": "country",
-    "bounds": "-174.543,-17.852,176.849,4.699"
-  },
-  {
     "gid": "KNA",
     "alpha2": "KN",
     "name": "Saint Kitts and Nevis",
@@ -1156,13 +1135,6 @@
     "bounds": "-87.691,10.708,-82,15.026"
   },
   {
-    "gid": "NIU",
-    "alpha2": "NU",
-    "name": "Niue",
-    "type": "country",
-    "bounds": "-169.951,-19.156,-169.774,-18.952"
-  },
-  {
     "gid": "NLD",
     "alpha2": "NL",
     "name": "Netherlands",
@@ -1322,13 +1294,6 @@
     "name": "Romania",
     "type": "country",
     "bounds": "20.264,43.619,29.72,48.266"
-  },
-  {
-    "gid": "RUS",
-    "alpha2": "RU",
-    "name": "Russia",
-    "type": "country",
-    "bounds": "-340.35749817,41.18886566,-169.65260315,81.85468292"
   },
   {
     "gid": "RWA",
@@ -1623,27 +1588,13 @@
     "name": "Ukraine",
     "type": "country",
     "bounds": "22.14,44.386,40.218,52.375"
-  },
-  {
-    "gid": "UMI",
-    "alpha2": "UM",
-    "name": "United States Minor Outlying Islands",
-    "type": "country",
-    "bounds": "-178.304,-0.389,166.658,28.402"
-  },
+  },  
   {
     "gid": "URY",
     "alpha2": "UY",
     "name": "Uruguay",
     "type": "country",
     "bounds": "-58.443,-34.974,-53.094,-30.08"
-  },
-  {
-    "gid": "USA",
-    "alpha2": "US",
-    "name": "United States",
-    "type": "country",
-    "bounds": "-187.56388855,18.91027832,-66.94889069,72.68541718"
   },
   {
     "gid": "UZB",
@@ -1693,13 +1644,6 @@
     "name": "Vanuatu",
     "type": "country",
     "bounds": "166.541,-20.253,170.24,-13.072"
-  },
-  {
-    "gid": "WLF",
-    "alpha2": "WF",
-    "name": "Wallis and Futuna",
-    "type": "country",
-    "bounds": "-178.182,-14.369,-176.124,-13.183"
   },
   {
     "gid": "WSM",
