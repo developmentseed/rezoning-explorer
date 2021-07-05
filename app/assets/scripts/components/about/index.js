@@ -132,7 +132,8 @@ function About () {
                 Marshall Islands, Niue, United States Minor Outlying Islands,
                 Wallis and Fortuna.
                 We expect to incorporate these into the next revision of the
-                REZoning tool.</p>
+                REZoning tool.
+              </p>
               <p>
                 The REZoning tool is powered by global geospatial datasets and
                 uses baseline industry assumptions as default values for economic
