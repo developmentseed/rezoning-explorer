@@ -1,4 +1,6 @@
-# REZoning Web
+# REZoning Explorer
+
+![image](https://user-images.githubusercontent.com/12634024/124962962-3d159580-dfed-11eb-8b4a-ea760ef1cc45.png)
 
 Web application to explore Renewable Energy Zones.
 
