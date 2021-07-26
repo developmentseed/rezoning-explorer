@@ -137,7 +137,9 @@ workflows:
             - prepare
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - circle_ci_s3_prod
       - deploy-production:
           requires:
             - lint
