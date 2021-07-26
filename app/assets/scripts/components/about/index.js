@@ -125,7 +125,14 @@ function About () {
                 brings together spatial analysis and economic calculations into an
                 online, user-friendly environment that allows users and decision
                 makers to obtain insights into the technical and economic
-                potential of renewable energy resources for all countries.
+                potential of renewable energy resources for all countries*.
+              </p>
+              <p className='small'>* Version v.1 does not contain the following
+                countries: United States, Russia, Kiribati, Fiji, Cook Islands,
+                Marshall Islands, Niue, United States Minor Outlying Islands,
+                Wallis and Fortuna.
+                We expect to incorporate these into the next revision of the
+                REZoning tool.
               </p>
               <p>
                 The REZoning tool is powered by global geospatial datasets and
