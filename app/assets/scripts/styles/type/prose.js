@@ -45,6 +45,11 @@ const Prose = styled.div`
   > *:last-child {
     margin-bottom: 0;
   }
+
+  .small {
+    font-size: .875em;
+    line-height: 1.25em;
+  }
 `;
 
 export default Prose;
