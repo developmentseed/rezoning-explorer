@@ -139,7 +139,6 @@ workflows:
             branches:
               only:
                 - master
-                - circle_ci_s3_prod
       - deploy-production:
           requires:
             - lint
@@ -150,4 +149,3 @@ workflows:
             branches:
               only:
                 - master
-                - circle_ci_s3_prod
