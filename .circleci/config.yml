@@ -73,7 +73,7 @@ jobs:
       - checkout
       - restore_cache:
           <<: *restore_cache_def
-      - run: yarn install          
+      - run: yarn install
       - run:
           name: Building staging site
           command: yarn stage
@@ -83,21 +83,33 @@ jobs:
             cp ./dist/index.html ./dist/200.html
             ./node_modules/surge/lib/cli.js --project ./dist --domain https://rezoning-dev.surge.sh
 
-  deploy-surge:
+  build-production:
     <<: *base_def
     steps:
       - checkout
       - restore_cache:
           <<: *restore_cache_def
-      - run: yarn install          
+      - run: yarn install
       - run:
-          name: Building staging site
+          name: Building production site
           command: yarn build
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - dist
+
+  deploy-production:
+    docker:
+      - image: 'circleci/python:3.9'
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
-          name: Deploy to surge
-          command: |
-            cp ./dist/index.html ./dist/200.html
-            ./node_modules/surge/lib/cli.js --project ./dist --domain https://rezoning.surge.sh
+          name: Install awscli
+          command: sudo pip install awscli
+      - run:
+          name: Sync files at S3
+          command: aws s3 sync --delete /tmp/workspace/dist s3://${PRODUCTION_S3_BUCKET}/
 
 workflows:
   version: 2
@@ -118,7 +130,7 @@ workflows:
           filters:
             branches:
               only: develop
-      - deploy-surge:
+      - build-production:
           requires:
             - lint
             - test
@@ -126,3 +138,14 @@ workflows:
           filters:
             branches:
               only: master
+      - deploy-production:
+          requires:
+            - lint
+            - test
+            - prepare
+            - build-production
+          filters:
+            branches:
+              only:
+                - master
+                - circle_ci_s3_prod
