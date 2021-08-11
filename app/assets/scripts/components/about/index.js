@@ -144,7 +144,12 @@ function About () {
                 World Bank any judgement on the legal status of any territory or
                 endorsement or acceptance of such boundaries. A list of the input
                 datasets can be found here (link to ED.info datasets) and the
-                methodology is described here (link to github). See the
+                source code is {' '}
+                <a
+                  href='https://github.com/developmentseed/rezoning-explorer'
+                >
+                  here
+                </a>{' '}. See the
                 {' '}
                 <a href='https://gre-website-public.s3.us-east-2.amazonaws.com/rezoning_user_guide.pdf'>
                        Rezoning User Guide
