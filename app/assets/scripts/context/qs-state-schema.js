@@ -17,7 +17,7 @@ export const castByFilterType = (type) => {
     case BOOL:
       return Boolean;
     case DROPDOWN:
-      return ({ name, id }) => id;
+      return (value) => value?.id || value; // value might be object or string
     case MULTI:
     case TEXT:
       return String;
