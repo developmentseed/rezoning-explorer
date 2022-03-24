@@ -142,9 +142,8 @@ function About () {
                 or UCSB. The boundaries, colors, denominations and other
                 information shown on the outputs do not imply on the part of the
                 World Bank any judgement on the legal status of any territory or
-                endorsement or acceptance of such boundaries. A list of the input
-                datasets can be found here (link to ED.info datasets) and the
-                source code is {' '}
+                endorsement or acceptance of such boundaries. The
+                source code is available {' '}
                 <a
                   href='https://github.com/developmentseed/rezoning-explorer'
                 >
@@ -196,9 +195,8 @@ function About () {
                   <strong>Multi-criteria analysis and prioritization:</strong> This step allows
                   the user to include various criteria and factors (both monetized
                   and non-monetized) in addition to the LCOE to select and
-                  prioritize suitable renewable energy sites for development. Such
-                  criteria include slope, population density, [add some more
-                  examples]. The user can then provide different weights for each
+                  prioritize suitable renewable energy sites for development. The
+                  user can then provide different weights for each
                   of their criteria under the ‘Weights Tab’ in order to estimate a
                   weighted score for each renewable energy zone. The zones are
                   then sorted and ranked by their scores or LCOE and the user can
