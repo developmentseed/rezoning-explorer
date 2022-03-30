@@ -122,14 +122,14 @@ workflows:
       - test:
           requires:
             - prepare
-      - deploy-surge-dev:
-          requires:
-            - lint
-            - test
-            - prepare
-          filters:
-            branches:
-              only: develop
+      # - deploy-surge-dev:
+      #     requires:
+      #       - lint
+      #       - test
+      #       - prepare
+      #     filters:
+      #       branches:
+      #         only: develop
       - build-production:
           requires:
             - lint
