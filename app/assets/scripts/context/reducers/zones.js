@@ -23,6 +23,7 @@ async function getZoneSummary (feature, filterString, weights, lcoe, countryReso
     summary = (
       await fetchJSON(`${apiEndpoint}/zone${countryResourcePath}?${filterString}`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           aoi: feature.geometry,
           weights,
