@@ -215,6 +215,7 @@ const ExportZonesButton = (props) => {
         `${apiEndpoint}/export/${operation}/${selectedArea.id}/${apiResourceNameMap[selectedResource]}`,
         {
           method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             lcoe: getLcoeValues(props.location, selectedResource, lcoeList),
             weights: getWeightValues(
